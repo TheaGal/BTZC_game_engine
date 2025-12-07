@@ -23,6 +23,7 @@ struct Follow_camera_follow_ref
     struct State
     {
         UUID locked_on_entity;
+        float_t locked_on_facing_angle;
     } state;
 };
 

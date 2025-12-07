@@ -34,14 +34,14 @@ void BT::system::player_character_lock_onto_target()
 
     // Get locked on entity.
     bool found_player_character{ false };
-    UUID* locked_on_entity{ nullptr };
+    component::Follow_camera_follow_ref::State* follow_state{ nullptr };
     {
         size_t count{ 0 };
         for (auto&& [ecs_entity, follow_cam_follow_ref, transform] :
             reg.view<component::Follow_camera_follow_ref, component::Transform const>().each())
         {
             found_player_character = true;
-            locked_on_entity = &follow_cam_follow_ref.state.locked_on_entity;
+            follow_state = &follow_cam_follow_ref.state;
             count++;
         }
         assert(count <= 1);  // Enforce only one iteration (or exit system if no found pointer).
@@ -64,11 +64,12 @@ void BT::system::player_character_lock_onto_target()
     }
 
     // Remove other character reference if (1) clicked lock off or (2) reference is broken.
-    if (!locked_on_entity->is_nil())
+    if (!follow_state->locked_on_entity.is_nil())
     {
-        if (on_lockon_press || !entity_container.entity_exists(*locked_on_entity))
+        if (on_lockon_press ||
+            !entity_container.entity_exists(follow_state->locked_on_entity))
         {   // Remove character reference.
-            *locked_on_entity = UUID();
+            follow_state->locked_on_entity = UUID();
         }
     }
     // Look for other character if clicking lockon.
@@ -110,12 +111,12 @@ void BT::system::player_character_lock_onto_target()
 
         if (!best_entity.is_nil())
         {   // Apply best entity.
-            *locked_on_entity = best_entity;
+            follow_state->locked_on_entity = best_entity;
         }
     }
 
     // Exit early if no locked on entity.
-    if (locked_on_entity->is_nil())
+    if (follow_state->locked_on_entity.is_nil())
         return;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -127,7 +128,7 @@ void BT::system::player_character_lock_onto_target()
     vec3 locked_on_pos;
     {
         auto& transform{ reg.get<component::Transform const>(
-            entity_container.find_entity(*locked_on_entity)) };
+            entity_container.find_entity(follow_state->locked_on_entity)) };
 
         // @TODO: Conform to `write_render_transforms.cpp`
         locked_on_pos[0] = static_cast<float_t>(transform.position.x);
@@ -146,4 +147,7 @@ void BT::system::player_character_lock_onto_target()
     new_orbits[1] = -std::atan2f(delta_pos[1], glm_vec2_norm(vec2{ delta_pos[0], delta_pos[2] })) +
                     k_x_angle_offset;
     camera.set_follow_orbit_orbits(new_orbits);
+
+    // Save locked on facing angle.
+    follow_state->locked_on_facing_angle = new_orbits[0];
 }

@@ -932,6 +932,10 @@ while (running_game_loop)
         - [ ] Blends animation correctly with the animator.
     - [ ] Face player forward all the time, even when moving (except for sprint moving if this is a thing).
         - FOR NOW: Just make sprinting not a thing.
+        - [x] Faces visually
+        - [x] Override the facing direction and its input for the desired facing direction as well.
+            - Now that this is implemented this should be the foundation for the blendtree stuff.
+        - [ ] Write the facing angle value to animator data.
 
 - [ ] Get strong attacks implemented (and have strong versions of knockbacks used)
     - Perhaps by having some kind of AFA data point being like "is_strong_attack" that could indicate a strong attack being done?

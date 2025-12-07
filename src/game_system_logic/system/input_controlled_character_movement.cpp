@@ -7,6 +7,7 @@
 #include "btglm.h"
 #include "game_system_logic/component/animator_root_motion.h"
 #include "game_system_logic/component/character_movement.h"
+#include "game_system_logic/component/follow_camera.h"
 #include "game_system_logic/component/physics_object_settings.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
@@ -230,6 +231,7 @@ Char_mvt_logic_results character_controller_movement_logic(
     component::Character_mvt_state& char_mvt_state,
     component::Character_mvt_animated_state* char_mvt_anim_state,
     component::Animator_root_motion const* anim_root_motion,
+    component::Follow_camera_follow_ref::State const* follow_cam_state,
     Physics_object& phys_obj)
 {   // Get current character controller state.
     auto char_con_impl{ phys_obj.get_impl() };
@@ -342,6 +344,10 @@ Char_mvt_logic_results character_controller_movement_logic(
                                                char_ws_input.ws_flat_clamped_input.z)
                                       : 0 };
     float_t turn_speed{ anim_root_motion ? anim_root_motion->turn_speed : 1000000.0f };
+
+    // Override desired facing angle.
+    if (follow_cam_state && !follow_cam_state->locked_on_entity.is_nil())
+        desired_facing_angle = follow_cam_state->locked_on_facing_angle;
 
     // Desired velocity.
     float_t display_facing_angle;
@@ -474,10 +480,25 @@ void BT::system::input_controlled_character_movement()
                                              char_mvt_anim_state->affecting_animator_uuid))
                                    : nullptr };
 
+        component::Follow_camera_follow_ref::State* follow_cam_state{ nullptr };
+        auto poss_display_repr_ref{ reg.try_get<component::Display_repr_transform_ref>(entity) };
+        if (poss_display_repr_ref != nullptr)
+        {
+            auto display_repr_ecs_ent{ entity_container.find_entity(
+                poss_display_repr_ref->display_repr_uuid) };
+
+            auto follow_cam_follow_ref{ reg.try_get<component::Follow_camera_follow_ref>(
+                display_repr_ecs_ent) };
+
+            if (follow_cam_follow_ref != nullptr)
+                follow_cam_state = &follow_cam_follow_ref->state;
+        }
+
         auto mvt_logic_result = character_controller_movement_logic(char_ws_input,
                                                                     char_mvt_state,
                                                                     char_mvt_anim_state,
                                                                     anim_root_motion,
+                                                                    follow_cam_state,
                                                                     phys_obj);
 
         // Apply movement logic outputs to physics object character controller inputs.
@@ -496,9 +517,7 @@ void BT::system::input_controlled_character_movement()
         phys_engine.return_physics_object(&phys_obj);
 
         // Try writing a new facing direction.
-        if (auto poss_display_repr_ref{
-                reg.try_get<component::Display_repr_transform_ref>(entity) };
-            poss_display_repr_ref != nullptr)
+        if (poss_display_repr_ref != nullptr)
         {   // Calculate rotation.
             versors rot;
             glm_quat(rot.raw, mvt_logic_result.display_facing_angle, 0.0f, 1.0f, 0.0f);
