@@ -16,7 +16,21 @@ namespace anim_tmpl_types
 struct Animator_state
 {
     std::string state_name;
-    uint32_t animation_idx;
+    enum
+    {
+        SINGLE_ANIM,
+        BLENDTREE
+    } state_type;
+
+    uint32_t animation_idx{ (uint32_t)-1 };
+
+    struct Blend_anim
+    {
+        uint32_t animation_idx;
+        float_t value;
+    };
+    std::vector<Blend_anim> blend_anims;
+
     float_t speed{ 1.0f };
     bool loop{ true };
 };

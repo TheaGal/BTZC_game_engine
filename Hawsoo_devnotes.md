@@ -926,6 +926,10 @@ while (running_game_loop)
     - [ ] Blend between strafing anims with a blend tree.
         - Have back moving one be slower since walking backwards.
         - I think just the 4 directions is fine? Maybe there just needs to be a thing in the animator that uses two AFA data as the horiz and vert mvt input, and then it will combine the animations?
+        - [x] Create the animator template for blendtrees.
+        - [x] Import it correctly.
+        - [ ] Assign values to `mvt_facing_angle`.
+        - [ ] Blends animation correctly with the animator.
     - [ ] Face player forward all the time, even when moving (except for sprint moving if this is a thing).
         - FOR NOW: Just make sprinting not a thing.
 

@@ -19,16 +19,34 @@ struct Animator_template
 {
     struct Animator_state
     {
-        std::string state_name;
-        std::string anim_name;
-        float_t     speed;
-        bool        loop;
+        std::string state_name{ "INVALID_STATE_NAME" };
+        std::string state_type{ "single_anim" };  // [single_anim, blendtree]
 
-        NLOHMANN_DEFINE_TYPE_INTRUSIVE(Animator_state,
-                                       state_name,
-                                       anim_name,
-                                       speed,
-                                       loop);
+        // Single anim.
+        std::string anim_name{ "INVALID_ANIM_NAME" };
+
+        // Blendtree.
+        struct Blend_anim
+        {
+            std::string anim_name;
+            float_t value;
+
+            NLOHMANN_DEFINE_TYPE_INTRUSIVE(Blend_anim,
+                                           anim_name,
+                                           value);
+        };
+        std::vector<Blend_anim> blend_anims;
+
+        float_t speed{ 1.0f };
+        bool    loop{ false };
+
+        NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Animator_state,
+                                                    state_name,
+                                                    state_type,
+                                                    anim_name,
+                                                    blend_anims,
+                                                    speed,
+                                                    loop);
     };
     std::vector<Animator_state> animator_states;
 

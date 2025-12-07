@@ -188,9 +188,24 @@ void BT::Animator_template_bank::load_animator_template_into_animator(
     anim_states.reserve(anim_temp.animator_states.size());
     for (auto const& temp_anim_state : anim_temp.animator_states)
     {
+        auto state_type{ temp_anim_state.state_type == "single_anim"
+                             ? anim_tmpl_types::Animator_state::SINGLE_ANIM
+                             : anim_tmpl_types::Animator_state::BLENDTREE };
+
+        std::vector<anim_tmpl_types::Animator_state::Blend_anim> blend_anims;
+        if (state_type == anim_tmpl_types::Animator_state::BLENDTREE)
+        {
+            for (auto const& blend_anim : temp_anim_state.blend_anims)
+                blend_anims.emplace_back(animator.get_model_animation_idx(blend_anim.anim_name),
+                                         blend_anim.value);
+        }
+
         anim_states.emplace_back(temp_anim_state.state_name,
-                                 animator.get_model_animation_idx(
-                                     temp_anim_state.anim_name),
+                                 state_type,
+                                 state_type == anim_tmpl_types::Animator_state::SINGLE_ANIM
+                                     ? animator.get_model_animation_idx(temp_anim_state.anim_name)
+                                     : (uint32_t)-1,
+                                 std::move(blend_anims),
                                  temp_anim_state.speed,
                                  temp_anim_state.loop);
     }

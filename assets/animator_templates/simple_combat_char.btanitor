@@ -2,90 +2,134 @@
     "animator_states": [
         {
             "state_name": "st_idle",
+            "state_type": "single_anim",
             "anim_name": "Idle",
             "speed": 1.0,
             "loop": true
         },
         {
             "state_name": "st_running",
+            "state_type": "single_anim",
             "anim_name": "Running",
             "speed": 1.0,
             "loop": true
         },
         {
             "state_name": "st_running_turnaround",
+            "state_type": "single_anim",
             "anim_name": "Running_turnaround",
             "speed": 1.0,
             "loop": false
         },
         {
+            "state_name": "st_running_while_locked_on",
+            "state_type": "blendtree",
+            "blend_var": "mvt_facing_angle",
+            "blend_anims": [
+                {
+                    "anim_name": "Running",
+                    "value": 0.0
+                },
+                {
+                    "anim_name": "Running_strafe_east",
+                    "value": 1.5708
+                },
+                {
+                    "anim_name": "Running_strafe_south",
+                    "value": 3.14159
+                },
+                {
+                    "anim_name": "Running_strafe_west",
+                    "value": 4.71239
+                },
+                {
+                    "anim_name": "Running",
+                    "value": 6.28319
+                }
+            ],
+            "speed": 1.0,
+            "loop": true
+        },
+        {
             "state_name": "st_jump",
+            "state_type": "single_anim",
             "anim_name": "Jump",
             "speed": 1.0,
             "loop": false
         },
         {
             "state_name": "st_fall",
+            "state_type": "single_anim",
             "anim_name": "Fall",
             "speed": 1.0,
             "loop": false
         },
         {
             "state_name": "st_attack_0",
+            "state_type": "single_anim",
             "anim_name": "Sample_attack",
             "speed": 1.0,
             "loop": false
         },
         {
             "state_name": "st_hurt_parry",
+            "state_type": "single_anim",
             "anim_name": "Hurt_parry_left",
             "speed": 1.0,
             "loop": false
         },
         {
             "state_name": "st_hurt_guard",
+            "state_type": "single_anim",
             "anim_name": "Hurt_guard",
             "speed": 1.0,
             "loop": false
         },
         {
             "state_name": "st_hurt_receive",
+            "state_type": "single_anim",
             "anim_name": "Hurt_receive",
             "speed": 1.0,
             "loop": false
         },
         {
             "state_name": "st_hurt_receive_from_back",
+            "state_type": "single_anim",
             "anim_name": "Hurt_receive_from_back",
             "speed": 1.0,
             "loop": false
         },
         {
             "state_name": "st_ready_parry",
+            "state_type": "single_anim",
             "anim_name": "Ready_parry",
             "speed": 1.0,
             "loop": false
         },
         {
             "state_name": "st_ready_parry_from_running",
+            "state_type": "single_anim",
             "anim_name": "Ready_parry_from_running",
             "speed": 1.0,
             "loop": false
         },
         {
             "state_name": "st_hold_guard_idle",
+            "state_type": "single_anim",
             "anim_name": "Hold_guard",
             "speed": 1.0,
             "loop": true
         },
         {
             "state_name": "st_hold_guard_walking",
+            "state_type": "single_anim",
             "anim_name": "Hold_guard_walking",
             "speed": 1.0,
             "loop": true
         },
         {
             "state_name": "_DEBUG_STATE",
+            "state_type": "single_anim",
             "anim_name": "0_TPose",
             "speed": 1.0,
             "loop": true
@@ -93,16 +137,17 @@
     ],
     "transition_intermediate_states": [],
     "variables": [
-        "bool is_moving",
-        "trig on_turnaround",
-        "bool is_grounded",
-        "trig on_jump",
-        "trig on_attack",
-        "trig on_parry_hurt",
-        "trig on_guard_hurt",
-        "trig on_receive_hurt",
-        "trig on_receive_hurt_from_back",
-        "bool is_guarding"
+        "bool  is_moving",
+        "float mvt_facing_angle",
+        "trig  on_turnaround",
+        "bool  is_grounded",
+        "trig  on_jump",
+        "trig  on_attack",
+        "trig  on_parry_hurt",
+        "trig  on_guard_hurt",
+        "trig  on_receive_hurt",
+        "trig  on_receive_hurt_from_back",
+        "bool  is_guarding"
     ],
     "state_transitions": [
         {

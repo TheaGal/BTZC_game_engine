@@ -60,6 +60,10 @@
             "state_name": "st_running_turnaround"
         },
         {
+            "regions": [],
+            "state_name": "st_running_while_locked_on"
+        },
+        {
             "regions": [
                 {
                     "ctrl_item_idx": 7,
