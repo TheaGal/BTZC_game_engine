@@ -8,9 +8,12 @@
 #include "uuid/uuid.h"
 
 #include <algorithm>
+#include <cassert>
 #include <cmath>
 #include <cstddef>
 #include <cstdlib>
+#include <limits>
+#include <map>
 
 
 BT::Model_joint_animation_frame::Joint_local_transform
@@ -107,6 +110,15 @@ uint32_t BT::Model_joint_animation::calc_frame_idx(float_t time,
     return frame_idx;
 }
 
+std::vector<BT::Model_joint_animation_frame::Joint_local_transform>
+BT::Model_joint_animation::calc_joint_local_transforms(bool interpolate_frames,
+                                                       float_t time,
+                                                       bool loop,
+                                                       bool root_motion_zeroing) const
+{
+    
+}
+
 void BT::Model_joint_animation::calc_joint_matrices(float_t time,
                                                     bool loop,
                                                     bool root_motion_zeroing,
@@ -183,9 +195,205 @@ void BT::Model_joint_animation::calc_joint_matrices(float_t time,
     }
 }
 
+void BT::Model_joint_animation::calc_joint_matrices_blended(
+    float_t time,
+    bool loop,
+    bool root_motion_zeroing,
+    Model_joint_animation const& other_anim,
+    float_t blend_t,
+    std::vector<mat4s>& out_joint_matrices) const
+{   ////////////////////////////////////////////////////////////////////////////////////////////////
+    // @COPYPASTA below from `calc_joint_matrices()`
+    //   Note the commented out sections of code. This marks the parts that are removed from the
+    //   original source material. And then, lines with `// +` at the end are marked for showing
+    //   addition of the source material.
+    //
+    // @NOTE: So I think that the best thing to do here is just copy the contents of the
+    //   `calc_joint_matrices()` function and then instead of using `interpolate_fast()`, just
+    //   return the first one essentially. It'll just be copypasta for this run around but maybe in
+    //   the future a more efficient way for `get_joint_matrices_at_frame()` can be concocted when
+    //   the program demands the performance.  -Thea 2025/09/27
+    //
+    // @NOTE: Hey, I really don't like these copypastas. These really need some kind of
+    //   consolidation/abstraction for this!!!  -Thea 2025/11/26
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    uint32_t frame_idx_a{ calc_frame_idx(time, loop, FLOOR) };
+    uint32_t frame_idx_b{ calc_frame_idx(time, loop, CEIL) };
+
+    float_t interp_t{ (time / k_frames_per_second)
+                      - std::floor(time / k_frames_per_second) };
+
+    // Allocate calculation cache.
+    std::vector<mat4s> joint_global_transform_cache;
+    joint_global_transform_cache.resize(m_model_skin.joints_sorted_breadth_first.size());
+
+    out_joint_matrices.resize(m_model_skin.joints_sorted_breadth_first.size());
+
+    // Calculate joint matrices.
+    for (size_t i = 0; i < m_model_skin.joints_sorted_breadth_first.size(); i++)
+    {
+        auto& joint{ m_model_skin.joints_sorted_breadth_first[i] };
+        if (i == 0 && joint.parent_idx != (uint32_t)-1)
+        {
+            logger::printe(logger::ERROR,
+                           "First joint parent is not null. Joint list probably not sorted. Aborting.");
+            assert(false);
+            return;
+        }
+
+        // Calculate global transform (relative to parent bone -> model space).
+        auto local_joint_transform{
+            m_frames[frame_idx_a].joint_transforms_in_order[i].interpolate_fast(
+                m_frames[frame_idx_b].joint_transforms_in_order[i],
+                interp_t) };
+
+        if (i == 0 && root_motion_zeroing)
+        {   // Delete root motion (for XZ axes).
+            local_joint_transform.position[0] = local_joint_transform.position[2] = 0;
+        }
+
+        mat4 global_joint_transform;
+        glm_translate_make(global_joint_transform, local_joint_transform.position);
+        glm_quat_rotate(global_joint_transform, local_joint_transform.rotation, global_joint_transform);
+        glm_scale(global_joint_transform, local_joint_transform.scale);
+
+        if (joint.parent_idx == (uint32_t)-1)
+        {   // Use skin baseline transform.
+            glm_mat4_mul(const_cast<vec4*>(m_model_skin.baseline_transform),
+                 global_joint_transform,
+                 global_joint_transform);
+        }
+        else
+        {   // Use cached parent global trans to make global trans.
+            glm_mat4_mul(joint_global_transform_cache[joint.parent_idx].raw,
+                         global_joint_transform,
+                         global_joint_transform);
+        }
+
+        // Insert global transform into cache.
+        glm_mat4_copy(global_joint_transform, joint_global_transform_cache[i].raw);
+
+        // Calculate joint matrix.
+        // @RANT: I hate how all the glm functions don't mark the params as const,
+        //   and also since they're not getting mutated! Aaaaggghhhh
+        // @RANT: I hate how the rant above was a rant!!! The amount of strenuous
+        //   work to get this whole shitshow working was insane!!!! Hahahahahahaha  -Thea 2025/07/20
+        mat4 joint_matrix;
+        glm_mat4_mul(const_cast<vec4*>(m_model_skin.inverse_global_transform),
+                     global_joint_transform,
+                     joint_matrix);
+        glm_mat4_mul(joint_matrix,
+                     const_cast<vec4*>(joint.inverse_bind_matrix),
+                     out_joint_matrices[i].raw);
+    }
+}
+
 void BT::Model_joint_animation::get_joint_matrices_at_frame(
     uint32_t frame_idx,
     bool root_motion_zeroing,
+    std::vector<mat4s>& out_joint_matrices) const
+{   ////////////////////////////////////////////////////////////////////////////////////////////////
+    // @COPYPASTA below from `calc_joint_matrices()`
+    //   Note the commented out sections of code. This marks the parts that are removed from the
+    //   original source material. And then, lines with `// +` at the end are marked for showing
+    //   addition of the source material.
+    //
+    // @NOTE: So I think that the best thing to do here is just copy the contents of the
+    //   `calc_joint_matrices()` function and then instead of using `interpolate_fast()`, just
+    //   return the first one essentially. It'll just be copypasta for this run around but maybe in
+    //   the future a more efficient way for `get_joint_matrices_at_frame()` can be concocted when
+    //   the program demands the performance.  -Thea 2025/09/27
+    //
+    // @NOTE: Hey, I really don't like these copypastas. These really need some kind of
+    //   consolidation/abstraction for this!!!  -Thea 2025/11/26
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // uint32_t frame_idx_a{ calc_frame_idx(time, loop, FLOOR) };
+    // uint32_t frame_idx_b{ calc_frame_idx(time, loop, CEIL) };
+
+    // float_t interp_t{ (time / k_frames_per_second)
+    //                   - std::floor(time / k_frames_per_second) };
+
+    // Allocate calculation cache.
+    std::vector<mat4s> joint_global_transform_cache;
+    joint_global_transform_cache.resize(m_model_skin.joints_sorted_breadth_first.size());
+
+    out_joint_matrices.resize(m_model_skin.joints_sorted_breadth_first.size());
+
+    // Calculate joint matrices.
+    for (size_t i = 0; i < m_model_skin.joints_sorted_breadth_first.size(); i++)
+    {
+        auto& joint{ m_model_skin.joints_sorted_breadth_first[i] };
+        if (i == 0 && joint.parent_idx != (uint32_t)-1)
+        {
+            logger::printe(logger::ERROR,
+                           "First joint parent is not null. Joint list probably not sorted. Aborting.");
+            assert(false);
+            return;
+        }
+
+        // Calculate global transform (relative to parent bone -> model space).
+
+        // auto local_joint_transform{
+        //     m_frames[frame_idx_a].joint_transforms_in_order[i].interpolate_fast(
+        //         m_frames[frame_idx_b].joint_transforms_in_order[i],
+        //         interp_t) };
+
+        // @NOTE: Is a copy because as a reference, when the root motion deletion was           // +
+        //        happening, it was causing a destructive effect to the joint transforms        // +
+        //        whenever this function was used.                                              // +
+        //   Though honestly, bells should've been going off as soon as I const casted a        // +
+        //   const reference into a non-const reference  (^_^;)                                 // +
+        //     -Thea 2025/12/05                                                                 // +
+        auto local_joint_transform{ m_frames[frame_idx].joint_transforms_in_order[i] };         // +
+
+        if (i == 0 && root_motion_zeroing)                                                      // +
+        {   // Delete root motion (for XZ axes).                                                // +
+            local_joint_transform.position[0] = local_joint_transform.position[2] = 0;          // +
+        }                                                                                       // +
+
+        mat4 global_joint_transform;
+        glm_translate_make(global_joint_transform, local_joint_transform.position);
+        glm_quat_rotate(global_joint_transform, local_joint_transform.rotation, global_joint_transform);
+        glm_scale(global_joint_transform, local_joint_transform.scale);
+
+        if (joint.parent_idx == (uint32_t)-1)
+        {   // Use skin baseline transform.
+            glm_mat4_mul(const_cast<vec4*>(m_model_skin.baseline_transform),
+                 global_joint_transform,
+                 global_joint_transform);
+        }
+        else
+        {   // Use cached parent global trans to make global trans.
+            glm_mat4_mul(joint_global_transform_cache[joint.parent_idx].raw,
+                         global_joint_transform,
+                         global_joint_transform);
+        }
+
+        // Insert global transform into cache.
+        glm_mat4_copy(global_joint_transform, joint_global_transform_cache[i].raw);
+
+        // Calculate joint matrix.
+        // @RANT: I hate how all the glm functions don't mark the params as const,
+        //   and also since they're not getting mutated! Aaaaggghhhh
+        // @RANT: I hate how the rant above was a rant!!! The amount of strenuous
+        //   work to get this whole shitshow working was insane!!!! Hahahahahahaha  -Thea 2025/07/20
+        mat4 joint_matrix;
+        glm_mat4_mul(const_cast<vec4*>(m_model_skin.inverse_global_transform),
+                     global_joint_transform,
+                     joint_matrix);
+        glm_mat4_mul(joint_matrix,
+                     const_cast<vec4*>(joint.inverse_bind_matrix),
+                     out_joint_matrices[i].raw);
+    }
+}
+
+void BT::Model_joint_animation::get_joint_matrices_at_frame_blended(
+    uint32_t frame_idx,
+    bool root_motion_zeroing,
+    Model_joint_animation const& other_anim,
+    float_t blend_t,
     std::vector<mat4s>& out_joint_matrices) const
 {   ////////////////////////////////////////////////////////////////////////////////////////////////
     // @COPYPASTA below from `calc_joint_matrices()`
@@ -444,6 +652,19 @@ void BT::Model_animator::set_float_variable(std::string const& var_name, float_t
     var_handle.var_value = value;
 }
 
+float_t BT::Model_animator::get_float_variable(std::string const& var_name) const
+{
+    auto const& var_handle{ find_animator_variable_const(var_name) };
+
+    if (var_handle.type != anim_tmpl_types::Animator_variable::TYPE_FLOAT)
+    {
+        assert(false);
+        return std::numeric_limits<float_t>::lowest();
+    }
+
+    return var_handle.var_value;
+}
+
 void BT::Model_animator::set_trigger_variable(std::string const& var_name)
 {
     auto& var_handle{ find_animator_variable(var_name) };
@@ -660,26 +881,77 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
 }
 
 void BT::Model_animator::calc_anim_pose(Animator_timer_profile profile,
+                                        bool root_motion_zeroing,
                                         std::vector<mat4s>& out_joint_matrices) const
 {
+    auto time{ get_profile_time_handle(profile).load() };
     auto& anim_state{ m_animator_states[m_current_state_idx] };
-    m_model_animations[anim_state.animation_idx]
-        .calc_joint_matrices(get_profile_time_handle(profile).load(),
-                             anim_state.loop,
-                             false,
-                             out_joint_matrices);
-}
 
-void BT::Model_animator::calc_anim_pose_with_root_motion_zeroing(
-    Animator_timer_profile profile,
-    std::vector<mat4s>& out_joint_matrices) const
-{
-    auto& anim_state{ m_animator_states[m_current_state_idx] };
-    m_model_animations[anim_state.animation_idx]
-        .calc_joint_matrices(get_profile_time_handle(profile).load(),
-                             anim_state.loop,
-                             true,
-                             out_joint_matrices);
+    switch (anim_state.state_type)
+    {
+    case anim_tmpl_types::Animator_state::SINGLE_ANIM:
+    {   // Get single anim pose.
+        m_model_animations[anim_state.animation_idx].calc_joint_matrices(time,
+                                                                         anim_state.loop,
+                                                                         root_motion_zeroing,
+                                                                         out_joint_matrices);
+        break;
+    }
+
+    case anim_tmpl_types::Animator_state::BLENDTREE:
+    {   assert(false);  // IMPLEMENT!!!!
+
+        // // Look for two animations that are closest.
+        // float_t blend_var_value{ get_float_variable(anim_state.blend_var) };
+
+        // std::map<float_t, uint32_t> distance_to_anim_idx_map;
+        // for (auto const& blend_anim : anim_state.blend_anims)
+        // {
+        //     distance_to_anim_idx_map.emplace(std::abs(blend_anim.value - blend_var_value),
+        //                                      blend_anim.animation_idx);
+        // }
+        // assert(distance_to_anim_idx_map.size() >= 2);
+
+        // std::vector<std::pair<float_t, uint32_t>> influencing_distance_and_anim_idx_pairs;
+        // influencing_distance_and_anim_idx_pairs.reserve(2);
+        // for (auto it : distance_to_anim_idx_map)
+        // {
+        //     influencing_distance_and_anim_idx_pairs.emplace_back(it.first, it.second);
+        //     if (influencing_distance_and_anim_idx_pairs.size() >= 2)
+        //         break;
+        // }
+
+        // // Get root motion of both anims.
+        // constexpr size_t k_num_root_motions{ 2 };
+        // vec3 root_motions[k_num_root_motions];
+        // for (size_t i = 0; i < k_num_root_motions; i++)
+        // {
+        //     auto anim_idx{ influencing_distance_and_anim_idx_pairs[i].second };
+        //     auto& root_motion_ref{ root_motions[i] };
+
+        //     uint32_t frame_idx{ m_model_animations[anim_idx].calc_frame_idx(
+        //         time,
+        //         anim_state.loop,
+        //         Model_joint_animation::FLOOR) };
+        //     m_model_animations[anim_idx].get_root_motion_delta_pos_at_frame(
+        //         frame_idx,
+        //         root_motion_ref);
+        // }
+
+        // // Blend motions.
+        // float_t blend_t;
+        // {
+        //     float_t total_weight{ influencing_distance_and_anim_idx_pairs[0].first +
+        //                           influencing_distance_and_anim_idx_pairs[1].first };
+        //     blend_t = (influencing_distance_and_anim_idx_pairs[0].first / total_weight);
+        // }
+        // glm_vec3_lerp(root_motions[0], root_motions[1], blend_t, out_root_motion_delta_pos);
+
+        break;
+    }
+
+    default: assert(false); break;  // Unsupported type.
+    }
 }
 
 bool BT::Model_animator::get_is_using_root_motion() const
@@ -688,46 +960,155 @@ bool BT::Model_animator::get_is_using_root_motion() const
 }
 
 void BT::Model_animator::get_anim_floored_frame_pose(Animator_timer_profile profile,
+                                                     bool root_motion_zeroing,
                                                      std::vector<mat4s>& out_joint_matrices) const
 {
+    auto time{ get_profile_time_handle(profile).load() };
     auto& anim_state{ m_animator_states[m_current_state_idx] };
-    uint32_t frame_idx{
-        m_model_animations[anim_state.animation_idx]
-            .calc_frame_idx(get_profile_time_handle(profile).load(),
-                            anim_state.loop,
-                            Model_joint_animation::FLOOR) };
-    m_model_animations[anim_state.animation_idx].get_joint_matrices_at_frame(frame_idx,
-                                                                             false,
-                                                                             out_joint_matrices);
-}
 
-void BT::Model_animator::get_anim_floored_frame_pose_with_root_motion_zeroing(
-    Animator_timer_profile profile,
-    std::vector<mat4s>& out_joint_matrices) const
-{
-    auto& anim_state{ m_animator_states[m_current_state_idx] };
-    uint32_t frame_idx{
-        m_model_animations[anim_state.animation_idx]
-            .calc_frame_idx(get_profile_time_handle(profile).load(),
-                            anim_state.loop,
-                            Model_joint_animation::FLOOR) };
-    m_model_animations[anim_state.animation_idx].get_joint_matrices_at_frame(frame_idx,
-                                                                             true,
-                                                                             out_joint_matrices);
+    switch (anim_state.state_type)
+    {
+    case anim_tmpl_types::Animator_state::SINGLE_ANIM:
+    {   // Get single anim pose.
+        uint32_t frame_idx{ m_model_animations[anim_state.animation_idx].calc_frame_idx(
+            time,
+            anim_state.loop,
+            Model_joint_animation::FLOOR) };
+        m_model_animations[anim_state.animation_idx].get_joint_matrices_at_frame(
+            frame_idx,
+            root_motion_zeroing,
+            out_joint_matrices);
+        break;
+    }
+
+    case anim_tmpl_types::Animator_state::BLENDTREE:
+    {   assert(false);  // IMPLEMENT!!!!
+
+        // // Look for two animations that are closest.
+        // float_t blend_var_value{ get_float_variable(anim_state.blend_var) };
+
+        // std::map<float_t, uint32_t> distance_to_anim_idx_map;
+        // for (auto const& blend_anim : anim_state.blend_anims)
+        // {
+        //     distance_to_anim_idx_map.emplace(std::abs(blend_anim.value - blend_var_value),
+        //                                      blend_anim.animation_idx);
+        // }
+        // assert(distance_to_anim_idx_map.size() >= 2);
+
+        // std::vector<std::pair<float_t, uint32_t>> influencing_distance_and_anim_idx_pairs;
+        // influencing_distance_and_anim_idx_pairs.reserve(2);
+        // for (auto it : distance_to_anim_idx_map)
+        // {
+        //     influencing_distance_and_anim_idx_pairs.emplace_back(it.first, it.second);
+        //     if (influencing_distance_and_anim_idx_pairs.size() >= 2)
+        //         break;
+        // }
+
+        // // Get root motion of both anims.
+        // constexpr size_t k_num_root_motions{ 2 };
+        // vec3 root_motions[k_num_root_motions];
+        // for (size_t i = 0; i < k_num_root_motions; i++)
+        // {
+        //     auto anim_idx{ influencing_distance_and_anim_idx_pairs[i].second };
+        //     auto& root_motion_ref{ root_motions[i] };
+
+        //     uint32_t frame_idx{ m_model_animations[anim_idx].calc_frame_idx(
+        //         time,
+        //         anim_state.loop,
+        //         Model_joint_animation::FLOOR) };
+        //     m_model_animations[anim_idx].get_root_motion_delta_pos_at_frame(
+        //         frame_idx,
+        //         root_motion_ref);
+        // }
+
+        // // Blend motions.
+        // float_t blend_t;
+        // {
+        //     float_t total_weight{ influencing_distance_and_anim_idx_pairs[0].first +
+        //                           influencing_distance_and_anim_idx_pairs[1].first };
+        //     blend_t = (influencing_distance_and_anim_idx_pairs[0].first / total_weight);
+        // }
+        // glm_vec3_lerp(root_motions[0], root_motions[1], blend_t, out_root_motion_delta_pos);
+
+        break;
+    }
+
+    default: assert(false); break;  // Unsupported type.
+    }
 }
 
 void BT::Model_animator::get_anim_root_motion_delta_pos(Animator_timer_profile profile,
                                                         vec3& out_root_motion_delta_pos) const
 {
+    auto time{ get_profile_time_handle(profile).load() };
     auto& anim_state{ m_animator_states[m_current_state_idx] };
-    uint32_t frame_idx{
-        m_model_animations[anim_state.animation_idx]
-            .calc_frame_idx(get_profile_time_handle(profile).load(),
-                            anim_state.loop,
-                            Model_joint_animation::FLOOR) };
-    m_model_animations[anim_state.animation_idx].get_root_motion_delta_pos_at_frame(
-        frame_idx,
-        out_root_motion_delta_pos);
+
+    switch (anim_state.state_type)
+    {
+    case anim_tmpl_types::Animator_state::SINGLE_ANIM:
+    {   // Get single anim root motion.
+        uint32_t frame_idx{ m_model_animations[anim_state.animation_idx].calc_frame_idx(
+            time,
+            anim_state.loop,
+            Model_joint_animation::FLOOR) };
+        m_model_animations[anim_state.animation_idx].get_root_motion_delta_pos_at_frame(
+            frame_idx,
+            out_root_motion_delta_pos);
+        break;
+    }
+
+    case anim_tmpl_types::Animator_state::BLENDTREE:
+    {   // Look for two animations that are closest.
+        float_t blend_var_value{ get_float_variable(anim_state.blend_var) };
+
+        std::map<float_t, uint32_t> distance_to_anim_idx_map;
+        for (auto const& blend_anim : anim_state.blend_anims)
+        {
+            distance_to_anim_idx_map.emplace(std::abs(blend_anim.value - blend_var_value),
+                                             blend_anim.animation_idx);
+        }
+        assert(distance_to_anim_idx_map.size() >= 2);
+
+        std::vector<std::pair<float_t, uint32_t>> influencing_distance_and_anim_idx_pairs;
+        influencing_distance_and_anim_idx_pairs.reserve(2);
+        for (auto it : distance_to_anim_idx_map)
+        {
+            influencing_distance_and_anim_idx_pairs.emplace_back(it.first, it.second);
+            if (influencing_distance_and_anim_idx_pairs.size() >= 2)
+                break;
+        }
+
+        // Get root motion of both anims.
+        constexpr size_t k_num_root_motions{ 2 };
+        vec3 root_motions[k_num_root_motions];
+        for (size_t i = 0; i < k_num_root_motions; i++)
+        {
+            auto anim_idx{ influencing_distance_and_anim_idx_pairs[i].second };
+            auto& root_motion_ref{ root_motions[i] };
+
+            uint32_t frame_idx{ m_model_animations[anim_idx].calc_frame_idx(
+                time,
+                anim_state.loop,
+                Model_joint_animation::FLOOR) };
+            m_model_animations[anim_idx].get_root_motion_delta_pos_at_frame(
+                frame_idx,
+                root_motion_ref);
+        }
+
+        // Blend motions.
+        float_t blend_t;
+        {
+            float_t total_weight{ influencing_distance_and_anim_idx_pairs[0].first +
+                                  influencing_distance_and_anim_idx_pairs[1].first };
+            blend_t = (influencing_distance_and_anim_idx_pairs[0].first / total_weight);
+        }
+        glm_vec3_lerp(root_motions[0], root_motions[1], blend_t, out_root_motion_delta_pos);
+
+        break;
+    }
+
+    default: assert(false); break;  // Unsupported type.
+    }
 }
 
 BT::anim_frame_action::Runtime_controllable_data&
@@ -769,6 +1150,12 @@ BT::Model_animator::animator_time_t& BT::Model_animator::get_profile_prev_time_h
 
 BT::anim_tmpl_types::Animator_variable& BT::Model_animator::find_animator_variable(
     std::string const& var_name)
+{
+    return const_cast<anim_tmpl_types::Animator_variable&>(find_animator_variable_const(var_name));
+}
+
+BT::anim_tmpl_types::Animator_variable const& BT::Model_animator::find_animator_variable_const(
+    std::string const& var_name) const
 {
     for (auto& anim_var : m_animator_variables)
         if (anim_var.var_name == var_name)

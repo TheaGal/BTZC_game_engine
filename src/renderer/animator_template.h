@@ -26,6 +26,7 @@ struct Animator_template
         std::string anim_name{ "INVALID_ANIM_NAME" };
 
         // Blendtree.
+        std::string blend_var{ "INVALID_BLEND_VAR_NAME" };
         struct Blend_anim
         {
             std::string anim_name;
@@ -44,6 +45,7 @@ struct Animator_template
                                                     state_name,
                                                     state_type,
                                                     anim_name,
+                                                    blend_var,
                                                     blend_anims,
                                                     speed,
                                                     loop);

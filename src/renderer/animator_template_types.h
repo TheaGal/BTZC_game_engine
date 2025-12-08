@@ -24,6 +24,8 @@ struct Animator_state
 
     uint32_t animation_idx{ (uint32_t)-1 };
 
+    std::string blend_var;
+
     struct Blend_anim
     {
         uint32_t animation_idx;

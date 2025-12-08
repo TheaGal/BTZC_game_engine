@@ -72,13 +72,33 @@ public:
 
     enum Rounding_func{ FLOOR, CEIL };
     uint32_t calc_frame_idx(float_t time, bool loop, Rounding_func rounding) const;
+
+    std::vector<Model_joint_animation_frame::Joint_local_transform> calc_joint_local_transforms(
+        bool interpolate_frames,
+        float_t time,
+        bool loop,
+        bool root_motion_zeroing) const;
+
     void calc_joint_matrices(float_t time,
                              bool loop,
                              bool root_motion_zeroing,
                              std::vector<mat4s>& out_joint_matrices) const;
+    void calc_joint_matrices_blended(float_t time,
+                                     bool loop,
+                                     bool root_motion_zeroing,
+                                     Model_joint_animation const& other_anim,
+                                     float_t blend_t,
+                                     std::vector<mat4s>& out_joint_matrices) const;
+
     void get_joint_matrices_at_frame(uint32_t frame_idx,
                                      bool root_motion_zeroing,
                                      std::vector<mat4s>& out_joint_matrices) const;
+    void get_joint_matrices_at_frame_blended(uint32_t frame_idx,
+                                             bool root_motion_zeroing,
+                                             Model_joint_animation const& other_anim,
+                                             float_t blend_t,
+                                             std::vector<mat4s>& out_joint_matrices) const;
+
     void get_root_motion_delta_pos_at_frame(uint32_t frame_idx,
                                             vec3& out_root_motion_delta_pos) const;
 
@@ -131,6 +151,9 @@ public:
     /// Sets a variable inside the state machine.
     void set_float_variable(std::string const& var_name, float_t value);
 
+    /// Gets a variable inside the state machine.
+    float_t get_float_variable(std::string const& var_name) const;
+
     /// Sets a variable inside the state machine.
     void set_trigger_variable(std::string const& var_name);
 
@@ -149,24 +172,19 @@ public:
     void update(Animator_timer_profile profile, float_t delta_time);
 
     /// Calculates the set of joint matrices, interpolated.
+    /// Also allows for root motion zeroing.
     void calc_anim_pose(Animator_timer_profile profile,
+                        bool root_motion_zeroing,
                         std::vector<mat4s>& out_joint_matrices) const;
-
-    /// Calculates the set of joint matrices, interpolated, taking into account root motion zeroing.
-    void calc_anim_pose_with_root_motion_zeroing(Animator_timer_profile profile,
-                                                 std::vector<mat4s>& out_joint_matrices) const;
 
     /// Gets whether root motion is enabled or not on this animator.
     bool get_is_using_root_motion() const;
 
     /// Calculates the set of joint matrices, floored. Note this one will be faster.
+    /// Also allows for root motion zeroing.
     void get_anim_floored_frame_pose(Animator_timer_profile profile,
+                                     bool root_motion_zeroing,
                                      std::vector<mat4s>& out_joint_matrices) const;
-
-    /// Calculates the set of joint matrices, floored, with delta pos and zeroing from root motion.
-    void get_anim_floored_frame_pose_with_root_motion_zeroing(
-        Animator_timer_profile profile,
-        std::vector<mat4s>& out_joint_matrices) const;
 
     /// Gets the root motion delta pos of the current frame.
     void get_anim_root_motion_delta_pos(Animator_timer_profile profile,
@@ -202,6 +220,7 @@ private:
     anim_frame_action::Runtime_controllable_data m_anim_frame_action_data;
 
     anim_tmpl_types::Animator_variable& find_animator_variable(std::string const& var_name);
+    anim_tmpl_types::Animator_variable const& find_animator_variable_const(std::string const& var_name) const;
 };
 
 }  // namespace BT

@@ -39,13 +39,9 @@ void BT::system::animator_driven_hitcapsule_sets_update()
         animator.get_anim_frame_action_data_handle().assign_hitcapsule_enabled_flags();
 
         std::vector<mat4s> joint_matrices;
-        if (animator.get_is_using_root_motion())
-            animator.get_anim_floored_frame_pose_with_root_motion_zeroing(
-                Model_animator::SIMULATION_PROFILE,
-                joint_matrices);
-        else
-            animator.get_anim_floored_frame_pose(Model_animator::SIMULATION_PROFILE,
-                                                 joint_matrices);
+        animator.get_anim_floored_frame_pose(Model_animator::SIMULATION_PROFILE,
+                                             animator.get_is_using_root_motion(),
+                                             joint_matrices);
 
         animator.get_anim_frame_action_data_handle().update_hitcapsule_transforms(
             rend_obj.render_transform(),
