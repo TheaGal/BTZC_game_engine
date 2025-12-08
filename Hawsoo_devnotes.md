@@ -919,6 +919,7 @@ while (running_game_loop)
 - [ ] Make attack only possible forwards when camera is locked on
     - [ ] Create strafing anims.
         - [x] Just do the root bones for trying speed w/ root motion.
+        - [ ] Make east/west ones be same speed as north one.
         - [ ] Create actual anims
             - [ ] East
             - [ ] West
