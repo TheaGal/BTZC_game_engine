@@ -135,9 +135,11 @@ void BT::system::_dev_animation_frame_action_editor()
                 eds.working_model_animator->change_state_idx(afa_agent.working_anim_state_idx);
 
                 // Set editor state from animator.
-                auto anim_state_anim_idx{ eds.working_model_animator
-                                              ->get_animator_state(afa_agent.working_anim_state_idx)
-                                              .animation_idx };
+                auto const& anim_state{ eds.working_model_animator->get_animator_state(
+                    afa_agent.working_anim_state_idx) };
+                auto anim_state_anim_idx{ anim_state.state_type == anim_state.SINGLE_ANIM
+                                              ? anim_state.animation_idx
+                                              : anim_state.blend_anims.front().animation_idx };  // @TEMP
                 eds.selected_anim_num_frames =
                     eds.working_model_animator->get_model_animation(anim_state_anim_idx)
                         .get_num_frames();

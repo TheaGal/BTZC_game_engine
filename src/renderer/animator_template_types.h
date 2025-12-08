@@ -50,7 +50,7 @@ struct Animator_variable
 
     std::string var_name;
 
-    float_t var_value{ std::numeric_limits<float_t>::lowest() };
+    float_t var_value{ 0 };
 };
 
 struct Animator_state_transition

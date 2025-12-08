@@ -176,7 +176,7 @@
             "condition": "ON_ANIM_END"
         },
         {
-            "from_to_state": [["st_idle", "st_running", "st_fall", "st_attack_0"], "st_jump"],
+            "from_to_state": [["st_idle", "st_running", "st_running_while_locked_on", "st_fall", "st_attack_0"], "st_jump"],
             "condition": "on_jump"
         },
         {
@@ -184,7 +184,7 @@
             "condition": "ON_ANIM_END"
         },
         {
-            "from_to_state": [["st_idle", "st_running", "st_attack_0"], "st_fall"],
+            "from_to_state": [["st_idle", "st_running", "st_running_while_locked_on", "st_attack_0"], "st_fall"],
             "condition": "is_grounded eq false"
         },
         {
@@ -192,7 +192,7 @@
             "condition": "is_grounded eq true"
         },
         {
-            "from_to_state": [["st_idle", "st_running"], "st_attack_0"],
+            "from_to_state": [["st_idle", "st_running", "st_running_while_locked_on"], "st_attack_0"],
             "condition": "on_attack"
         },
         {
@@ -200,19 +200,19 @@
             "condition": "ON_ANIM_END"
         },
         {
-            "from_to_state": [["st_idle", "st_running", "st_running_turnaround", "st_jump", "st_fall", "st_attack_0"], "st_hurt_parry"],
+            "from_to_state": [["st_idle", "st_running", "st_running_while_locked_on", "st_running_turnaround", "st_jump", "st_fall", "st_attack_0"], "st_hurt_parry"],
             "condition": "on_parry_hurt"
         },
         {
-            "from_to_state": [["st_idle", "st_running", "st_running_turnaround", "st_jump", "st_fall", "st_attack_0"], "st_hurt_guard"],
+            "from_to_state": [["st_idle", "st_running", "st_running_while_locked_on", "st_running_turnaround", "st_jump", "st_fall", "st_attack_0"], "st_hurt_guard"],
             "condition": "on_guard_hurt"
         },
         {
-            "from_to_state": [["st_idle", "st_running", "st_running_turnaround", "st_jump", "st_fall", "st_attack_0"], "st_hurt_receive"],
+            "from_to_state": [["st_idle", "st_running", "st_running_while_locked_on", "st_running_turnaround", "st_jump", "st_fall", "st_attack_0"], "st_hurt_receive"],
             "condition": "on_receive_hurt"
         },
         {
-            "from_to_state": [["st_idle", "st_running", "st_running_turnaround", "st_jump", "st_fall", "st_attack_0"], "st_hurt_receive_from_back"],
+            "from_to_state": [["st_idle", "st_running", "st_running_while_locked_on", "st_running_turnaround", "st_jump", "st_fall", "st_attack_0"], "st_hurt_receive_from_back"],
             "condition": "on_receive_hurt_from_back"
         },
         {
@@ -220,7 +220,7 @@
             "condition": "ON_ANIM_END"
         },
         {
-            "from_to_state": [["st_idle", "st_attack_0"], "st_ready_parry"],
+            "from_to_state": [["st_idle", "st_running_while_locked_on", "st_attack_0"], "st_ready_parry"],
             "condition": "is_guarding eq true"
         },
         {

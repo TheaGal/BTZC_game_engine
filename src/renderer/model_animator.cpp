@@ -110,13 +110,151 @@ uint32_t BT::Model_joint_animation::calc_frame_idx(float_t time,
     return frame_idx;
 }
 
-std::vector<BT::Model_joint_animation_frame::Joint_local_transform>
-BT::Model_joint_animation::calc_joint_local_transforms(bool interpolate_frames,
-                                                       float_t time,
-                                                       bool loop,
-                                                       bool root_motion_zeroing) const
+BT::Model_joint_animation::Joint_local_transform_set_t
+BT::Model_joint_animation::calc_joint_local_transforms_interpolated(float_t time,
+                                                                    bool loop,
+                                                                    bool root_motion_zeroing) const
 {
-    
+    uint32_t frame_idx_a{ calc_frame_idx(time, loop, FLOOR) };
+    uint32_t frame_idx_b{ calc_frame_idx(time, loop, CEIL) };
+
+    assert(m_model_skin.joints_sorted_breadth_first.size() ==
+           m_frames[frame_idx_a].joint_transforms_in_order.size());
+    assert(m_model_skin.joints_sorted_breadth_first.size() ==
+           m_frames[frame_idx_b].joint_transforms_in_order.size());
+
+    float_t interp_t{ (time / k_frames_per_second)
+                      - std::floor(time / k_frames_per_second) };
+
+    Joint_local_transform_set_t local_joint_transforms;
+    local_joint_transforms.reserve(m_model_skin.joints_sorted_breadth_first.size());
+
+    // Calculate joint transforms.
+    for (size_t i = 0; i < m_model_skin.joints_sorted_breadth_first.size(); i++)
+    {   // Calculate local transform.
+        local_joint_transforms.emplace_back(
+            m_frames[frame_idx_a].joint_transforms_in_order[i].interpolate_fast(
+                m_frames[frame_idx_b].joint_transforms_in_order[i],
+                interp_t));
+
+        if (i == 0 && root_motion_zeroing)
+        {   // Delete root motion (for XZ axes).
+            local_joint_transforms.back().position[0] = local_joint_transforms.back().position[2] = 0;
+        }
+    }
+
+    return local_joint_transforms;
+}
+
+BT::Model_joint_animation::Joint_local_transform_set_t
+BT::Model_joint_animation::calc_joint_local_transforms_floored(float_t time,
+                                                               bool loop,
+                                                               bool root_motion_zeroing) const
+{
+    uint32_t frame_idx{ calc_frame_idx(time, loop, FLOOR) };
+
+    assert(m_model_skin.joints_sorted_breadth_first.size() ==
+           m_frames[frame_idx].joint_transforms_in_order.size());
+
+    Joint_local_transform_set_t local_joint_transforms;
+    local_joint_transforms.reserve(m_model_skin.joints_sorted_breadth_first.size());
+
+    // Calculate joint transforms.
+    for (size_t i = 0; i < m_model_skin.joints_sorted_breadth_first.size(); i++)
+    {   // Calculate local transform.
+        local_joint_transforms.emplace_back(m_frames[frame_idx].joint_transforms_in_order[i]);
+
+        if (i == 0 && root_motion_zeroing)
+        {   // Delete root motion (for XZ axes).
+            local_joint_transforms.back().position[0] = local_joint_transforms.back().position[2] = 0;
+        }
+    }
+
+    return local_joint_transforms;
+}
+
+BT::Model_joint_animation::Joint_local_transform_set_t
+BT::Model_joint_animation::blend_joint_local_transform_sets(Joint_local_transform_set_t const& a,
+                                                            Joint_local_transform_set_t const& b,
+                                                            float_t blend_t)
+{
+    assert(a.size() == b.size());
+
+    Joint_local_transform_set_t local_joint_transforms;
+    local_joint_transforms.reserve(a.size());
+
+    for (size_t i = 0; i < a.size(); i++)
+    {
+        local_joint_transforms.emplace_back(a[i].interpolate_fast(b[i], blend_t));
+    }
+
+    return local_joint_transforms;
+}
+
+void BT::Model_joint_animation::calc_joint_matrices(
+    Joint_local_transform_set_t const& joint_local_transforms,
+    std::vector<mat4s>& out_joint_matrices) const
+{
+    assert(m_model_skin.joints_sorted_breadth_first.size() == joint_local_transforms.size());
+
+    // Allocate calculation cache.
+    std::vector<mat4s> joint_global_transform_cache;
+    joint_global_transform_cache.resize(m_model_skin.joints_sorted_breadth_first.size());
+
+    out_joint_matrices.resize(m_model_skin.joints_sorted_breadth_first.size());
+
+    // Calculate joint matrices.
+    for (size_t i = 0; i < m_model_skin.joints_sorted_breadth_first.size(); i++)
+    {
+        auto const& joint{ m_model_skin.joints_sorted_breadth_first[i] };
+        if (i == 0 && joint.parent_idx != (uint32_t)-1)
+        {
+            BT_ERROR(
+                "First joint\'s parent is not null. Joint list probably not sorted. Aborting.");
+            assert(false);
+            return;
+        }
+
+        // Calculate global transform (relative to parent bone -> model space).
+        auto const& local_joint_transform{ joint_local_transforms[i] };
+
+        mat4 global_joint_transform;
+        glm_translate_make(global_joint_transform,
+                           const_cast<float_t*>(local_joint_transform.position));
+        glm_quat_rotate(global_joint_transform,
+                        const_cast<float_t*>(local_joint_transform.rotation),
+                        global_joint_transform);
+        glm_scale(global_joint_transform, const_cast<float_t*>(local_joint_transform.scale));
+
+        if (joint.parent_idx == (uint32_t)-1)
+        {   // Use skin baseline transform.
+            glm_mat4_mul(const_cast<vec4*>(m_model_skin.baseline_transform),
+                 global_joint_transform,
+                 global_joint_transform);
+        }
+        else
+        {   // Use cached parent global trans to make global trans.
+            glm_mat4_mul(joint_global_transform_cache[joint.parent_idx].raw,
+                         global_joint_transform,
+                         global_joint_transform);
+        }
+
+        // Insert global transform into cache.
+        glm_mat4_copy(global_joint_transform, joint_global_transform_cache[i].raw);
+
+        // Calculate joint matrix.
+        // @RANT: I hate how all the glm functions don't mark the params as const,
+        //   and also since they're not getting mutated! Aaaaggghhhh
+        // @RANT: I hate how the rant above was a rant!!! The amount of strenuous
+        //   work to get this whole shitshow working was insane!!!! Hahahahahahaha  -Thea 2025/07/20
+        mat4 joint_matrix;
+        glm_mat4_mul(const_cast<vec4*>(m_model_skin.inverse_global_transform),
+                     global_joint_transform,
+                     joint_matrix);
+        glm_mat4_mul(joint_matrix,
+                     const_cast<vec4*>(joint.inverse_bind_matrix),
+                     out_joint_matrices[i].raw);
+    }
 }
 
 void BT::Model_joint_animation::calc_joint_matrices(float_t time,
@@ -124,6 +262,8 @@ void BT::Model_joint_animation::calc_joint_matrices(float_t time,
                                                     bool root_motion_zeroing,
                                                     std::vector<mat4s>& out_joint_matrices) const
 {
+    assert(false);  // IMPLEMENT.
+
     uint32_t frame_idx_a{ calc_frame_idx(time, loop, FLOOR) };
     uint32_t frame_idx_b{ calc_frame_idx(time, loop, CEIL) };
 
@@ -202,7 +342,10 @@ void BT::Model_joint_animation::calc_joint_matrices_blended(
     Model_joint_animation const& other_anim,
     float_t blend_t,
     std::vector<mat4s>& out_joint_matrices) const
-{   ////////////////////////////////////////////////////////////////////////////////////////////////
+{
+    assert(false);  // IMPLEMENT.
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     // @COPYPASTA below from `calc_joint_matrices()`
     //   Note the commented out sections of code. This marks the parts that are removed from the
     //   original source material. And then, lines with `// +` at the end are marked for showing
@@ -293,7 +436,10 @@ void BT::Model_joint_animation::get_joint_matrices_at_frame(
     uint32_t frame_idx,
     bool root_motion_zeroing,
     std::vector<mat4s>& out_joint_matrices) const
-{   ////////////////////////////////////////////////////////////////////////////////////////////////
+{
+    assert(false);  // IMPLEMENT.
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     // @COPYPASTA below from `calc_joint_matrices()`
     //   Note the commented out sections of code. This marks the parts that are removed from the
     //   original source material. And then, lines with `// +` at the end are marked for showing
@@ -395,7 +541,10 @@ void BT::Model_joint_animation::get_joint_matrices_at_frame_blended(
     Model_joint_animation const& other_anim,
     float_t blend_t,
     std::vector<mat4s>& out_joint_matrices) const
-{   ////////////////////////////////////////////////////////////////////////////////////////////////
+{
+    assert(false);  // IMPLEMENT.
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     // @COPYPASTA below from `calc_joint_matrices()`
     //   Note the commented out sections of code. This marks the parts that are removed from the
     //   original source material. And then, lines with `// +` at the end are marked for showing
@@ -824,10 +973,12 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
             }
             else
             {   // Check if time within frame bounds.
-                auto frame_idx = m_model_animations[m_animator_states[m_current_state_idx].animation_idx]
-                                 .calc_frame_idx(curr_time,
-                                                 m_animator_states[m_current_state_idx].loop,
-                                                 Model_joint_animation::FLOOR);
+                auto const& anim_state{ m_animator_states[m_current_state_idx] };
+                auto frame_idx =
+                    m_model_animations[anim_state.state_type == anim_state.SINGLE_ANIM
+                                           ? anim_state.animation_idx
+                                           : anim_state.blend_anims.front().animation_idx]  // @TEMP.
+                        .calc_frame_idx(curr_time, anim_state.loop, Model_joint_animation::FLOOR);
                 if (frame_idx >= region.start_frame && frame_idx < region.end_frame)
                 {   // Add override/write mutation.
                     bool is_bool_type{ anim_frame_action::Runtime_controllable_data
@@ -891,61 +1042,44 @@ void BT::Model_animator::calc_anim_pose(Animator_timer_profile profile,
     {
     case anim_tmpl_types::Animator_state::SINGLE_ANIM:
     {   // Get single anim pose.
-        m_model_animations[anim_state.animation_idx].calc_joint_matrices(time,
-                                                                         anim_state.loop,
-                                                                         root_motion_zeroing,
+        auto joint_local_transforms{
+            m_model_animations[anim_state.animation_idx].calc_joint_local_transforms_interpolated(
+                time,
+                anim_state.loop,
+                root_motion_zeroing)
+        };
+        m_model_animations[anim_state.animation_idx].calc_joint_matrices(joint_local_transforms,
                                                                          out_joint_matrices);
         break;
     }
 
     case anim_tmpl_types::Animator_state::BLENDTREE:
-    {   assert(false);  // IMPLEMENT!!!!
+    {
+        auto [anim_idx_a, anim_idx_b, blend_t]{ calc_blend_value_ffffffff(anim_state) };
 
-        // // Look for two animations that are closest.
-        // float_t blend_var_value{ get_float_variable(anim_state.blend_var) };
+        // Calc model animations of both anims.
+        constexpr size_t k_num_sets{ 2 };
+        Model_joint_animation::Joint_local_transform_set_t joint_trans_sets[k_num_sets];
+        for (size_t i = 0; i < k_num_sets; i++)
+        {
+            auto anim_idx{ i == 0 ? anim_idx_a : anim_idx_b };
 
-        // std::map<float_t, uint32_t> distance_to_anim_idx_map;
-        // for (auto const& blend_anim : anim_state.blend_anims)
-        // {
-        //     distance_to_anim_idx_map.emplace(std::abs(blend_anim.value - blend_var_value),
-        //                                      blend_anim.animation_idx);
-        // }
-        // assert(distance_to_anim_idx_map.size() >= 2);
+            joint_trans_sets[i] =
+                m_model_animations[anim_idx].calc_joint_local_transforms_interpolated(
+                    time,
+                    anim_state.loop,
+                    root_motion_zeroing);
+        }
 
-        // std::vector<std::pair<float_t, uint32_t>> influencing_distance_and_anim_idx_pairs;
-        // influencing_distance_and_anim_idx_pairs.reserve(2);
-        // for (auto it : distance_to_anim_idx_map)
-        // {
-        //     influencing_distance_and_anim_idx_pairs.emplace_back(it.first, it.second);
-        //     if (influencing_distance_and_anim_idx_pairs.size() >= 2)
-        //         break;
-        // }
+        // Blend model anims.
+        auto blended_trans_set{ Model_joint_animation::blend_joint_local_transform_sets(
+            joint_trans_sets[0],
+            joint_trans_sets[1],
+            blend_t) };
 
-        // // Get root motion of both anims.
-        // constexpr size_t k_num_root_motions{ 2 };
-        // vec3 root_motions[k_num_root_motions];
-        // for (size_t i = 0; i < k_num_root_motions; i++)
-        // {
-        //     auto anim_idx{ influencing_distance_and_anim_idx_pairs[i].second };
-        //     auto& root_motion_ref{ root_motions[i] };
-
-        //     uint32_t frame_idx{ m_model_animations[anim_idx].calc_frame_idx(
-        //         time,
-        //         anim_state.loop,
-        //         Model_joint_animation::FLOOR) };
-        //     m_model_animations[anim_idx].get_root_motion_delta_pos_at_frame(
-        //         frame_idx,
-        //         root_motion_ref);
-        // }
-
-        // // Blend motions.
-        // float_t blend_t;
-        // {
-        //     float_t total_weight{ influencing_distance_and_anim_idx_pairs[0].first +
-        //                           influencing_distance_and_anim_idx_pairs[1].first };
-        //     blend_t = (influencing_distance_and_anim_idx_pairs[0].first / total_weight);
-        // }
-        // glm_vec3_lerp(root_motions[0], root_motions[1], blend_t, out_root_motion_delta_pos);
+        // @NOCHECKIN: @TODO: @THEA: CHANGE THIS TO BE IN `Model_animator` INSTEAD!!!!!
+        // Because now which model animation runs this doesn't matter.
+        m_model_animations[0].calc_joint_matrices(blended_trans_set, out_joint_matrices);
 
         break;
     }
@@ -970,65 +1104,44 @@ void BT::Model_animator::get_anim_floored_frame_pose(Animator_timer_profile prof
     {
     case anim_tmpl_types::Animator_state::SINGLE_ANIM:
     {   // Get single anim pose.
-        uint32_t frame_idx{ m_model_animations[anim_state.animation_idx].calc_frame_idx(
-            time,
-            anim_state.loop,
-            Model_joint_animation::FLOOR) };
-        m_model_animations[anim_state.animation_idx].get_joint_matrices_at_frame(
-            frame_idx,
-            root_motion_zeroing,
-            out_joint_matrices);
+        auto joint_local_transforms{
+            m_model_animations[anim_state.animation_idx].calc_joint_local_transforms_floored(
+                time,
+                anim_state.loop,
+                root_motion_zeroing)
+        };
+        m_model_animations[anim_state.animation_idx].calc_joint_matrices(joint_local_transforms,
+                                                                         out_joint_matrices);
         break;
     }
 
     case anim_tmpl_types::Animator_state::BLENDTREE:
-    {   assert(false);  // IMPLEMENT!!!!
+    {
+        auto [anim_idx_a, anim_idx_b, blend_t]{ calc_blend_value_ffffffff(anim_state) };
 
-        // // Look for two animations that are closest.
-        // float_t blend_var_value{ get_float_variable(anim_state.blend_var) };
+        // Calc model animations of both anims.
+        constexpr size_t k_num_sets{ 2 };
+        Model_joint_animation::Joint_local_transform_set_t joint_trans_sets[k_num_sets];
+        for (size_t i = 0; i < k_num_sets; i++)
+        {
+            auto anim_idx{ i == 0 ? anim_idx_a : anim_idx_b };
 
-        // std::map<float_t, uint32_t> distance_to_anim_idx_map;
-        // for (auto const& blend_anim : anim_state.blend_anims)
-        // {
-        //     distance_to_anim_idx_map.emplace(std::abs(blend_anim.value - blend_var_value),
-        //                                      blend_anim.animation_idx);
-        // }
-        // assert(distance_to_anim_idx_map.size() >= 2);
+            joint_trans_sets[i] =
+                m_model_animations[anim_idx].calc_joint_local_transforms_floored(
+                    time,
+                    anim_state.loop,
+                    root_motion_zeroing);
+        }
 
-        // std::vector<std::pair<float_t, uint32_t>> influencing_distance_and_anim_idx_pairs;
-        // influencing_distance_and_anim_idx_pairs.reserve(2);
-        // for (auto it : distance_to_anim_idx_map)
-        // {
-        //     influencing_distance_and_anim_idx_pairs.emplace_back(it.first, it.second);
-        //     if (influencing_distance_and_anim_idx_pairs.size() >= 2)
-        //         break;
-        // }
+        // Blend model anims.
+        auto blended_trans_set{ Model_joint_animation::blend_joint_local_transform_sets(
+            joint_trans_sets[0],
+            joint_trans_sets[1],
+            blend_t) };
 
-        // // Get root motion of both anims.
-        // constexpr size_t k_num_root_motions{ 2 };
-        // vec3 root_motions[k_num_root_motions];
-        // for (size_t i = 0; i < k_num_root_motions; i++)
-        // {
-        //     auto anim_idx{ influencing_distance_and_anim_idx_pairs[i].second };
-        //     auto& root_motion_ref{ root_motions[i] };
-
-        //     uint32_t frame_idx{ m_model_animations[anim_idx].calc_frame_idx(
-        //         time,
-        //         anim_state.loop,
-        //         Model_joint_animation::FLOOR) };
-        //     m_model_animations[anim_idx].get_root_motion_delta_pos_at_frame(
-        //         frame_idx,
-        //         root_motion_ref);
-        // }
-
-        // // Blend motions.
-        // float_t blend_t;
-        // {
-        //     float_t total_weight{ influencing_distance_and_anim_idx_pairs[0].first +
-        //                           influencing_distance_and_anim_idx_pairs[1].first };
-        //     blend_t = (influencing_distance_and_anim_idx_pairs[0].first / total_weight);
-        // }
-        // glm_vec3_lerp(root_motions[0], root_motions[1], blend_t, out_root_motion_delta_pos);
+        // @NOCHECKIN: @TODO: @THEA: CHANGE THIS TO BE IN `Model_animator` INSTEAD!!!!!
+        // Because now which model animation runs this doesn't matter.
+        m_model_animations[0].calc_joint_matrices(blended_trans_set, out_joint_matrices);
 
         break;
     }
@@ -1058,32 +1171,15 @@ void BT::Model_animator::get_anim_root_motion_delta_pos(Animator_timer_profile p
     }
 
     case anim_tmpl_types::Animator_state::BLENDTREE:
-    {   // Look for two animations that are closest.
-        float_t blend_var_value{ get_float_variable(anim_state.blend_var) };
-
-        std::map<float_t, uint32_t> distance_to_anim_idx_map;
-        for (auto const& blend_anim : anim_state.blend_anims)
-        {
-            distance_to_anim_idx_map.emplace(std::abs(blend_anim.value - blend_var_value),
-                                             blend_anim.animation_idx);
-        }
-        assert(distance_to_anim_idx_map.size() >= 2);
-
-        std::vector<std::pair<float_t, uint32_t>> influencing_distance_and_anim_idx_pairs;
-        influencing_distance_and_anim_idx_pairs.reserve(2);
-        for (auto it : distance_to_anim_idx_map)
-        {
-            influencing_distance_and_anim_idx_pairs.emplace_back(it.first, it.second);
-            if (influencing_distance_and_anim_idx_pairs.size() >= 2)
-                break;
-        }
-
+    {
+        auto [anim_idx_a, anim_idx_b, blend_t]{ calc_blend_value_ffffffff(anim_state) };
+        
         // Get root motion of both anims.
         constexpr size_t k_num_root_motions{ 2 };
         vec3 root_motions[k_num_root_motions];
         for (size_t i = 0; i < k_num_root_motions; i++)
         {
-            auto anim_idx{ influencing_distance_and_anim_idx_pairs[i].second };
+            auto anim_idx{ i == 0 ? anim_idx_a : anim_idx_b };
             auto& root_motion_ref{ root_motions[i] };
 
             uint32_t frame_idx{ m_model_animations[anim_idx].calc_frame_idx(
@@ -1095,13 +1191,7 @@ void BT::Model_animator::get_anim_root_motion_delta_pos(Animator_timer_profile p
                 root_motion_ref);
         }
 
-        // Blend motions.
-        float_t blend_t;
-        {
-            float_t total_weight{ influencing_distance_and_anim_idx_pairs[0].first +
-                                  influencing_distance_and_anim_idx_pairs[1].first };
-            blend_t = (influencing_distance_and_anim_idx_pairs[0].first / total_weight);
-        }
+        // Blend root motions.
         glm_vec3_lerp(root_motions[0], root_motions[1], blend_t, out_root_motion_delta_pos);
 
         break;
@@ -1166,4 +1256,39 @@ BT::anim_tmpl_types::Animator_variable const& BT::Model_animator::find_animator_
     // Crash the program when don't find the var.
     assert(false);
     throw new std::exception(("Did not find var name: " + var_name).c_str());
+}
+
+BT::Model_animator::Blend_value_result BT::Model_animator::calc_blend_value_ffffffff(
+    anim_tmpl_types::Animator_state const& anim_state) const
+{   // Look for two animations that are closest.
+    float_t blend_var_value{ get_float_variable(anim_state.blend_var) };
+
+    std::map<float_t, uint32_t> distance_to_anim_idx_map;
+    for (auto const& blend_anim : anim_state.blend_anims)
+    {
+        distance_to_anim_idx_map.emplace(std::abs(blend_anim.value - blend_var_value),
+                                            blend_anim.animation_idx);
+    }
+    assert(distance_to_anim_idx_map.size() >= 2);
+
+    std::vector<std::pair<float_t, uint32_t>> influencing_distance_and_anim_idx_pairs;
+    influencing_distance_and_anim_idx_pairs.reserve(2);
+    for (auto it : distance_to_anim_idx_map)
+    {
+        influencing_distance_and_anim_idx_pairs.emplace_back(it.first, it.second);
+        if (influencing_distance_and_anim_idx_pairs.size() >= 2)
+            break;
+    }
+
+    // Blend motions.
+    float_t blend_t;
+    {
+        float_t total_weight{ influencing_distance_and_anim_idx_pairs[0].first +
+                                influencing_distance_and_anim_idx_pairs[1].first };
+        blend_t = (influencing_distance_and_anim_idx_pairs[0].first / total_weight);
+    }
+
+    return { influencing_distance_and_anim_idx_pairs[0].second,
+             influencing_distance_and_anim_idx_pairs[1].second,
+             blend_t };
 }

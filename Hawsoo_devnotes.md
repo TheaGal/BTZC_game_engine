@@ -923,19 +923,22 @@ while (running_game_loop)
             - [ ] East
             - [ ] West
             - [ ] South
-    - [ ] Blend between strafing anims with a blend tree.
+    - [x] Blend between strafing anims with a blend tree.
         - Have back moving one be slower since walking backwards.
         - I think just the 4 directions is fine? Maybe there just needs to be a thing in the animator that uses two AFA data as the horiz and vert mvt input, and then it will combine the animations?
         - [x] Create the animator template for blendtrees.
         - [x] Import it correctly.
         - [x] Assign values to `mvt_facing_angle`.
-        - [ ] Blends animation correctly with the animator.
+        - [x] Blends animation correctly with the animator.
     - [x] Face player forward all the time, even when moving (except for sprint moving if this is a thing).
         - FOR NOW: Just make sprinting not a thing.
         - [x] Faces visually
         - [x] Override the facing direction and its input for the desired facing direction as well.
             - Now that this is implemented this should be the foundation for the blendtree stuff.
         - [x] Write the facing angle value to animator data.
+    - [ ] Test that the anim blending is working correctly (after creating actual anims)
+    - [ ] Remove @NOCHECKIN and @TEMP tags from commit ``
+    - [ ] BUGFIX: Still face forward even if doing attack over and over (currently doesn't reset to facing the target).
 
 - [ ] Get strong attacks implemented (and have strong versions of knockbacks used)
     - Perhaps by having some kind of AFA data point being like "is_strong_attack" that could indicate a strong attack being done?

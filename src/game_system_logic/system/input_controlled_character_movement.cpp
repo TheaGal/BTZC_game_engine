@@ -363,7 +363,7 @@ Char_mvt_logic_results character_controller_movement_logic(
 
         if (is_locked_on)
         {
-            float_t facing_angle{ input_angle - locked_on_angle };
+            float_t facing_angle{ locked_on_angle - input_angle };
             while (facing_angle >= glm_rad(360.0f)) facing_angle -= glm_rad(360.0f);
             while (facing_angle < glm_rad(0.0f)) facing_angle += glm_rad(360.0f);
 

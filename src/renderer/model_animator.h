@@ -73,12 +73,29 @@ public:
     enum Rounding_func{ FLOOR, CEIL };
     uint32_t calc_frame_idx(float_t time, bool loop, Rounding_func rounding) const;
 
-    std::vector<Model_joint_animation_frame::Joint_local_transform> calc_joint_local_transforms(
-        bool interpolate_frames,
+    using Joint_local_transform_set_t =
+        std::vector<Model_joint_animation_frame::Joint_local_transform>;
+
+    Joint_local_transform_set_t calc_joint_local_transforms_interpolated(
         float_t time,
         bool loop,
         bool root_motion_zeroing) const;
+    Joint_local_transform_set_t calc_joint_local_transforms_floored(float_t time,
+                                                                    bool loop,
+                                                                    bool root_motion_zeroing) const;
 
+    static Joint_local_transform_set_t blend_joint_local_transform_sets(
+        Joint_local_transform_set_t const& a,
+        Joint_local_transform_set_t const& b,
+        float_t blend_t);
+
+    // @TODO: @THEA: This func should get moved to `Model_animator` instead!!!!
+    // @NOCHECKIN: Do ^^ above ^^
+    void calc_joint_matrices(Joint_local_transform_set_t const& joint_local_transforms,
+                             std::vector<mat4s>& out_joint_matrices) const;
+
+    #define DELETE_ME 1
+    #if DELETE_ME
     void calc_joint_matrices(float_t time,
                              bool loop,
                              bool root_motion_zeroing,
@@ -98,6 +115,7 @@ public:
                                              Model_joint_animation const& other_anim,
                                              float_t blend_t,
                                              std::vector<mat4s>& out_joint_matrices) const;
+    #endif  // DELETE_ME
 
     void get_root_motion_delta_pos_at_frame(uint32_t frame_idx,
                                             vec3& out_root_motion_delta_pos) const;
@@ -221,6 +239,15 @@ private:
 
     anim_tmpl_types::Animator_variable& find_animator_variable(std::string const& var_name);
     anim_tmpl_types::Animator_variable const& find_animator_variable_const(std::string const& var_name) const;
+
+    struct Blend_value_result
+    {
+        uint32_t anim_idx_a;
+        uint32_t anim_idx_b;
+        float_t blend_t;
+    };
+    Blend_value_result calc_blend_value_ffffffff(
+        anim_tmpl_types::Animator_state const& anim_state) const;
 };
 
 }  // namespace BT
