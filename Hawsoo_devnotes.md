@@ -937,8 +937,10 @@ while (running_game_loop)
             - Now that this is implemented this should be the foundation for the blendtree stuff.
         - [x] Write the facing angle value to animator data.
     - [ ] Test that the anim blending is working correctly (after creating actual anims)
+    - [ ] IMPROVE: Keep magnitude of root motion vector, instead of linearly interpolating.
     - [ ] Remove @NOCHECKIN and @TEMP tags from commit `570de0f27f0606db66525fb5984e20f391625053`
     - [ ] BUGFIX: Still face forward even if doing attack over and over (currently doesn't reset to facing the target).
+    - [ ] Add strafing anims to guard-walking.
 
 - [ ] Get strong attacks implemented (and have strong versions of knockbacks used)
     - Perhaps by having some kind of AFA data point being like "is_strong_attack" that could indicate a strong attack being done?
