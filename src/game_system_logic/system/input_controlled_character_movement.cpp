@@ -345,9 +345,31 @@ Char_mvt_logic_results character_controller_movement_logic(
                                       : 0 };
     float_t turn_speed{ anim_root_motion ? anim_root_motion->turn_speed : 1000000.0f };
 
+    // Capture input angle.
+    float_t input_angle{ desired_facing_angle };  // @TODO: Get this to interpolate!!
+
     // Override desired facing angle.
-    if (follow_cam_state && !follow_cam_state->locked_on_entity.is_nil())
+    bool is_locked_on{ follow_cam_state && !follow_cam_state->locked_on_entity.is_nil() };
+    if (is_locked_on)
         desired_facing_angle = follow_cam_state->locked_on_facing_angle;
+
+    // Capture locked-on angle.
+    float_t locked_on_angle{ desired_facing_angle };  // @TODO: Get this to interpolate!! (Or not??)
+
+    // Calc movement facing angle.
+    if (char_mvt_anim_state)
+    {
+        char_mvt_anim_state->write_to_animator_data.is_locked_on = is_locked_on;
+
+        if (is_locked_on)
+        {
+            float_t facing_angle{ input_angle - locked_on_angle };
+            while (facing_angle >= glm_rad(360.0f)) facing_angle -= glm_rad(360.0f);
+            while (facing_angle < glm_rad(0.0f)) facing_angle += glm_rad(360.0f);
+
+            char_mvt_anim_state->write_to_animator_data.mvt_facing_angle = facing_angle;
+        }
+    }
 
     // Desired velocity.
     float_t display_facing_angle;
@@ -364,7 +386,7 @@ Char_mvt_logic_results character_controller_movement_logic(
                                         turn_speed);
 
         if (char_mvt_anim_state)
-            char_mvt_anim_state->write_to_animator_data.is_moving = has_desired_facing_angle;  // @THEA: @NOCHECKIN: Hmmm maybe this needs reordering to solve the 1 sim-tick lag as well?  -Thea 2025/11/27
+            char_mvt_anim_state->write_to_animator_data.is_moving = has_desired_facing_angle;
 
         grounded_state.allow_grounded_sliding = (desired_velocity.LengthSq() > 1e-6f * 1e-6f);
 

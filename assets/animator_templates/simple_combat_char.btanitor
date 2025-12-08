@@ -138,6 +138,7 @@
     "transition_intermediate_states": [],
     "variables": [
         "bool  is_moving",
+        "bool  is_locked_on",
         "float mvt_facing_angle",
         "trig  on_turnaround",
         "bool  is_grounded",
@@ -155,8 +156,16 @@
             "condition": "is_moving eq true"
         },
         {
-            "from_to_state": [["st_running"], "st_idle"],
+            "from_to_state": [["st_running", "st_running_while_locked_on"], "st_idle"],
             "condition": "is_moving eq false"
+        },
+        {
+            "from_to_state": [["st_running"], "st_running_while_locked_on"],
+            "condition": "is_locked_on eq true"
+        },
+        {
+            "from_to_state": [["st_running_while_locked_on"], "st_running"],
+            "condition": "is_locked_on eq false"
         },
         {
             "from_to_state": [["st_running"], "st_running_turnaround"],

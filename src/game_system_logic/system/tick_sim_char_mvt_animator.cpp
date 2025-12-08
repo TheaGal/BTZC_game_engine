@@ -48,6 +48,13 @@ void BT::system::tick_sim_char_mvt_animator()
             animator->set_bool_variable("is_moving",
                                         char_mvt_anim_state.write_to_animator_data.is_moving);
 
+            animator->set_bool_variable("is_locked_on",
+                                        char_mvt_anim_state.write_to_animator_data.is_locked_on);
+
+            animator->set_float_variable(
+                "mvt_facing_angle",
+                char_mvt_anim_state.write_to_animator_data.mvt_facing_angle);
+
             if (char_mvt_anim_state.write_to_animator_data.on_turnaround)
                 animator->set_trigger_variable("on_turnaround");
             char_mvt_anim_state.write_to_animator_data.on_turnaround = false;

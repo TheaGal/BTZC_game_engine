@@ -92,6 +92,8 @@ struct Character_mvt_animated_state
     struct Write_to_animator_data
     {
         bool is_moving{ false };
+        bool is_locked_on{ false };
+        float_t mvt_facing_angle{ 0 };
         bool on_turnaround{ false };
         bool is_grounded{ false };
         bool on_jump{ false };
