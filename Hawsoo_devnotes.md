@@ -949,6 +949,7 @@ while (running_game_loop)
 - [ ] Feature: Time-parametrized state transitions (MAYBE?)
     - Transitions out of state after only a certain time?
     - Maybe it could just be accomplished with `can_move`->`is_moving` pairs?
+        - This honestly just seems like the most viable way to go about doing this tbh.
 
 
 - [ ] ~~REFACTOR: Delete the `calc_orig_pt_distance()` method in hitcapsule bc this info is really only needed when doing the actual collision and isn't needed most of the time.~~
