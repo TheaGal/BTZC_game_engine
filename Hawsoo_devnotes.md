@@ -928,14 +928,14 @@ while (running_game_loop)
         - I think just the 4 directions is fine? Maybe there just needs to be a thing in the animator that uses two AFA data as the horiz and vert mvt input, and then it will combine the animations?
         - [x] Create the animator template for blendtrees.
         - [x] Import it correctly.
-        - [ ] Assign values to `mvt_facing_angle`.
+        - [x] Assign values to `mvt_facing_angle`.
         - [ ] Blends animation correctly with the animator.
-    - [ ] Face player forward all the time, even when moving (except for sprint moving if this is a thing).
+    - [x] Face player forward all the time, even when moving (except for sprint moving if this is a thing).
         - FOR NOW: Just make sprinting not a thing.
         - [x] Faces visually
         - [x] Override the facing direction and its input for the desired facing direction as well.
             - Now that this is implemented this should be the foundation for the blendtree stuff.
-        - [ ] Write the facing angle value to animator data.
+        - [x] Write the facing angle value to animator data.
 
 - [ ] Get strong attacks implemented (and have strong versions of knockbacks used)
     - Perhaps by having some kind of AFA data point being like "is_strong_attack" that could indicate a strong attack being done?
