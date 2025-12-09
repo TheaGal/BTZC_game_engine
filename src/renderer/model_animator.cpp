@@ -808,8 +808,23 @@ void BT::Model_animator::get_anim_root_motion_delta_pos(Animator_timer_profile p
                 root_motion_ref);
         }
 
-        // Blend root motions.
-        glm_vec3_lerp(root_motions[0], root_motions[1], blend_t, out_root_motion_delta_pos);
+        // Blend root motions (preserving magnitude).
+        vec3 lerped_root_motion;
+        glm_vec3_lerp(root_motions[0], root_motions[1], blend_t, lerped_root_motion);
+
+        if (float_t lerped_rm_magnitude{ glm_vec3_norm(lerped_root_motion) };
+            lerped_rm_magnitude > 1e-6f)
+        {   // Only preserve magnitude if the lerped root motion vector is not essentially zero.
+            float_t magnitude_0{ glm_vec3_norm(root_motions[0]) };
+            float_t magnitude_1{ glm_vec3_norm(root_motions[1]) };
+            float_t target_magnitude{ glm_lerp(magnitude_0, magnitude_1, blend_t) };
+
+            glm_vec3_scale(lerped_root_motion,
+                           target_magnitude / lerped_rm_magnitude,
+                           lerped_root_motion);
+        }
+
+        glm_vec3_copy(lerped_root_motion, out_root_motion_delta_pos);
 
         break;
     }
