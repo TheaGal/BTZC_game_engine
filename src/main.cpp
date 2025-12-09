@@ -303,7 +303,11 @@ int32_t main()
         main_physics_engine.accumulate_delta_time(delta_time);
         while (main_physics_engine.calc_wants_to_tick() ||  // @TODO: Change the `wants_to_tick()` to something that's not the physics engine. Perhaps a simulation manager or something???  -Thea 2025/10/31
                iter_type == Iteration_type::TEARDOWN_ITERATION)  // Force one iteration if teardown.
-        {   // Pre-physics.
+        {   // Performance measure.
+            BT::Timer perf_timer;
+            perf_timer.start_timer();
+            
+            // Pre-physics.
             BT::system::process_physics_object_lifetime();
 
             BT::system::tick_sim_char_mvt_animator();
@@ -323,6 +327,9 @@ int32_t main()
             BT::system::animator_driven_hitcapsule_sets_update();
             BT::system::hitcapsule_attack_processing(BT::Physics_engine::k_simulation_delta_time);
 
+            // Performance measure.
+            main_renderer_imgui_renderer.set_sim_loop_perf_time(perf_timer.calc_delta_time());
+
             // Only run once if teardown iteration.
             if (iter_type == Iteration_type::TEARDOWN_ITERATION)
                 break;
@@ -330,7 +337,11 @@ int32_t main()
 
         // Render loop.
         main_physics_engine.calc_interpolation_alpha();
-        {   // Run all pre-render systems.
+        {   // Performance measure.
+            BT::Timer perf_timer;
+            perf_timer.start_timer();
+            
+            // Run all pre-render systems.
             bool is_afa_editor_context{
                 main_renderer_imgui_renderer.is_anim_frame_data_editor_context() };
             if (is_afa_editor_context)
@@ -352,6 +363,9 @@ int32_t main()
                     //        processing of AFA controller/data points.
                     BT::system::_dev_animation_frame_action_editor();
             }
+
+            // Performance measure.
+            main_renderer_imgui_renderer.set_rend_loop_perf_time(perf_timer.calc_delta_time());
         }
 
         // Switch iteration type.

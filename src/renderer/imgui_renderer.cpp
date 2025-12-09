@@ -38,6 +38,16 @@ BT::ImGui_renderer::ImGui_renderer()
     BT_SERVICE_FINDER_ADD_SERVICE(ImGui_renderer, this);
 }
 
+void BT::ImGui_renderer::set_sim_loop_perf_time(float_t time)
+{
+    m_sim_loop_perf_time = time;
+}
+
+void BT::ImGui_renderer::set_rend_loop_perf_time(float_t time)
+{
+    m_rend_loop_perf_time = time;
+}
+
 
 namespace
 {
@@ -353,7 +363,11 @@ void BT::ImGui_renderer::render_imgui(float_t delta_time)
             ImGui::TextColored(ImVec4(0.6f, 0.6f, 0.6f, 1.0f), "Simulation Stopped");
 
         ImGui::SameLine();
-        ImGui::Text("%.1f FPS (%.3f ms)", io.Framerate, (1000.0f / io.Framerate));
+        ImGui::Text("Total: %.1f FPS (%.3f ms)\tSim: %.3f ms\tRend: %.3f ms",
+                    io.Framerate,
+                    (1000.0f / io.Framerate),
+                    m_sim_loop_perf_time * 1000.0f,
+                    m_rend_loop_perf_time * 1000.0f);
 
         // Viewport views.
         ImGui::SameLine(0, k_wide_spacing);

@@ -23,6 +23,10 @@ public:
     void set_renderer_ref(Renderer* renderer) { m_renderer = renderer; }
     void set_input_handler_ref(Input_handler* input_handler) { m_input_handler = input_handler; }
 
+    // Perf time reporting.
+    void set_sim_loop_perf_time(float_t time);
+    void set_rend_loop_perf_time(float_t time);
+
     /// This flag is retrieved for getting different behavior amongst systems when the AFA editor is
     /// being used.
     /// As in, this is @HACK ... very verrry hacky!!!  -Thea 2025/11/09
@@ -35,6 +39,9 @@ private:
     Camera* m_camera{ nullptr };
     Renderer* m_renderer{ nullptr };
     Input_handler* m_input_handler{ nullptr };
+
+    float_t m_sim_loop_perf_time;
+    float_t m_rend_loop_perf_time;
 
     void render_imgui__level_editor_context(bool enter, float_t delta_time);
     void render_imgui__animation_frame_data_editor_context(bool enter, float_t delta_time);

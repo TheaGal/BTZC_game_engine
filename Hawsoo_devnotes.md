@@ -942,6 +942,7 @@ while (running_game_loop)
     - [ ] Remove @NOCHECKIN and @TEMP tags from commit `570de0f27f0606db66525fb5984e20f391625053`
     - [x] Delete dead code (`#define DELETE_ME`)
     - [x] BUGFIX: Still face forward even if doing attack over and over (currently doesn't reset to facing the target).
+    - [x] Smol perf timer for simulation and rendering just to see what was going on.
     - [ ] Add strafing anims to guard-walking.
 
 - [ ] Get strong attacks implemented (and have strong versions of knockbacks used)
