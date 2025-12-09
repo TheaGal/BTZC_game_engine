@@ -916,14 +916,14 @@ while (running_game_loop)
         - ROOT CAUSE: Turns out it was editing a reference of a joint anim frame. After realizing that (alarm bells should've been ringing when I was doing a `const_cast` on a freaking reference!!)
     - [x] Actually make the length of the knockback and stuff to 1.0
 
-- [ ] Make attack only possible forwards when camera is locked on
-    - [ ] Create strafing anims.
+- [x] Make attack only possible forwards when camera is locked on
+    - [x] Create strafing anims.
         - [x] Just do the root bones for trying speed w/ root motion.
         - [ ] ~~Make east/west ones be same speed as north one.~~
             - I decided against this after getting the magnitude preservation in root motion stuff.
-        - [ ] Create actual anims (for running)
-            - [ ] East
-            - [ ] West
+        - [x] Create actual anims (for running)
+            - [x] East
+            - [x] West
             - [x] South
         - [x] Create actual anims (for guard-walking)
             - [x] East
@@ -942,18 +942,19 @@ while (running_game_loop)
         - [x] Override the facing direction and its input for the desired facing direction as well.
             - Now that this is implemented this should be the foundation for the blendtree stuff.
         - [x] Write the facing angle value to animator data.
-    - [ ] Test that the anim blending is working correctly (after creating actual anims)
+    - [x] Test that the anim blending is working correctly (after creating actual anims)
+        - Diagonals kinda have the same issue as the root motion where the magnitude is not preserved, but this isn't something I'm gonna worry about for now.
     - [x] IMPROVE: Keep magnitude of root motion vector, instead of linearly interpolating.
     - [x] Delete dead code (`#define DELETE_ME`)
     - [x] BUGFIX: Still face forward even if doing attack over and over (currently doesn't reset to facing the target).
     - [x] Smol perf timer for simulation and rendering just to see what was going on.
     - [x] Add strafing anims to guard-walking.
-    - [ ] Remove @NOCHECKIN and @TEMP tags from commit `570de0f27f0606db66525fb5984e20f391625053` (Faces forward even when moving and integrates strafing in.) (December 8, 2025 at 12:56 AM)
-        - It looks like this is going to be quite a lot of refactoring and in general just a lot of work that I'm not ready for.
 
 - [ ] Get strong attacks implemented (and have strong versions of knockbacks used)
     - Perhaps by having some kind of AFA data point being like "is_strong_attack" that could indicate a strong attack being done?
 
+- [ ] Remove @NOCHECKIN and @TEMP tags from commit `570de0f27f0606db66525fb5984e20f391625053` (Faces forward even when moving and integrates strafing in.) (December 8, 2025 at 12:56 AM)
+    - It looks like this is going to be quite a lot of refactoring and in general just a lot of work that I'm not ready for.
 
 - [ ] Feature: Time-parametrized state transitions (MAYBE?)
     - Transitions out of state after only a certain time?
