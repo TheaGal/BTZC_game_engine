@@ -115,8 +115,30 @@
         },
         {
             "state_name": "st_hold_guard_walking",
-            "state_type": "single_anim",
-            "anim_name": "Hold_guard_walking",
+            "state_type": "blendtree",
+            "blend_var": "mvt_facing_angle",
+            "blend_anims": [
+                {
+                    "anim_name": "Hold_guard_walking",
+                    "value": 0.0
+                },
+                {
+                    "anim_name": "Hold_guard_walking_east",
+                    "value": 1.5708
+                },
+                {
+                    "anim_name": "Hold_guard_walking_south",
+                    "value": 3.14159
+                },
+                {
+                    "anim_name": "Hold_guard_walking_west",
+                    "value": 4.71239
+                },
+                {
+                    "anim_name": "Hold_guard_walking",
+                    "value": 6.28319
+                }
+            ],
             "speed": 1.0,
             "loop": true
         },

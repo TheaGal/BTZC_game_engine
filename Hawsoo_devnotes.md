@@ -920,7 +920,11 @@ while (running_game_loop)
     - [ ] Create strafing anims.
         - [x] Just do the root bones for trying speed w/ root motion.
         - [ ] Make east/west ones be same speed as north one.
-        - [ ] Create actual anims
+        - [ ] Create actual anims (for running)
+            - [ ] East
+            - [ ] West
+            - [ ] South
+        - [ ] Create actual anims (for guard-walking)
             - [ ] East
             - [ ] West
             - [ ] South
@@ -939,11 +943,11 @@ while (running_game_loop)
         - [x] Write the facing angle value to animator data.
     - [ ] Test that the anim blending is working correctly (after creating actual anims)
     - [x] IMPROVE: Keep magnitude of root motion vector, instead of linearly interpolating.
-    - [ ] Remove @NOCHECKIN and @TEMP tags from commit `570de0f27f0606db66525fb5984e20f391625053`
     - [x] Delete dead code (`#define DELETE_ME`)
     - [x] BUGFIX: Still face forward even if doing attack over and over (currently doesn't reset to facing the target).
     - [x] Smol perf timer for simulation and rendering just to see what was going on.
-    - [ ] Add strafing anims to guard-walking.
+    - [x] Add strafing anims to guard-walking.
+    - [ ] Remove @NOCHECKIN and @TEMP tags from commit `570de0f27f0606db66525fb5984e20f391625053`
 
 - [ ] Get strong attacks implemented (and have strong versions of knockbacks used)
     - Perhaps by having some kind of AFA data point being like "is_strong_attack" that could indicate a strong attack being done?
