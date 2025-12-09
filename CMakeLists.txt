@@ -1,9 +1,20 @@
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.28 FATAL_ERROR)
 
 # Project.
 project(btzc_game_engine
     VERSION 0.1.0
     LANGUAGES CXX C)
+
+# When turning this option on, the library will be compiled using assertions. By default asserts are enabled in Debug build.
+option(ENABLE_PROFILING "Enable profiling" OFF)
+
+# Print out all options.
+message(
+    "\n"
+    "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n"
+    "|               ::OPTION VALUES::                \n"
+    "| ENABLE_PROFILING : ${ENABLE_PROFILING}\n"
+    "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n")
 
 # App icon.
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
@@ -26,6 +37,11 @@ endif()
 set(CMAKE_BUILD_PARALLEL_LEVEL 16)
 if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+endif()
+
+# Profiling.
+if (ENABLE_PROFILING)
+    message(FATAL_ERROR "@TODO: Implement profiling libraries here!")
 endif()
 
 # Assets directory.
