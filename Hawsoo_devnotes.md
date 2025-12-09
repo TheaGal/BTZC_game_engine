@@ -940,7 +940,8 @@ while (running_game_loop)
     - [ ] Test that the anim blending is working correctly (after creating actual anims)
     - [ ] IMPROVE: Keep magnitude of root motion vector, instead of linearly interpolating.
     - [ ] Remove @NOCHECKIN and @TEMP tags from commit `570de0f27f0606db66525fb5984e20f391625053`
-    - [ ] BUGFIX: Still face forward even if doing attack over and over (currently doesn't reset to facing the target).
+    - [x] Delete dead code (`#define DELETE_ME`)
+    - [x] BUGFIX: Still face forward even if doing attack over and over (currently doesn't reset to facing the target).
     - [ ] Add strafing anims to guard-walking.
 
 - [ ] Get strong attacks implemented (and have strong versions of knockbacks used)

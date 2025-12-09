@@ -337,8 +337,9 @@ Char_mvt_logic_results character_controller_movement_logic(
     }
 
     // Desired facing angle.
-    bool has_desired_facing_angle{ glm_vec3_norm2(const_cast<float_t*>(
-                                       char_ws_input.ws_flat_clamped_input.raw)) > 1e-6f * 1e-6f };
+    bool is_moving{ glm_vec3_norm2(const_cast<float_t*>(char_ws_input.ws_flat_clamped_input.raw)) >
+                    1e-6f * 1e-6f };
+    bool has_desired_facing_angle{ is_moving };
     float_t desired_facing_angle{ has_desired_facing_angle
                                       ? atan2f(char_ws_input.ws_flat_clamped_input.x,
                                                char_ws_input.ws_flat_clamped_input.z)
@@ -351,7 +352,10 @@ Char_mvt_logic_results character_controller_movement_logic(
     // Override desired facing angle.
     bool is_locked_on{ follow_cam_state && !follow_cam_state->locked_on_entity.is_nil() };
     if (is_locked_on)
+    {
+        has_desired_facing_angle = true;
         desired_facing_angle = follow_cam_state->locked_on_facing_angle;
+    }
 
     // Capture locked-on angle.
     float_t locked_on_angle{ desired_facing_angle };  // @TODO: Get this to interpolate!! (Or not??)
@@ -386,7 +390,7 @@ Char_mvt_logic_results character_controller_movement_logic(
                                         turn_speed);
 
         if (char_mvt_anim_state)
-            char_mvt_anim_state->write_to_animator_data.is_moving = has_desired_facing_angle;
+            char_mvt_anim_state->write_to_animator_data.is_moving = is_moving;
 
         grounded_state.allow_grounded_sliding = (desired_velocity.LengthSq() > 1e-6f * 1e-6f);
 
@@ -422,7 +426,7 @@ Char_mvt_logic_results character_controller_movement_logic(
         new_velocity += effective_velocity;
 
         if (has_desired_facing_angle)
-        {   // Move towards input angle.
+        {   // Move facing angle towards desired facing angle.
             float_t delta_direction{ desired_facing_angle - airborne_state.input_facing_angle };
             while (delta_direction > glm_rad(180.0f)) delta_direction -= glm_rad(360.0f);
             while (delta_direction <= glm_rad(-180.0f)) delta_direction += glm_rad(360.0f);
