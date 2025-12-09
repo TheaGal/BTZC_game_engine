@@ -373,6 +373,8 @@ Char_mvt_logic_results character_controller_movement_logic(
 
             char_mvt_anim_state->write_to_animator_data.mvt_facing_angle = facing_angle;
         }
+        else
+            char_mvt_anim_state->write_to_animator_data.mvt_facing_angle = 0;
     }
 
     // Desired velocity.
