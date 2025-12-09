@@ -35,11 +35,6 @@
                     "ctrl_item_idx": 8,
                     "end_frame": 41,
                     "start_frame": 0
-                },
-                {
-                    "ctrl_item_idx": 9,
-                    "end_frame": 41,
-                    "start_frame": 0
                 }
             ],
             "state_name": "st_running"
@@ -58,21 +53,6 @@
                 }
             ],
             "state_name": "st_running_turnaround"
-        },
-        {
-            "regions": [
-                {
-                    "ctrl_item_idx": 8,
-                    "end_frame": 41,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_item_idx": 4,
-                    "end_frame": 41,
-                    "start_frame": 0
-                }
-            ],
-            "state_name": "st_running_while_locked_on"
         },
         {
             "regions": [
