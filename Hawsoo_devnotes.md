@@ -919,15 +919,16 @@ while (running_game_loop)
 - [ ] Make attack only possible forwards when camera is locked on
     - [ ] Create strafing anims.
         - [x] Just do the root bones for trying speed w/ root motion.
-        - [ ] Make east/west ones be same speed as north one.
+        - [ ] ~~Make east/west ones be same speed as north one.~~
+            - I decided against this after getting the magnitude preservation in root motion stuff.
         - [ ] Create actual anims (for running)
             - [ ] East
             - [ ] West
-            - [ ] South
-        - [ ] Create actual anims (for guard-walking)
-            - [ ] East
-            - [ ] West
-            - [ ] South
+            - [x] South
+        - [x] Create actual anims (for guard-walking)
+            - [x] East
+            - [x] West
+            - [x] South
     - [x] Blend between strafing anims with a blend tree.
         - Have back moving one be slower since walking backwards.
         - I think just the 4 directions is fine? Maybe there just needs to be a thing in the animator that uses two AFA data as the horiz and vert mvt input, and then it will combine the animations?
@@ -947,7 +948,8 @@ while (running_game_loop)
     - [x] BUGFIX: Still face forward even if doing attack over and over (currently doesn't reset to facing the target).
     - [x] Smol perf timer for simulation and rendering just to see what was going on.
     - [x] Add strafing anims to guard-walking.
-    - [ ] Remove @NOCHECKIN and @TEMP tags from commit `570de0f27f0606db66525fb5984e20f391625053`
+    - [ ] Remove @NOCHECKIN and @TEMP tags from commit `570de0f27f0606db66525fb5984e20f391625053` (Faces forward even when moving and integrates strafing in.) (December 8, 2025 at 12:56 AM)
+        - It looks like this is going to be quite a lot of refactoring and in general just a lot of work that I'm not ready for.
 
 - [ ] Get strong attacks implemented (and have strong versions of knockbacks used)
     - Perhaps by having some kind of AFA data point being like "is_strong_attack" that could indicate a strong attack being done?
