@@ -45,49 +45,31 @@ void BT::system::tick_sim_char_mvt_animator()
             }
 
             // Set animator vars.
-            animator->set_bool_variable("is_moving",
-                                        char_mvt_anim_state.write_to_animator_data.is_moving);
+            #define SET_ANIMATOR_BOOL_VAR(_var)                                                     \
+                animator->set_bool_variable(#_var, char_mvt_anim_state.write_to_animator_data._var);
+            #define SET_ANIMATOR_FLOAT_VAR(_var)                                                    \
+                animator->set_float_variable(#_var, char_mvt_anim_state.write_to_animator_data._var);
+            #define SET_ANIMATOR_TRIGGER(_var)                                                      \
+                if (char_mvt_anim_state.write_to_animator_data._var)                                \
+                    animator->set_trigger_variable(#_var);                                          \
+                char_mvt_anim_state.write_to_animator_data._var = false;
 
-            animator->set_bool_variable("is_locked_on",
-                                        char_mvt_anim_state.write_to_animator_data.is_locked_on);
+            SET_ANIMATOR_BOOL_VAR(is_moving)
+            SET_ANIMATOR_BOOL_VAR(is_locked_on)
+            SET_ANIMATOR_FLOAT_VAR(mvt_facing_angle)
+            SET_ANIMATOR_TRIGGER(on_turnaround)
+            SET_ANIMATOR_BOOL_VAR(is_grounded)
+            SET_ANIMATOR_TRIGGER(on_jump)
+            SET_ANIMATOR_TRIGGER(on_attack)
+            SET_ANIMATOR_TRIGGER(on_parry_hurt)
+            SET_ANIMATOR_TRIGGER(on_guard_hurt)
+            SET_ANIMATOR_TRIGGER(on_receive_hurt)
+            SET_ANIMATOR_TRIGGER(on_receive_hurt_from_back)
+            SET_ANIMATOR_BOOL_VAR(is_guarding)
 
-            animator->set_float_variable(
-                "mvt_facing_angle",
-                char_mvt_anim_state.write_to_animator_data.mvt_facing_angle);
-
-            if (char_mvt_anim_state.write_to_animator_data.on_turnaround)
-                animator->set_trigger_variable("on_turnaround");
-            char_mvt_anim_state.write_to_animator_data.on_turnaround = false;
-
-            animator->set_bool_variable("is_grounded",
-                                        char_mvt_anim_state.write_to_animator_data.is_grounded);
-
-            if (char_mvt_anim_state.write_to_animator_data.on_jump)
-                animator->set_trigger_variable("on_jump");
-            char_mvt_anim_state.write_to_animator_data.on_jump = false;
-
-            if (char_mvt_anim_state.write_to_animator_data.on_attack)
-                animator->set_trigger_variable("on_attack");
-            char_mvt_anim_state.write_to_animator_data.on_attack = false;
-
-            if (char_mvt_anim_state.write_to_animator_data.on_parry_hurt)
-                animator->set_trigger_variable("on_parry_hurt");
-            char_mvt_anim_state.write_to_animator_data.on_parry_hurt = false;
-
-            if (char_mvt_anim_state.write_to_animator_data.on_guard_hurt)
-                animator->set_trigger_variable("on_guard_hurt");
-            char_mvt_anim_state.write_to_animator_data.on_guard_hurt = false;
-
-            if (char_mvt_anim_state.write_to_animator_data.on_receive_hurt)
-                animator->set_trigger_variable("on_receive_hurt");
-            char_mvt_anim_state.write_to_animator_data.on_receive_hurt = false;
-
-            if (char_mvt_anim_state.write_to_animator_data.on_receive_hurt_from_back)
-                animator->set_trigger_variable("on_receive_hurt_from_back");
-            char_mvt_anim_state.write_to_animator_data.on_receive_hurt_from_back = false;
-
-            animator->set_bool_variable("is_guarding",
-                                        char_mvt_anim_state.write_to_animator_data.is_guarding);
+            #undef SET_ANIMATOR_BOOL_VAR
+            #undef SET_ANIMATOR_FLOAT_VAR
+            #undef SET_ANIMATOR_TRIGGER
 
             // Update animator.
             animator->update(Model_animator::SIMULATION_PROFILE,
