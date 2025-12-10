@@ -950,17 +950,41 @@ while (running_game_loop)
     - [x] Smol perf timer for simulation and rendering just to see what was going on.
     - [x] Add strafing anims to guard-walking.
 
+- [ ] CPU behavior. (I don't wanna say AI anymore)
+    - These are the CPU states I imagine:
+        - UNAWARE (watching, patrolling, etc.)
+            - If attacked or gains awareness of its enemy (by sight or sound or aura or something?), then will enter AWARE mode.
+            - If sees/hears/feels a sense of suspicion, then will enter SUSPICIOUS mode.
+            - It does seem like having some kind of SUSPICIOUS state is necessary tho, bc then the CPU doesn't just go super-chill after it loses sight of its enemy.
+        - SUSPICIOUS (searching for its enemy, only aware of the position of suspicion)
+            - CPU will typically investigate the position of suspicion.
+            - If the CPU happens upon its enemy (gains awareness), then will enter AWARE mode.
+            - If no gaining of awareness (no line-of-sight, etc.) after X time, then will return back to UNAWARE.
+        - AWARE (has definite sight of its enemy, "attack mode")
+            - Keeps track of last known position of its enemy. If has line-of-sight of its enemy, then will update its last known position of its enemy.
+            - If CPU loses line-of-sight for X time, then will switch back to SUSPICIOUS.
+            - Will move to be in range of melee, or if a ranged CPU, will fire ranged weapon unless its enemy is in range of melee.
+
+    - [ ] Create CPU behavior component.
+        - [ ] Checkbox of "player character is an enemy".
+        - [ ] Current state text.
+        - [ ] Param of viewable fov and radius for line-of-sight awareness.
+        - [ ] Param of hearable radius for hearing points of suspicion.
+        - [ ] Param of viewable fov and radius for seeing points of suspicion.
+
 - [ ] Get strong attacks implemented (and have strong versions of knockbacks used)
     - Perhaps by having some kind of AFA data point being like "is_strong_attack" that could indicate a strong attack being done?
+
+
+### Refactor and tech debt stuff.
 
 - [ ] Remove @NOCHECKIN and @TEMP tags from commit `570de0f27f0606db66525fb5984e20f391625053` (Faces forward even when moving and integrates strafing in.) (December 8, 2025 at 12:56 AM)
     - It looks like this is going to be quite a lot of refactoring and in general just a lot of work that I'm not ready for.
 
-- [ ] Feature: Time-parametrized state transitions (MAYBE?)
+- [ ] ~~Feature: Time-parametrized state transitions (MAYBE?)~~
     - Transitions out of state after only a certain time?
     - Maybe it could just be accomplished with `can_move`->`is_moving` pairs?
         - This honestly just seems like the most viable way to go about doing this tbh.
-
 
 - [ ] ~~REFACTOR: Delete the `calc_orig_pt_distance()` method in hitcapsule bc this info is really only needed when doing the actual collision and isn't needed most of the time.~~
     - No. This is used in the spherization of the capsules in the broad phase of the overlap check.
