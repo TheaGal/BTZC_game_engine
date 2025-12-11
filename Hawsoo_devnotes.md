@@ -966,6 +966,10 @@ while (running_game_loop)
             - Will move to be in range of melee, or if a ranged CPU, will fire ranged weapon unless its enemy is in range of melee.
 
     - [ ] Create CPU behavior component.
+        - [x] The struct for its enemy awareness.
+        - [ ] Query the position/location of the head from the char model for eyesight.
+            - This way looking around can be accomplished by an actual looking around animation and doesn't have to be programmed.
+            - Perhaps could be similar to the hitcapsule-to-bone system?
         - [ ] Checkbox of "player character is an enemy".
         - [ ] Current state text.
         - [ ] Param of viewable fov and radius for line-of-sight awareness.

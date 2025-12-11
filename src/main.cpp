@@ -1,11 +1,12 @@
 #include "animation_frame_action_tool/runtime_data.h"
 #include "btzc_game_engine.h"
 #include "btglm.h"
-#include "renderer/camera.h"
-#include "game_system_logic/entity_container.h"
 #include "game_system_logic/component/component_registry.h"
+#include "game_system_logic/entity_container.h"
 #include "game_system_logic/system/_dev_animation_frame_action_editor.h"
 #include "game_system_logic/system/animator_driven_hitcapsule_sets_update.h"
+#include "game_system_logic/system/cpu_character_enemy_detection.h"
+#include "game_system_logic/system/cpu_character_world_space_input.h"
 #include "game_system_logic/system/hitcapsule_attack_processing.h"
 #include "game_system_logic/system/imgui_render_transform_hierarchy_window.h"
 #include "game_system_logic/system/input_controlled_character_movement.h"
@@ -19,6 +20,7 @@
 #include "game_system_logic/system/write_render_transforms.h"
 #include "game_system_logic/world/scene_loader.h"
 #include "game_system_logic/world/world_properties.h"
+#include "renderer/camera.h"
 #include "hitbox_interactor/hitcapsule.h"
 #include "input_handler/input_handler.h"
 #include "Jolt/Jolt.h"  // @DEBUG
@@ -312,6 +314,8 @@ int32_t main()
 
             BT::system::tick_sim_char_mvt_animator();
 
+            BT::system::cpu_character_enemy_detection();
+            BT::system::cpu_character_world_space_input();
             BT::system::player_character_world_space_input();
             BT::system::input_controlled_character_movement();
 

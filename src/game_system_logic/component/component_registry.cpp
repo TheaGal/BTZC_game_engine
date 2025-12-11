@@ -7,6 +7,7 @@
 #include "character_movement.h"
 #include "combat_stats.h"
 #include "component_imgui_edit_functions.h"
+#include "cpu_enemy_awareness.h"
 #include "entity_metadata.h"
 #include "entt/core/fwd.hpp"
 #include "entt/core/type_info.hpp"
@@ -122,6 +123,7 @@ void BT::component::register_all_components()
     REGISTER_COMPONENT__YES_SERIALIZE(component::_Dev_animation_frame_action_editor_agent,    edit::imgui_edit__sample);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Health_stats_data,                           edit::imgui_edit__health_stats_data);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Base_combat_stats_data,                      edit::imgui_edit__base_combat_stats_data);
+    REGISTER_COMPONENT__YES_SERIALIZE(component::CPU_enemy_awareness,                         edit::imgui_edit__sample);
     //----------------------------------------------------------------------------------------------
 
     #undef REGISTER_COMPONENT

@@ -97,6 +97,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/component_imgui_edit_functions.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/component_registry.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/component_registry.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/cpu_enemy_awareness.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/entity_metadata.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/follow_camera.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/health_stats.h
@@ -111,6 +112,10 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/_dev_animation_frame_action_editor.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/animator_driven_hitcapsule_sets_update.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/animator_driven_hitcapsule_sets_update.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/cpu_character_enemy_detection.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/cpu_character_enemy_detection.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/cpu_character_world_space_input.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/cpu_character_world_space_input.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/hitcapsule_attack_processing.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/hitcapsule_attack_processing.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/imgui_render_transform_hierarchy_window.cpp
