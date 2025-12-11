@@ -968,7 +968,7 @@ while (running_game_loop)
 
     - [ ] Create CPU behavior component.
         - [x] The struct for its enemy awareness.
-        - [ ] Query the position/location of the head from the char model for eyesight.
+        - [x] Query the position/location of the head from the char model for eyesight.
             - This way looking around can be accomplished by an actual looking around animation and doesn't have to be programmed.
             - Perhaps could be similar to the hitcapsule-to-bone system?
         - [ ] Checkbox of "player character is an enemy".
@@ -976,6 +976,9 @@ while (running_game_loop)
         - [ ] Param of viewable fov and radius for line-of-sight awareness.
         - [ ] Param of hearable radius for hearing points of suspicion.
         - [ ] Param of viewable fov and radius for seeing points of suspicion.
+        - [ ] Draw lines showing eyesight and CPU suspicion/awareness detection zone.
+            - You can create new color codes and stuff for this too.
+            - [ ] Double check that using the "Eyes" bone for tracking eyesight is working correctly.
 
 - [ ] Get strong attacks implemented (and have strong versions of knockbacks used)
     - Perhaps by having some kind of AFA data point being like "is_strong_attack" that could indicate a strong attack being done?

@@ -309,7 +309,8 @@
                 {
                     "type_name": "component::CPU_enemy_awareness",
                     "members_j": {
-                        "is_player_char_an_enemy": true
+                        "is_player_char_an_enemy": true,
+                        "eyes_bone": "Eyes"
                     }
                 }
             ]

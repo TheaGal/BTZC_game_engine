@@ -54,6 +54,8 @@ struct CPU_enemy_awareness
             NUM_AWARENESS_STATES
         } enemy_awareness{ UNAWARE };
         UUID focused_enemy;
+
+        uint32_t eyes_bone_idx{ (uint32_t)-1 };
     } runtime_state;
 };
 

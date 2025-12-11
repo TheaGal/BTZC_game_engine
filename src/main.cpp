@@ -311,7 +311,6 @@ int32_t main()
             
             // Pre-physics.
             BT::system::process_physics_object_lifetime();
-
             BT::system::tick_sim_char_mvt_animator();
 
             BT::system::cpu_character_enemy_detection();

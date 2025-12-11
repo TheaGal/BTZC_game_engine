@@ -1,12 +1,11 @@
 #include "cpu_character_enemy_detection.h"
 
 #include "btglm.h"
+#include "cglm/affine.h"
+#include "cglm/mat4.h"
 #include "entt/entity/entity.hpp"
-#include "game_system_logic/component/animator_root_motion.h"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/cpu_enemy_awareness.h"
-#include "game_system_logic/component/follow_camera.h"
-#include "game_system_logic/component/physics_object_settings.h"
 #include "game_system_logic/component/render_object_settings.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
@@ -25,27 +24,49 @@ using namespace BT;
 
 void fetch_eyesight_data(Render_object_pool& rend_obj_pool,
                          UUID rend_obj_uuid,
+                         component::CPU_enemy_awareness& in_out_awareness,
                          rvec3& out_eyesight_pos,
                          vec3& out_eyesight_forward)
 {
     auto& rend_obj{ *rend_obj_pool.checkout_render_obj_by_key({ rend_obj_uuid }).front() };
 
-    // Update whether capsules are enabled and keep capsules attached to connecting bone in
-    // animator.
-    auto& animator{ *rend_obj.get_model_animator() };
+    if (rend_obj.get_model_animator() == nullptr)
+    {   // Exit since no model animator attached.
+        rend_obj_pool.return_render_objs({ &rend_obj });
+        return;
+    }
 
-    animator.get_anim_frame_action_data_handle().assign_hitcapsule_enabled_flags();
+    // Update joint matrix of eyes bone.
+    auto& animator{ *rend_obj.get_model_animator() };
 
     std::vector<mat4s> joint_matrices;
     animator.get_anim_floored_frame_pose(Model_animator::SIMULATION_PROFILE,
                                          animator.get_is_using_root_motion(),
                                          joint_matrices);
 
-    animator.get_anim_frame_action_data_handle().update_hitcapsule_transforms(
-        rend_obj.render_transform(),
-        joint_matrices);
+    if (in_out_awareness.runtime_state.eyes_bone_idx == (uint32_t)-1)
+    {   // Get the bone idx for eyes-bone.
+        in_out_awareness.runtime_state.eyes_bone_idx =
+            animator.get_model_skin().joint_name_to_idx.at(in_out_awareness.eyes_bone);
+    }
+    assert(in_out_awareness.runtime_state.eyes_bone_idx != (uint32_t)-1);
+
+    mat4 eyes_bone_trans;
+    glm_mat4_mul(rend_obj.render_transform(),
+                 joint_matrices[in_out_awareness.runtime_state.eyes_bone_idx].raw,
+                 eyes_bone_trans);
 
     rend_obj_pool.return_render_objs({ &rend_obj });
+
+    // Write eyesight data.
+    vec3 translate;
+    glm_vec3(eyes_bone_trans[3], translate);
+
+    out_eyesight_pos[0] = translate[0];  // @TODO: Conform to `write_render_transforms.cpp`
+    out_eyesight_pos[1] = translate[1];
+    out_eyesight_pos[2] = translate[2];
+
+    glm_mat4_mulv3(eyes_bone_trans, out_eyesight_forward, 0, out_eyesight_forward);
 }
 
 }  // namespace
@@ -71,17 +92,19 @@ void BT::system::cpu_character_enemy_detection()
 
         btglm_rvec3_copy(transform.position.raw, eyesight_pos);
 
-        if (auto disp_repr{ reg.try_get<component::Display_repr_transform_ref const>(entity) };
-            disp_repr != nullptr)
+        if (!cpu_enemy_awareness.eyes_bone.empty())
         {
-            if (auto rend_obj_ref{ reg.try_get<component::Created_render_object_reference>(
-                    entity_container.find_entity(disp_repr->display_repr_uuid)) };
-                rend_obj_ref != nullptr)
-                if (!rend_obj_ref->render_obj_uuid_ref.is_nil())
-                    fetch_eyesight_data(rend_obj_pool,
-                                        rend_obj_ref->render_obj_uuid_ref,
-                                        eyesight_pos,
-                                        eyesight_forward);
+            if (auto disp_repr{ reg.try_get<component::Display_repr_transform_ref const>(entity) };
+                disp_repr != nullptr)
+                if (auto rend_obj_ref{ reg.try_get<component::Created_render_object_reference>(
+                        entity_container.find_entity(disp_repr->display_repr_uuid)) };
+                    rend_obj_ref != nullptr)
+                    if (!rend_obj_ref->render_obj_uuid_ref.is_nil())
+                        fetch_eyesight_data(rend_obj_pool,
+                                            rend_obj_ref->render_obj_uuid_ref,
+                                            cpu_enemy_awareness,
+                                            eyesight_pos,
+                                            eyesight_forward);
         }
 
         // Awareness state machine.
