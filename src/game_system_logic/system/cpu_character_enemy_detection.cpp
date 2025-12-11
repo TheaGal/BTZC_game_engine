@@ -65,23 +65,7 @@ void BT::system::cpu_character_enemy_detection()
 
     // Process all CPU characters.
     for (auto&& [entity, transform, cpu_enemy_awareness] : view.each())
-    {
-        // entt::entity disp_repr_ecs_entity{ entt::null };
-
-        // // Try to find facing direction of character.
-        // versor facing_rotation = GLM_QUAT_IDENTITY_INIT;  // @TODO: I THINK THIS ISNT NEEDED
-        // if (auto disp_repr{ reg.try_get<component::Display_repr_transform_ref const>(entity) };
-        //     disp_repr != nullptr)
-        // {
-        //     disp_repr_ecs_entity = entity_container.find_entity(disp_repr->display_repr_uuid);
-        //     if (auto disp_repr_trans{
-        //             reg.try_get<component::Transform const>(disp_repr_ecs_entity) };
-        //         disp_repr_trans != nullptr)
-        //         glm_quat_copy(const_cast<float_t*>(disp_repr_trans->rotation.raw),
-        //                         facing_rotation);
-        // }
-
-        // Calc eyesight.
+    {   // Calc eyesight.
         rvec3 eyesight_pos;
         vec3 eyesight_forward{ 0, 0, 1 };
 
@@ -146,73 +130,4 @@ void BT::system::cpu_character_enemy_detection()
         default: assert(false); break;
         }
     }
-
-
-
-#if 0
-        // Get char anim state.
-        auto char_mvt_anim_state{ reg.try_get<component::Character_mvt_animated_state>(entity) };
-
-        // Process input into character movement logic.
-        auto& phys_engine{ service_finder::find_service<Physics_engine>() };
-        auto phys_obj_uuid{
-            view.get<component::Created_physics_object_reference const>(entity).physics_obj_uuid_ref
-        };
-        auto& phys_obj{ *phys_engine.checkout_physics_object(phys_obj_uuid) };
-
-        auto anim_root_motion{ char_mvt_anim_state
-                                   ? reg.try_get<component::Animator_root_motion const>(
-                                         entity_container.find_entity(
-                                             char_mvt_anim_state->affecting_animator_uuid))
-                                   : nullptr };
-
-        component::Follow_camera_follow_ref::State* follow_cam_state{ nullptr };
-        auto poss_display_repr_ref{ reg.try_get<component::Display_repr_transform_ref>(entity) };
-        if (poss_display_repr_ref != nullptr)
-        {
-            auto display_repr_ecs_ent{ entity_container.find_entity(
-                poss_display_repr_ref->display_repr_uuid) };
-
-            auto follow_cam_follow_ref{ reg.try_get<component::Follow_camera_follow_ref>(
-                display_repr_ecs_ent) };
-
-            if (follow_cam_follow_ref != nullptr)
-                follow_cam_state = &follow_cam_follow_ref->state;
-        }
-
-        auto mvt_logic_result = character_controller_movement_logic(char_ws_input,
-                                                                    char_mvt_state,
-                                                                    char_mvt_anim_state,
-                                                                    anim_root_motion,
-                                                                    follow_cam_state,
-                                                                    phys_obj);
-
-        // Apply movement logic outputs to physics object character controller inputs.
-        auto const& physics_gravity{
-            reinterpret_cast<JPH::PhysicsSystem*>(
-                service_finder::find_service<Physics_engine>().get_physics_system_ptr())
-                ->GetGravity()
-        };
-        apply_velocity_to_char_con(char_mvt_state.grounded_state,
-                                   phys_obj,
-                                   mvt_logic_result.is_grounded,
-                                   mvt_logic_result.up_rotation,
-                                   physics_gravity,
-                                   mvt_logic_result.new_velocity);
-
-        phys_engine.return_physics_object(&phys_obj);
-
-        // Try writing a new facing direction.
-        if (poss_display_repr_ref != nullptr)
-        {   // Calculate rotation.
-            versors rot;
-            glm_quat(rot.raw, mvt_logic_result.display_facing_angle, 0.0f, 1.0f, 0.0f);
-
-            // Write to display repr entity transform.
-            auto display_repr_ecs_ent{ entity_container.find_entity(
-                poss_display_repr_ref->display_repr_uuid) };
-            component::submit_transform_change_only_rotation_helper(reg, display_repr_ecs_ent, rot);
-        }
-    }
-#endif  // 0
 }
