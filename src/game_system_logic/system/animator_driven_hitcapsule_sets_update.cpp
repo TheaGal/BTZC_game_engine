@@ -9,7 +9,6 @@
 #include "game_system_logic/component/render_object_settings.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
-#include "physics_engine/physics_engine.h"  // For `k_simulation_delta_time`.
 #include "renderer/model_animator.h"
 #include "renderer/renderer.h"
 #include "service_finder/service_finder.h"

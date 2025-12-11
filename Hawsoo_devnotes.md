@@ -961,7 +961,8 @@ while (running_game_loop)
             - If the CPU happens upon its enemy (gains awareness), then will enter AWARE mode.
             - If no gaining of awareness (no line-of-sight, etc.) after X time, then will return back to UNAWARE.
         - AWARE (has definite sight of its enemy, "attack mode")
-            - Keeps track of last known position of its enemy. If has line-of-sight of its enemy, then will update its last known position of its enemy.
+            - ~~Keeps track of last known position of its enemy. If has line-of-sight of its enemy, then will update its last known position of its enemy.~~
+                - I think if it just "knows" where its enemy's position is at all times that's good enough and will make it easier and not have to worry about losing line-of-sight for programming the CPU.
             - If CPU loses line-of-sight for X time, then will switch back to SUSPICIOUS.
             - Will move to be in range of melee, or if a ranged CPU, will fire ranged weapon unless its enemy is in range of melee.
 

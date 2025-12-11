@@ -19,7 +19,7 @@ struct CPU_enemy_awareness
 {
     bool is_player_char_an_enemy{ false };
 
-    vec3 eyes_pos{ 0, 1, 0 };
+    std::string eyes_bone{ "" };  // Bone from display repr model to base "eyes" off of.
 
     float_t aware_sight_fov{ glm_rad(45.0f) };  // @NOTE: In radians.
     float_t aware_sight_distance{ 10.0f };
@@ -34,7 +34,7 @@ struct CPU_enemy_awareness
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
         CPU_enemy_awareness,
         is_player_char_an_enemy,
-        eyes_pos,
+        eyes_bone,
         aware_sight_fov,
         aware_sight_distance,
         suspicion_sight_fov,
