@@ -972,6 +972,7 @@ while (running_game_loop)
             - This way looking around can be accomplished by an actual looking around animation and doesn't have to be programmed.
             - Perhaps could be similar to the hitcapsule-to-bone system?
         - [ ] Checkbox of "player character is an enemy".
+            - There needs to be a midpoint for the player character that the origin is, since the player origin is at the feet at the moment oof.
         - [ ] Current state text.
         - [ ] Param of viewable fov and radius for line-of-sight awareness.
         - [ ] Param of hearable radius for hearing points of suspicion.
