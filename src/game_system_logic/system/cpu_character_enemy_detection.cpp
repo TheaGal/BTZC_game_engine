@@ -3,6 +3,7 @@
 #include "btglm.h"
 #include "cglm/affine.h"
 #include "cglm/mat4.h"
+#include "cglm/quat.h"
 #include "entt/entity/entity.hpp"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/cpu_enemy_awareness.h"
@@ -10,11 +11,13 @@
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
 #include "game_system_logic/world/world_properties.h"
+#include "renderer/debug_render_job.h"
 #include "renderer/renderer.h"
 #include "service_finder/service_finder.h"
 #include "uuid/uuid.h"
 
 #include <cassert>
+#include <cmath>
 
 
 namespace
@@ -25,6 +28,7 @@ using namespace BT;
 void fetch_eyesight_data(Render_object_pool& rend_obj_pool,
                          UUID rend_obj_uuid,
                          component::CPU_enemy_awareness& in_out_awareness,
+                         vec3 eyes_origin,
                          rvec3& out_eyesight_pos,
                          vec3& out_eyesight_forward)
 {
@@ -59,14 +63,59 @@ void fetch_eyesight_data(Render_object_pool& rend_obj_pool,
     rend_obj_pool.return_render_objs({ &rend_obj });
 
     // Write eyesight data.
-    vec3 translate;
-    glm_vec3(eyes_bone_trans[3], translate);
+    vec3 eyesight_pos;
+    glm_mat4_mulv3(eyes_bone_trans, eyes_origin, 1, eyesight_pos);
 
-    out_eyesight_pos[0] = translate[0];  // @TODO: Conform to `write_render_transforms.cpp`
-    out_eyesight_pos[1] = translate[1];
-    out_eyesight_pos[2] = translate[2];
+    out_eyesight_pos[0] = eyesight_pos[0];  // @TODO: Conform to `write_render_transforms.cpp`
+    out_eyesight_pos[1] = eyesight_pos[1];
+    out_eyesight_pos[2] = eyesight_pos[2];
 
     glm_mat4_mulv3(eyes_bone_trans, out_eyesight_forward, 0, out_eyesight_forward);
+}
+
+void draw_detection_cone(float_t fov,
+                         float_t distance,
+                         vec3 eyesight_pos,
+                         vec3 eyesight_forward,
+                         vec4 line_color)
+{
+    auto half_fov{ fov * 0.5f };
+    auto sin_half_fov{ std::sinf(half_fov) };
+    auto cos_half_fov{ std::cosf(half_fov) };
+    versor view_rotation;
+    glm_quat_from_vecs(vec3{ 0, 0, 1 }, eyesight_forward, view_rotation);
+
+    // Detection cone pre-transformation.
+    std::vector<vec3s> detection_cone_pts{
+        { 0, 0, 0 }, { -sin_half_fov, 0, cos_half_fov },
+        { 0, 0, 0 }, {  sin_half_fov, 0, cos_half_fov },
+        { 0, 0, 0 }, { 0, -sin_half_fov, cos_half_fov },
+        { 0, 0, 0 }, { 0,  sin_half_fov, cos_half_fov },
+        { 0, 0, 0 }, { 0, 0, 1 },
+    };
+
+    // Transform and submit lines for debug draw.
+    assert(detection_cone_pts.size() % 2 == 0);
+    for (size_t i = 1; i < detection_cone_pts.size(); i += 2)
+    {
+        std::array<vec3s, 2> pts;
+        for (size_t j = 0; j < pts.size(); j++)
+        {
+            auto const& pt_read{ detection_cone_pts[i - 1 + j] };
+            auto& pt_write{ pts[j] };
+            glm_vec3_scale(const_cast<float_t*>(pt_read.raw), distance, pt_write.raw);
+            glm_quat_rotatev(view_rotation, pt_write.raw, pt_write.raw);
+            glm_vec3_add(pt_write.raw, eyesight_pos, pt_write.raw);
+        }
+
+        Debug_line dbg_line;
+        glm_vec3_copy(pts[0].raw, dbg_line.pos1);
+        glm_vec3_copy(pts[1].raw, dbg_line.pos2);
+        glm_vec4_copy(line_color, dbg_line.color1);
+        glm_vec4_copy(line_color, dbg_line.color2);
+
+        get_main_debug_line_pool().emplace_debug_line(std::move(dbg_line), 0.03f);
+    }
 }
 
 }  // namespace
@@ -103,6 +152,7 @@ void BT::system::cpu_character_enemy_detection()
                         fetch_eyesight_data(rend_obj_pool,
                                             rend_obj_ref->render_obj_uuid_ref,
                                             cpu_enemy_awareness,
+                                            cpu_enemy_awareness.eyes_origin.raw,
                                             eyesight_pos,
                                             eyesight_forward);
         }
@@ -112,7 +162,34 @@ void BT::system::cpu_character_enemy_detection()
         {
         case component::CPU_enemy_awareness::State::UNAWARE:
         case component::CPU_enemy_awareness::State::SUSPICIOUS:
-        {   // If a new hint of suspicion is found whether to set `suspicion=1` or `suspicion+=1`.
+        {   // Draw debug view.
+            vec3 eyesight_pos_f{ static_cast<float_t>(eyesight_pos[0]),  // @TODO: Conform to `write_render_transforms.cpp`
+                                 static_cast<float_t>(eyesight_pos[1]),
+                                 static_cast<float_t>(eyesight_pos[2]), };
+
+            // Draw debug aware sight zone.
+            draw_detection_cone(cpu_enemy_awareness.aware_sight_fov,
+                                cpu_enemy_awareness.aware_sight_distance,
+                                eyesight_pos_f,
+                                eyesight_forward,
+                                vec4{ 0.550, 0.0275, 0.193 });
+
+            // Draw debug suspicion sight zone.
+            draw_detection_cone(cpu_enemy_awareness.suspicion_sight_fov,
+                                cpu_enemy_awareness.suspicion_sight_distance,
+                                eyesight_pos_f,
+                                eyesight_forward,
+                                vec4{ 0.550, 0.541, 0.0275 });
+
+            // Draw debug suspicion sound zone.
+            get_main_debug_line_pool().emplace_debug_line_based_capsule(
+                eyesight_pos_f,
+                eyesight_pos_f,
+                cpu_enemy_awareness.suspicion_sound_distance,
+                vec4{ 0.297, 0.0275, 0.550 },
+                0.03f);
+
+            // If a new hint of suspicion is found whether to set `suspicion=1` or `suspicion+=1`.
             bool is_suspicion_additive{ cpu_enemy_awareness.runtime_state.enemy_awareness ==
                                         component::CPU_enemy_awareness::State::SUSPICIOUS };
 
@@ -139,7 +216,9 @@ void BT::system::cpu_character_enemy_detection()
         }
 
         case component::CPU_enemy_awareness::State::AWARE:
-        {
+        {   // Draw debug view.
+            assert(false);;  // @TODO IMPLEMENT!
+
             // Check for line-of-sight with CPU's enemy.
             // @HERE
 

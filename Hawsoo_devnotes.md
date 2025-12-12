@@ -979,7 +979,11 @@ while (running_game_loop)
         - [ ] Param of viewable fov and radius for seeing points of suspicion.
         - [ ] Draw lines showing eyesight and CPU suspicion/awareness detection zone.
             - You can create new color codes and stuff for this too.
-            - [ ] Double check that using the "Eyes" bone for tracking eyesight is working correctly.
+            - [x] Double check that using the "Eyes" bone for tracking eyesight is working correctly.
+            - [x] Detection zones.
+            - [ ] Lines drawn from CPU to possible enemies.
+                - If too far, draw the extra distance as red, and the requisite distance as yellow.
+                - If close enough, draw the whole line as green (or whatever color wanted?)
 
 - [ ] Get strong attacks implemented (and have strong versions of knockbacks used)
     - Perhaps by having some kind of AFA data point being like "is_strong_attack" that could indicate a strong attack being done?

@@ -20,21 +20,23 @@ struct CPU_enemy_awareness
     bool is_player_char_an_enemy{ false };
 
     std::string eyes_bone{ "" };  // Bone from display repr model to base "eyes" off of.
+    vec3s eyes_origin{ 0, 1, 0 };  // Origin point of eyes position.
 
-    float_t aware_sight_fov{ glm_rad(45.0f) };  // @NOTE: In radians.
+    float_t aware_sight_fov{ glm_rad(90.0f) };  // @NOTE: In radians.
     float_t aware_sight_distance{ 10.0f };
 
-    float_t suspicion_sight_fov{ glm_rad(80.0f) };  // @NOTE: In radians.
+    float_t suspicion_sight_fov{ glm_rad(160.0f) };  // @NOTE: In radians.
     float_t suspicion_sight_distance{ 30.0f };
 
     /// @NOTE: Can hear in all directions. However, cannot gain awareness from sound alone.
-    float_t suspicion_sound_distance{ 30.0f };
+    float_t suspicion_sound_distance{ 15.0f };
 
     /// Serialization.
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
         CPU_enemy_awareness,
         is_player_char_an_enemy,
         eyes_bone,
+        eyes_origin,
         aware_sight_fov,
         aware_sight_distance,
         suspicion_sight_fov,

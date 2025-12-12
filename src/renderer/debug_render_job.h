@@ -37,10 +37,10 @@ public:
     void render_all_meshes();
 
     /// Debug mesh rendering masks.
-    static constexpr uint8_t k_mask_all          = 0b11111111;
-    static constexpr uint8_t k_mask_none         = 0b00000000;
-    static constexpr uint8_t k_mask_selected_obj = 0b00000001;
-    static constexpr uint8_t k_mask_phys_obj     = 0b00000010;
+    static constexpr uint8_t k_mask_all           = 0b11111111;
+    static constexpr uint8_t k_mask_none          = 0b00000000;
+    static constexpr uint8_t k_mask_selected_obj  = 0b00000001;
+    static constexpr uint8_t k_mask_phys_obj      = 0b00000010;
 
     uint8_t get_visible_mask() { return m_visible.load(); }
 
@@ -124,7 +124,7 @@ private:
 
     uint32_t m_ssbo{ (uint32_t)-1 };
 
-    std::atomic_bool m_visible{ false };
+    std::atomic_bool m_visible{ true };
 };
 
 Debug_line_pool& set_main_debug_line_pool(std::unique_ptr<Debug_line_pool>&& dbg_line_pool);
