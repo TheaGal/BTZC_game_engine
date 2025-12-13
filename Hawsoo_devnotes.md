@@ -981,9 +981,12 @@ while (running_game_loop)
             - You can create new color codes and stuff for this too.
             - [x] Double check that using the "Eyes" bone for tracking eyesight is working correctly.
             - [x] Detection zones.
-            - [ ] Lines drawn from CPU to possible enemies.
+            - [x] Lines drawn from CPU to possible enemies.
                 - If too far, draw the extra distance as red, and the requisite distance as yellow.
                 - If close enough, draw the whole line as green (or whatever color wanted?)
+            - [x] Fix detection zones. Now they detect the enemy in them.
+            - [ ] Utilize the `my_enemy_bitmask`.
+            - [ ] Write awareness value into `CPU_enemy_awareness` component.
 
 - [ ] Get strong attacks implemented (and have strong versions of knockbacks used)
     - Perhaps by having some kind of AFA data point being like "is_strong_attack" that could indicate a strong attack being done?
