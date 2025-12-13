@@ -91,6 +91,13 @@
                         "height": 2.0,
                         "crouch_height": 1.1
                     }
+                },
+                {
+                    "type_name": "component::Detectable_character",
+                    "members_j": {
+                        "type": 1,
+                        "transform_offset": { "x": 0, "y": 1.68, "z": 0 }
+                    }
                 }
             ]
         },
@@ -309,9 +316,16 @@
                 {
                     "type_name": "component::CPU_enemy_awareness",
                     "members_j": {
-                        "is_player_char_an_enemy": true,
+                        "my_enemy_bitmask": 11,
                         "eyes_bone": "Eyes",
                         "eyes_origin": { "x": 0, "y": 1.68, "z": 0.135 }
+                    }
+                },
+                {
+                    "type_name": "component::Detectable_character",
+                    "members_j": {
+                        "type": 4,
+                        "transform_offset": { "x": 0, "y": 1.68, "z": 0 }
                     }
                 }
             ]

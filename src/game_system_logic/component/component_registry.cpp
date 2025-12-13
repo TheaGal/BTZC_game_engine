@@ -124,6 +124,7 @@ void BT::component::register_all_components()
     REGISTER_COMPONENT__YES_SERIALIZE(component::Health_stats_data,                           edit::imgui_edit__health_stats_data);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Base_combat_stats_data,                      edit::imgui_edit__base_combat_stats_data);
     REGISTER_COMPONENT__YES_SERIALIZE(component::CPU_enemy_awareness,                         edit::imgui_edit__sample);
+    REGISTER_COMPONENT__YES_SERIALIZE(component::Detectable_character,                        edit::imgui_edit__sample);
     //----------------------------------------------------------------------------------------------
 
     #undef REGISTER_COMPONENT

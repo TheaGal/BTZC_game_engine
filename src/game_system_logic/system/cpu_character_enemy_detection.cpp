@@ -1,9 +1,11 @@
 #include "cpu_character_enemy_detection.h"
 
 #include "btglm.h"
+#include "btlogger.h"
 #include "cglm/affine.h"
 #include "cglm/mat4.h"
 #include "cglm/quat.h"
+#include "cglm/vec3.h"
 #include "entt/entity/entity.hpp"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/cpu_enemy_awareness.h"
@@ -130,11 +132,12 @@ void BT::system::cpu_character_enemy_detection()
 
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
-    auto view{ reg.view<component::Transform const, component::CPU_enemy_awareness>() };
+    auto view_cpus{ reg.view<component::Transform const, component::CPU_enemy_awareness>() };
+    auto view_det_chars{ reg.view<component::Transform const, component::Detectable_character>() };
     auto& rend_obj_pool{ service_finder::find_service<Renderer>().get_render_object_pool() };
 
     // Process all CPU characters.
-    for (auto&& [entity, transform, cpu_enemy_awareness] : view.each())
+    for (auto&& [entity, transform, cpu_enemy_awareness] : view_cpus.each())
     {   // Calc eyesight.
         rvec3 eyesight_pos;
         vec3 eyesight_forward{ 0, 0, 1 };
@@ -193,11 +196,86 @@ void BT::system::cpu_character_enemy_detection()
             bool is_suspicion_additive{ cpu_enemy_awareness.runtime_state.enemy_awareness ==
                                         component::CPU_enemy_awareness::State::SUSPICIOUS };
 
-            // Check in awareness zone.
-            // @HERE
+            // Check suspicion zone and awareness zone for entities.
+            auto suspicion_sight_sin{ std::sinf(cpu_enemy_awareness.aware_sight_fov) };
+            auto aware_sight_sin{ std::sinf(cpu_enemy_awareness.suspicion_sight_fov) };
+            for (auto&& [det_entity, det_trans, det_char] : view_det_chars.each())
+            {
+                if (det_entity == entity)
+                    continue;  // Skip when comparing self to self.
 
-            // Check in suspicion sight zone.
-            // @HERE
+                vec3 delta_pos;
+                float_t eye_forward_dot_delta_pos_n;
+                float_t delta_pos_dist2;
+                {
+                    rvec3 delta_pos_r;
+                    btglm_rvec3_sub(det_trans.position.raw, eyesight_pos, delta_pos_r);
+
+                    // @TODO: Conform to `write_render_transforms.cpp`
+                    // Now add transform offset too.
+                    delta_pos[0] = delta_pos_r[0] + det_char.transform_offset.x;
+                    delta_pos[1] = delta_pos_r[1] + det_char.transform_offset.y;
+                    delta_pos[2] = delta_pos_r[2] + det_char.transform_offset.z;
+
+                    vec3 dpn;
+                    glm_vec3_normalize_to(delta_pos, dpn);
+                    eye_forward_dot_delta_pos_n = glm_vec3_dot(eyesight_forward, dpn);
+                    delta_pos_dist2 = glm_vec3_norm2(delta_pos);
+
+                    if constexpr(false)
+                    {
+                        Debug_line dbg_line{
+                            { eyesight_pos_f[0], eyesight_pos_f[1], eyesight_pos_f[2] },
+                            { eyesight_pos_f[0] + delta_pos[0],
+                              eyesight_pos_f[1] + delta_pos[1],
+                              eyesight_pos_f[2] + delta_pos[2] },
+                            { 1, 1, 1 },
+                            { 1, 1, 1 }
+                        };
+                        get_main_debug_line_pool().emplace_debug_line(std::move(dbg_line), 0.03f);
+                    }
+                }
+
+                // @DEBUG: Draw debug line when within detection zone.
+                bool draw_detection_zone_debug_line{ false };
+                vec4 detection_zone_debug_line_color;
+
+                BT_TRACEF("DOT PROD!!! %.3f", eye_forward_dot_delta_pos_n);  // @TODO: START HERE!!!! GET THE DOT PRODUCT WORKING WITH THE SIGHT FOV!!!!
+
+                // Check in awareness zone.
+                if (eye_forward_dot_delta_pos_n > aware_sight_sin &&
+                    delta_pos_dist2 < cpu_enemy_awareness.aware_sight_distance *
+                                          cpu_enemy_awareness.aware_sight_distance)
+                {
+                    draw_detection_zone_debug_line = true;
+                    glm_vec4_copy(vec4{ 0.990, 0.0198, 0.359 }, detection_zone_debug_line_color);
+                }
+                // Check in suspicion sight zone.
+                else if (eye_forward_dot_delta_pos_n > suspicion_sight_sin &&
+                         delta_pos_dist2 < cpu_enemy_awareness.suspicion_sight_distance *
+                                               cpu_enemy_awareness.suspicion_sight_distance)
+                {
+                    draw_detection_zone_debug_line = true;
+                    glm_vec4_copy(vec4{ 0.958, 0.990, 0.0198 }, detection_zone_debug_line_color);
+                }
+
+                if (draw_detection_zone_debug_line)
+                {
+                    // @TODO: Conform to `write_render_transforms.cpp`
+                    Debug_line dbg_line{
+                        { eyesight_pos_f[0],
+                          eyesight_pos_f[1],
+                          eyesight_pos_f[2] },
+                        { static_cast<float_t>(det_trans.position.x) + det_char.transform_offset.x,
+                          static_cast<float_t>(det_trans.position.y) + det_char.transform_offset.y,
+                          static_cast<float_t>(det_trans.position.z) + det_char.transform_offset.z }
+                    };
+                    glm_vec4_copy(detection_zone_debug_line_color, dbg_line.color1);
+                    glm_vec4_copy(detection_zone_debug_line_color, dbg_line.color2);
+
+                    get_main_debug_line_pool().emplace_debug_line(std::move(dbg_line), 0.03f);
+                }
+            }
 
             // Check in suspicion sound zone.
             // @TODO: This needs to look up a `Sound_maker` component or something in order to have
@@ -207,11 +285,20 @@ void BT::system::cpu_character_enemy_detection()
             // "loudness radius" so that there's a collision detection with the sound made and the
             // `suspicion_sound_distance`.
             //   -Thea 2025/12/11
+            if (false)
+            {
+                BT_TRACE("Entered SUSPICIOUS state.");
+                cpu_enemy_awareness.runtime_state.enemy_awareness =
+                    component::CPU_enemy_awareness::State::SUSPICIOUS;
+            }
 
             // If suspicion/awareness is enough, enter AWARE state.
             if (/*suspicion >= some_number*/false)  // @HERE
+            {
+                BT_TRACE("Entered AWARE state.");
                 cpu_enemy_awareness.runtime_state.enemy_awareness =
                     component::CPU_enemy_awareness::State::AWARE;
+            }
             break;
         }
 
@@ -224,8 +311,11 @@ void BT::system::cpu_character_enemy_detection()
 
             // If line-of-sight is lost for long enough, go to SUSPICIOUS state.
             if (/*last_line_of_sight_update >= some_time*/false)  // @HERE
+            {
+                BT_TRACE("Entered SUSPICIOUS state.");
                 cpu_enemy_awareness.runtime_state.enemy_awareness =
                     component::CPU_enemy_awareness::State::SUSPICIOUS;
+            }
             break;
         }
 

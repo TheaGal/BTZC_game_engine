@@ -14,10 +14,19 @@ namespace BT
 namespace component
 {
 
+/// Categories for all types of detectable entities.
+namespace detectable_character_type
+{
+    constexpr uint8_t PLAYER   = 0b00000001;
+    constexpr uint8_t GOOD_GUY = 0b00000010;
+    constexpr uint8_t BAD_GUY  = 0b00000100;
+    constexpr uint8_t NEUTRAL  = 0b00001000;
+}
+
 /// Status of CPU awareness and list of its enemies.
 struct CPU_enemy_awareness
 {
-    bool is_player_char_an_enemy{ false };
+    uint8_t my_enemy_bitmask{ 0 };  // Use `detectable_character_type`.
 
     std::string eyes_bone{ "" };  // Bone from display repr model to base "eyes" off of.
     vec3s eyes_origin{ 0, 1, 0 };  // Origin point of eyes position.
@@ -34,7 +43,7 @@ struct CPU_enemy_awareness
     /// Serialization.
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
         CPU_enemy_awareness,
-        is_player_char_an_enemy,
+        my_enemy_bitmask,
         eyes_bone,
         eyes_origin,
         aware_sight_fov,
@@ -59,6 +68,19 @@ struct CPU_enemy_awareness
 
         uint32_t eyes_bone_idx{ (uint32_t)-1 };
     } runtime_state;
+};
+
+/// Marks an entity as a possible enemy for the CPU.
+struct Detectable_character
+{
+    uint8_t type{ detectable_character_type::NEUTRAL };  // Use `detectable_character_type`.
+    vec3s transform_offset{ 0, 1, 0 };
+
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
+        Detectable_character,
+        type,
+        transform_offset
+    );
 };
 
 }  // namespace component
