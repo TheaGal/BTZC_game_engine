@@ -197,8 +197,8 @@ void BT::system::cpu_character_enemy_detection()
                                         component::CPU_enemy_awareness::State::SUSPICIOUS };
 
             // Check suspicion zone and awareness zone for entities.
-            auto suspicion_sight_sin{ std::sinf(cpu_enemy_awareness.aware_sight_fov) };
-            auto aware_sight_sin{ std::sinf(cpu_enemy_awareness.suspicion_sight_fov) };
+            auto suspicion_sight_cos{ std::cosf(cpu_enemy_awareness.suspicion_sight_fov * 0.5f) };
+            auto aware_sight_cos{ std::cosf(cpu_enemy_awareness.aware_sight_fov * 0.5f) };
             for (auto&& [det_entity, det_trans, det_char] : view_det_chars.each())
             {
                 if (det_entity == entity)
@@ -222,7 +222,8 @@ void BT::system::cpu_character_enemy_detection()
                     eye_forward_dot_delta_pos_n = glm_vec3_dot(eyesight_forward, dpn);
                     delta_pos_dist2 = glm_vec3_norm2(delta_pos);
 
-                    if constexpr(false)
+                    constexpr bool k_draw_line_of_sight_line{ false };
+                    if constexpr(k_draw_line_of_sight_line)
                     {
                         Debug_line dbg_line{
                             { eyesight_pos_f[0], eyesight_pos_f[1], eyesight_pos_f[2] },
@@ -241,9 +242,9 @@ void BT::system::cpu_character_enemy_detection()
                 vec4 detection_zone_debug_line_color;
 
                 BT_TRACEF("DOT PROD!!! %.3f", eye_forward_dot_delta_pos_n);  // @TODO: START HERE!!!! GET THE DOT PRODUCT WORKING WITH THE SIGHT FOV!!!!
-
+                                                                        // Ig it makes sense that the fov's should be angles, but honestly it's .
                 // Check in awareness zone.
-                if (eye_forward_dot_delta_pos_n > aware_sight_sin &&
+                if (eye_forward_dot_delta_pos_n > aware_sight_cos &&
                     delta_pos_dist2 < cpu_enemy_awareness.aware_sight_distance *
                                           cpu_enemy_awareness.aware_sight_distance)
                 {
@@ -251,7 +252,7 @@ void BT::system::cpu_character_enemy_detection()
                     glm_vec4_copy(vec4{ 0.990, 0.0198, 0.359 }, detection_zone_debug_line_color);
                 }
                 // Check in suspicion sight zone.
-                else if (eye_forward_dot_delta_pos_n > suspicion_sight_sin &&
+                else if (eye_forward_dot_delta_pos_n > suspicion_sight_cos &&
                          delta_pos_dist2 < cpu_enemy_awareness.suspicion_sight_distance *
                                                cpu_enemy_awareness.suspicion_sight_distance)
                 {
