@@ -1009,7 +1009,7 @@ while (running_game_loop)
                     - [ ] Enemy close in -> CPU attack.
                     - [ ] Enemy do nothing -> CPU 様子見, or CPU attack, or CPU guard.
 
-        - [ ] Revisit detection: Add line-of-sight detection with raycast.
+        - [ ] Revisit detection: Add line-of-sight detection with raycast. (`@FIXME` tags)
 
         - [ ] BUGFIX: Detection line when drawn has only the suspicion color.
 

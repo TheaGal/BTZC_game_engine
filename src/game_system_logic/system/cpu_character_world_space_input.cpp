@@ -1,29 +1,116 @@
 #include "cpu_character_world_space_input.h"
 
-#if 0
-#include "Jolt/Jolt.h"
-#include "Jolt/Math/MathTypes.h"
-#include "Jolt/Physics/PhysicsSystem.h"
-#include "Jolt/Math/Vec3.h"
-#include "btglm.h"
 #include "game_system_logic/component/animator_root_motion.h"
 #include "game_system_logic/component/character_movement.h"
-#include "game_system_logic/component/follow_camera.h"
+#include "game_system_logic/component/cpu_enemy_awareness.h"
 #include "game_system_logic/component/physics_object_settings.h"
-#include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
 #include "physics_engine/physics_engine.h"
-#include "physics_engine/physics_object.h"
-#include "physics_engine/raycast_helper.h"
-#include "renderer/model_animator.h"  // For `Model_joint_animation::k_frames_per_second`
 #include "service_finder/service_finder.h"
+#include "uuid/uuid.h"
 
-#include <cassert>
-#endif  // 0
+// #if 0
+// #include "Jolt/Jolt.h"
+// #include "Jolt/Math/MathTypes.h"
+// #include "Jolt/Physics/PhysicsSystem.h"
+// #include "Jolt/Math/Vec3.h"
+// #include "btglm.h"
+// #include "game_system_logic/component/animator_root_motion.h"
+// #include "game_system_logic/component/character_movement.h"
+// #include "game_system_logic/component/follow_camera.h"
+// #include "game_system_logic/component/physics_object_settings.h"
+// #include "game_system_logic/component/transform.h"
+// #include "game_system_logic/entity_container.h"
+// #include "physics_engine/physics_engine.h"
+// #include "physics_engine/physics_object.h"
+// #include "physics_engine/raycast_helper.h"
+// #include "renderer/model_animator.h"  // For `Model_joint_animation::k_frames_per_second`
+// #include "service_finder/service_finder.h"
+
+// #include <cassert>
+// #endif  // 0
 
 
 void BT::system::cpu_character_world_space_input()
 {
+    auto& entity_container{ service_finder::find_service<Entity_container>() };
+    auto& reg{ entity_container.get_ecs_registry() };
+    auto view{ reg.view<component::CPU_enemy_awareness const,
+                        component::Character_world_space_input const,
+                        component::Character_mvt_state,
+                        component::Character_mvt_animated_state,
+                        component::Created_physics_object_reference const>() };
+    auto& phys_engine{ service_finder::find_service<Physics_engine>() };
+
+    // Process all character movements.
+    for (auto&& [entity,
+                 cpu_enemy_awareness,
+                 char_ws_input,
+                 char_mvt_state,
+                 char_mvt_anim_state,
+                 cre_phys_obj_ref] : view.each())
+    {
+        auto anim_root_motion{ reg.try_get<component::Animator_root_motion const>(
+            entity_container.find_entity(char_mvt_anim_state.affecting_animator_uuid)) };
+        if (anim_root_motion == nullptr)
+        {
+            BT_ERRORF(
+                "`component::Animator_root_motion` not found at UUID=%s!! Skipping entity.",
+                UUID_helper::to_pretty_repr(char_mvt_anim_state.affecting_animator_uuid).c_str());
+            assert(false);
+            continue;
+        }
+
+        // Process input into character movement logic.
+        auto phys_obj_uuid{
+            view.get<component::Created_physics_object_reference const>(entity).physics_obj_uuid_ref
+        };
+        auto& phys_obj{ *phys_engine.checkout_physics_object(phys_obj_uuid) };
+
+        auto mvt_logic_result = character_controller_movement_logic(char_ws_input,
+                                                                    char_mvt_state,
+                                                                    char_mvt_anim_state,
+                                                                    anim_root_motion,
+                                                                    // follow_cam_state,
+                                                                    phys_obj);
+
+        // Apply movement logic outputs to physics object character controller inputs.
+        auto const& physics_gravity{
+            reinterpret_cast<JPH::PhysicsSystem*>(
+                service_finder::find_service<Physics_engine>().get_physics_system_ptr())
+                ->GetGravity()
+        };
+        apply_velocity_to_char_con(char_mvt_state.grounded_state,
+                                   phys_obj,
+                                   mvt_logic_result.is_grounded,
+                                   mvt_logic_result.up_rotation,
+                                   physics_gravity,
+                                   mvt_logic_result.new_velocity);
+
+        phys_engine.return_physics_object(&phys_obj);
+
+        // Try writing a new facing direction.
+        if (poss_display_repr_ref != nullptr)
+        {   // Calculate rotation.
+            versors rot;
+            glm_quat(rot.raw, mvt_logic_result.display_facing_angle, 0.0f, 1.0f, 0.0f);
+
+            // Write to display repr entity transform.
+            auto display_repr_ecs_ent{ entity_container.find_entity(
+                poss_display_repr_ref->display_repr_uuid) };
+            component::submit_transform_change_only_rotation_helper(reg, display_repr_ecs_ent, rot);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
 #if 0
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };

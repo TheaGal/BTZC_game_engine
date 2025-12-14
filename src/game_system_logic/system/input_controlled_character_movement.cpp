@@ -485,6 +485,7 @@ void BT::system::input_controlled_character_movement()
     auto view{ reg.view<component::Character_world_space_input const,
                         component::Character_mvt_state,
                         component::Created_physics_object_reference const>() };
+    auto& phys_engine{ service_finder::find_service<Physics_engine>() };
 
     // Process all character movements.
     for (auto entity : view)
@@ -496,7 +497,6 @@ void BT::system::input_controlled_character_movement()
         auto char_mvt_anim_state{ reg.try_get<component::Character_mvt_animated_state>(entity) };
 
         // Process input into character movement logic.
-        auto& phys_engine{ service_finder::find_service<Physics_engine>() };
         auto phys_obj_uuid{
             view.get<component::Created_physics_object_reference const>(entity).physics_obj_uuid_ref
         };
