@@ -1,8 +1,8 @@
 #include "player_character_world_space_input.h"
 
 #include "Jolt/Jolt.h"
-#include "Jolt/Physics/PhysicsSystem.h"
 #include "Jolt/Math/Vec3.h"
+#include "Jolt/Physics/PhysicsSystem.h"
 #include "animation_frame_action_tool/runtime_data.h"
 #include "btglm.h"
 #include "game_system_logic/component/character_movement.h"
@@ -10,6 +10,7 @@
 #include "game_system_logic/component/render_object_settings.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
+#include "game_system_logic/system/helper_funcs.h"
 #include "input_handler/input_handler.h"
 #include "physics_engine/physics_engine.h"
 #include "physics_engine/physics_object.h"
@@ -25,41 +26,6 @@ namespace
 {
 
 using namespace BT;
-
-/// Fetches certain AFA data from animator.
-void fetch_wanted_afa_data(Entity_container const& entity_container,
-                           entt::registry& reg,
-                           component::Character_mvt_animated_state const& char_mvt_anim_state,
-                           bool& out_can_move,
-                           bool& out_can_guard_exit,
-                           bool& out_can_attack_exit)
-{   // @NOTE: BRUH I HATE HOW DIFFICULT IT IS TO ACCESS THE ANIMATOR DATA IT'S SO
-    //        FREAKIN STUPID WHY DID I DESIGN THE SYSTEM LIKE THIS PLEEEEEAAAAASE CHANGE
-    //        IT AT SOME POINT WTF!!!!!!  -Thea 2025/11/24
-    auto rend_obj_ref{ reg.try_get<component::Created_render_object_reference>(
-        entity_container.find_entity(char_mvt_anim_state.affecting_animator_uuid)) };
-
-    if (!rend_obj_ref)
-        return;  // Exit since rend_obj_ref not found.
-
-    // Get animator AFA data.
-    auto& rend_obj_pool{ service_finder::find_service<Renderer>().get_render_object_pool() };
-    auto& rend_obj{
-        *rend_obj_pool.checkout_render_obj_by_key({ rend_obj_ref->render_obj_uuid_ref }).front()
-    };
-
-    if (auto animator{ rend_obj.get_model_animator() })
-    {
-        auto& afa_data{ animator->get_anim_frame_action_data_handle() };
-
-        // Fill in data.
-        out_can_move        = afa_data.get_bool_data_handle(anim_frame_action::CTRL_DATA_LABEL_can_move).get_val();
-        out_can_guard_exit  = afa_data.get_bool_data_handle(anim_frame_action::CTRL_DATA_LABEL_can_guard_exit).get_val();
-        out_can_attack_exit = afa_data.get_bool_data_handle(anim_frame_action::CTRL_DATA_LABEL_can_attack_exit).get_val();
-    }
-
-    rend_obj_pool.return_render_objs({ &rend_obj });
-}
 
 /// Takes `input_vec` user input and transforms it into a world space input vector where forward is
 /// the direction the camera is facing.
@@ -115,19 +81,18 @@ void BT::system::player_character_world_space_input()
         // Get AFA data.
         auto char_mvt_anim_state{ reg.try_get<component::Character_mvt_animated_state>(
             entity) };
-        component::Created_render_object_reference* rend_obj_ref{ nullptr };
 
         bool can_move{ false };
         bool can_guard_exit{ false };
         bool can_attack_exit{ false };
 
         if (char_mvt_anim_state)
-            fetch_wanted_afa_data(entity_container,
-                                  reg,
-                                  *char_mvt_anim_state,
-                                  can_move,
-                                  can_guard_exit,
-                                  can_attack_exit);
+            helper::fetch_wanted_afa_data(entity_container,
+                                          reg,
+                                          *char_mvt_anim_state,
+                                          can_move,
+                                          can_guard_exit,
+                                          can_attack_exit);
 
         // Get writing handle for world-space input.
         auto& char_ws_input{ view.get<component::Character_world_space_input>(entity) };

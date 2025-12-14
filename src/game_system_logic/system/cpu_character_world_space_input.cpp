@@ -1,38 +1,66 @@
 #include "cpu_character_world_space_input.h"
-
-#include "game_system_logic/component/animator_root_motion.h"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/cpu_enemy_awareness.h"
-#include "game_system_logic/component/physics_object_settings.h"
 #include "game_system_logic/entity_container.h"
-#include "physics_engine/physics_engine.h"
+#include "game_system_logic/system/helper_funcs.h"
 #include "service_finder/service_finder.h"
-#include "uuid/uuid.h"
-
-// #if 0
-// #include "Jolt/Jolt.h"
-// #include "Jolt/Math/MathTypes.h"
-// #include "Jolt/Physics/PhysicsSystem.h"
-// #include "Jolt/Math/Vec3.h"
-// #include "btglm.h"
-// #include "game_system_logic/component/animator_root_motion.h"
-// #include "game_system_logic/component/character_movement.h"
-// #include "game_system_logic/component/follow_camera.h"
-// #include "game_system_logic/component/physics_object_settings.h"
-// #include "game_system_logic/component/transform.h"
-// #include "game_system_logic/entity_container.h"
-// #include "physics_engine/physics_engine.h"
-// #include "physics_engine/physics_object.h"
-// #include "physics_engine/raycast_helper.h"
-// #include "renderer/model_animator.h"  // For `Model_joint_animation::k_frames_per_second`
-// #include "service_finder/service_finder.h"
-
-// #include <cassert>
-// #endif  // 0
 
 
 void BT::system::cpu_character_world_space_input()
 {
+    auto& entity_container{ service_finder::find_service<Entity_container>() };
+    auto& reg{ entity_container.get_ecs_registry() };
+    auto view{ reg.view<component::CPU_enemy_awareness const,
+                        component::Character_world_space_input,
+                        component::Character_mvt_animated_state>() };
+
+    for (auto&& [entity,
+                 cpu_enemy_awareness,
+                 char_ws_input,
+                 char_mvt_anim_state] : view.each())
+    {   // Get AFA data.
+        bool can_move{ false };
+        bool can_guard_exit{ false };
+        bool can_attack_exit{ false };
+        helper::fetch_wanted_afa_data(entity_container,
+                                      reg,
+                                      char_mvt_anim_state,
+                                      can_move,
+                                      can_guard_exit,
+                                      can_attack_exit);
+
+        // // Get input for player character, transformed into camera view direction.
+        // auto const& input_state{ service_finder::find_service<Input_handler>().get_input_state() };
+
+        vec2 move_input{ input_state.move.x.val, input_state.move.y.val };
+        if (!can_move)
+            glm_vec2_zero(move_input);
+
+        // Update input state.
+        char_ws_input.prev_jump_pressed   = char_ws_input.jump_pressed;
+        char_ws_input.jump_pressed        = input_state.jump.val;
+        char_ws_input.prev_crouch_pressed = char_ws_input.crouch_pressed;
+        char_ws_input.crouch_pressed      = input_state.crouch.val;
+
+        // On attack trigger.
+        bool attack_pressed{ input_state.attack.val };
+        if (camera.is_follow_orbit() &&
+            can_attack_exit &&
+            !char_mvt_anim_state->state.prev_attack_pressed &&
+            attack_pressed)
+            char_mvt_anim_state->write_to_animator_data.on_attack = true;
+        char_mvt_anim_state->state.prev_attack_pressed = attack_pressed;
+
+        char_mvt_anim_state->write_to_animator_data.is_guarding = (camera.is_follow_orbit() &&
+                                                                   can_guard_exit &&
+                                                                   input_state.guard.val);
+    }
+
+
+
+
+
+#if 0
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
     auto view{ reg.view<component::CPU_enemy_awareness const,
@@ -101,7 +129,7 @@ void BT::system::cpu_character_world_space_input()
             component::submit_transform_change_only_rotation_helper(reg, display_repr_ecs_ent, rot);
         }
     }
-
+#endif  // 0
 
 
 
