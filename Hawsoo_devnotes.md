@@ -985,7 +985,7 @@ while (running_game_loop)
                 - If too far, draw the extra distance as red, and the requisite distance as yellow.
                 - If close enough, draw the whole line as green (or whatever color wanted?)
             - [x] Fix detection zones. Now they detect the enemy in them.
-            - [ ] Utilize the `my_enemy_bitmask`.
+            - [x] Utilize the `my_enemy_bitmask`.
             - [ ] Write awareness value into `CPU_enemy_awareness` component.
 
 - [ ] Get strong attacks implemented (and have strong versions of knockbacks used)
