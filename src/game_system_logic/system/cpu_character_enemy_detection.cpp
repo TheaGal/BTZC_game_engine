@@ -169,246 +169,237 @@ void BT::system::cpu_character_enemy_detection()
                                             eyesight_forward);
         }
 
-        // Awareness state machine.
-        switch (cpu_enemy_awareness.runtime_state.enemy_awareness)
+        // Awareness detection.
+        auto const enemy_awa_copy{ cpu_enemy_awareness.runtime_state.enemy_awareness };
+
+        // Draw debug view.
+        vec3 eyesight_pos_f{ static_cast<float_t>(eyesight_pos[0]),  // @TODO: Conform to `write_render_transforms.cpp`
+                             static_cast<float_t>(eyesight_pos[1]),
+                             static_cast<float_t>(eyesight_pos[2]), };
+
+        // Draw debug aware sight zone.
+        draw_detection_cone(cpu_enemy_awareness.aware_sdz,
+                            eyesight_pos_f,
+                            eyesight_forward,
+                            vec4{ 0.550, 0.0275, 0.193 },
+                            vec4{ 0.790, 0.493, 0.0474 });
+
+        // Draw debug suspicion sight zone.
+        draw_detection_cone(cpu_enemy_awareness.suspicion_sdz,
+                            eyesight_pos_f,
+                            eyesight_forward,
+                            vec4{ 0.550, 0.541, 0.0275 },
+                            vec4{ 0.555, 0.790, 0.0474 });
+
+        // Draw debug suspicion sound zone.
+        get_main_debug_line_pool().emplace_debug_line_based_capsule(
+            eyesight_pos_f,
+            eyesight_pos_f,
+            cpu_enemy_awareness.suspicion_sound_distance,
+            vec4{ 0.297, 0.0275, 0.550 },
+            0.03f);
+
+        // Detection zone stats.
+        bool inside_aware_sdz_buildup_zone{ false };
+        bool inside_suspicion_sdz_buildup_zone{ false };
+        bool in_line_of_sight_and_in_det_zone{ false };  // @TODO: @FIXME: IMPLEMENT THIS!!!
+
+        // Check suspicion zone and awareness zone for entities.
+        auto suspicion_sight_cos{ std::cosf(cpu_enemy_awareness.suspicion_sdz.fov * 0.5f) };
+        auto aware_sight_cos{ std::cosf(cpu_enemy_awareness.aware_sdz.fov * 0.5f) };
+        for (auto&& [det_entity, det_trans, det_char] : view_det_chars.each())
         {
-        case component::CPU_enemy_awareness::State::UNAWARE:
-        case component::CPU_enemy_awareness::State::SUSPICIOUS:
-        {
-            auto const enemy_awa_copy{ cpu_enemy_awareness.runtime_state.enemy_awareness };
+            if (det_entity == entity)
+                continue;  // Skip when comparing self to self.
 
-            // Draw debug view.
-            vec3 eyesight_pos_f{ static_cast<float_t>(eyesight_pos[0]),  // @TODO: Conform to `write_render_transforms.cpp`
-                                 static_cast<float_t>(eyesight_pos[1]),
-                                 static_cast<float_t>(eyesight_pos[2]), };
+            if ((det_char.type & cpu_enemy_awareness.my_enemy_bitmask) == 0)
+                continue;  // Skip when not the type of detectable character that is an enemy.
 
-            // Draw debug aware sight zone.
-            draw_detection_cone(cpu_enemy_awareness.aware_sdz,
-                                eyesight_pos_f,
-                                eyesight_forward,
-                                vec4{ 0.550, 0.0275, 0.193 },
-                                vec4{ 0.790, 0.493, 0.0474 });
-
-            // Draw debug suspicion sight zone.
-            draw_detection_cone(cpu_enemy_awareness.suspicion_sdz,
-                                eyesight_pos_f,
-                                eyesight_forward,
-                                vec4{ 0.550, 0.541, 0.0275 },
-                                vec4{ 0.555, 0.790, 0.0474 });
-
-            // Draw debug suspicion sound zone.
-            get_main_debug_line_pool().emplace_debug_line_based_capsule(
-                eyesight_pos_f,
-                eyesight_pos_f,
-                cpu_enemy_awareness.suspicion_sound_distance,
-                vec4{ 0.297, 0.0275, 0.550 },
-                0.03f);
-
-            // Check suspicion zone and awareness zone for entities.
-            auto suspicion_sight_cos{ std::cosf(cpu_enemy_awareness.suspicion_sdz.fov * 0.5f) };
-            auto aware_sight_cos{ std::cosf(cpu_enemy_awareness.aware_sdz.fov * 0.5f) };
-            for (auto&& [det_entity, det_trans, det_char] : view_det_chars.each())
+            vec3 delta_pos;
+            float_t eye_forward_dot_delta_pos_n;
+            float_t delta_pos_dist2;
             {
-                if (det_entity == entity)
-                    continue;  // Skip when comparing self to self.
+                rvec3 delta_pos_r;
+                btglm_rvec3_sub(det_trans.position.raw, eyesight_pos, delta_pos_r);
 
-                if ((det_char.type & cpu_enemy_awareness.my_enemy_bitmask) == 0)
-                    continue;  // Skip when not the type of detectable character that is an enemy.
+                // @TODO: Conform to `write_render_transforms.cpp`
+                // Now add transform offset too.
+                delta_pos[0] = delta_pos_r[0] + det_char.transform_offset.x;
+                delta_pos[1] = delta_pos_r[1] + det_char.transform_offset.y;
+                delta_pos[2] = delta_pos_r[2] + det_char.transform_offset.z;
 
-                vec3 delta_pos;
-                float_t eye_forward_dot_delta_pos_n;
-                float_t delta_pos_dist2;
+                vec3 dpn;
+                glm_vec3_normalize_to(delta_pos, dpn);
+                eye_forward_dot_delta_pos_n = glm_vec3_dot(eyesight_forward, dpn);
+                delta_pos_dist2 = glm_vec3_norm2(delta_pos);
+
+                constexpr bool k_draw_line_of_sight_line{ false };
+                if constexpr(k_draw_line_of_sight_line)
                 {
-                    rvec3 delta_pos_r;
-                    btglm_rvec3_sub(det_trans.position.raw, eyesight_pos, delta_pos_r);
-
-                    // @TODO: Conform to `write_render_transforms.cpp`
-                    // Now add transform offset too.
-                    delta_pos[0] = delta_pos_r[0] + det_char.transform_offset.x;
-                    delta_pos[1] = delta_pos_r[1] + det_char.transform_offset.y;
-                    delta_pos[2] = delta_pos_r[2] + det_char.transform_offset.z;
-
-                    vec3 dpn;
-                    glm_vec3_normalize_to(delta_pos, dpn);
-                    eye_forward_dot_delta_pos_n = glm_vec3_dot(eyesight_forward, dpn);
-                    delta_pos_dist2 = glm_vec3_norm2(delta_pos);
-
-                    constexpr bool k_draw_line_of_sight_line{ false };
-                    if constexpr(k_draw_line_of_sight_line)
-                    {
-                        Debug_line dbg_line{
-                            { eyesight_pos_f[0], eyesight_pos_f[1], eyesight_pos_f[2] },
-                            { eyesight_pos_f[0] + delta_pos[0],
-                              eyesight_pos_f[1] + delta_pos[1],
-                              eyesight_pos_f[2] + delta_pos[2] },
-                            { 1, 1, 1 },
-                            { 1, 1, 1 }
-                        };
-                        get_main_debug_line_pool().emplace_debug_line(std::move(dbg_line), 0.03f);
-                    }
-                }
-
-                // @DEBUG: Draw debug line when within detection zone.
-                bool draw_detection_zone_debug_line{ false };
-                vec4 detection_zone_debug_line_color;
-
-                // Detection zone stats.
-                bool inside_aware_sdz_buildup_zone{ false };
-                bool inside_suspicion_sdz_buildup_zone{ false };
-
-                // Check in awareness zone.  @COPYPASTA
-                if (eye_forward_dot_delta_pos_n > aware_sight_cos)
-                {
-                    auto& sdz{ cpu_enemy_awareness.aware_sdz };
-                    assert(sdz.distance_immediate <= sdz.distance_buildup);
-
-                    if (delta_pos_dist2 < sdz.distance_buildup2())
-                    {   // Inside detection zone.
-                        bool is_immediate_det_zone{
-                            delta_pos_dist2 < sdz.distance_immediate2()
-                        };
-
-                        // @DEBUG: Draw detection line.
-                        draw_detection_zone_debug_line = true;
-                        glm_vec4_copy(is_immediate_det_zone ? vec4{ 0.990, 0.0198, 0.359 }
-                                                            : vec4{ 1.00, 0.608, 0.0200 },
-                                      detection_zone_debug_line_color);
-
-                        // Add detection zone buildup.
-                        sdz.current_buildup =
-                            (is_immediate_det_zone
-                                 ? sdz.buildup_threshold + 0.1f
-                                 : sdz.current_buildup + Physics_engine::k_simulation_delta_time);
-                        inside_aware_sdz_buildup_zone = true;
-                    }
-                }
-
-                // Check in suspicion sight zone.  @COPYPASTA
-                if (eye_forward_dot_delta_pos_n > suspicion_sight_cos)
-                {
-                    auto& sdz{ cpu_enemy_awareness.suspicion_sdz };
-                    assert(sdz.distance_immediate <= sdz.distance_buildup);
-
-                    if (delta_pos_dist2 < sdz.distance_buildup2())
-                    {   // Inside detection zone.
-                        bool is_immediate_det_zone{
-                            delta_pos_dist2 < sdz.distance_immediate2()
-                        };
-
-                        // @DEBUG: Draw detection line.
-                        draw_detection_zone_debug_line = true;
-                        glm_vec4_copy(is_immediate_det_zone ? vec4{ 0.958, 0.990, 0.0198 }
-                                                            : vec4{ 0.771, 1.00, 0.0200 },
-                                      detection_zone_debug_line_color);
-
-                        // Add detection zone buildup.
-                        sdz.current_buildup =
-                            (is_immediate_det_zone
-                                 ? sdz.buildup_threshold + 0.1f
-                                 : sdz.current_buildup + Physics_engine::k_simulation_delta_time);
-                        inside_suspicion_sdz_buildup_zone = true;
-                    }
-                }
-
-                // Calm down awareness level when leaving detection zones.
-                bool in_line_of_sight{ true };  // @TODO: @FIXME: IMPLEMENT THIS!!!
-                if (!inside_suspicion_sdz_buildup_zone || !in_line_of_sight)
-                {
-                    auto& sdz{ cpu_enemy_awareness.suspicion_sdz };
-                    sdz.current_buildup =
-                        glm_max(0,
-                                sdz.current_buildup - Physics_engine::k_simulation_delta_time);
-
-                    if (!inside_aware_sdz_buildup_zone || !in_line_of_sight)
-                    {
-                        auto& sdz{ cpu_enemy_awareness.aware_sdz };
-                        sdz.current_buildup =
-                            glm_max(0,
-                                    sdz.current_buildup - Physics_engine::k_simulation_delta_time);
-
-                        // Increase out-of-detection timer to step down awareness states.
-                        cpu_enemy_awareness.runtime_state.out_of_detection_timer +=
-                            Physics_engine::k_simulation_delta_time;
-                    }
-                }
-
-                // Reset out-of-detection timer if within zone(s) and line-of-sight is found
-                if ((inside_suspicion_sdz_buildup_zone || inside_aware_sdz_buildup_zone) &&
-                    in_line_of_sight)
-                {
-                    cpu_enemy_awareness.runtime_state.out_of_detection_timer = 0;
-                }
-
-                // @DEBUG: Detection line drawing.
-                if (draw_detection_zone_debug_line)
-                {
-                    // @TODO: Conform to `write_render_transforms.cpp`
                     Debug_line dbg_line{
-                        { eyesight_pos_f[0],
-                          eyesight_pos_f[1],
-                          eyesight_pos_f[2] },
-                        { static_cast<float_t>(det_trans.position.x) + det_char.transform_offset.x,
-                          static_cast<float_t>(det_trans.position.y) + det_char.transform_offset.y,
-                          static_cast<float_t>(det_trans.position.z) + det_char.transform_offset.z }
+                        { eyesight_pos_f[0], eyesight_pos_f[1], eyesight_pos_f[2] },
+                        { eyesight_pos_f[0] + delta_pos[0],
+                          eyesight_pos_f[1] + delta_pos[1],
+                          eyesight_pos_f[2] + delta_pos[2] },
+                        { 1, 1, 1 },
+                        { 1, 1, 1 }
                     };
-                    glm_vec4_copy(detection_zone_debug_line_color, dbg_line.color1);
-                    glm_vec4_copy(detection_zone_debug_line_color, dbg_line.color2);
-
                     get_main_debug_line_pool().emplace_debug_line(std::move(dbg_line), 0.03f);
-                }
-
-                // Suspicion buildup can only happen while in UNAWARE state.
-                bool is_unaware_state{ cpu_enemy_awareness.runtime_state.enemy_awareness ==
-                                       component::CPU_enemy_awareness::State::UNAWARE };
-
-                // Gain awareness thru awareness buildup.
-                if (auto& sdz{ cpu_enemy_awareness.aware_sdz };
-                    sdz.current_buildup >= sdz.buildup_threshold)
-                {
-                    cpu_enemy_awareness.runtime_state.enemy_awareness =
-                        component::CPU_enemy_awareness::State::AWARE;
-                }
-
-                if (auto& sdz{ cpu_enemy_awareness.suspicion_sdz };
-                    is_unaware_state && sdz.current_buildup >= sdz.buildup_threshold)
-                {
-                    cpu_enemy_awareness.runtime_state.enemy_awareness =
-                        component::CPU_enemy_awareness::State::SUSPICIOUS;
-                }
-
-                // Lose awareness thru out-of-detection time.
-                if (cpu_enemy_awareness.runtime_state.enemy_awareness ==
-                    component::CPU_enemy_awareness::State::SUSPICIOUS)
-                {
-                    if (cpu_enemy_awareness.runtime_state.out_of_detection_timer >=
-                        cpu_enemy_awareness.lose_suspicion_time)
-                    {
-                        cpu_enemy_awareness.runtime_state.enemy_awareness =
-                            component::CPU_enemy_awareness::State::UNAWARE;
-                    }
-                }
-                else if (cpu_enemy_awareness.runtime_state.enemy_awareness ==
-                         component::CPU_enemy_awareness::State::AWARE)
-                {
-                    if (cpu_enemy_awareness.runtime_state.out_of_detection_timer >=
-                        cpu_enemy_awareness.lose_aware_time)
-                    {
-                        cpu_enemy_awareness.runtime_state.enemy_awareness =
-                            component::CPU_enemy_awareness::State::SUSPICIOUS;
-                    }
-                }
-
-                // Break out of searching entities and clear state if state has changed.
-                if (enemy_awa_copy != cpu_enemy_awareness.runtime_state.enemy_awareness)
-                {
-                    cpu_enemy_awareness.aware_sdz.current_buildup = 0;
-                    cpu_enemy_awareness.suspicion_sdz.current_buildup = 0;
-                    cpu_enemy_awareness.runtime_state.out_of_detection_timer = 0;
-                    break;
                 }
             }
 
-            // Check in suspicion sound zone.
+            // @DEBUG: Draw debug line when within detection zone.
+            bool draw_detection_zone_debug_line{ false };
+            vec4 detection_zone_debug_line_color;
+
+            // Check in awareness zone.  @COPYPASTA
+            if (eye_forward_dot_delta_pos_n > aware_sight_cos)
+            {
+                auto& sdz{ cpu_enemy_awareness.aware_sdz };
+                assert(sdz.distance_immediate <= sdz.distance_buildup);
+
+                if (delta_pos_dist2 < sdz.distance_buildup2())
+                {   // Inside detection zone.
+                    bool is_immediate_det_zone{
+                        delta_pos_dist2 < sdz.distance_immediate2()
+                    };
+
+                    // @DEBUG: Draw detection line.
+                    draw_detection_zone_debug_line = true;
+                    glm_vec4_copy(is_immediate_det_zone ? vec4{ 0.990, 0.0198, 0.359 }
+                                                        : vec4{ 1.00, 0.608, 0.0200 },
+                                  detection_zone_debug_line_color);
+
+                    // Add detection zone buildup.
+                    sdz.current_buildup =
+                        (is_immediate_det_zone
+                             ? sdz.buildup_threshold + 0.1f
+                             : sdz.current_buildup + Physics_engine::k_simulation_delta_time);
+                    inside_aware_sdz_buildup_zone = true;
+                }
+            }
+
+            // Check in suspicion sight zone.  @COPYPASTA
+            if (eye_forward_dot_delta_pos_n > suspicion_sight_cos)
+            {
+                auto& sdz{ cpu_enemy_awareness.suspicion_sdz };
+                assert(sdz.distance_immediate <= sdz.distance_buildup);
+
+                if (delta_pos_dist2 < sdz.distance_buildup2())
+                {   // Inside detection zone.
+                    bool is_immediate_det_zone{
+                        delta_pos_dist2 < sdz.distance_immediate2()
+                    };
+
+                    // @DEBUG: Draw detection line.
+                    draw_detection_zone_debug_line = true;
+                    glm_vec4_copy(is_immediate_det_zone ? vec4{ 0.958, 0.990, 0.0198 }
+                                                        : vec4{ 0.771, 1.00, 0.0200 },
+                                  detection_zone_debug_line_color);
+
+                    // Add detection zone buildup.
+                    sdz.current_buildup =
+                        (is_immediate_det_zone
+                             ? sdz.buildup_threshold + 0.1f
+                             : sdz.current_buildup + Physics_engine::k_simulation_delta_time);
+                    inside_suspicion_sdz_buildup_zone = true;
+                }
+            }
+
+            // @TODO: @FIXME: IMPLEMENT THIS!!! Check for line of sight.
+            in_line_of_sight_and_in_det_zone = true;
+
+            // @DEBUG: Detection line drawing.
+            if (draw_detection_zone_debug_line)
+            {
+                // @TODO: Conform to `write_render_transforms.cpp`
+                Debug_line dbg_line{
+                    { eyesight_pos_f[0],
+                      eyesight_pos_f[1],
+                      eyesight_pos_f[2] },
+                    { static_cast<float_t>(det_trans.position.x) + det_char.transform_offset.x,
+                      static_cast<float_t>(det_trans.position.y) + det_char.transform_offset.y,
+                      static_cast<float_t>(det_trans.position.z) + det_char.transform_offset.z }
+                };
+                glm_vec4_copy(detection_zone_debug_line_color, dbg_line.color1);
+                glm_vec4_copy(detection_zone_debug_line_color, dbg_line.color2);
+
+                get_main_debug_line_pool().emplace_debug_line(std::move(dbg_line), 0.03f);
+            }
+        }
+
+        // Calm down suspicion/awareness buildup when outside detection zones or out of sight.
+        if (!inside_suspicion_sdz_buildup_zone || !in_line_of_sight_and_in_det_zone)
+        {
+            auto& sdz{ cpu_enemy_awareness.suspicion_sdz };
+            sdz.current_buildup =
+                glm_max(0, sdz.current_buildup - Physics_engine::k_simulation_delta_time);
+        }
+
+        if (!inside_aware_sdz_buildup_zone || !in_line_of_sight_and_in_det_zone)
+        {
+            auto& sdz{ cpu_enemy_awareness.aware_sdz };
+            sdz.current_buildup =
+                glm_max(0, sdz.current_buildup - Physics_engine::k_simulation_delta_time);
+        }
+
+        // Update out-of-detection timer.
+        if ((inside_suspicion_sdz_buildup_zone || inside_aware_sdz_buildup_zone) &&
+            in_line_of_sight_and_in_det_zone)
+        {   // Reset out-of-detection timer if within zone(s) and line-of-sight is found.
+            cpu_enemy_awareness.runtime_state.out_of_detection_timer = 0;
+        }
+        else
+        {   // Increase out-of-detection timer to step down awareness states.
+            cpu_enemy_awareness.runtime_state.out_of_detection_timer +=
+                Physics_engine::k_simulation_delta_time;
+        }
+
+        // Suspicion buildup can only happen while in UNAWARE state.
+        bool is_unaware_state{ cpu_enemy_awareness.runtime_state.enemy_awareness ==
+                               component::CPU_enemy_awareness::State::UNAWARE };
+
+        // Gain awareness thru awareness buildup.
+        if (auto& sdz{ cpu_enemy_awareness.aware_sdz };
+            sdz.current_buildup >= sdz.buildup_threshold)
+        {
+            cpu_enemy_awareness.runtime_state.enemy_awareness =
+                component::CPU_enemy_awareness::State::AWARE;
+        }
+
+        if (auto& sdz{ cpu_enemy_awareness.suspicion_sdz };
+            is_unaware_state && sdz.current_buildup >= sdz.buildup_threshold)
+        {
+            cpu_enemy_awareness.runtime_state.enemy_awareness =
+                component::CPU_enemy_awareness::State::SUSPICIOUS;
+        }
+
+        // Lose awareness thru out-of-detection time.
+        if (cpu_enemy_awareness.runtime_state.enemy_awareness ==
+            component::CPU_enemy_awareness::State::SUSPICIOUS)
+        {
+            if (cpu_enemy_awareness.runtime_state.out_of_detection_timer >=
+                cpu_enemy_awareness.lose_suspicion_time)
+            {
+                cpu_enemy_awareness.runtime_state.enemy_awareness =
+                    component::CPU_enemy_awareness::State::UNAWARE;
+            }
+        }
+        else if (cpu_enemy_awareness.runtime_state.enemy_awareness ==
+                 component::CPU_enemy_awareness::State::AWARE)
+        {
+            if (cpu_enemy_awareness.runtime_state.out_of_detection_timer >=
+                cpu_enemy_awareness.lose_aware_time)
+            {
+                cpu_enemy_awareness.runtime_state.enemy_awareness =
+                    component::CPU_enemy_awareness::State::SUSPICIOUS;
+            }
+        }
+
+        // Check in suspicion sound zone.
+        if (cpu_enemy_awareness.runtime_state.enemy_awareness ==
+            component::CPU_enemy_awareness::State::UNAWARE)
+        {
             // @TODO: This needs to look up a `Sound_maker` component or something in order to have
             //        a position it can look at so search for.
             // @AMEND: Also, just use `eyesight_pos` as where the ears are!
@@ -421,27 +412,14 @@ void BT::system::cpu_character_enemy_detection()
                 cpu_enemy_awareness.runtime_state.enemy_awareness =
                     component::CPU_enemy_awareness::State::SUSPICIOUS;
             }
-            break;
         }
 
-        case component::CPU_enemy_awareness::State::AWARE:
-        {   // Draw debug view.
-            assert(false);;  // @TODO IMPLEMENT!
-
-            // Check for line-of-sight with CPU's enemy.
-            // @HERE
-
-            // If line-of-sight is lost for long enough, go to SUSPICIOUS state.
-            if (/*last_line_of_sight_update >= some_time*/false)  // @HERE
-            {
-                BT_TRACE("Entered SUSPICIOUS state.");
-                cpu_enemy_awareness.runtime_state.enemy_awareness =
-                    component::CPU_enemy_awareness::State::SUSPICIOUS;
-            }
-            break;
-        }
-
-        default: assert(false); break;
+        // Clear CPU detection state if awareness state has changed.
+        if (enemy_awa_copy != cpu_enemy_awareness.runtime_state.enemy_awareness)
+        {
+            cpu_enemy_awareness.aware_sdz.current_buildup = 0;
+            cpu_enemy_awareness.suspicion_sdz.current_buildup = 0;
+            cpu_enemy_awareness.runtime_state.out_of_detection_timer = 0;
         }
 
         // @DEBUG: Print stats.
