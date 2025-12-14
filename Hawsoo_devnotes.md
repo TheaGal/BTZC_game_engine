@@ -990,7 +990,7 @@ while (running_game_loop)
             - [x] Utilize the `my_enemy_bitmask`.
             - [x] Write awareness value into `CPU_enemy_awareness` component.
 
-        - [ ] Movement behavior that reads from the detection runtime data.
+        - [ ] Movement behavior that reads from the detection runtime data (different system than `cpu_character_enemy_detection.cpp`).
             - [ ] UNAWARE.
                 - Preprogrammed thingy. Just stand there for this POC.
             - [ ] SUSPICIOUS.
