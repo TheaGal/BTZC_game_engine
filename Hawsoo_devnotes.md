@@ -971,13 +971,15 @@ while (running_game_loop)
         - [x] Query the position/location of the head from the char model for eyesight.
             - This way looking around can be accomplished by an actual looking around animation and doesn't have to be programmed.
             - Perhaps could be similar to the hitcapsule-to-bone system?
-        - [ ] Checkbox of "player character is an enemy".
+        - [ ] ~~Checkbox of "player character is an enemy".~~
             - There needs to be a midpoint for the player character that the origin is, since the player origin is at the feet at the moment oof.
+            - Crossed out. Using a mask now.
         - [ ] Current state text.
         - [ ] Param of viewable fov and radius for line-of-sight awareness.
         - [ ] Param of hearable radius for hearing points of suspicion.
         - [ ] Param of viewable fov and radius for seeing points of suspicion.
-        - [ ] Draw lines showing eyesight and CPU suspicion/awareness detection zone.
+
+        - [x] Draw lines showing eyesight and CPU suspicion/awareness detection zone.
             - You can create new color codes and stuff for this too.
             - [x] Double check that using the "Eyes" bone for tracking eyesight is working correctly.
             - [x] Detection zones.
@@ -986,7 +988,30 @@ while (running_game_loop)
                 - If close enough, draw the whole line as green (or whatever color wanted?)
             - [x] Fix detection zones. Now they detect the enemy in them.
             - [x] Utilize the `my_enemy_bitmask`.
-            - [ ] Write awareness value into `CPU_enemy_awareness` component.
+            - [x] Write awareness value into `CPU_enemy_awareness` component.
+
+        - [ ] Movement behavior that reads from the detection runtime data.
+            - [ ] UNAWARE.
+                - Preprogrammed thingy. Just stand there for this POC.
+            - [ ] SUSPICIOUS.
+                - Preprogrammed thingy. Have a speed for going to the suspicious point of interest, and play an animation.
+                - [ ] Special approaching animation.
+                    - Have anim looking left and right while traveling to the point of interest.
+            - [ ] AWARE.
+                - [ ] Make one of each attack type animation.
+                    - [ ] Attack.
+                    - [ ] Counter attack (more aggressive attack).
+                    - [ ] Pinch attack.
+                - [ ] Detect these events from CPU's enemy.
+                    - [ ] Enemy attack -> CPU deflect, then counter attack.
+                    - [ ] Enemy heal/consumable -> CPU pinch attack.
+                    - [ ] Enemy run away -> CPU reapproach attack (can just be pinch attack, or a grab attack, or many ones to pick from).
+                    - [ ] Enemy close in -> CPU attack.
+                    - [ ] Enemy do nothing -> CPU 様子見, or CPU attack, or CPU guard.
+
+        - [ ] Revisit detection: Add line-of-sight detection with raycast.
+
+        - [ ] BUGFIX: Detection line when drawn has only the suspicion color.
 
 - [ ] Get strong attacks implemented (and have strong versions of knockbacks used)
     - Perhaps by having some kind of AFA data point being like "is_strong_attack" that could indicate a strong attack being done?
