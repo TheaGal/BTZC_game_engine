@@ -96,12 +96,11 @@ struct CPU_enemy_awareness
             UNAWARE,
             SUSPICIOUS,
             AWARE,
-
             NUM_AWARENESS_STATES
         } enemy_awareness{ UNAWARE };
         float_t out_of_detection_timer{ 0 };
-
-        UUID focused_enemy;
+        rvec3 position_of_interest;  // Last detected position of suspicion or aware-enemy.
+        UUID aware_enemy;
 
         uint32_t eyes_bone_idx{ (uint32_t)-1 };
     } runtime_state;

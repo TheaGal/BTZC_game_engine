@@ -1,6 +1,9 @@
 #include "cpu_character_world_space_input.h"
+
+#include "btglm.h"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/cpu_enemy_awareness.h"
+#include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
 #include "game_system_logic/system/helper_funcs.h"
 #include "service_finder/service_finder.h"
@@ -10,11 +13,13 @@ void BT::system::cpu_character_world_space_input()
 {
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
-    auto view{ reg.view<component::CPU_enemy_awareness const,
+    auto view{ reg.view<component::Transform const,
+                        component::CPU_enemy_awareness const,
                         component::Character_world_space_input,
                         component::Character_mvt_animated_state>() };
 
     for (auto&& [entity,
+                 transform,
                  cpu_enemy_awareness,
                  char_ws_input,
                  char_mvt_anim_state] : view.each())
@@ -29,31 +34,75 @@ void BT::system::cpu_character_world_space_input()
                                       can_guard_exit,
                                       can_attack_exit);
 
-        // // Get input for player character, transformed into camera view direction.
-        // auto const& input_state{ service_finder::find_service<Input_handler>().get_input_state() };
+        // World-space movement input.
+        switch (cpu_enemy_awareness.runtime_state.enemy_awareness)
+        {
+        case component::CPU_enemy_awareness::State::UNAWARE:
+            // Stand still.
+            glm_vec3_zero(char_ws_input.ws_flat_clamped_input.raw);
+            break;
 
-        vec2 move_input{ input_state.move.x.val, input_state.move.y.val };
-        if (!can_move)
-            glm_vec2_zero(move_input);
+        case component::CPU_enemy_awareness::State::SUSPICIOUS:
+        {
+            rvec3 desired_direction{ 0, 0, 0 };
+            if (can_move)
+                btglm_rvec3_sub(cpu_enemy_awareness.runtime_state.position_of_interest,
+                                transform.position.raw,
+                                desired_direction);
 
-        // Update input state.
-        char_ws_input.prev_jump_pressed   = char_ws_input.jump_pressed;
-        char_ws_input.jump_pressed        = input_state.jump.val;
-        char_ws_input.prev_crouch_pressed = char_ws_input.crouch_pressed;
-        char_ws_input.crouch_pressed      = input_state.crouch.val;
+            // @TODO: Conform to `write_render_transforms.cpp`
+            char_ws_input.ws_flat_clamped_input.raw[0] = desired_direction[0];
+            char_ws_input.ws_flat_clamped_input.raw[1] = desired_direction[1];
+            char_ws_input.ws_flat_clamped_input.raw[2] = desired_direction[2];
+            break;
+        }
 
-        // On attack trigger.
-        bool attack_pressed{ input_state.attack.val };
-        if (camera.is_follow_orbit() &&
-            can_attack_exit &&
-            !char_mvt_anim_state->state.prev_attack_pressed &&
-            attack_pressed)
-            char_mvt_anim_state->write_to_animator_data.on_attack = true;
-        char_mvt_anim_state->state.prev_attack_pressed = attack_pressed;
+        case component::CPU_enemy_awareness::State::AWARE:
+            if constexpr(true)
+            {
+                // Stand still.
+                glm_vec3_zero(char_ws_input.ws_flat_clamped_input.raw);
+            }
+            else
+            {
+                // @TODO: IMPLEMEMT!
+                assert(false);
+            }
+            break;
 
-        char_mvt_anim_state->write_to_animator_data.is_guarding = (camera.is_follow_orbit() &&
-                                                                   can_guard_exit &&
-                                                                   input_state.guard.val);
+        default: assert(false); break;
+        }
+
+
+
+
+
+
+        // // // Get input for player character, transformed into camera view direction.
+        // // auto const& input_state{ service_finder::find_service<Input_handler>().get_input_state() };
+
+        // vec2 move_input{ input_state.move.x.val, input_state.move.y.val };
+        // if (!can_move)
+        //     glm_vec2_zero(move_input);
+
+        // // Update input state.
+        // char_ws_input.prev_jump_pressed   = char_ws_input.jump_pressed;
+        // char_ws_input.jump_pressed        = input_state.jump.val;
+        // char_ws_input.prev_crouch_pressed = char_ws_input.crouch_pressed;
+        // char_ws_input.crouch_pressed      = input_state.crouch.val;
+
+        // // On attack trigger.
+        // bool attack_pressed{ input_state.attack.val };
+        // if (camera.is_follow_orbit() &&
+        //     can_attack_exit &&
+        //     !char_mvt_anim_state->state.prev_attack_pressed &&
+        //     attack_pressed)
+        //     char_mvt_anim_state->write_to_animator_data.on_attack = true;
+        // char_mvt_anim_state->state.prev_attack_pressed = attack_pressed;
+
+        // char_mvt_anim_state->write_to_animator_data.is_guarding = (camera.is_follow_orbit() &&
+        //                                                            can_guard_exit &&
+        //                                                            input_state.guard.val);
     }
 
 

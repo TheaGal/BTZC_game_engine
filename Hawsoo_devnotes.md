@@ -991,12 +991,20 @@ while (running_game_loop)
             - [x] Write awareness value into `CPU_enemy_awareness` component.
 
         - [ ] Movement behavior that reads from the detection runtime data (different system than `cpu_character_enemy_detection.cpp`).
-            - [ ] UNAWARE.
+            - [x] UNAWARE.
                 - Preprogrammed thingy. Just stand there for this POC.
             - [ ] SUSPICIOUS.
                 - Preprogrammed thingy. Have a speed for going to the suspicious point of interest, and play an animation.
-                - [ ] Special approaching animation.
+                - [ ] Special approaching/walking animation.
                     - Have anim looking left and right while traveling to the point of interest.
+                    - [x] Initial just the normal running anim.
+                    - [ ] Create walk animation in blender.
+                    - [ ] Make a state transition that will be something like `on_running and is_suspicious eq true` w/ the regular running anim being `is_suspicious eq false`.
+                        - [ ] Logical AND in state transition logic.
+                - [ ] "realize suspicion" animation, where there's a 0.5s window where the CPU goes from relaxed/unaware to alert, weapon-readied, and then starts turning around to look.
+                - [ ] When arriving and there's no enemy, look around and make sure that the enemy isn't out of view (but since there's no leads for another place the enemy could be at, then don't look in another place).
+                    - Probably there needs to be a way for the CPU to realize another place to look is what to do.
+                        - FOR NOW: Do not implement this. No new leads when in SUSPICIOUS state.
             - [ ] AWARE.
                 - [ ] Make one of each attack type animation.
                     - [ ] Attack.
@@ -1011,13 +1019,18 @@ while (running_game_loop)
 
         - [ ] Revisit detection: Add line-of-sight detection with raycast. (`@FIXME` tags)
 
-        - [ ] BUGFIX: Detection line when drawn has only the suspicion color.
+        - [x] BUGFIX: Detection line when drawn has only the suspicion color.
+            - I think that's simply bc even after awareness is checked, suspicion zone is still checked, thus overriding the color from before.
+            - FIX: Changes the line drawing so that only the color and whether the line should get drawn only gets mutated once.
 
 - [ ] Get strong attacks implemented (and have strong versions of knockbacks used)
     - Perhaps by having some kind of AFA data point being like "is_strong_attack" that could indicate a strong attack being done?
 
 
 ### Refactor and tech debt stuff.
+
+- [ ] Move all instances of converting `rvec3` to `vec3` into a helper lib (that will eventually change to doing it the "correct" way).
+    - (see "// @TODO: Conform to `write_render_transforms.cpp`")
 
 - [ ] Remove @NOCHECKIN and @TEMP tags from commit `570de0f27f0606db66525fb5984e20f391625053` (Faces forward even when moving and integrates strafing in.) (December 8, 2025 at 12:56 AM)
     - It looks like this is going to be quite a lot of refactoring and in general just a lot of work that I'm not ready for.

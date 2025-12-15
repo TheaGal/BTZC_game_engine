@@ -202,7 +202,7 @@ void BT::system::cpu_character_enemy_detection()
         // Detection zone stats.
         bool inside_aware_sdz_buildup_zone{ false };
         bool inside_suspicion_sdz_buildup_zone{ false };
-        bool in_line_of_sight_and_in_det_zone{ false };  // @TODO: @FIXME: IMPLEMENT THIS!!!
+        rvec3 candidate_position_of_interest;
 
         // Check suspicion zone and awareness zone for entities.
         auto suspicion_sight_cos{ std::cosf(cpu_enemy_awareness.suspicion_sdz.fov * 0.5f) };
@@ -248,12 +248,17 @@ void BT::system::cpu_character_enemy_detection()
                 }
             }
 
+            // @TODO: @FIXME: IMPLEMENT THIS!!! Check for line of sight.
+            bool in_line_of_sight_and_in_det_zone{ false };
+            in_line_of_sight_and_in_det_zone = true;  // @TODO: @FIXME: This is just a stopgap.
+
             // @DEBUG: Draw debug line when within detection zone.
             bool draw_detection_zone_debug_line{ false };
             vec4 detection_zone_debug_line_color;
 
             // Check in awareness zone.  @COPYPASTA
-            if (eye_forward_dot_delta_pos_n > aware_sight_cos)
+            if (in_line_of_sight_and_in_det_zone &&
+                eye_forward_dot_delta_pos_n > aware_sight_cos)
             {
                 auto& sdz{ cpu_enemy_awareness.aware_sdz };
                 assert(sdz.distance_immediate <= sdz.distance_buildup);
@@ -264,11 +269,13 @@ void BT::system::cpu_character_enemy_detection()
                         delta_pos_dist2 < sdz.distance_immediate2()
                     };
 
-                    // @DEBUG: Draw detection line.
-                    draw_detection_zone_debug_line = true;
-                    glm_vec4_copy(is_immediate_det_zone ? vec4{ 0.990, 0.0198, 0.359 }
-                                                        : vec4{ 1.00, 0.608, 0.0200 },
-                                  detection_zone_debug_line_color);
+                    if (!draw_detection_zone_debug_line)
+                    {   // @DEBUG: Draw detection line.
+                        draw_detection_zone_debug_line = true;
+                        glm_vec4_copy(is_immediate_det_zone ? vec4{ 0.990, 0.0198, 0.359 }
+                                                            : vec4{ 1.00, 0.608, 0.0200 },
+                                      detection_zone_debug_line_color);
+                    }
 
                     // Add detection zone buildup.
                     sdz.current_buildup =
@@ -276,11 +283,15 @@ void BT::system::cpu_character_enemy_detection()
                              ? sdz.buildup_threshold + 0.1f
                              : sdz.current_buildup + Physics_engine::k_simulation_delta_time);
                     inside_aware_sdz_buildup_zone = true;
+
+                    // Point of interest!
+                    btglm_rvec3_copy(det_trans.position.raw, candidate_position_of_interest);
                 }
             }
 
             // Check in suspicion sight zone.  @COPYPASTA
-            if (eye_forward_dot_delta_pos_n > suspicion_sight_cos)
+            if (in_line_of_sight_and_in_det_zone &&
+                eye_forward_dot_delta_pos_n > suspicion_sight_cos)
             {
                 auto& sdz{ cpu_enemy_awareness.suspicion_sdz };
                 assert(sdz.distance_immediate <= sdz.distance_buildup);
@@ -291,11 +302,13 @@ void BT::system::cpu_character_enemy_detection()
                         delta_pos_dist2 < sdz.distance_immediate2()
                     };
 
-                    // @DEBUG: Draw detection line.
-                    draw_detection_zone_debug_line = true;
-                    glm_vec4_copy(is_immediate_det_zone ? vec4{ 0.958, 0.990, 0.0198 }
-                                                        : vec4{ 0.771, 1.00, 0.0200 },
-                                  detection_zone_debug_line_color);
+                    if (!draw_detection_zone_debug_line)
+                    {   // @DEBUG: Draw detection line.
+                        draw_detection_zone_debug_line = true;
+                        glm_vec4_copy(is_immediate_det_zone ? vec4{ 0.958, 0.990, 0.0198 }
+                                                            : vec4{ 0.771, 1.00, 0.0200 },
+                                      detection_zone_debug_line_color);
+                    }
 
                     // Add detection zone buildup.
                     sdz.current_buildup =
@@ -303,11 +316,11 @@ void BT::system::cpu_character_enemy_detection()
                              ? sdz.buildup_threshold + 0.1f
                              : sdz.current_buildup + Physics_engine::k_simulation_delta_time);
                     inside_suspicion_sdz_buildup_zone = true;
+
+                    // Point of interest!
+                    btglm_rvec3_copy(det_trans.position.raw, candidate_position_of_interest);
                 }
             }
-
-            // @TODO: @FIXME: IMPLEMENT THIS!!! Check for line of sight.
-            in_line_of_sight_and_in_det_zone = true;
 
             // @DEBUG: Detection line drawing.
             if (draw_detection_zone_debug_line)
@@ -329,14 +342,14 @@ void BT::system::cpu_character_enemy_detection()
         }
 
         // Calm down suspicion/awareness buildup when outside detection zones or out of sight.
-        if (!inside_suspicion_sdz_buildup_zone || !in_line_of_sight_and_in_det_zone)
+        if (!inside_suspicion_sdz_buildup_zone)
         {
             auto& sdz{ cpu_enemy_awareness.suspicion_sdz };
             sdz.current_buildup =
                 glm_max(0, sdz.current_buildup - Physics_engine::k_simulation_delta_time);
         }
 
-        if (!inside_aware_sdz_buildup_zone || !in_line_of_sight_and_in_det_zone)
+        if (!inside_aware_sdz_buildup_zone)
         {
             auto& sdz{ cpu_enemy_awareness.aware_sdz };
             sdz.current_buildup =
@@ -344,8 +357,7 @@ void BT::system::cpu_character_enemy_detection()
         }
 
         // Update out-of-detection timer.
-        if ((inside_suspicion_sdz_buildup_zone || inside_aware_sdz_buildup_zone) &&
-            in_line_of_sight_and_in_det_zone)
+        if (inside_suspicion_sdz_buildup_zone || inside_aware_sdz_buildup_zone)
         {   // Reset out-of-detection timer if within zone(s) and line-of-sight is found.
             cpu_enemy_awareness.runtime_state.out_of_detection_timer = 0;
         }
@@ -355,9 +367,23 @@ void BT::system::cpu_character_enemy_detection()
                 Physics_engine::k_simulation_delta_time;
         }
 
-        // Suspicion buildup can only happen while in UNAWARE state.
+        // Pos of interest set and suspicion buildup can only happen while in UNAWARE state.
         bool is_unaware_state{ cpu_enemy_awareness.runtime_state.enemy_awareness ==
                                component::CPU_enemy_awareness::State::UNAWARE };
+
+        // Pos of interest set can also happen in AWARE state.
+        bool is_aware_state{ cpu_enemy_awareness.runtime_state.enemy_awareness ==
+                             component::CPU_enemy_awareness::State::AWARE };
+
+        // Update position of interest.
+        if ((inside_suspicion_sdz_buildup_zone || inside_aware_sdz_buildup_zone) &&
+            (is_unaware_state || is_aware_state))
+        {   // @NOTE: Setting this must happen before any state changes occur. In case enemy enters
+            //        an "immediate" zone, there needs to be an initial setting of the position of
+            //        interest.
+            btglm_rvec3_copy(candidate_position_of_interest,
+                             cpu_enemy_awareness.runtime_state.position_of_interest);
+        }
 
         // Gain awareness thru awareness buildup.
         if (auto& sdz{ cpu_enemy_awareness.aware_sdz };
