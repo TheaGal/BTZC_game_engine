@@ -94,6 +94,7 @@ struct Character_mvt_animated_state
         bool is_moving{ false };
         bool is_locked_on{ false };
         bool on_suspicion{ false };
+        bool is_suspicious_approaching{ false };
         float_t mvt_facing_angle{ 0 };
         bool on_turnaround{ false };
         bool is_grounded{ false };

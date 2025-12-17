@@ -1010,8 +1010,10 @@ while (running_game_loop)
                                 - The ^^ above ^^ would be a no. It's just not a good setting at all. It would be too confusing that way.
                                     - But also, the double condition wouldn't work either...
                                     - So cross out the logical AND task below.
-                        - [ ] Put trigger for when the walk-over/search is done and the final look-around should be done `on_suspicious_walk_end` (or smth).
-                        - [ ] Put event at end of animation to let behavior know to go from SUSPICIOUS to UNAWARE detection state.
+                        - [x] Put trigger for when the walk-over/search is done and the final look-around should be done `on_suspicious_walk_end` (or smth).
+                            - [x] ACTUALLY MAKE IT A BOOL. Since triggers have the possibility of getting eaten.
+                        - [x] Put event at end of animation to let behavior know to go from SUSPICIOUS to UNAWARE detection state.
+                        - [ ] Read the return-to-UNAWARE event and go back to UNAWARE.
                     - [ ] ~~Make a state transition that will be something like `on_running and is_suspicious eq true` w/ the regular running anim being `is_suspicious eq false`.~~
                         - [ ] ~~Logical AND in state transition logic.~~
                         - @NOTE: This wouldn't work, bc of the `is_moving` bug. Stopping for the final look-around at the end of the walk/search should be done by a trigger.

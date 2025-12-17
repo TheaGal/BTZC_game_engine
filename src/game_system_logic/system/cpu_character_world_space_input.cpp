@@ -49,21 +49,33 @@ void BT::system::cpu_character_world_space_input()
             {   // Trigger new state entered.
                 char_mvt_anim_state.write_to_animator_data.on_suspicion = true;
 
-                // Stand still (for just the enter state tick).
+                // Stand still (for just the enter state tick so that animator has a tick to update
+                // the animator state to a different animation than the idle anim which will do an
+                // immediate turn speed which we want to avoid).
                 glm_vec3_zero(char_ws_input.ws_flat_clamped_input.raw);
             }
             else
-            {
+            {   // Calc desired direction.
                 rvec3 desired_direction{ 0, 0, 0 };
-                if (can_move)
-                    btglm_rvec3_sub(cpu_enemy_awareness.runtime_state.position_of_interest,
-                                    transform.position.raw,
-                                    desired_direction);
+                btglm_rvec3_sub(cpu_enemy_awareness.runtime_state.position_of_interest,
+                                transform.position.raw,
+                                desired_direction);
 
                 // @TODO: Conform to `write_render_transforms.cpp`
                 char_ws_input.ws_flat_clamped_input.raw[0] = desired_direction[0];
-                char_ws_input.ws_flat_clamped_input.raw[1] = desired_direction[1];
+                char_ws_input.ws_flat_clamped_input.raw[1] = 0;  // desired_direction[1];
                 char_ws_input.ws_flat_clamped_input.raw[2] = desired_direction[2];
+
+                constexpr float_t k_close_enough_dist{ 0.1f };
+                constexpr float_t k_close_enough_dist2{ k_close_enough_dist * k_close_enough_dist };
+                char_mvt_anim_state.write_to_animator_data.is_suspicious_approaching =
+                    (glm_vec3_norm2(char_ws_input.ws_flat_clamped_input.raw) >
+                     k_close_enough_dist2);
+
+                // Stand still (put this at the end so that other vars can take advantage of the
+                // desired movement vector).
+                if (!can_move)
+                    glm_vec3_zero(char_ws_input.ws_flat_clamped_input.raw);
             }
             break;
         }

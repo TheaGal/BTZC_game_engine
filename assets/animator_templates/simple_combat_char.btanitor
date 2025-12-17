@@ -176,6 +176,7 @@
         "bool  is_moving",
         "bool  is_locked_on",
         "trig  on_suspicion",
+        "bool  is_suspicious_approaching",
         "float mvt_facing_angle",
         "trig  on_turnaround",
         "bool  is_grounded",
@@ -214,7 +215,7 @@
         },
         {
             "from_to_state": [["st_awareness_suspicion_walking"], "st_awareness_suspicion_end"],
-            "condition": "is_moving eq false"
+            "condition": "is_suspicious_approaching eq false"
         },
         {
             "from_to_state": [["st_awareness_suspicion_end"], "st_idle"],

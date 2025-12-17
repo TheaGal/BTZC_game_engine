@@ -80,6 +80,11 @@
                     "ctrl_item_idx": 6,
                     "end_frame": 121,
                     "start_frame": 0
+                },
+                {
+                    "ctrl_item_idx": 19,
+                    "end_frame": 111,
+                    "start_frame": 110
                 }
             ],
             "state_name": "st_awareness_suspicion_end"
@@ -352,6 +357,9 @@
         },
         {
             "name": "root_motion_multi:wr:1.0"
+        },
+        {
+            "name": "return_to_cpu_unaware_state:tr"
         }
     ],
     "hitcapsule_group_set_template": {
