@@ -1036,6 +1036,8 @@ while (running_game_loop)
                     - [ ] Enemy do nothing -> CPU 様子見, or CPU attack, or CPU guard.
 
         - [ ] Revisit detection: Add line-of-sight detection with raycast. (`@FIXME` tags)
+        - [ ] Revisit detection: Ignore suspicious sight cone during SUSPICIOUS state.
+            - This is bc I want the CPU to cool-down even if player is in the cone for the SUSPICIOUS state. It's only when entering the detection or AWARE buildup is going up (inside AWARE detection cone) do I feel like the cool-down/calm-down timer should reset to 0.
 
         - [x] BUGFIX: Detection line when drawn has only the suspicion color.
             - I think that's simply bc even after awareness is checked, suspicion zone is still checked, thus overriding the color from before.
