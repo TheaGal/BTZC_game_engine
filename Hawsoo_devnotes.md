@@ -999,12 +999,16 @@ while (running_game_loop)
                     - Have anim looking left and right while traveling to the point of interest.
                     - [x] Initial just the normal running anim.
                     - [ ] Create walk animation in blender.
+                        - [x] Ichiou
+                    - [x] Try just triggering into this instead of immediately running.
+                    - [ ] Don't run on the change-state frame. (since the trigger + move is executing on the same frame but need it to lag behind one frame so that new BTAFA properties get read in.)
                     - [ ] Make a state transition that will be something like `on_running and is_suspicious eq true` w/ the regular running anim being `is_suspicious eq false`.
                         - [ ] Logical AND in state transition logic.
-                - [ ] "realize suspicion" animation, where there's a 0.5s window where the CPU goes from relaxed/unaware to alert, weapon-readied, and then starts turning around to look.
+                - [x] "realize suspicion" animation, where there's a 0.5s window where the CPU goes from relaxed/unaware to alert, weapon-readied, and then starts turning around to look.
                 - [ ] When arriving and there's no enemy, look around and make sure that the enemy isn't out of view (but since there's no leads for another place the enemy could be at, then don't look in another place).
                     - Probably there needs to be a way for the CPU to realize another place to look is what to do.
                         - FOR NOW: Do not implement this. No new leads when in SUSPICIOUS state.
+                    - [x] Make animation.
             - [ ] AWARE.
                 - [ ] Make one of each attack type animation.
                     - [ ] Attack.

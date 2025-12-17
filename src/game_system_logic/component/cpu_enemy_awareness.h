@@ -97,7 +97,9 @@ struct CPU_enemy_awareness
             SUSPICIOUS,
             AWARE,
             NUM_AWARENESS_STATES
-        } enemy_awareness{ UNAWARE };
+        };
+        Awareness enemy_awareness{ UNAWARE };
+        Awareness prev_enemy_awareness{ enemy_awareness };
         float_t out_of_detection_timer{ 0 };
         rvec3 position_of_interest;  // Last detected position of suspicion or aware-enemy.
         UUID aware_enemy;

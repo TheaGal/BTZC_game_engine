@@ -44,6 +44,12 @@ void BT::system::cpu_character_world_space_input()
 
         case component::CPU_enemy_awareness::State::SUSPICIOUS:
         {
+            if (cpu_enemy_awareness.runtime_state.prev_enemy_awareness !=
+                cpu_enemy_awareness.runtime_state.enemy_awareness)
+            {   // Trigger new state entered.
+                char_mvt_anim_state.write_to_animator_data.on_suspicion = true;
+            }
+
             rvec3 desired_direction{ 0, 0, 0 };
             if (can_move)
                 btglm_rvec3_sub(cpu_enemy_awareness.runtime_state.position_of_interest,

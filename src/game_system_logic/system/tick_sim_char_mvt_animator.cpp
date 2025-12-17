@@ -56,6 +56,7 @@ void BT::system::tick_sim_char_mvt_animator()
 
             SET_ANIMATOR_BOOL_VAR(is_moving)
             SET_ANIMATOR_BOOL_VAR(is_locked_on)
+            SET_ANIMATOR_TRIGGER(on_suspicion)
             SET_ANIMATOR_FLOAT_VAR(mvt_facing_angle)
             SET_ANIMATOR_TRIGGER(on_turnaround)
             SET_ANIMATOR_BOOL_VAR(is_grounded)

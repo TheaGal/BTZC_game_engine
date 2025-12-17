@@ -55,6 +55,18 @@
             "state_name": "st_running_turnaround"
         },
         {
+            "regions": [],
+            "state_name": "st_awareness_suspicion_begin"
+        },
+        {
+            "regions": [],
+            "state_name": "st_awareness_suspicion_walking"
+        },
+        {
+            "regions": [],
+            "state_name": "st_awareness_suspicion_end"
+        },
+        {
             "regions": [
                 {
                     "ctrl_item_idx": 7,

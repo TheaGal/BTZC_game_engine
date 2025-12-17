@@ -169,8 +169,9 @@ void BT::system::cpu_character_enemy_detection()
                                             eyesight_forward);
         }
 
-        // Awareness detection.
-        auto const enemy_awa_copy{ cpu_enemy_awareness.runtime_state.enemy_awareness };
+        // Awareness detection (prev state).
+        cpu_enemy_awareness.runtime_state.prev_enemy_awareness =
+            cpu_enemy_awareness.runtime_state.enemy_awareness;
 
         // Draw debug view.
         vec3 eyesight_pos_f{ static_cast<float_t>(eyesight_pos[0]),  // @TODO: Conform to `write_render_transforms.cpp`
@@ -441,7 +442,7 @@ void BT::system::cpu_character_enemy_detection()
         }
 
         // Clear CPU detection state if awareness state has changed.
-        if (enemy_awa_copy != cpu_enemy_awareness.runtime_state.enemy_awareness)
+        if (cpu_enemy_awareness.runtime_state.prev_enemy_awareness != cpu_enemy_awareness.runtime_state.enemy_awareness)
         {
             cpu_enemy_awareness.aware_sdz.current_buildup = 0;
             cpu_enemy_awareness.suspicion_sdz.current_buildup = 0;
