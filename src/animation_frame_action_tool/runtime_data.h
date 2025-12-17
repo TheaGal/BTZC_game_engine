@@ -64,7 +64,7 @@ enum Controllable_data_label : std::uint32_t
         X__bool(hitcapsule_group_8_enabled, false)      \
         X__bool(hitcapsule_group_9_enabled, false)      \
         /* Rising edge events */                        \
-        X_reeve(return_to_cpu_unaware_state)            \
+        X_reeve(cpu_aware_chg_suspicious_to_unaware)    \
         X_reeve(play_sfx_footstep)                      \
         X_reeve(play_sfx_ready_guard)                   \
         X_reeve(play_sfx_blade_swing)                   \

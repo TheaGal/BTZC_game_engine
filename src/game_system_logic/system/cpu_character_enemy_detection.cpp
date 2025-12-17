@@ -1,5 +1,6 @@
 #include "cpu_character_enemy_detection.h"
 
+#include "animation_frame_action_tool/runtime_data.h"
 #include "btglm.h"
 #include "btlogger.h"
 #include "cglm/affine.h"
@@ -29,13 +30,16 @@ namespace
 
 using namespace BT;
 
-void fetch_eyesight_data(Render_object_pool& rend_obj_pool,
-                         UUID rend_obj_uuid,
-                         component::CPU_enemy_awareness& in_out_awareness,
-                         vec3 eyes_origin,
-                         rvec3& out_eyesight_pos,
-                         vec3& out_eyesight_forward)
+void fetch_eyesight_data_and_AFA_data(Render_object_pool& rend_obj_pool,
+                                      UUID rend_obj_uuid,
+                                      component::CPU_enemy_awareness& in_out_awareness,
+                                      vec3 eyes_origin,
+                                      rvec3& out_eyesight_pos,
+                                      vec3& out_eyesight_forward,
+                                      bool& out_chg_suspicious_to_unaware_request)
 {
+    out_chg_suspicious_to_unaware_request = false;
+
     auto& rend_obj{ *rend_obj_pool.checkout_render_obj_by_key({ rend_obj_uuid }).front() };
 
     if (rend_obj.get_model_animator() == nullptr)
@@ -63,6 +67,13 @@ void fetch_eyesight_data(Render_object_pool& rend_obj_pool,
     glm_mat4_mul(rend_obj.render_transform(),
                  joint_matrices[in_out_awareness.runtime_state.eyes_bone_idx].raw,
                  eyes_bone_trans);
+
+    // Retrieve important AFA event(s).
+    out_chg_suspicious_to_unaware_request =
+        animator.get_anim_frame_action_data_handle()
+            .get_reeve_data_handle(
+                anim_frame_action::CTRL_DATA_LABEL_cpu_aware_chg_suspicious_to_unaware)
+            .check_if_rising_edge_occurred();
 
     rend_obj_pool.return_render_objs({ &rend_obj });
 
@@ -153,6 +164,8 @@ void BT::system::cpu_character_enemy_detection()
 
         btglm_rvec3_copy(transform.position.raw, eyesight_pos);
 
+        bool req_to_chg_state_sus_to_unaware{ false };
+
         if (!cpu_enemy_awareness.eyes_bone.empty())
         {
             if (auto disp_repr{ reg.try_get<component::Display_repr_transform_ref const>(entity) };
@@ -161,12 +174,13 @@ void BT::system::cpu_character_enemy_detection()
                         entity_container.find_entity(disp_repr->display_repr_uuid)) };
                     rend_obj_ref != nullptr)
                     if (!rend_obj_ref->render_obj_uuid_ref.is_nil())
-                        fetch_eyesight_data(rend_obj_pool,
-                                            rend_obj_ref->render_obj_uuid_ref,
-                                            cpu_enemy_awareness,
-                                            cpu_enemy_awareness.eyes_origin.raw,
-                                            eyesight_pos,
-                                            eyesight_forward);
+                        fetch_eyesight_data_and_AFA_data(rend_obj_pool,
+                                                         rend_obj_ref->render_obj_uuid_ref,
+                                                         cpu_enemy_awareness,
+                                                         cpu_enemy_awareness.eyes_origin.raw,
+                                                         eyesight_pos,
+                                                         eyesight_forward,
+                                                         req_to_chg_state_sus_to_unaware);
         }
 
         // Awareness detection (prev state).
@@ -405,8 +419,9 @@ void BT::system::cpu_character_enemy_detection()
         if (cpu_enemy_awareness.runtime_state.enemy_awareness ==
             component::CPU_enemy_awareness::State::SUSPICIOUS)
         {
-            if (cpu_enemy_awareness.runtime_state.out_of_detection_timer >=
-                cpu_enemy_awareness.lose_suspicion_time)
+            if (req_to_chg_state_sus_to_unaware ||
+                cpu_enemy_awareness.runtime_state.out_of_detection_timer >=
+                    cpu_enemy_awareness.lose_suspicion_time)
             {
                 cpu_enemy_awareness.runtime_state.enemy_awareness =
                     component::CPU_enemy_awareness::State::UNAWARE;

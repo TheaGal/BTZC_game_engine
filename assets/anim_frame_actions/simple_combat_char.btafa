@@ -359,7 +359,7 @@
             "name": "root_motion_multi:wr:1.0"
         },
         {
-            "name": "return_to_cpu_unaware_state:tr"
+            "name": "cpu_aware_chg_suspicious_to_unaware:tr"
         }
     ],
     "hitcapsule_group_set_template": {

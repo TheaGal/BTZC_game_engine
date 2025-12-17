@@ -1003,7 +1003,7 @@ while (running_game_loop)
                     - [x] Try just triggering into this instead of immediately running.
                     - [x] Don't run on the change-state frame. (since the trigger + move is executing on the same frame but need it to lag behind one frame so that new BTAFA properties get read in.)
                         - This is so that the char doesn't immediately turn towards the suspicion point, but rather faces where they are currently for the first part.
-                    - [ ] Fix an issue w `st_awareness_suspicion_walking` turning into `idle` in the single frame when there's technically no moving, since the last frame of `st_awareness_suspicion_begin` has `can_move` set to `false`.
+                    - [x] Fix an issue w `st_awareness_suspicion_walking` turning into `idle` in the single frame when there's technically no moving, since the last frame of `st_awareness_suspicion_begin` has `can_move` set to `false`.
                         - [x] Tried a workaround by setting `can_move` to `true` in the final frames.
                             - IMO, it's a bit too complicated and corner-casey, so I think it would just be better if I made it allowed to have multiple cases for evaluation in the `"condition"` script part.
                                 - ~~Well, honestly, I could probably just work around this by having a `is_suspicious_and_moving` flag, where the end of it is it off.~~
@@ -1013,13 +1013,13 @@ while (running_game_loop)
                         - [x] Put trigger for when the walk-over/search is done and the final look-around should be done `on_suspicious_walk_end` (or smth).
                             - [x] ACTUALLY MAKE IT A BOOL. Since triggers have the possibility of getting eaten.
                         - [x] Put event at end of animation to let behavior know to go from SUSPICIOUS to UNAWARE detection state.
-                        - [ ] Read the return-to-UNAWARE event and go back to UNAWARE.
+                        - [x] Read the return-to-UNAWARE event and go back to UNAWARE.
                     - [ ] ~~Make a state transition that will be something like `on_running and is_suspicious eq true` w/ the regular running anim being `is_suspicious eq false`.~~
                         - [ ] ~~Logical AND in state transition logic.~~
                         - @NOTE: This wouldn't work, bc of the `is_moving` bug. Stopping for the final look-around at the end of the walk/search should be done by a trigger.
                             - And then use an event from the AFA to call back to when the "suspicion" should return to "unaware".
                 - [x] "realize suspicion" animation, where there's a 0.5s window where the CPU goes from relaxed/unaware to alert, weapon-readied, and then starts turning around to look.
-                - [ ] When arriving and there's no enemy, look around and make sure that the enemy isn't out of view (but since there's no leads for another place the enemy could be at, then don't look in another place).
+                - [x] When arriving and there's no enemy, look around and make sure that the enemy isn't out of view (but since there's no leads for another place the enemy could be at, then don't look in another place).
                     - Probably there needs to be a way for the CPU to realize another place to look is what to do.
                         - FOR NOW: Do not implement this. No new leads when in SUSPICIOUS state.
                     - [x] Make animation.
