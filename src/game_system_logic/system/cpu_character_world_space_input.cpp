@@ -48,18 +48,23 @@ void BT::system::cpu_character_world_space_input()
                 cpu_enemy_awareness.runtime_state.enemy_awareness)
             {   // Trigger new state entered.
                 char_mvt_anim_state.write_to_animator_data.on_suspicion = true;
+
+                // Stand still (for just the enter state tick).
+                glm_vec3_zero(char_ws_input.ws_flat_clamped_input.raw);
             }
+            else
+            {
+                rvec3 desired_direction{ 0, 0, 0 };
+                if (can_move)
+                    btglm_rvec3_sub(cpu_enemy_awareness.runtime_state.position_of_interest,
+                                    transform.position.raw,
+                                    desired_direction);
 
-            rvec3 desired_direction{ 0, 0, 0 };
-            if (can_move)
-                btglm_rvec3_sub(cpu_enemy_awareness.runtime_state.position_of_interest,
-                                transform.position.raw,
-                                desired_direction);
-
-            // @TODO: Conform to `write_render_transforms.cpp`
-            char_ws_input.ws_flat_clamped_input.raw[0] = desired_direction[0];
-            char_ws_input.ws_flat_clamped_input.raw[1] = desired_direction[1];
-            char_ws_input.ws_flat_clamped_input.raw[2] = desired_direction[2];
+                // @TODO: Conform to `write_render_transforms.cpp`
+                char_ws_input.ws_flat_clamped_input.raw[0] = desired_direction[0];
+                char_ws_input.ws_flat_clamped_input.raw[1] = desired_direction[1];
+                char_ws_input.ws_flat_clamped_input.raw[2] = desired_direction[2];
+            }
             break;
         }
 

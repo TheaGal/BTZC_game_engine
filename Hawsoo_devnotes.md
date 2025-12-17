@@ -1001,9 +1001,21 @@ while (running_game_loop)
                     - [ ] Create walk animation in blender.
                         - [x] Ichiou
                     - [x] Try just triggering into this instead of immediately running.
-                    - [ ] Don't run on the change-state frame. (since the trigger + move is executing on the same frame but need it to lag behind one frame so that new BTAFA properties get read in.)
-                    - [ ] Make a state transition that will be something like `on_running and is_suspicious eq true` w/ the regular running anim being `is_suspicious eq false`.
-                        - [ ] Logical AND in state transition logic.
+                    - [x] Don't run on the change-state frame. (since the trigger + move is executing on the same frame but need it to lag behind one frame so that new BTAFA properties get read in.)
+                        - This is so that the char doesn't immediately turn towards the suspicion point, but rather faces where they are currently for the first part.
+                    - [ ] Fix an issue w `st_awareness_suspicion_walking` turning into `idle` in the single frame when there's technically no moving, since the last frame of `st_awareness_suspicion_begin` has `can_move` set to `false`.
+                        - [x] Tried a workaround by setting `can_move` to `true` in the final frames.
+                            - IMO, it's a bit too complicated and corner-casey, so I think it would just be better if I made it allowed to have multiple cases for evaluation in the `"condition"` script part.
+                                - ~~Well, honestly, I could probably just work around this by having a `is_suspicious_and_moving` flag, where the end of it is it off.~~
+                                - The ^^ above ^^ would be a no. It's just not a good setting at all. It would be too confusing that way.
+                                    - But also, the double condition wouldn't work either...
+                                    - So cross out the logical AND task below.
+                        - [ ] Put trigger for when the walk-over/search is done and the final look-around should be done `on_suspicious_walk_end` (or smth).
+                        - [ ] Put event at end of animation to let behavior know to go from SUSPICIOUS to UNAWARE detection state.
+                    - [ ] ~~Make a state transition that will be something like `on_running and is_suspicious eq true` w/ the regular running anim being `is_suspicious eq false`.~~
+                        - [ ] ~~Logical AND in state transition logic.~~
+                        - @NOTE: This wouldn't work, bc of the `is_moving` bug. Stopping for the final look-around at the end of the walk/search should be done by a trigger.
+                            - And then use an event from the AFA to call back to when the "suspicion" should return to "unaware".
                 - [x] "realize suspicion" animation, where there's a 0.5s window where the CPU goes from relaxed/unaware to alert, weapon-readied, and then starts turning around to look.
                 - [ ] When arriving and there's no enemy, look around and make sure that the enemy isn't out of view (but since there's no leads for another place the enemy could be at, then don't look in another place).
                     - Probably there needs to be a way for the CPU to realize another place to look is what to do.
@@ -1052,6 +1064,10 @@ while (running_game_loop)
 
 - [ ] REFACTOR: Move the animator out into its own component.
     - This just needs to get out, bc reserving a render obj from the renderer and then grabbing the animator from there is just way too much of a hassle.
+
+- [ ] REFACTOR: Allow `Render_object_settings`/`Created_render_object_reference` to have a "mat4 local_transform" property that gets appended to the entity's transform at the end.
+    - This allows for no need to have a child object that solely houses the render object (and then needs to rely on the animator and has hectic stuff happen to it bc of that w/ the entity/component relationship)
+        - I think this change would make querying for things like animators SOOO much easier, and not require things like `affecting_entity_uuid` to appear in components too.
 
 - [ ] BUGFIX: When selecting an object that has a debug mesh render job, when you switch context from level editor to animation frame action data editor, it crashes bc it can't find the mesh job renderable (dangling pointer).
     - Confirmed that it's when it's displaying a deformed mesh (so if play mode is on and it's player model)

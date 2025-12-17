@@ -55,15 +55,33 @@
             "state_name": "st_running_turnaround"
         },
         {
-            "regions": [],
+            "regions": [
+                {
+                    "ctrl_item_idx": 6,
+                    "end_frame": 41,
+                    "start_frame": 0
+                }
+            ],
             "state_name": "st_awareness_suspicion_begin"
         },
         {
-            "regions": [],
+            "regions": [
+                {
+                    "ctrl_item_idx": 10,
+                    "end_frame": 41,
+                    "start_frame": 0
+                }
+            ],
             "state_name": "st_awareness_suspicion_walking"
         },
         {
-            "regions": [],
+            "regions": [
+                {
+                    "ctrl_item_idx": 6,
+                    "end_frame": 121,
+                    "start_frame": 0
+                }
+            ],
             "state_name": "st_awareness_suspicion_end"
         },
         {
