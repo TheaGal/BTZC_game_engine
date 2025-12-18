@@ -1030,6 +1030,7 @@ while (running_game_loop)
                 - [x] Ichiou: Have attack anim repeating and just go after CPU's enemy.
                     - [x] Fix missing hitcapsules and missing guard/parry frames.
                     - [ ] It seems like there's frames where the hurtcapsules aren't hitting properly?
+                    - [ ] The feel of the parrying and stuff doesn't feel right (from player end). Why is that?
 
                 - [ ] Make one of each attack type animation.
                     - [ ] Attack.
