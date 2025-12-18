@@ -35,17 +35,23 @@ void BT::system::cpu_character_world_space_input()
                                       can_attack_exit);
 
         // World-space movement input.
+        bool enter_state{ cpu_enemy_awareness.runtime_state.prev_enemy_awareness !=
+                          cpu_enemy_awareness.runtime_state.enemy_awareness };
         switch (cpu_enemy_awareness.runtime_state.enemy_awareness)
         {
         case component::CPU_enemy_awareness::State::UNAWARE:
+            if (enter_state)
+            {   // Trigger new state entered.
+                char_mvt_anim_state.write_to_animator_data.on_unaware = true;
+            }
+
             // Stand still.
             glm_vec3_zero(char_ws_input.ws_flat_clamped_input.raw);
             break;
 
         case component::CPU_enemy_awareness::State::SUSPICIOUS:
         {
-            if (cpu_enemy_awareness.runtime_state.prev_enemy_awareness !=
-                cpu_enemy_awareness.runtime_state.enemy_awareness)
+            if (enter_state)
             {   // Trigger new state entered.
                 char_mvt_anim_state.write_to_animator_data.on_suspicion = true;
 
@@ -81,15 +87,24 @@ void BT::system::cpu_character_world_space_input()
         }
 
         case component::CPU_enemy_awareness::State::AWARE:
-            if constexpr(true)
-            {
-                // Stand still.
-                glm_vec3_zero(char_ws_input.ws_flat_clamped_input.raw);
+            if (enter_state)
+            {   // Trigger new state entered.
+                char_mvt_anim_state.write_to_animator_data.on_aware = true;
             }
             else
-            {
-                // @TODO: IMPLEMEMT!
-                assert(false);
+            {   // @TEMP: @DEBUG: Keep attack anim up!
+                char_mvt_anim_state.write_to_animator_data.on_attack = true;
+                
+                // Calc desired direction. (@COPYPASTA, also @TEMP bc this just assumes the attack anim.)
+                rvec3 desired_direction{ 0, 0, 0 };
+                btglm_rvec3_sub(cpu_enemy_awareness.runtime_state.position_of_interest,
+                                transform.position.raw,
+                                desired_direction);
+
+                // @TODO: Conform to `write_render_transforms.cpp`
+                char_ws_input.ws_flat_clamped_input.raw[0] = desired_direction[0];
+                char_ws_input.ws_flat_clamped_input.raw[1] = 0;  // desired_direction[1];
+                char_ws_input.ws_flat_clamped_input.raw[2] = desired_direction[2];
             }
             break;
 

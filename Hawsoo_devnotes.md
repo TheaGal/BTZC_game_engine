@@ -995,7 +995,7 @@ while (running_game_loop)
                 - Preprogrammed thingy. Just stand there for this POC.
             - [ ] SUSPICIOUS.
                 - Preprogrammed thingy. Have a speed for going to the suspicious point of interest, and play an animation.
-                - [ ] Special approaching/walking animation.
+                - [x] Special approaching/walking animation.
                     - Have anim looking left and right while traveling to the point of interest.
                     - [x] Initial just the normal running anim.
                     - [ ] Create walk animation in blender.
@@ -1023,7 +1023,14 @@ while (running_game_loop)
                     - Probably there needs to be a way for the CPU to realize another place to look is what to do.
                         - FOR NOW: Do not implement this. No new leads when in SUSPICIOUS state.
                     - [x] Make animation.
+                - [x] Fix not returning to UNAWARE animation.
+                - [x] Fix not going to some AWARE animation.
+                    - Since one doesn't exist, just use the attack animation.
             - [ ] AWARE.
+                - [x] Ichiou: Have attack anim repeating and just go after CPU's enemy.
+                    - [x] Fix missing hitcapsules and missing guard/parry frames.
+                    - [ ] It seems like there's frames where the hurtcapsules aren't hitting properly?
+
                 - [ ] Make one of each attack type animation.
                     - [ ] Attack.
                     - [ ] Counter attack (more aggressive attack).

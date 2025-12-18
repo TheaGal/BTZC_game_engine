@@ -177,6 +177,8 @@
         "bool  is_locked_on",
         "trig  on_suspicion",
         "bool  is_suspicious_approaching",
+        "trig  on_unaware",
+        "trig  on_aware",
         "float mvt_facing_angle",
         "trig  on_turnaround",
         "bool  is_grounded",
@@ -218,8 +220,12 @@
             "condition": "is_suspicious_approaching eq false"
         },
         {
-            "from_to_state": [["st_awareness_suspicion_end"], "st_idle"],
-            "condition": "ON_ANIM_END"
+            "from_to_state": [["st_awareness_suspicion_begin", "st_awareness_suspicion_walking", "st_awareness_suspicion_end"], "st_idle"],
+            "condition": "on_unaware"
+        },
+        {
+            "from_to_state": [["st_awareness_suspicion_begin", "st_awareness_suspicion_walking", "st_awareness_suspicion_end"], "st_attack_0"],
+            "condition": "on_aware"
         },
         {
             "from_to_state": [["st_idle", "st_running", "st_fall", "st_attack_0"], "st_jump"],
@@ -246,19 +252,19 @@
             "condition": "ON_ANIM_END"
         },
         {
-            "from_to_state": [["st_idle", "st_running", "st_running_turnaround", "st_jump", "st_fall", "st_attack_0", "st_awareness_suspicion_begin", "st_awareness_suspicion_walking", "st_awareness_suspicion_end"], "st_hurt_parry"],
+            "from_to_state": [["st_idle", "st_running", "st_running_turnaround", "st_jump", "st_fall", "st_attack_0", "st_awareness_suspicion_begin", "st_awareness_suspicion_walking", "st_awareness_suspicion_end", "st_ready_parry", "st_ready_parry_from_running", "st_hold_guard_idle", "st_hold_guard_walking"], "st_hurt_parry"],
             "condition": "on_parry_hurt"
         },
         {
-            "from_to_state": [["st_idle", "st_running", "st_running_turnaround", "st_jump", "st_fall", "st_attack_0", "st_awareness_suspicion_begin", "st_awareness_suspicion_walking", "st_awareness_suspicion_end"], "st_hurt_guard"],
+            "from_to_state": [["st_idle", "st_running", "st_running_turnaround", "st_jump", "st_fall", "st_attack_0", "st_awareness_suspicion_begin", "st_awareness_suspicion_walking", "st_awareness_suspicion_end", "st_ready_parry", "st_ready_parry_from_running", "st_hold_guard_idle", "st_hold_guard_walking"], "st_hurt_guard"],
             "condition": "on_guard_hurt"
         },
         {
-            "from_to_state": [["st_idle", "st_running", "st_running_turnaround", "st_jump", "st_fall", "st_attack_0", "st_awareness_suspicion_begin", "st_awareness_suspicion_walking", "st_awareness_suspicion_end"], "st_hurt_receive"],
+            "from_to_state": [["st_idle", "st_running", "st_running_turnaround", "st_jump", "st_fall", "st_attack_0", "st_awareness_suspicion_begin", "st_awareness_suspicion_walking", "st_awareness_suspicion_end", "st_ready_parry", "st_ready_parry_from_running", "st_hold_guard_idle", "st_hold_guard_walking"], "st_hurt_receive"],
             "condition": "on_receive_hurt"
         },
         {
-            "from_to_state": [["st_idle", "st_running", "st_running_turnaround", "st_jump", "st_fall", "st_attack_0", "st_awareness_suspicion_begin", "st_awareness_suspicion_walking", "st_awareness_suspicion_end"], "st_hurt_receive_from_back"],
+            "from_to_state": [["st_idle", "st_running", "st_running_turnaround", "st_jump", "st_fall", "st_attack_0", "st_awareness_suspicion_begin", "st_awareness_suspicion_walking", "st_awareness_suspicion_end", "st_ready_parry", "st_ready_parry_from_running", "st_hold_guard_idle", "st_hold_guard_walking"], "st_hurt_receive_from_back"],
             "condition": "on_receive_hurt_from_back"
         },
         {

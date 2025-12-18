@@ -15,11 +15,6 @@
                     "ctrl_item_idx": 7,
                     "end_frame": 11,
                     "start_frame": 0
-                },
-                {
-                    "ctrl_item_idx": 15,
-                    "end_frame": 11,
-                    "start_frame": 0
                 }
             ],
             "state_name": "st_idle"
@@ -270,6 +265,21 @@
                     "ctrl_item_idx": 8,
                     "end_frame": 12,
                     "start_frame": 0
+                },
+                {
+                    "ctrl_item_idx": 2,
+                    "end_frame": 10,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_item_idx": 15,
+                    "end_frame": 39,
+                    "start_frame": 10
+                },
+                {
+                    "ctrl_item_idx": 4,
+                    "end_frame": 39,
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_ready_parry"
@@ -280,12 +290,38 @@
                     "ctrl_item_idx": 8,
                     "end_frame": 22,
                     "start_frame": 0
+                },
+                {
+                    "ctrl_item_idx": 2,
+                    "end_frame": 20,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_item_idx": 15,
+                    "end_frame": 49,
+                    "start_frame": 20
+                },
+                {
+                    "ctrl_item_idx": 4,
+                    "end_frame": 49,
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_ready_parry_from_running"
         },
         {
-            "regions": [],
+            "regions": [
+                {
+                    "ctrl_item_idx": 15,
+                    "end_frame": 11,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_item_idx": 4,
+                    "end_frame": 11,
+                    "start_frame": 0
+                }
+            ],
             "state_name": "st_hold_guard_idle"
         },
         {
@@ -293,6 +329,16 @@
                 {
                     "ctrl_item_idx": 8,
                     "end_frame": 41,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_item_idx": 4,
+                    "end_frame": 21,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_item_idx": 15,
+                    "end_frame": 21,
                     "start_frame": 0
                 }
             ],
