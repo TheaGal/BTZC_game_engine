@@ -1030,7 +1030,12 @@ while (running_game_loop)
                 - [x] Ichiou: Have attack anim repeating and just go after CPU's enemy.
                     - [x] Fix missing hitcapsules and missing guard/parry frames.
                     - [ ] It seems like there's frames where the hurtcapsules aren't hitting properly?
+                        - It just seems like the sending knockback needs to be halved and then that'll fix it?
+                        - Lengthening the time for the hurtboxes to be active could also help too.
+                            - Bc they just don't seem to be hitting at all???
                     - [ ] The feel of the parrying and stuff doesn't feel right (from player end). Why is that?
+                        - Probably because there needs to be a way to cancel out of the ready-parry animation so it's a bit more responsive.
+                            - So then redoing a ready-parry is faster and doesn't feel like ER nightreign's sluggishness with the executor.
 
                 - [ ] Make one of each attack type animation.
                     - [ ] Attack.
