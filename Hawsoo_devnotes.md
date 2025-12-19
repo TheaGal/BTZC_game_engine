@@ -1033,6 +1033,11 @@ while (running_game_loop)
                         - It just seems like the sending knockback needs to be halved and then that'll fix it?
                         - Lengthening the time for the hurtboxes to be active could also help too.
                             - Bc they just don't seem to be hitting at all???
+                            - Honestly this doesn't seem to be the move. Closing in on the char's enemy seems to be the move.
+                                - It just seems like there needs to be a more closeness.
+                        - @NOTE: After studying sekiro's animations, the char will often close in on its enemy right before or slightly during the first little bit of its attack. This ensures that it's right in the face of its enemy.
+                        - [ ] Have char not hit enemy so far in knockback.
+                        - [ ] Have char close in on enemy when starting attack.
                     - [ ] The feel of the parrying and stuff doesn't feel right (from player end). Why is that?
                         - Probably because there needs to be a way to cancel out of the ready-parry animation so it's a bit more responsive.
                             - So then redoing a ready-parry is faster and doesn't feel like ER nightreign's sluggishness with the executor.
