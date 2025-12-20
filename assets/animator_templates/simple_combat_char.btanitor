@@ -273,7 +273,7 @@
             "condition": "ON_ANIM_END"
         },
         {
-            "from_to_state": [["st_idle", "st_running", "st_attack_0", "st_hold_guard_idle", "st_hold_guard_walking"], "st_ready_parry"],
+            "from_to_state": [["st_idle", "st_running", "st_attack_0", "st_hold_guard_idle", "st_hold_guard_walking", "st_hurt_parry"], "st_ready_parry"],
             "condition": "on_guard"
         },
         {

@@ -148,13 +148,13 @@
             "regions": [
                 {
                     "ctrl_item_idx": 5,
-                    "end_frame": 30,
+                    "end_frame": 22,
                     "start_frame": 15
                 },
                 {
                     "ctrl_item_idx": 5,
-                    "end_frame": 76,
-                    "start_frame": 50
+                    "end_frame": 54,
+                    "start_frame": 48
                 },
                 {
                     "ctrl_item_idx": 2,
@@ -172,24 +172,19 @@
                     "start_frame": 61
                 },
                 {
-                    "ctrl_item_idx": 3,
-                    "end_frame": 101,
-                    "start_frame": 100
-                },
-                {
                     "ctrl_item_idx": 4,
-                    "end_frame": 89,
+                    "end_frame": 71,
                     "start_frame": 0
                 },
                 {
                     "ctrl_item_idx": 6,
-                    "end_frame": 30,
+                    "end_frame": 22,
                     "start_frame": 14
                 },
                 {
                     "ctrl_item_idx": 6,
-                    "end_frame": 76,
-                    "start_frame": 49
+                    "end_frame": 54,
+                    "start_frame": 47
                 },
                 {
                     "ctrl_item_idx": 8,
@@ -198,23 +193,23 @@
                 },
                 {
                     "ctrl_item_idx": 8,
-                    "end_frame": 51,
-                    "start_frame": 29
+                    "end_frame": 48,
+                    "start_frame": 21
                 },
                 {
                     "ctrl_item_idx": 8,
-                    "end_frame": 89,
-                    "start_frame": 77
+                    "end_frame": 71,
+                    "start_frame": 53
                 },
                 {
                     "ctrl_item_idx": 16,
-                    "end_frame": 30,
-                    "start_frame": 15
+                    "end_frame": 22,
+                    "start_frame": 14
                 },
                 {
                     "ctrl_item_idx": 17,
-                    "end_frame": 76,
-                    "start_frame": 50
+                    "end_frame": 54,
+                    "start_frame": 47
                 }
             ],
             "state_name": "st_attack_0"
@@ -396,10 +391,10 @@
             "name": "is_guard_active:ov:true"
         },
         {
-            "name": "attack_send_root_motion_multi:wr:2.0"
+            "name": "attack_send_root_motion_multi:wr:1.0"
         },
         {
-            "name": "attack_send_root_motion_multi:wr:4.0"
+            "name": "attack_send_root_motion_multi:wr:2.0"
         },
         {
             "name": "root_motion_multi:wr:1.0"

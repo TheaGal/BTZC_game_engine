@@ -1029,17 +1029,24 @@ while (running_game_loop)
             - [ ] AWARE.
                 - [x] Ichiou: Have attack anim repeating and just go after CPU's enemy.
                     - [x] Fix missing hitcapsules and missing guard/parry frames.
-                    - [ ] It seems like there's frames where the hurtcapsules aren't hitting properly?
+                    - [x] It seems like there's frames where the hurtcapsules aren't hitting properly?
                         - It just seems like the sending knockback needs to be halved and then that'll fix it?
                         - Lengthening the time for the hurtboxes to be active could also help too.
                             - Bc they just don't seem to be hitting at all???
                             - Honestly this doesn't seem to be the move. Closing in on the char's enemy seems to be the move.
                                 - It just seems like there needs to be a more closeness.
                         - @NOTE: After studying sekiro's animations, the char will often close in on its enemy right before or slightly during the first little bit of its attack. This ensures that it's right in the face of its enemy.
-                        - [ ] Have char not hit enemy so far in knockback.
+                        - [x] Have char not hit enemy so far in knockback.
                         - [x] Have char close in on enemy when starting attack.
                             - I think ^^ this ^^ will help out the most since it seems like the char only closes in enough by the end of the attack, not the beginning or middle.
                             - THOUGHT: After doing this this definitely helped out a lot w feel, tho it feels like not doing the knockback as much would also help out a lot too.
+                        - CONCLUSION: So it seems that it's a lot better for the attacks and they connect consistently now. I think that it's a lot better now, but something doesn't feel right? It's like the responsiveness of the animator ig??? Idk.
+                            - [x] Just check real quick that there's a good order for the input->write_animator_vals->update_animator
+                                - So it's update_animator->input->write_animator_vals.
+                                - It's BECAUSE it needs the AFA values that come from the `update_animator` for the input stuff.
+                                - AAAAAGGGHHHH I hate how circular this is. I have to compromise which one is going to come first.
+                                    - Well, having the AFA values available seems like very necessary, so this seems like a good order.
+                                    - (But then what can I do to make things feel more fluid???)
                     - [x] The feel of the parrying and stuff doesn't feel right (from player end). Why is that?
                         - Probably because there needs to be a way to cancel out of the ready-parry animation so it's a bit more responsive.
                             - So then redoing a ready-parry is faster and doesn't feel like ER nightreign's sluggishness with the executor.
