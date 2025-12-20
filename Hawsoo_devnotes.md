@@ -1056,7 +1056,9 @@ while (running_game_loop)
                     - Now going from a hurt to a ready-parry is possible! It feels kinda different tho ngl for some reason.
 
                 - [ ] Buffer overlaps of hurtboxes/hitboxes so that they lag by 1 or 2 update ticks (to compensate for the animator-input circular relationship).
-                    - Just PROMISE me that the simulation tick isn't gonna run any faster than the allocated 16.667ms.
+                    - Just PROMISE me that the simulation tick isn't gonna run any faster than the allocated 16.667ms. (Bc then that would mess up real world timing)
+                    - OH YES this needs to be included. It just doesn't feel like it's spot on (bc it's too early).
+
 
                 - [ ] Make one of each attack type animation.
                     - [ ] Attack.
