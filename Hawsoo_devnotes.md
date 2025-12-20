@@ -1058,7 +1058,8 @@ while (running_game_loop)
                 - [ ] Buffer overlaps of hurtboxes/hitboxes so that they lag by 1 or 2 update ticks (to compensate for the animator-input circular relationship).
                     - Just PROMISE me that the simulation tick isn't gonna run any faster than the allocated 16.667ms. (Bc then that would mess up real world timing)
                     - OH YES this needs to be included. It just doesn't feel like it's spot on (bc it's too early).
-
+                    - [ ] Also buffer the other direction too. Extend "parry" and "guard" frames 1-2 frames beyond what the AFA dictates.
+                        - Just to make sure that things feel like it responds to player input.
 
                 - [ ] Make one of each attack type animation.
                     - [ ] Attack.

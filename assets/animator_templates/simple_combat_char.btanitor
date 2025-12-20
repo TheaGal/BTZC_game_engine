@@ -273,11 +273,11 @@
             "condition": "ON_ANIM_END and is_guarding eq false"
         },
         {
-            "from_to_state": [["st_hurt_parry", "st_hurt_guard", "st_hurt_receive", "st_hurt_receive_from_back"], "st_ready_parry"],
+            "from_to_state": [["st_hurt_parry", "st_hurt_guard", "st_hurt_receive", "st_hurt_receive_from_back"], "st_hold_guard_idle"],
             "condition": "ON_ANIM_END and is_guarding eq true"
         },
         {
-            "from_to_state": [["st_idle", "st_running", "st_attack_0", "st_hold_guard_idle", "st_hold_guard_walking", "st_hurt_parry"], "st_ready_parry"],
+            "from_to_state": [["st_idle", "st_running", "st_attack_0", "st_hold_guard_idle", "st_hold_guard_walking", "st_hurt_parry", "st_hurt_guard"], "st_ready_parry"],
             "condition": "on_guard"
         },
         {
