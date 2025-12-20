@@ -12,19 +12,27 @@
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
 #include "hitbox_interactor/hitcapsule.h"
-#include "physics_engine/physics_engine.h"  // For `k_simulation_delta_time`.
 #include "renderer/renderer.h"
 #include "service_finder/service_finder.h"
 
 
 void BT::system::hitcapsule_attack_processing(float_t delta_time)
 {
-    static double_t s_attack_timer{ 0 };
+    static double_t s_global_attack_timer{ 0 };
 
-    // Update hitcapsules.
-    auto attack_pairs{
-        service_finder::find_service<Hitcapsule_group_overlap_solver>().update_overlaps()
-    };
+    // Attack pairs buffer for lagging the attacks by `k_lagging_ticks` ticks.
+    constexpr size_t k_lagging_ticks{ 2 };
+    constexpr size_t k_atk_pir_buf_size{ k_lagging_ticks + 1 };
+    using Attack_pairs_list = std::vector<std::pair<UUID, UUID>>;
+    static std::array<Attack_pairs_list, k_atk_pir_buf_size> s_attack_pairs_buffer;
+    static size_t s_cur_atk_pir_buf{ 0 };
+
+    // Update hitcapsule overlaps and write result to writing buffer position.
+    s_attack_pairs_buffer[s_cur_atk_pir_buf % k_atk_pir_buf_size] =
+        service_finder::find_service<Hitcapsule_group_overlap_solver>().update_overlaps();
+
+    // Tick to processing buffer position (`k_lagging_ticks` behind, but using wraparound).
+    s_cur_atk_pir_buf++;
 
     // Process all attacks.
     auto& entity_container{ service_finder::find_service<Entity_container>() };
@@ -36,8 +44,16 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
     };
     auto defender_view{ reg.view<component::Health_stats_data>() };  // `Base_combat_stats_data` is optional.
 
-    for (auto&& [offender_uuid, defender_uuid] : attack_pairs)
-    {   // Get offender stats.
+    for (auto&& [offender_uuid, defender_uuid] :
+         s_attack_pairs_buffer[s_cur_atk_pir_buf % k_atk_pir_buf_size])
+    {
+        if (!entity_container.entity_exists(offender_uuid) ||
+            !entity_container.entity_exists(defender_uuid))
+        {   // Skip evaluation since attack pair is invalid now (1 or 2 entity(s) destroyed).
+            continue;
+        }
+
+        // Get offender stats.
         auto offender_ecs_entity{ entity_container.find_entity(offender_uuid) };
         auto const& offe_combat_stats{ offender_view.get<component::Base_combat_stats_data const>(
             offender_ecs_entity) };
@@ -53,10 +69,10 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
         bool attack_process_allowed{ false };
         if (defe_health_stats.prev_atk_received_time +
                 defe_health_stats.atk_receive_debounce_time <=
-            s_attack_timer)
+            s_global_attack_timer)
         {   // Attack allowed!!
             attack_process_allowed = true;
-            defe_health_stats.prev_atk_received_time = s_attack_timer;
+            defe_health_stats.prev_atk_received_time = s_global_attack_timer;
         }
 
         // Skip this attack pair if attack is not allowed.
@@ -235,5 +251,5 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
     }
 
     // Update attack timer.
-    s_attack_timer += delta_time;
+    s_global_attack_timer += delta_time;
 }

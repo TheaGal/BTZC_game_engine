@@ -1061,6 +1061,11 @@ while (running_game_loop)
                     - [ ] Also buffer the other direction too. Extend "parry" and "guard" frames 1-2 frames beyond what the AFA dictates.
                         - Just to make sure that things feel like it responds to player input.
 
+                    - I tried doing this inside the animator, but (on top of it not working for some reason), there's an issue with writing the root motion from the hits.
+                        - This needs to be done inside the actual hitcapsule interactor.
+                        - [x] Do.
+                            - Ok this definitely helps a lot with the feel and timing. 2 ticks doesn't feel too forgiving but yeah.
+
                 - [ ] Make one of each attack type animation.
                     - [ ] Attack.
                     - [ ] Counter attack (more aggressive attack).
