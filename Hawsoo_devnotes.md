@@ -1052,6 +1052,12 @@ while (running_game_loop)
                             - So then redoing a ready-parry is faster and doesn't feel like ER nightreign's sluggishness with the executor.
                         - Made the parry animation as short as KUSR. That helped the feel out a looot.
 
+                - [x] Make change to state machine transition conditions to allow `and` keyword.
+                    - Now going from a hurt to a ready-parry is possible! It feels kinda different tho ngl for some reason.
+
+                - [ ] Buffer overlaps of hurtboxes/hitboxes so that they lag by 1 or 2 update ticks (to compensate for the animator-input circular relationship).
+                    - Just PROMISE me that the simulation tick isn't gonna run any faster than the allocated 16.667ms.
+
                 - [ ] Make one of each attack type animation.
                     - [ ] Attack.
                     - [ ] Counter attack (more aggressive attack).

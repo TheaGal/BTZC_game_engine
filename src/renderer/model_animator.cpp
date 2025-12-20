@@ -480,56 +480,66 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
             for (auto from_state_idx : state_trans.from_to_state.first)
             if (from_state_idx == curr_state_idx)
             {   // Possible state transition.
-                bool do_transition{ false };
-                if (state_trans.condition_var_idx == anim_tmpl_types::k_on_anim_end_var_idx)
-                {
-                    if (!state_changed)
-                    {   // Special ON_ANIM_END case.
-                        // @NOTE: Since this is frame dependent, we need to make sure that we're
-                        //        using the correct animation idx (hence `!state_changed` check).
-                        //        -Thea 2025/11/23
-                        auto const& model_anim{ m_model_animations[anim_state.animation_idx] };
-                        if (model_anim.calc_frame_idx(time_handle.load(),
-                                                      false,
-                                                      Model_joint_animation::FLOOR) ==
-                            model_anim.get_num_frames() - 1)
-                        {
-                            do_transition = true;
+                bool do_transition{ true };
+
+                for (auto const& trans_cond : state_trans.list_of_and_conditions)
+                {   // Check if condition is fulfilled (all of them in an AND chain must be
+                    // fulfilled to transition).
+                    bool cond_fulfilled{ false };
+
+                    if (trans_cond.condition_var_idx == anim_tmpl_types::k_on_anim_end_var_idx)
+                    {
+                        if (!state_changed)
+                        {   // Special ON_ANIM_END case.
+                            // @NOTE: Since this is frame dependent, we need to make sure that we're
+                            //        using the correct animation idx (hence `!state_changed` check).
+                            //        -Thea 2025/11/23
+                            auto const& model_anim{ m_model_animations[anim_state.animation_idx] };
+                            if (model_anim.calc_frame_idx(time_handle.load(),
+                                                          false,
+                                                          Model_joint_animation::FLOOR) ==
+                                model_anim.get_num_frames() - 1)
+                            {
+                                cond_fulfilled = true;
+                            }
                         }
                     }
-                }
-                else
-                {   // Normal condition var.
-                    auto const& anim_var{ m_animator_variables[state_trans.condition_var_idx] };
+                    else
+                    {   // Normal condition var.
+                        auto const& anim_var{ m_animator_variables[trans_cond.condition_var_idx] };
 
-                    switch (state_trans.compare_operator)
-                    {
-                    case anim_tmpl_types::Animator_state_transition::COMP_EQ:
-                        do_transition = glm_eq(anim_var.var_value, state_trans.compare_value);
-                        break;
+                        switch (trans_cond.compare_operator)
+                        {
+                        case anim_tmpl_types::Animator_state_transition::Condition::COMP_EQ:
+                            cond_fulfilled = glm_eq(anim_var.var_value, trans_cond.compare_value);
+                            break;
 
-                    case anim_tmpl_types::Animator_state_transition::COMP_NEQ:
-                        do_transition = !glm_eq(anim_var.var_value, state_trans.compare_value);
-                        break;
+                        case anim_tmpl_types::Animator_state_transition::Condition::COMP_NEQ:
+                            cond_fulfilled = !glm_eq(anim_var.var_value, trans_cond.compare_value);
+                            break;
 
-                    case anim_tmpl_types::Animator_state_transition::COMP_LESS:
-                        do_transition = (anim_var.var_value < state_trans.compare_value);
-                        break;
+                        case anim_tmpl_types::Animator_state_transition::Condition::COMP_LESS:
+                            cond_fulfilled = (anim_var.var_value < trans_cond.compare_value);
+                            break;
 
-                    case anim_tmpl_types::Animator_state_transition::COMP_LEQ:
-                        do_transition = (anim_var.var_value <= state_trans.compare_value);
-                        break;
+                        case anim_tmpl_types::Animator_state_transition::Condition::COMP_LEQ:
+                            cond_fulfilled = (anim_var.var_value <= trans_cond.compare_value);
+                            break;
 
-                    case anim_tmpl_types::Animator_state_transition::COMP_GREATER:
-                        do_transition = (anim_var.var_value > state_trans.compare_value);
-                        break;
+                        case anim_tmpl_types::Animator_state_transition::Condition::COMP_GREATER:
+                            cond_fulfilled = (anim_var.var_value > trans_cond.compare_value);
+                            break;
 
-                    case anim_tmpl_types::Animator_state_transition::COMP_GEQ:
-                        do_transition = (anim_var.var_value >= state_trans.compare_value);
-                        break;
+                        case anim_tmpl_types::Animator_state_transition::Condition::COMP_GEQ:
+                            cond_fulfilled = (anim_var.var_value >= trans_cond.compare_value);
+                            break;
 
-                    default: assert(false); break;
+                        default: assert(false); break;
+                        }
                     }
+
+                    // AND on this condition.
+                    do_transition = (do_transition && cond_fulfilled);
                 }
 
                 if (do_transition)

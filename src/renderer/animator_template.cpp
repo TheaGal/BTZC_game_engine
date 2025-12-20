@@ -93,79 +93,111 @@ BT::Animator_template const& BT::Animator_template_bank::load_animator_template(
                 std::copy(std::istream_iterator<std::string>(iss),
                           std::istream_iterator<std::string>(),
                           std::back_inserter(tokens));
-                assert(tokens.size() == 1 || tokens.size() == 3);
             }
 
-            // Convert var idx.
-            auto var_type{ anim_tmpl_types::Animator_variable::TYPE_INVALID };
-
-            if (tokens[0] == "ON_ANIM_END")
-            {   // Special case.
-                ckd.condition_var_idx = anim_tmpl_types::k_on_anim_end_var_idx;
-                var_type = anim_tmpl_types::Animator_variable::TYPE_TRIGGER;
-            }
-            else
-            {
-                bool found{ false };
-                for (size_t i = 0; i < new_template.variables_cooked.size(); i++)
-                    if (tokens[0] == new_template.variables_cooked[i].var_name)
-                    {   // Found var name!
-                        ckd.condition_var_idx = i;
-                        var_type = new_template.variables_cooked[i].type;
-                        found = true;
-                        break;
-                    }
-
-                if (!found)
-                {
-                    BT_ERRORF("Var name not found: %s", tokens[0].c_str());
-                    assert(false);
+            size_t tidx{ 0 };
+            bool expecting_and_token{ false };
+            while (tidx < tokens.size())
+            {   // Get subset of tokens.
+                std::vector<std::string> sub_tokens;
+                sub_tokens.reserve(3);
+                for (size_t sti = 0; sti < 3 && tidx + sti < tokens.size(); sti++)
+                {   // Get next 3 tokens into sub-tokens, if available.
+                    sub_tokens.emplace_back(tokens[tidx + sti]);
                 }
-            }
+                assert(sub_tokens.size() == 1 || sub_tokens.size() == 3);
 
-            // Convert compare op and value.
-            switch (var_type)
-            {
-            case anim_tmpl_types::Animator_variable::TYPE_BOOL:
-                if      (tokens[1] == "eq")  ckd.compare_operator = ckd.COMP_EQ;
-                else if (tokens[1] == "neq") ckd.compare_operator = ckd.COMP_NEQ;
-                else assert(false);
+                // Check for special case AND token.
+                if (expecting_and_token)
+                {
+                    if (sub_tokens[0] != "and")
+                    {
+                        assert(false);
+                    }
+                    expecting_and_token = false;
+                    tidx += 1;
+                    continue;
+                }
 
-                if      (tokens[2] == "false") ckd.compare_value = anim_tmpl_types::k_bool_false;
-                else if (tokens[2] == "true")  ckd.compare_value = anim_tmpl_types::k_bool_true;
-                else assert(false);
-                break;
+                // New condition.
+                anim_tmpl_types::Animator_state_transition::Condition ncd;
 
-            case anim_tmpl_types::Animator_variable::TYPE_INT:
-                if      (tokens[1] == "eq")      ckd.compare_operator = ckd.COMP_EQ;
-                else if (tokens[1] == "neq")     ckd.compare_operator = ckd.COMP_NEQ;
-                else if (tokens[1] == "less")    ckd.compare_operator = ckd.COMP_LESS;
-                else if (tokens[1] == "leq")     ckd.compare_operator = ckd.COMP_LEQ;
-                else if (tokens[1] == "greater") ckd.compare_operator = ckd.COMP_GREATER;
-                else if (tokens[1] == "geq")     ckd.compare_operator = ckd.COMP_GEQ;
-                else assert(false);
+                // Convert var idx.
+                auto var_type{ anim_tmpl_types::Animator_variable::TYPE_INVALID };
 
-                assert(false);  // @TODO: Implement str-to-int here!
-                break;
+                if (sub_tokens[0] == "ON_ANIM_END")
+                {   // Special case.
+                    ncd.condition_var_idx = anim_tmpl_types::k_on_anim_end_var_idx;
+                    var_type = anim_tmpl_types::Animator_variable::TYPE_TRIGGER;
+                }
+                else
+                {
+                    bool found{ false };
+                    for (size_t i = 0; i < new_template.variables_cooked.size(); i++)
+                        if (sub_tokens[0] == new_template.variables_cooked[i].var_name)
+                        {   // Found var name!
+                            ncd.condition_var_idx = i;
+                            var_type = new_template.variables_cooked[i].type;
+                            found = true;
+                            break;
+                        }
 
-            case anim_tmpl_types::Animator_variable::TYPE_FLOAT:
-                if      (tokens[1] == "eq")      ckd.compare_operator = ckd.COMP_EQ;
-                else if (tokens[1] == "neq")     ckd.compare_operator = ckd.COMP_NEQ;
-                else if (tokens[1] == "less")    ckd.compare_operator = ckd.COMP_LESS;
-                else if (tokens[1] == "leq")     ckd.compare_operator = ckd.COMP_LEQ;
-                else if (tokens[1] == "greater") ckd.compare_operator = ckd.COMP_GREATER;
-                else if (tokens[1] == "geq")     ckd.compare_operator = ckd.COMP_GEQ;
-                else assert(false);
+                    if (!found)
+                    {
+                        BT_ERRORF("Var name not found: %s", sub_tokens[0].c_str());
+                        assert(false);
+                    }
+                }
 
-                assert(false);  // @TODO: Implement str-to-float here!
-                break;
+                // Convert compare op and value.
+                switch (var_type)
+                {
+                case anim_tmpl_types::Animator_variable::TYPE_BOOL:
+                    if      (sub_tokens[1] == "eq")  ncd.compare_operator = ncd.COMP_EQ;
+                    else if (sub_tokens[1] == "neq") ncd.compare_operator = ncd.COMP_NEQ;
+                    else assert(false);
 
-            case anim_tmpl_types::Animator_variable::TYPE_TRIGGER:
-                ckd.compare_operator = ckd.COMP_EQ;
-                ckd.compare_value = anim_tmpl_types::k_trig_triggered;
-                break;
+                    if      (sub_tokens[2] == "false") ncd.compare_value = anim_tmpl_types::k_bool_false;
+                    else if (sub_tokens[2] == "true")  ncd.compare_value = anim_tmpl_types::k_bool_true;
+                    else assert(false);
+                    break;
 
-            default: assert(false); break;
+                case anim_tmpl_types::Animator_variable::TYPE_INT:
+                    if      (sub_tokens[1] == "eq")      ncd.compare_operator = ncd.COMP_EQ;
+                    else if (sub_tokens[1] == "neq")     ncd.compare_operator = ncd.COMP_NEQ;
+                    else if (sub_tokens[1] == "less")    ncd.compare_operator = ncd.COMP_LESS;
+                    else if (sub_tokens[1] == "leq")     ncd.compare_operator = ncd.COMP_LEQ;
+                    else if (sub_tokens[1] == "greater") ncd.compare_operator = ncd.COMP_GREATER;
+                    else if (sub_tokens[1] == "geq")     ncd.compare_operator = ncd.COMP_GEQ;
+                    else assert(false);
+
+                    assert(false);  // @TODO: Implement str-to-int here!
+                    break;
+
+                case anim_tmpl_types::Animator_variable::TYPE_FLOAT:
+                    if      (sub_tokens[1] == "eq")      ncd.compare_operator = ncd.COMP_EQ;
+                    else if (sub_tokens[1] == "neq")     ncd.compare_operator = ncd.COMP_NEQ;
+                    else if (sub_tokens[1] == "less")    ncd.compare_operator = ncd.COMP_LESS;
+                    else if (sub_tokens[1] == "leq")     ncd.compare_operator = ncd.COMP_LEQ;
+                    else if (sub_tokens[1] == "greater") ncd.compare_operator = ncd.COMP_GREATER;
+                    else if (sub_tokens[1] == "geq")     ncd.compare_operator = ncd.COMP_GEQ;
+                    else assert(false);
+
+                    assert(false);  // @TODO: Implement str-to-float here!
+                    break;
+
+                case anim_tmpl_types::Animator_variable::TYPE_TRIGGER:
+                    ncd.compare_operator = ncd.COMP_EQ;
+                    ncd.compare_value = anim_tmpl_types::k_trig_triggered;
+                    break;
+
+                default: assert(false); break;
+                }
+
+                // Insert in new condition.
+                ckd.list_of_and_conditions.emplace_back(std::move(ncd));
+                expecting_and_token = true;
+                tidx += (var_type == anim_tmpl_types::Animator_variable::TYPE_TRIGGER ? 1 : 3);
             }
         }
 
