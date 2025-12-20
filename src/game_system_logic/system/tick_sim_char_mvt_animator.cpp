@@ -69,6 +69,7 @@ void BT::system::tick_sim_char_mvt_animator()
             SET_ANIMATOR_TRIGGER(on_guard_hurt)
             SET_ANIMATOR_TRIGGER(on_receive_hurt)
             SET_ANIMATOR_TRIGGER(on_receive_hurt_from_back)
+            SET_ANIMATOR_TRIGGER(on_guard)
             SET_ANIMATOR_BOOL_VAR(is_guarding)
 
             #undef SET_ANIMATOR_BOOL_VAR

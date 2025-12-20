@@ -106,12 +106,14 @@ struct Character_mvt_animated_state
         bool on_guard_hurt{ false };
         bool on_receive_hurt{ false };
         bool on_receive_hurt_from_back{ false };
+        bool on_guard{ false };
         bool is_guarding{ false };
     } write_to_animator_data;
 
     struct State
     {
         bool prev_attack_pressed{ false };
+        bool prev_guard_pressed{ false };
     } state;
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(

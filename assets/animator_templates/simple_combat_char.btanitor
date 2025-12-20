@@ -188,6 +188,7 @@
         "trig  on_guard_hurt",
         "trig  on_receive_hurt",
         "trig  on_receive_hurt_from_back",
+        "trig  on_guard",
         "bool  is_guarding"
     ],
     "state_transitions": [
@@ -272,12 +273,12 @@
             "condition": "ON_ANIM_END"
         },
         {
-            "from_to_state": [["st_idle", "st_running", "st_attack_0"], "st_ready_parry"],
-            "condition": "is_guarding eq true"
+            "from_to_state": [["st_idle", "st_running", "st_attack_0", "st_hold_guard_idle", "st_hold_guard_walking"], "st_ready_parry"],
+            "condition": "on_guard"
         },
         {
             "from_to_state": [[], "st_ready_parry_from_running"],
-            "condition": "is_guarding eq true"
+            "condition": "on_guard"
         },
         {
             "from_to_state": [["st_ready_parry", "st_ready_parry_from_running"], "st_hold_guard_idle"],

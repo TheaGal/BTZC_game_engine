@@ -1037,10 +1037,13 @@ while (running_game_loop)
                                 - It just seems like there needs to be a more closeness.
                         - @NOTE: After studying sekiro's animations, the char will often close in on its enemy right before or slightly during the first little bit of its attack. This ensures that it's right in the face of its enemy.
                         - [ ] Have char not hit enemy so far in knockback.
-                        - [ ] Have char close in on enemy when starting attack.
-                    - [ ] The feel of the parrying and stuff doesn't feel right (from player end). Why is that?
+                        - [x] Have char close in on enemy when starting attack.
+                            - I think ^^ this ^^ will help out the most since it seems like the char only closes in enough by the end of the attack, not the beginning or middle.
+                            - THOUGHT: After doing this this definitely helped out a lot w feel, tho it feels like not doing the knockback as much would also help out a lot too.
+                    - [x] The feel of the parrying and stuff doesn't feel right (from player end). Why is that?
                         - Probably because there needs to be a way to cancel out of the ready-parry animation so it's a bit more responsive.
                             - So then redoing a ready-parry is faster and doesn't feel like ER nightreign's sluggishness with the executor.
+                        - Made the parry animation as short as KUSR. That helped the feel out a looot.
 
                 - [ ] Make one of each attack type animation.
                     - [ ] Attack.
@@ -1080,6 +1083,8 @@ while (running_game_loop)
 
 - [ ] ~~REFACTOR: Delete the `calc_orig_pt_distance()` method in hitcapsule bc this info is really only needed when doing the actual collision and isn't needed most of the time.~~
     - No. This is used in the spherization of the capsules in the broad phase of the overlap check.
+
+- [ ] DESIGN FIX: Stop having the last frame of root motion be the average of 0th and n-1th frame. Calculate a proper last frame of root motion without interpolation (especially since there are one-off attacks that shouldn't have the beginning of the root motion leaking into the end like that).
 
 - [ ] REFACTOR: Move the AFA data handle from the animator to a component attached to the entity.
     - Bc it seems like everything that needs to use the AFA data handle part of the animator is accessing it from _not_ the renderer, so it should be somewhere else.

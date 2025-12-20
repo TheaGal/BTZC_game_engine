@@ -123,9 +123,18 @@ void BT::system::player_character_world_space_input()
             char_mvt_anim_state->write_to_animator_data.on_attack = true;
         char_mvt_anim_state->state.prev_attack_pressed = attack_pressed;
 
-        char_mvt_anim_state->write_to_animator_data.is_guarding = (camera.is_follow_orbit() &&
-                                                                   can_guard_exit &&
-                                                                   input_state.guard.val);
+        // On guard trigger and is-guarding bool.
+        bool on_guard;
+        bool is_guarding;
+        {
+            bool guard_pressed{ input_state.guard.val };
+            is_guarding = (camera.is_follow_orbit() && can_guard_exit && guard_pressed);
+            on_guard = (is_guarding && !char_mvt_anim_state->state.prev_guard_pressed);
+
+            char_mvt_anim_state->state.prev_guard_pressed = guard_pressed;
+        }
+        char_mvt_anim_state->write_to_animator_data.on_guard = on_guard;
+        char_mvt_anim_state->write_to_animator_data.is_guarding = is_guarding;
 
         // End of first iteration.
         is_first = false;
