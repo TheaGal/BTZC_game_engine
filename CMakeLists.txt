@@ -152,6 +152,27 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/input_handler/input_handler.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/input_handler/input_handler.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/brush.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/entity.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/entity_geometry.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/face.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/geo_generator.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/geo_generator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/libmap.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/libmap_math.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/map_data.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/map_data.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/map_parser.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/map_parser.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/matrix.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/matrix.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/platform.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/surface_gatherer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/surface_gatherer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/vector.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/vector.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/map_importer.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/map_importer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/physics_engine/physics_engine.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/physics_engine/physics_engine.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/physics_engine/physics_engine_impl.cpp

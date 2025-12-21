@@ -550,6 +550,10 @@ Uncomment `third_party/cglm/include/cglm/simd/intrin.h:98` (where it includes "a
     - [ ] Get mesh importing figured out.
     - @TODO.
 
+1. Trenchbroom `.map` loader.
+    - [x] Include libmap_cpp src.
+    - @TODO.
+
 1. Move from GLSL to SLANG shaders.
     > This should make the switch from OpenGL to Vulkan (and to Metal in the further future) a lot easier!!
     > I think that reflection should be easier for this as well. Using the spirv reflection API was fine, but I worry that for something like Metal it wouldn't work quite the way it should.
