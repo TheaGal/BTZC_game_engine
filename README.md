@@ -537,6 +537,9 @@ Uncomment `third_party/cglm/include/cglm/simd/intrin.h:98` (where it includes "a
     - [x] Animation root motion.
     - [ ] Have CPU character attack, and have there be guard, parry, hurt -type interaction.
 
+    - [ ] Walking machine to prevent falling off edges.
+        - Especially now that char controller is a capsule instead of a box.
+
 1. ~~Unity to this engine migration.~~
     - [x] Import scene as yaml structure.
         - Using `python:unityparser`
