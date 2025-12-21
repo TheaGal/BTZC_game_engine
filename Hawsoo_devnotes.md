@@ -1076,7 +1076,9 @@ while (running_game_loop)
                 - [x] Change to capsule shape.
                     - This seems a lot better, but I need to figure out a better situation for the platforming.
                     - Like for example, falling needs to get better, where if the angle is 45deg or more it just falls off immediately instead of slowly sliding sliding sliding and then fall off.
-                    - Also, for something like having ledges you don't want to fall off of, have a walking machine algorithm 
+                    - Also, for something like having ledges you don't want to fall off of, have a walking machine algorithm.
+
+                - [ ] Enter awareness animation (something like drawing out a sword, or an aggression show).
 
                 - [ ] Make one of each attack type animation.
                     - [ ] Attack.
