@@ -263,13 +263,13 @@
                 },
                 {
                     "ctrl_item_idx": 2,
-                    "end_frame": 10,
+                    "end_frame": 12,
                     "start_frame": 0
                 },
                 {
                     "ctrl_item_idx": 15,
                     "end_frame": 17,
-                    "start_frame": 10
+                    "start_frame": 12
                 },
                 {
                     "ctrl_item_idx": 4,
@@ -288,13 +288,13 @@
                 },
                 {
                     "ctrl_item_idx": 2,
-                    "end_frame": 20,
+                    "end_frame": 22,
                     "start_frame": 0
                 },
                 {
                     "ctrl_item_idx": 15,
                     "end_frame": 49,
-                    "start_frame": 20
+                    "start_frame": 22
                 },
                 {
                     "ctrl_item_idx": 4,

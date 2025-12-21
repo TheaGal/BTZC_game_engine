@@ -1055,16 +1055,28 @@ while (running_game_loop)
                 - [x] Make change to state machine transition conditions to allow `and` keyword.
                     - Now going from a hurt to a ready-parry is possible! It feels kinda different tho ngl for some reason.
 
-                - [ ] Buffer overlaps of hurtboxes/hitboxes so that they lag by 1 or 2 update ticks (to compensate for the animator-input circular relationship).
+                - [x] Buffer overlaps of hurtboxes/hitboxes so that they lag by 1 or 2 update ticks (to compensate for the animator-input circular relationship).
                     - Just PROMISE me that the simulation tick isn't gonna run any faster than the allocated 16.667ms. (Bc then that would mess up real world timing)
                     - OH YES this needs to be included. It just doesn't feel like it's spot on (bc it's too early).
-                    - [ ] Also buffer the other direction too. Extend "parry" and "guard" frames 1-2 frames beyond what the AFA dictates.
+                    - [ ] ~~Also buffer the other direction too. Extend "parry" and "guard" frames 1-2 frames beyond what the AFA dictates.~~
                         - Just to make sure that things feel like it responds to player input.
+                        - INSTEAD: FOR NOW: Just extend the AFA by 2 frames. This should compensate enough properly.
+                            - [x] Do.
+                                - If anybody complains about the timing, make it more lax here too.
 
                     - I tried doing this inside the animator, but (on top of it not working for some reason), there's an issue with writing the root motion from the hits.
                         - This needs to be done inside the actual hitcapsule interactor.
                         - [x] Do.
                             - Ok this definitely helps a lot with the feel and timing. 2 ticks doesn't feel too forgiving but yeah.
+
+                - [x] Change inside shape for char con to be 45deg rotated box inscribing the char con box.
+                    - I think having capsules would be ideal, but for combat _and_ platforming, having an inscribed box would be better.
+                    - 感想：It just felt way too boxy, not smooth at all. Having a 45deg region was kinda nice tho.
+
+                - [x] Change to capsule shape.
+                    - This seems a lot better, but I need to figure out a better situation for the platforming.
+                    - Like for example, falling needs to get better, where if the angle is 45deg or more it just falls off immediately instead of slowly sliding sliding sliding and then fall off.
+                    - Also, for something like having ledges you don't want to fall off of, have a walking machine algorithm 
 
                 - [ ] Make one of each attack type animation.
                     - [ ] Attack.

@@ -14,6 +14,8 @@
 #include "physics_engine_impl_layers.h"
 #include "service_finder/service_finder.h"
 
+#include <cmath>
+
 
 BT::Phys_obj_impl_char_controller::Phys_obj_impl_char_controller(float_t radius,
                                                                  float_t height,
@@ -33,29 +35,65 @@ BT::Phys_obj_impl_char_controller::Phys_obj_impl_char_controller(float_t radius,
     // Assert required to create a box shape.
     assert(m_radius > 0.0f);
 
+    constexpr bool k_is_box_shape{ false };
+
     // @NOTE: Before the cylinder collider was used to get round sides and a flat
     //   bottom, however, the side collisions of the cylinder became so erratic that
     //   I had to switch to a box collider. It's a bit sad but the collision looks
     //   and feels great now!  -Thea 2025/05/29
-    m_standing_shape = JPH::RotatedTranslatedShapeSettings(
-        JPH::Vec3(0, 0.5f * m_height + m_radius, 0),
-        JPH::Quat::sIdentity(),
-        new JPH::BoxShape(JPH::Vec3(m_radius, 0.5f * m_height + m_radius, m_radius))).Create().Get();
-    m_crouching_shape = JPH::RotatedTranslatedShapeSettings(
-        JPH::Vec3(0, 0.5f * m_crouch_height + m_radius, 0),
-        JPH::Quat::sIdentity(),
-        new JPH::BoxShape(JPH::Vec3(m_radius, 0.5f * m_crouch_height + m_radius, m_radius))).Create().Get();
+    if constexpr (k_is_box_shape)
+    {
+        m_standing_shape = JPH::RotatedTranslatedShapeSettings(
+            JPH::Vec3(0, 0.5f * m_height + m_radius, 0),
+            JPH::Quat::sIdentity(),
+            new JPH::BoxShape(JPH::Vec3(m_radius, 0.5f * m_height + m_radius, m_radius))).Create().Get();
+
+        m_crouching_shape = JPH::RotatedTranslatedShapeSettings(
+            JPH::Vec3(0, 0.5f * m_crouch_height + m_radius, 0),
+            JPH::Quat::sIdentity(),
+            new JPH::BoxShape(JPH::Vec3(m_radius, 0.5f * m_crouch_height + m_radius, m_radius))).Create().Get();
+    }
+    else
+    {
+        m_standing_shape = JPH::RotatedTranslatedShapeSettings(
+            JPH::Vec3(0, 0.5f * m_height + m_radius, 0),
+            JPH::Quat::sIdentity(),
+            new JPH::CapsuleShape(0.5f * m_height, m_radius)).Create().Get();
+
+        m_crouching_shape = JPH::RotatedTranslatedShapeSettings(
+            JPH::Vec3(0, 0.5f * m_crouch_height + m_radius, 0),
+            JPH::Quat::sIdentity(),
+            new JPH::CapsuleShape(0.5f * m_crouch_height, m_radius)).Create().Get();
+    }
 
     // @NOTE: The inner shapes are capsules so that it's smoother and doesn't feel boxy when trying
     //        to move around other characters.  -Thea 2025/12/02
-    m_inner_standing_shape = JPH::RotatedTranslatedShapeSettings(
-        JPH::Vec3(0, 0.5f * m_height + m_radius, 0),
-        JPH::Quat::sIdentity(),
-        new JPH::CapsuleShape(0.5f * m_height * k_inner_shape_fraction, m_radius * k_inner_shape_fraction)).Create().Get();
-    m_inner_crouching_shape = JPH::RotatedTranslatedShapeSettings(
-        JPH::Vec3(0, 0.5f * m_crouch_height + m_radius, 0),
-        JPH::Quat::sIdentity(),
-        new JPH::CapsuleShape(0.5f * m_crouch_height * k_inner_shape_fraction, m_radius * k_inner_shape_fraction)).Create().Get();
+    if constexpr (k_is_box_shape)
+    {
+        float_t sin_45_r{ m_radius * std::sinf(glm_rad(45)) };  // For 45 y-axis rotated inner box.
+
+        m_inner_standing_shape = JPH::RotatedTranslatedShapeSettings(
+            JPH::Vec3(0, 0.5f * m_height + m_radius, 0),
+            JPH::Quat::sEulerAngles(JPH::Vec3(glm_rad(0), glm_rad(45), glm_rad(0))),
+            new JPH::BoxShape(JPH::Vec3(sin_45_r, 0.5f * m_height + m_radius, sin_45_r) * k_inner_shape_fraction)).Create().Get();
+
+        m_inner_crouching_shape = JPH::RotatedTranslatedShapeSettings(
+            JPH::Vec3(0, 0.5f * m_crouch_height + m_radius, 0),
+            JPH::Quat::sEulerAngles(JPH::Vec3(glm_rad(0), glm_rad(45), glm_rad(0))),
+            new JPH::BoxShape(JPH::Vec3(sin_45_r, 0.5f * m_crouch_height + m_radius, sin_45_r) * k_inner_shape_fraction)).Create().Get();
+    }
+    else
+    {
+        m_inner_standing_shape = JPH::RotatedTranslatedShapeSettings(
+            JPH::Vec3(0, 0.5f * m_height + m_radius, 0),
+            JPH::Quat::sIdentity(),
+            new JPH::CapsuleShape(0.5f * m_height * k_inner_shape_fraction, m_radius * k_inner_shape_fraction)).Create().Get();
+
+        m_inner_crouching_shape = JPH::RotatedTranslatedShapeSettings(
+            JPH::Vec3(0, 0.5f * m_crouch_height + m_radius, 0),
+            JPH::Quat::sIdentity(),
+            new JPH::CapsuleShape(0.5f * m_crouch_height * k_inner_shape_fraction, m_radius * k_inner_shape_fraction)).Create().Get();
+    }
 
     JPH::Ref<JPH::CharacterVirtualSettings> settings = new JPH::CharacterVirtualSettings();
     settings->mMaxSlopeAngle = s_max_slope_angle;
