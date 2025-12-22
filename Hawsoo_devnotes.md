@@ -1084,8 +1084,19 @@ while (running_game_loop)
                     - [ ] Attack.
                     - [ ] Counter attack (more aggressive attack).
                     - [ ] Pinch attack.
-                - [ ] Detect these events from CPU's enemy.
-                    - [ ] Enemy attack -> CPU deflect, then counter attack.
+
+                - [ ] Attack cancels.
+                    - If CPU's enemy deflect/parries a certain attack, the sequence is stopped. Usually the last attack of the sequence, but could also be stopped by mikiri in the middle (think kensei isshin).
+                    - The attack cancel should contain enough time for other enemy to do a counter attack.
+                    - [ ] Deflect cancel animation.
+                        - Does this have to be the same animation for every attack chain??
+
+                    - vv FUTURE vv
+                    - [ ] ~~Mikiri cancel animation.~~
+                    - [ ] ~~Stop cancel animation.~~
+
+                - [ ] Detect these events from CPU's enemy. (Do inside `cpu_character_enemy_detection.cpp` since it's something all CPUs should have detection of (ig even "shy" NPCs could use this information!))
+                    - [ ] Enemy attack -> 1st CPU guard, then 2nd CPU deflect, then counter attack.
                     - [ ] Enemy heal/consumable -> CPU pinch attack.
                     - [ ] Enemy run away -> CPU reapproach attack (can just be pinch attack, or a grab attack, or many ones to pick from).
                     - [ ] Enemy close in -> CPU attack.
