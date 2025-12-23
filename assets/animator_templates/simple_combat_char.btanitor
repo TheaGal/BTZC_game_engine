@@ -65,6 +65,13 @@
             "loop": false
         },
         {
+            "state_name": "st_awareness_aware_begin",
+            "state_type": "single_anim",
+            "anim_name": "Awareness_aware_begin",
+            "speed": 1.0,
+            "loop": false
+        },
+        {
             "state_name": "st_jump",
             "state_type": "single_anim",
             "anim_name": "Jump",
@@ -225,8 +232,12 @@
             "condition": "on_unaware"
         },
         {
-            "from_to_state": [["st_awareness_suspicion_begin", "st_awareness_suspicion_walking", "st_awareness_suspicion_end"], "st_attack_0"],
+            "from_to_state": [["st_awareness_suspicion_begin", "st_awareness_suspicion_walking", "st_awareness_suspicion_end"], "st_awareness_aware_begin"],
             "condition": "on_aware"
+        },
+        {
+            "from_to_state": [["st_awareness_aware_begin"], "st_idle"],
+            "condition": "ON_ANIM_END"
         },
         {
             "from_to_state": [["st_idle", "st_running", "st_fall", "st_attack_0"], "st_jump"],

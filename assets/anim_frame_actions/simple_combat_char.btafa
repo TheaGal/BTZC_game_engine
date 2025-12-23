@@ -87,6 +87,21 @@
         {
             "regions": [
                 {
+                    "ctrl_item_idx": 4,
+                    "end_frame": 61,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_item_idx": 10,
+                    "end_frame": 61,
+                    "start_frame": 0
+                }
+            ],
+            "state_name": "st_awareness_aware_begin"
+        },
+        {
+            "regions": [
+                {
                     "ctrl_item_idx": 7,
                     "end_frame": 11,
                     "start_frame": 0

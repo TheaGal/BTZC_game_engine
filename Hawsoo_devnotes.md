@@ -1078,7 +1078,7 @@ while (running_game_loop)
                     - Like for example, falling needs to get better, where if the angle is 45deg or more it just falls off immediately instead of slowly sliding sliding sliding and then fall off.
                     - Also, for something like having ledges you don't want to fall off of, have a walking machine algorithm.
 
-                - [ ] Enter awareness animation (something like drawing out a sword, or an aggression show).
+                - [x] Enter awareness animation (something like drawing out a sword, or an aggression show).
 
                 - [ ] Make one of each attack type animation.
                     - [ ] Attack.
@@ -1101,6 +1101,8 @@ while (running_game_loop)
                     - [ ] Enemy run away -> CPU reapproach attack (can just be pinch attack, or a grab attack, or many ones to pick from).
                     - [ ] Enemy close in -> CPU attack.
                     - [ ] Enemy do nothing -> CPU 様子見, or CPU attack, or CPU guard.
+                
+                - [ ] When hit by its enemy, CPU is made aware of that enemy.
 
         - [ ] Revisit detection: Add line-of-sight detection with raycast. (`@FIXME` tags)
         - [ ] Revisit detection: Ignore suspicious sight cone during SUSPICIOUS state.
