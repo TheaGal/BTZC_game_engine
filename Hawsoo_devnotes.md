@@ -1097,6 +1097,9 @@ while (running_game_loop)
                     - [ ] ~~Mikiri cancel animation.~~
                     - [ ] ~~Stomp cancel animation.~~
 
+                - [ ] ~~If attack canceled, then don't have defender knockback.~~
+                    - Actually, this shouldn't be the case I think.
+
                 - [ ] Detect these events from CPU's enemy. (Do inside `cpu_character_enemy_detection.cpp` since it's something all CPUs should have detection of (ig even "shy" NPCs could use this information!))
                     - [ ] Enemy attack -> 1st CPU guard, then 2nd CPU deflect, then counter attack.
                     - [ ] Enemy heal/consumable -> CPU pinch attack.
