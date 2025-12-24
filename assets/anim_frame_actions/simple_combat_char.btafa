@@ -225,9 +225,18 @@
                     "ctrl_item_idx": 17,
                     "end_frame": 54,
                     "start_frame": 47
+                },
+                {
+                    "ctrl_item_idx": 20,
+                    "end_frame": 54,
+                    "start_frame": 47
                 }
             ],
             "state_name": "st_attack_0"
+        },
+        {
+            "regions": [],
+            "state_name": "st_cancel_parried_attack"
         },
         {
             "regions": [
@@ -416,6 +425,9 @@
         },
         {
             "name": "cpu_aware_chg_suspicious_to_unaware:tr"
+        },
+        {
+            "name": "can_cancel_attack_w_parry:ov:true"
         }
     ],
     "hitcapsule_group_set_template": {

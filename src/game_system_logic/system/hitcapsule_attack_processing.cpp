@@ -112,6 +112,7 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
         if (defender_rend_obj_ref != nullptr && offender_rend_obj_ref != nullptr)
         {   // Get sending root motion multiplier from offender.
             float_t root_motion_multiplier;
+            bool can_cancel_attack_w_parry;
             {
                 auto& rend_obj{ *rend_obj_pool
                                      .checkout_render_obj_by_key(
@@ -124,6 +125,11 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
                     afa_data_handle
                         .get_float_data_handle(
                             anim_frame_action::CTRL_DATA_LABEL_attack_send_root_motion_multi)
+                        .get_val();
+                can_cancel_attack_w_parry =
+                    afa_data_handle
+                        .get_bool_data_handle(
+                            anim_frame_action::CTRL_DATA_LABEL_can_cancel_attack_w_parry)
                         .get_val();
 
                 rend_obj_pool.return_render_objs({ &rend_obj });
@@ -172,6 +178,21 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
             else if (is_guard_active)
             {
                 atk_res.defender.delta_hit_pts = 0;
+            }
+
+            // Get parent of offender.
+            auto offender_parent_ecs_entity{ entity_container.find_entity(
+                reg.get<component::Transform_hierarchy>(offender_ecs_entity).parent_entity) };
+
+            // Cancel attack anim of offender.
+            if (auto offender_char_mvt_anim_state{ reg.try_get<component::Character_mvt_animated_state>(
+                    offender_parent_ecs_entity) };
+                offender_char_mvt_anim_state)
+            {
+                if (can_cancel_attack_w_parry && is_parry_active)
+                    // If defender is parrying and can cancel the attack, cancel attack from being
+                    // parried.
+                    offender_char_mvt_anim_state->write_to_animator_data.on_cancel_parried = true;
             }
 
             // Get parent of defender.

@@ -93,6 +93,13 @@
             "loop": false
         },
         {
+            "state_name": "st_cancel_parried_attack",
+            "state_type": "single_anim",
+            "anim_name": "Cancel_parried_attack",
+            "speed": 1.0,
+            "loop": false
+        },
+        {
             "state_name": "st_hurt_parry",
             "state_type": "single_anim",
             "anim_name": "Hurt_parry_left",
@@ -191,6 +198,7 @@
         "bool  is_grounded",
         "trig  on_jump",
         "trig  on_attack",
+        "trig  on_cancel_parried",
         "trig  on_parry_hurt",
         "trig  on_guard_hurt",
         "trig  on_receive_hurt",
@@ -260,7 +268,11 @@
             "condition": "on_attack"
         },
         {
-            "from_to_state": [["st_attack_0"], "st_idle"],
+            "from_to_state": [["st_attack_0"], "st_cancel_parried_attack"],
+            "condition": "on_cancel_parried"
+        },
+        {
+            "from_to_state": [["st_attack_0", "st_cancel_parried_attack"], "st_idle"],
             "condition": "ON_ANIM_END"
         },
         {

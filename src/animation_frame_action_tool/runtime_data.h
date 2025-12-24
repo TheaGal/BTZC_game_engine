@@ -51,6 +51,7 @@ enum Controllable_data_label : std::uint32_t
         X__bool(mvt_input_enabled,          false)      \
         X__bool(can_guard_exit,             true)       \
         X__bool(can_attack_exit,            true)       \
+        X__bool(can_cancel_attack_w_parry,  false)      \
         X__bool(blade_has_mizunokata,       false)      \
         X__bool(blade_has_honoonokata,      false)      \
         X__bool(hitcapsule_group_0_enabled, false)      \
