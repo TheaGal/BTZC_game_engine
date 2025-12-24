@@ -220,18 +220,20 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
                 while (delta_angle_2 > glm_rad(180.0f)) delta_angle_2 -= glm_rad(360.0f);
                 while (delta_angle_2 <= glm_rad(-180.0f)) delta_angle_2 += glm_rad(360.0f);
 
-                #define ALLOW_TURNING_TO_FACE_AWAY 0  // Disabled for ensuring char always face towards where it got attacked.  -Thea 2025/12/23
-                #if ALLOW_TURNING_TO_FACE_AWAY
-                if (std::abs(delta_angle_2) < std::abs(delta_angle_1))
-                {   // Delta angle 2 is more optimal.
-                    target_facing_angle += glm_rad(180.0f);
-                    while (target_facing_angle > glm_rad(180.0f)) target_facing_angle -= glm_rad(360.0f);
-                    while (target_facing_angle <= glm_rad(-180.0f)) target_facing_angle += glm_rad(360.0f);
+                // Disabled for ensuring char always face towards where it got attacked.
+                //   -Thea 2025/12/23
+                if constexpr(false)
+                {
+                    if (std::abs(delta_angle_2) < std::abs(delta_angle_1))
+                    {   // Delta angle 2 is more optimal.
+                        target_facing_angle += glm_rad(180.0f);
+                        while (target_facing_angle > glm_rad(180.0f)) target_facing_angle -= glm_rad(360.0f);
+                        while (target_facing_angle <= glm_rad(-180.0f)) target_facing_angle += glm_rad(360.0f);
 
-                    // This is facing away case.
-                    turn_to_face_away = true;
+                        // This is facing away case.
+                        turn_to_face_away = true;
+                    }
                 }
-                #endif  // ALLOW_TURNING_TO_FACE_AWAY
 
                 // Apply.
                 char_mvt_state->set_facing_angle(target_facing_angle);
