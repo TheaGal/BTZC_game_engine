@@ -1107,7 +1107,8 @@ while (running_game_loop)
                     - [ ] Enemy close in -> CPU attack.
                     - [ ] Enemy do nothing -> CPU 様子見, or CPU attack, or CPU guard.
                 
-                - [ ] When hit by its enemy, CPU is made aware of that enemy.
+                - [x] When hit by its enemy, CPU is made aware of that enemy.
+                    - Maybe just turn CPU towards its enemy all the time.
 
         - [ ] Revisit detection: Add line-of-sight detection with raycast. (`@FIXME` tags)
         - [ ] Revisit detection: Ignore suspicious sight cone during SUSPICIOUS state.
