@@ -67,10 +67,54 @@ def find_missing_src_entry_in_src_entries(src_entries: list[str],
     return missing_entries
 
 
+def print_quit_help():
+    print("[quit/q]")
+    print("  Exits the program.")
 
 
-def print_complete_help():
-    pass
+def print_help_help():
+    print("[help/h]")
+    print("  Displays this prompt.")
+
+
+def print_list_help():
+    print("[list/l]")
+    print("  Lists all modules.")
+
+
+def print_module_name_example():
+    print("    EXAMPLE OF MODULE NAME: BT.world.c-Scene_loader.f-load_scene")
+    print("      No prefix : namespace")
+    print("      f-        : function or method")
+    print("      e-        : enum or enum class")
+    print("      s-        : struct")
+    print("      c-        : class")
+
+
+def print_view_help():
+    print("[view/v] module_name")
+    print("  Views properties of a module. If module name is not an exact match, " \
+          "similar ones are suggested.")
+    print_module_name_example()
+
+
+def print_new_help():
+    print("[new/n] module_name")
+    print("  Creates a new module. If module name is an exact match with another, " \
+          "raises an error message.")
+    print_module_name_example()
+
+
+def print_all_help():
+    print_quit_help()
+    print()
+    print_help_help()
+    print()
+    print_list_help()
+    print()
+    print_view_help()
+    print()
+    print_new_help()
 
 
 def check_token_exists(token_name: str) -> bool:
@@ -93,25 +137,34 @@ def interactive_mode(proj_files: list[Path]):
     # Loop for commands in interactive mode.
     while True:
         print()
-        user_ans = input("> ").split()  # Split on whitespace.
+        user_ans = input("コマンド⊳ ").split()  # Split on whitespace.
         print()
         
         # Check if input is valid.
         if len(user_ans) == 0:
             print("Enter 'help' or 'h' to view list of commands, or enter a command.")
             continue
-        
+
         # 'quit'
         if user_ans[0].lower() in ['q', 'quit']:
             break
 
         # 'help'
         if user_ans[0].lower() in ['h', 'help']:
-            print_complete_help()
+            print_all_help()
+            continue
+
+        # 'list'
+        if user_ans[0].lower() in ['l', 'list']:
+            search_for_token_and_print_results('')
             continue
 
         # 'view'
         if user_ans[0].lower() in ['v', 'view']:
+            if len(user_ans) != 2:
+                print_view_help()
+                continue
+
             if check_token_exists(user_ans[1]):
                 token_view_interactive_mode(user_ans[1])
             else:
@@ -120,6 +173,10 @@ def interactive_mode(proj_files: list[Path]):
 
         # 'new'
         if user_ans[0].lower() in ['n', 'new']:
+            if len(user_ans) != 2:
+                print_new_help()
+                continue
+
             if check_token_exists(user_ans[1]):
                 print("ERROR: Token already exists.")
             else:
@@ -127,17 +184,26 @@ def interactive_mode(proj_files: list[Path]):
             continue
 
 
-
-
 if __name__ == '__main__':
+    print("STARTUP: Finding project files... ", end='', flush=True)
+
     src_entries = find_src_entries()
     existing_files = find_existing_files()
 
     files_missing_in_src_entries = \
         find_missing_src_entry_in_src_entries(src_entries, existing_files)
-    
+
+    print("DONE")
 
 
+    print("STARTUP: Building module database... ", end='', flush=True)
+    # @TODO: @HERE: Create the db here!
+    print("DONE")
+
+
+    print("STARTUP finished.")
+    print()
+    print("Entering interactive mode!")
 
     interactive_mode(existing_files)
 
