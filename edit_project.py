@@ -67,6 +67,122 @@ def find_missing_src_entry_in_src_entries(src_entries: list[str],
     return missing_entries
 
 
+class Module:
+    m_type: str
+    VALID_TYPES = ["namespace", "func", "enum", "struct", "class"]
+
+    def __init__(self, type: str):
+        self.m_type = type
+        assert self.m_type in self.VALID_TYPES
+
+
+def strip_block_comments(buffer_lines: list[str]) -> list[str]:
+    is_block_comm_mode = False
+    block_comm_regions = []
+
+    # Gather block comments.
+    line_idx = 0
+    for line in buffer_lines:
+        while True:
+            if not is_block_comm_mode:
+                start_idx = line.find("/*")
+                if start_idx >= 0:
+                    is_block_comm_mode = True
+                    block_comm_regions.append({ "start_line": line_idx,
+                                                "start_idx": start_idx, })
+                else:
+                    break  # Get out of while-true.
+            else:
+                end_idx = line.find("*/")
+                if end_idx >= 0:
+                    is_block_comm_mode = False
+                    block_comm_regions[-1]["end_line"] = line_idx
+                    block_comm_regions[-1]["end_idx"] = end_idx + 2  # 2 for "*/" chars.
+                else:
+                    break  # Get out of while-true.
+        line_idx += 1
+
+    # Remove block comments.
+    for region in block_comm_regions:
+        if region["start_line"] == region["end_line"]:
+            # Cut out block comment from single line.
+            replacement_line = buffer_lines[region["start_line"]][:region["start_idx"]]
+            replacement_line += " "  # To prevent token mixing.
+            replacement_line += buffer_lines[region["end_line"]][region["end_idx"]:]
+            buffer_lines[region["start_line"]] = replacement_line
+        else:
+            # Replace begin line.
+            replacement_line = buffer_lines[region["start_line"]][:region["start_idx"]]
+            buffer_lines[region["start_line"]] = replacement_line
+
+            # Replace end line.
+            replacement_line = buffer_lines[region["end_line"]][region["end_idx"]:]
+            buffer_lines[region["end_line"]] = replacement_line
+
+            # Empty between lines.
+            for i in range(region["start_line"] + 1, region["end_line"]):
+                buffer_lines[i] = ""
+
+    return buffer_lines
+
+
+def strip_preprocessors(buffer_lines: list[str]) -> list[str]:
+    leftover_lines = []
+
+    is_preprocessor_line = False
+    is_next_line_preprocessor_line = False
+
+    for line in buffer_lines:
+        line_stripped = line.strip()
+
+        # Check whether current and/or next line(s) are preprocessor line(s).
+        if len(line_stripped) > 0 and line_stripped[0] == '#':
+            is_preprocessor_line = True
+
+        if is_preprocessor_line and len(line_stripped) > 0 and line_stripped[-1] == '\\':
+            is_next_line_preprocessor_line = True
+
+        # Ensure preprocessor lines get removed.
+        if not is_preprocessor_line:
+            leftover_lines.append(line)
+        
+        # Move to next line.
+        is_preprocessor_line = False
+        if is_next_line_preprocessor_line:
+            is_preprocessor_line = True
+            is_next_line_preprocessor_line = False
+
+    return leftover_lines
+
+
+def strip_comments(buffer_lines: list[str]) -> list[str]:
+    for line in buffer_lines:
+        
+
+
+def extract_modules(buffer_lines: list[str]) -> list[Module]:
+    modules = []
+    buffer_lines = strip_block_comments(buffer_lines)
+    buffer_lines = strip_preprocessors(buffer_lines)
+    buffer_lines = strip_comments(buffer_lines)
+    for l in buffer_lines:
+        print(l)
+    import sys; sys.exit(1)
+
+
+    return modules
+
+
+def build_module_database(existing_files: list[Path]) -> list[Module]:
+    modules = []
+    for existing_file in existing_files:
+        with open(existing_file, 'r', encoding='utf-8') as f:
+            buffer_lines = f.readlines()
+            modules.extend(extract_modules(buffer_lines))
+
+    return modules
+
+
 def print_quit_help():
     print("[quit/q]")
     print("  Exits the program.")
@@ -197,7 +313,7 @@ if __name__ == '__main__':
 
 
     print("STARTUP: Building module database... ", end='', flush=True)
-    # @TODO: @HERE: Create the db here!
+    all_modules = build_module_database(existing_files)
     print("DONE")
 
 
@@ -205,7 +321,7 @@ if __name__ == '__main__':
     print()
     print("Entering interactive mode!")
 
-    interactive_mode(existing_files)
+    interactive_mode(all_modules)
 
 
 
