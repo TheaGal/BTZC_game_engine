@@ -71,16 +71,29 @@ def find_missing_src_entry_in_src_entries(src_entries: list[str],
 class Module:
     m_type: str
     VALID_TYPES = ["namespace", "enum", "struct", "class", "func"]
+    TYPE_PREFIXES = ["", "e-", "s-", "c-", "f-"]
 
-    # Namespace.
-    m_ns_name: str
+    # Cooked in ctor.
+    m_full_name: str
+
+    # # Namespace.
+    # m_ns_name: str
+
+    # Enum.
+    m_is_enum_class: bool
 
     # Func.
     m_func_return_type: str
 
-    def __init__(self, type: str):
+    def __init__(self, type: str, name: str, parent_full_name: str):
         self.m_type = type
         assert self.m_type in self.VALID_TYPES
+        self.m_full_name = ((parent_full_name + '.') if len(parent_full_name) > 0 else '') + \
+                           (self.TYPE_PREFIXES[self.VALID_TYPES.index(self.m_type)]) + \
+                           name
+
+    def get_local_name(self) -> str:
+        return self.m_full_name.split(sep='.')[-1]
 
 
 def strip_unnec_parts(buffer_lines: list[str]) -> list[str]:
@@ -298,13 +311,17 @@ def extract_modules_from_tokens(tokens: list[str]) -> list[Module]:
         else:
             return tokens[idx]
 
+    mod_nesting: list[str] = []
+    def get_full_mod_nesting_str() -> str:
+        return '.'.join(mod_nesting)
+
     # Scan tokens.
     t_idx = 0
-    mod_nesting: list[str] = []
     while t_idx < len(tokens):
         t0 = get_token_safe(t_idx)
 
         # @NOTE: Ignore forward declarations.
+
         if t0 == '}':
             # Exit one nesting.
             assert len(mod_nesting) >= 1
@@ -312,23 +329,190 @@ def extract_modules_from_tokens(tokens: list[str]) -> list[Module]:
 
         elif t0 == 'namespace':
             # Namespace module?
+            t_nxt_idx = t_idx + 1
+            ns_name = get_token_safe(t_nxt_idx)
 
-            # @TODO: START HERE!!!!!
+            t_nxt_idx += 1
+            if get_token_safe(t_nxt_idx) == '{':
+                # Confirmed.
+                modules.append(Module("namespace", ns_name, get_full_mod_nesting_str()))
+                mod_nesting.append(modules[-1].get_local_name())
+            else:
+                print("Unknown syntax?!")
+                assert False
+            
+            t_idx = t_nxt_idx
 
-            pass
         elif t0 == 'enum':
             # Enum module?
-            pass
+            t_nxt_idx = t_idx + 1
+            nxt_tok = get_token_safe(t_nxt_idx)
+
+            is_enum_class = False
+            if nxt_tok == 'class':
+                is_enum_class = True
+
+                t_nxt_idx += 1
+                nxt_tok = get_token_safe(t_nxt_idx)
+
+            enum_name = nxt_tok
+
+            t_nxt_idx += 1
+            nxt_tok = get_token_safe(t_nxt_idx)
+
+            if nxt_tok == '{':
+                # Confirmed.
+                modules.append(Module("enum", enum_name, get_full_mod_nesting_str()))
+                modules[-1].m_is_enum_class = is_enum_class
+
+                mod_nesting.append(modules[-1].get_local_name())
+            elif nxt_tok == ';':
+                # Is forward declaration. SKIP.
+                pass
+            else:
+                print("Unknown syntax?!")
+                assert False
+            
+            t_idx = t_nxt_idx
+
         elif t0 == 'struct':
             # Struct module?
-            pass
-        elif t0 == 'class':
-            # Class module?
+            t_nxt_idx = t_idx + 1
+            nxt_tok = get_token_safe(t_nxt_idx)
 
-            pass
+            struct_name = nxt_tok
+
+            t_nxt_idx += 1
+            nxt_tok = get_token_safe(t_nxt_idx)
+
+            if nxt_tok == '{':
+                # Confirmed.
+                modules.append(Module("struct", struct_name, get_full_mod_nesting_str()))
+
+                mod_nesting.append(modules[-1].get_local_name())
+            elif nxt_tok == ';':
+                # Is forward declaration. SKIP.
+                pass
+            else:
+                print("Unknown syntax?!")
+                assert False
+            
+            t_idx = t_nxt_idx
+
+        elif t0 == 'class':
+            # Class module?    @COPYPASTA w struct version.
+            t_nxt_idx = t_idx + 1
+            nxt_tok = get_token_safe(t_nxt_idx)
+
+            class_name = nxt_tok
+
+            t_nxt_idx += 1
+            nxt_tok = get_token_safe(t_nxt_idx)
+
+            if nxt_tok == '{':
+                # Confirmed.
+                modules.append(Module("class", class_name, get_full_mod_nesting_str()))
+
+                mod_nesting.append(modules[-1].get_local_name())
+            elif nxt_tok == ';':
+                # Is forward declaration. SKIP.
+                pass
+            else:
+                print("Unknown syntax?!")
+                assert False
+            
+            t_idx = t_nxt_idx
+
         else:
             # Func module?
-            pass
+            t_nxt_idx = t_idx
+
+            # Try to find function tokens.
+            func_read_stage = 0  # 0:return type and func name  1:param list  2:post quals
+            ret_type_fn_name_toks = []
+            param_list_toks = [[]]
+            post_qual_toks = []
+
+            num_param_bracket_nest = 0  # For knowing when stage1 (param list) ends.
+
+            while True:
+                t_nxt_idx += 1
+                nxt_tok = get_token_safe(t_nxt_idx)
+
+                # Return type & func name.
+                if func_read_stage == 0:
+                    if nxt_tok in ["<", ">", "[", "]", ":", "*", "&"]:
+                        ret_type_fn_name_toks.append(nxt_tok)
+                    elif nxt_tok in ["const", "static", "inline", "friend", "constexpr", "volatile"]:
+                        ret_type_fn_name_toks.append(nxt_tok)
+                    elif nxt_tok[0].isalnum() or nxt_tok[0] == '_':
+                        # Assume is a type.
+                        ret_type_fn_name_toks.append(nxt_tok)
+                    elif nxt_tok == '(':
+                        # Oops we have the start of the param list in here!
+                        func_read_stage = 1
+                    else:
+                        # @TODO: If the prog makes it here, it likely means it's not a function, but we should drain the tokens until it's done? Probably??
+                        # @TODO: Figure out why it's hitting here! And mitigate.
+                        # @TODO: I just realized that the `std::function<void()>` type here could trigger the wrong syntax!!! AAAAGGGHHHH
+                        print("Unknown syntax?!")
+                        assert False
+
+                # Param list.
+                if func_read_stage == 1:
+                    if nxt_tok == '(':  # @NOTE: Could be from `std::function<void()>` as well, for example.
+                        num_param_bracket_nest += 1
+                    elif nxt_tok == ')':
+                        num_param_bracket_nest -= 1
+                        if num_param_bracket_nest == 0:
+                            # Finish param list and move on.
+                            func_read_stage = 2
+                            continue  # To force reading the next token.
+
+                        elif num_param_bracket_nest < 0:
+                            # It's only the parenthesis that can end the param list.
+                            print("Error somewhere?!?!")
+                            assert False
+
+                    elif nxt_tok in ["<", ">", "[", "]", ":", "*", "&"]:
+                        param_list_toks[-1].append(nxt_tok)
+
+                        if nxt_tok in ["<", "["]:
+                            num_param_bracket_nest += 1
+                        elif nxt_tok in [">", "]"]:
+                            num_param_bracket_nest -= 1
+
+                    elif nxt_tok in ["const"]:
+                        param_list_toks[-1].append(nxt_tok)
+                    elif num_param_bracket_nest > 1 and nxt_tok == ',':
+                        # Just a token.
+                        param_list_toks.append([])
+                    elif num_param_bracket_nest == 1 and nxt_tok == ',':
+                        # New param.
+                        param_list_toks.append([])
+                    elif nxt_tok[0].isalnum() or nxt_tok[0] == '_':
+                        # Assume is a type.
+                        ret_type_fn_name_toks.append(nxt_tok)
+                    else:
+                        print("Unknown syntax?!")
+                        assert False
+                
+                # Postfix qualifiers.
+                if func_read_stage == 2:
+                    if nxt_tok in ['const', 'override']:
+                        post_qual_toks.append(nxt_tok)
+                    elif nxt_tok in [';', '{']:
+                        # Confirmed! (@NOTE: Do not add to module nesting)
+                        func_name = ret_type_fn_name_toks[-1]
+                        modules.append(Module("func", func_name, get_full_mod_nesting_str()))
+
+                        if nxt_tok == '{':
+                            # Continue to drain everything in the function body.
+                            # (exclude any possible modules inside of functions for simplicity)
+                            assert False  # @TODO
+                        
+                        # Finish while-true.
+                        break
 
     return modules
 
@@ -339,10 +523,6 @@ def extract_modules(buffer_lines: list[str]) -> list[Module]:
     buffer_lines = strip_empty_lines(buffer_lines)
     tokens = extract_tokens_from_lines(buffer_lines)
     modules = extract_modules_from_tokens(tokens)
-
-    for l in tokens:
-        print(l)
-    import sys; sys.exit(1)
 
     return modules
 
