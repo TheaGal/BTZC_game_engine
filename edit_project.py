@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 
 
 def find_src_entries() -> list[str]:
@@ -69,7 +70,13 @@ def find_missing_src_entry_in_src_entries(src_entries: list[str],
 
 class Module:
     m_type: str
-    VALID_TYPES = ["namespace", "func", "enum", "struct", "class"]
+    VALID_TYPES = ["namespace", "enum", "struct", "class", "func"]
+
+    # Namespace.
+    m_ns_name: str
+
+    # Func.
+    m_func_return_type: str
 
     def __init__(self, type: str):
         self.m_type = type
@@ -247,15 +254,95 @@ def strip_empty_lines(buffer_lines: list[str]) -> list[str]:
     return non_empty_lines
 
 
+def extract_tokens_from_lines(buffer_lines: list[str]) -> list[str]:
+    tokens: list[str] = []
+    for line in buffer_lines:
+        prev_type = 0  # 0:non-word char  1:word char
+
+        for c_char in line:
+            # Calc current type.
+            cur_type = 0
+            if c_char.isalnum() or c_char == '_':
+                cur_type = 1
+
+            # Check if new type.
+            if cur_type != prev_type:
+                tokens.append('')
+
+            # Append to token.
+            tokens[-1] += c_char
+
+            # Separate to individual chars for non-word chars.
+            if cur_type == 0:
+                tokens.append('')
+
+            # End.
+            prev_type = cur_type
+
+    # Remove empty tokens (also removing whitespace-only tokens).
+    non_empty_tokens: list[str] = []
+    for t in tokens:
+        if len(t.strip()) > 0:
+            non_empty_tokens.append(t)
+
+    return non_empty_tokens
+
+
+def extract_modules_from_tokens(tokens: list[str]) -> list[Module]:
+    modules: list[Module] = []
+
+    # Helper func.
+    def get_token_safe(idx: int):
+        if idx < 0 or idx >= len(tokens):
+            return ''
+        else:
+            return tokens[idx]
+
+    # Scan tokens.
+    t_idx = 0
+    mod_nesting: list[str] = []
+    while t_idx < len(tokens):
+        t0 = get_token_safe(t_idx)
+
+        # @NOTE: Ignore forward declarations.
+        if t0 == '}':
+            # Exit one nesting.
+            assert len(mod_nesting) >= 1
+            mod_nesting = mod_nesting[:-1]
+
+        elif t0 == 'namespace':
+            # Namespace module?
+
+            # @TODO: START HERE!!!!!
+
+            pass
+        elif t0 == 'enum':
+            # Enum module?
+            pass
+        elif t0 == 'struct':
+            # Struct module?
+            pass
+        elif t0 == 'class':
+            # Class module?
+
+            pass
+        else:
+            # Func module?
+            pass
+
+    return modules
+
+
 def extract_modules(buffer_lines: list[str]) -> list[Module]:
     modules = []
     buffer_lines = strip_unnec_parts(buffer_lines)
     buffer_lines = strip_empty_lines(buffer_lines)
+    tokens = extract_tokens_from_lines(buffer_lines)
+    modules = extract_modules_from_tokens(tokens)
 
-    for l in buffer_lines:
+    for l in tokens:
         print(l)
     import sys; sys.exit(1)
-
 
     return modules
 
