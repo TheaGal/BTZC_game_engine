@@ -76,6 +76,56 @@ class Module:
         assert self.m_type in self.VALID_TYPES
 
 
+def strip_unnec_parts(buffer_lines: list[str]) -> list[str]:
+    scan_mode = 0  # 0:code  1:sing-str  2:dbl-str  3:preproc  4:block-comment  5:comment
+
+    erase_regions = []  # from_line, from_idx, to_line, to_idx, leave_space
+
+    # Scan for erase regions.
+    for line in buffer_lines:
+        # Helper func.
+        def get_char_safe(idx: int):
+            if idx < 0 or idx >= len(line):
+                return ''
+            else:
+                return line[idx]
+
+        # Scan.
+        c_idx = 0
+        while True:
+            c_char = get_char_safe(c_idx)
+            c1_char = get_char_safe(c_idx + 1)
+            c2_char = get_char_safe(c_idx + 2)
+
+            # Exit if ran end of line.
+            if c_char == '':
+                break
+            
+            # Mode switch.
+            if scan_mode == 0:
+                # Code mode.
+                pass
+            elif scan_mode == 1:
+                # Single str mode.
+                pass
+            elif scan_mode == 2:
+                # Double str mode.
+                pass
+            elif scan_mode == 3:
+                # Preprocessor mode.
+                pass
+            elif scan_mode == 4:
+                # Block comment mode.
+                pass
+            elif scan_mode == 5:
+                # Comment mode.
+                erase_regions[-1][]
+            else:
+                # Unknown.
+                assert False
+                import sys; sys.exit(1)
+
+
 def strip_block_comments(buffer_lines: list[str]) -> list[str]:
     is_block_comm_mode = False
     block_comm_regions = []
@@ -157,7 +207,7 @@ def strip_preprocessors(buffer_lines: list[str]) -> list[str]:
 
 def strip_comments(buffer_lines: list[str]) -> list[str]:
     for line in buffer_lines:
-        
+        pass
 
 
 def extract_modules(buffer_lines: list[str]) -> list[Module]:
