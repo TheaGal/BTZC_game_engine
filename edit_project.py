@@ -82,6 +82,7 @@ def strip_unnec_parts(buffer_lines: list[str]) -> list[str]:
     erase_regions = []  # from_line, from_idx, to_line, to_idx, leave_space
 
     # Scan for erase regions.
+    line_idx = 0
     for line in buffer_lines:
         # Helper func.
         def get_char_safe(idx: int):
@@ -92,129 +93,165 @@ def strip_unnec_parts(buffer_lines: list[str]) -> list[str]:
 
         # Scan.
         c_idx = 0
+        found_non_ws = False
         while True:
-            c_char = get_char_safe(c_idx)
+            cm_char = get_char_safe(c_idx - 1)
+            c0_char = get_char_safe(c_idx + 0)
             c1_char = get_char_safe(c_idx + 1)
-            c2_char = get_char_safe(c_idx + 2)
 
-            # Exit if ran end of line.
-            if c_char == '':
-                break
-            
             # Mode switch.
             if scan_mode == 0:
                 # Code mode.
-                pass
+                if c0_char == '\'':
+                    erase_regions.append({})
+                    erase_regions[-1]["from_line"] = line_idx
+                    erase_regions[-1]["from_idx"]  = c_idx
+                    scan_mode = 1
+                    c_idx += 1
+                elif c0_char == "\"":
+                    erase_regions.append({})
+                    erase_regions[-1]["from_line"] = line_idx
+                    erase_regions[-1]["from_idx"]  = c_idx
+                    scan_mode = 2
+                    c_idx += 1
+                elif c0_char == "#" and not found_non_ws:
+                    erase_regions.append({})
+                    erase_regions[-1]["from_line"] = line_idx
+                    erase_regions[-1]["from_idx"]  = c_idx
+                    scan_mode = 3
+                    c_idx += 1
+                elif c0_char == '/' and c1_char == '*':
+                    erase_regions.append({})
+                    erase_regions[-1]["from_line"] = line_idx
+                    erase_regions[-1]["from_idx"]  = c_idx
+                    scan_mode = 4
+                    c_idx += 2
+                elif c0_char == '/' and c1_char == '/':
+                    erase_regions.append({})
+                    erase_regions[-1]["from_line"] = line_idx
+                    erase_regions[-1]["from_idx"]  = c_idx
+                    scan_mode = 5
+                    c_idx += 2
+                else:
+                    c_idx += 1
+
             elif scan_mode == 1:
                 # Single str mode.
-                pass
+                if c0_char == '\\':
+                    # Escape c1 char.
+                    c_idx += 2
+                elif c0_char == '\'':
+                    erase_regions[-1]["to_line"] = line_idx
+                    erase_regions[-1]["to_idx"]  = c_idx
+                    scan_mode = 0
+                    c_idx += 1
+                else:
+                    c_idx += 1
+
             elif scan_mode == 2:
                 # Double str mode.
-                pass
+                if c0_char == '\\':
+                    # Escape c1 char.
+                    c_idx += 2
+                elif c0_char == '\"':
+                    erase_regions[-1]["to_line"] = line_idx
+                    erase_regions[-1]["to_idx"]  = c_idx
+                    scan_mode = 0
+                    c_idx += 1
+                else:
+                    c_idx += 1
+
             elif scan_mode == 3:
                 # Preprocessor mode.
-                pass
+                if c0_char == '':
+                    # End of line.
+                    if cm_char == '\\':
+                        # Continue to next line of preprocessor mode.
+                        pass
+                    else:
+                        # End preprocessor mode.
+                        erase_regions[-1]["to_line"] = line_idx
+                        erase_regions[-1]["to_idx"]  = c_idx
+                        scan_mode = 0
+                else:
+                    c_idx += 1
+
             elif scan_mode == 4:
                 # Block comment mode.
-                pass
+                if c0_char == '*' and c1_char == '/':
+                    # End block comment mode.
+                    erase_regions[-1]["to_line"] = line_idx
+                    erase_regions[-1]["to_idx"]  = c_idx + 2
+                    scan_mode = 0
+                    c_idx += 2
+                else:
+                    c_idx += 1
+
             elif scan_mode == 5:
-                # Comment mode.
-                erase_regions[-1][]
+                # End comment mode.
+                erase_regions[-1]["to_line"] = erase_regions[-1]["from_line"]
+                erase_regions[-1]["to_idx"]  = len(line) - 1
+                scan_mode = 0
+                c_idx = len(line)
+
             else:
                 # Unknown.
                 assert False
                 import sys; sys.exit(1)
 
+            # Check if c0 is a non-whitespace char.
+            if len(c0_char.strip()) > 0:
+                found_non_ws = True
 
-def strip_block_comments(buffer_lines: list[str]) -> list[str]:
-    is_block_comm_mode = False
-    block_comm_regions = []
+            # Exit if ran to end of line.
+            if c0_char == '':
+                assert scan_mode != 1
+                assert scan_mode != 2
+                assert scan_mode != 5
+                break
 
-    # Gather block comments.
-    line_idx = 0
-    for line in buffer_lines:
-        while True:
-            if not is_block_comm_mode:
-                start_idx = line.find("/*")
-                if start_idx >= 0:
-                    is_block_comm_mode = True
-                    block_comm_regions.append({ "start_line": line_idx,
-                                                "start_idx": start_idx, })
-                else:
-                    break  # Get out of while-true.
-            else:
-                end_idx = line.find("*/")
-                if end_idx >= 0:
-                    is_block_comm_mode = False
-                    block_comm_regions[-1]["end_line"] = line_idx
-                    block_comm_regions[-1]["end_idx"] = end_idx + 2  # 2 for "*/" chars.
-                else:
-                    break  # Get out of while-true.
+        # Next line!
         line_idx += 1
 
-    # Remove block comments.
-    for region in block_comm_regions:
-        if region["start_line"] == region["end_line"]:
-            # Cut out block comment from single line.
-            replacement_line = buffer_lines[region["start_line"]][:region["start_idx"]]
+    # Process erase regions.
+    for region in erase_regions:
+        if region["from_line"] == region["to_line"]:
+            # Erase within single line.
+            replacement_line = buffer_lines[region["from_line"]][:region["from_idx"]]
             replacement_line += " "  # To prevent token mixing.
-            replacement_line += buffer_lines[region["end_line"]][region["end_idx"]:]
-            buffer_lines[region["start_line"]] = replacement_line
+            replacement_line += buffer_lines[region["to_line"]][region["to_idx"]:]
+            buffer_lines[region["from_line"]] = replacement_line
         else:
-            # Replace begin line.
-            replacement_line = buffer_lines[region["start_line"]][:region["start_idx"]]
-            buffer_lines[region["start_line"]] = replacement_line
+            # Replace "from" line.
+            replacement_line = buffer_lines[region["from_line"]][:region["from_idx"]]
+            buffer_lines[region["from_line"]] = replacement_line
 
-            # Replace end line.
-            replacement_line = buffer_lines[region["end_line"]][region["end_idx"]:]
-            buffer_lines[region["end_line"]] = replacement_line
+            # Replace "to" line.
+            replacement_line = buffer_lines[region["to_line"]][region["to_idx"]:]
+            buffer_lines[region["to_line"]] = replacement_line
 
             # Empty between lines.
-            for i in range(region["start_line"] + 1, region["end_line"]):
+            for i in range(region["from_line"] + 1, region["to_line"]):
                 buffer_lines[i] = ""
 
     return buffer_lines
 
 
-def strip_preprocessors(buffer_lines: list[str]) -> list[str]:
-    leftover_lines = []
-
-    is_preprocessor_line = False
-    is_next_line_preprocessor_line = False
+def strip_empty_lines(buffer_lines: list[str]) -> list[str]:
+    non_empty_lines = []
 
     for line in buffer_lines:
-        line_stripped = line.strip()
+        if len(line.strip()) > 0:
+            non_empty_lines.append(line)
 
-        # Check whether current and/or next line(s) are preprocessor line(s).
-        if len(line_stripped) > 0 and line_stripped[0] == '#':
-            is_preprocessor_line = True
-
-        if is_preprocessor_line and len(line_stripped) > 0 and line_stripped[-1] == '\\':
-            is_next_line_preprocessor_line = True
-
-        # Ensure preprocessor lines get removed.
-        if not is_preprocessor_line:
-            leftover_lines.append(line)
-        
-        # Move to next line.
-        is_preprocessor_line = False
-        if is_next_line_preprocessor_line:
-            is_preprocessor_line = True
-            is_next_line_preprocessor_line = False
-
-    return leftover_lines
-
-
-def strip_comments(buffer_lines: list[str]) -> list[str]:
-    for line in buffer_lines:
-        pass
+    return non_empty_lines
 
 
 def extract_modules(buffer_lines: list[str]) -> list[Module]:
     modules = []
-    buffer_lines = strip_block_comments(buffer_lines)
-    buffer_lines = strip_preprocessors(buffer_lines)
-    buffer_lines = strip_comments(buffer_lines)
+    buffer_lines = strip_unnec_parts(buffer_lines)
+    buffer_lines = strip_empty_lines(buffer_lines)
+
     for l in buffer_lines:
         print(l)
     import sys; sys.exit(1)
