@@ -14,6 +14,7 @@ namespace BT
 
 class Model_animator;
 
+/// Individual hit-capsule. Multiple grouped together form a `Hitcapsule_group`.
 struct Hitcapsule
 {
     vec3s   origin_a;  // Origins of both ends of the spheres making up the capsule.
@@ -48,6 +49,7 @@ struct Hitcapsule
     void emplace_debug_render_repr(vec4 color) const;
 };
 
+/// Group of hitcapsules with annotations of interactions of hurt.
 class Hitcapsule_group
 {
 public:
@@ -55,6 +57,7 @@ public:
     {
         HITBOX_TYPE_RECEIVE_HURT,
         HITBOX_TYPE_GIVE_HURT,
+        HITBOX_TYPE_AGGRESSION_SIGNAL,
     };
 
     void set_enabled(bool enabled);
@@ -76,6 +79,7 @@ public:
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(Hitcapsule_group, m_enabled, m_type, m_capsules);
 };
 
+/// Set of hitcapsule groups to be connected to an entity.
 class Hitcapsule_group_set
 {
 public:
@@ -109,10 +113,17 @@ public:
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(Hitcapsule_group_set, m_hitcapsule_grps);
 };
 
-/// Result set for checking overlaps in the solver. The first UUID is the offender entity UUID and
-/// the second is the defender entity UUID.
-using Overlap_result_set = std::vector<std::pair<UUID, UUID>>;
+/// Result set for checking overlaps in the solver. With each `Entity_pair_list`, the first UUID is
+/// the giver and the second UUID is the receiver.
+struct Overlap_result_set
+{
+    using Entity_pair_list = std::vector<std::pair<UUID, UUID>>;
+    Entity_pair_list give_rece_hurt_pairs;
+    Entity_pair_list signal_aggro_send_rece_pairs;
+};
 
+/// Solver for groups of overlapping hitcapsule group sets (i.e. entity-to-entity hitcapsule
+/// overlaps).
 class Hitcapsule_group_overlap_solver
 {
 public:

@@ -91,6 +91,8 @@ struct CPU_enemy_awareness
     /// DO NOT SERIALIZE.
     struct State
     {
+        uint32_t eyes_bone_idx{ (uint32_t)-1 };
+
         enum Awareness : uint32_t
         {
             UNAWARE,
@@ -101,10 +103,10 @@ struct CPU_enemy_awareness
         Awareness enemy_awareness{ UNAWARE };
         Awareness prev_enemy_awareness{ enemy_awareness };
         float_t out_of_detection_timer{ 0 };
-        rvec3 position_of_interest;  // Last detected position of suspicion or aware-enemy.
-        UUID aware_enemy;
 
-        uint32_t eyes_bone_idx{ (uint32_t)-1 };
+        rvec3 position_of_interest;  // Last detected position of suspicion or aware-enemy.
+        // UUID aware_enemy;
+        // float_t perceived_aggression{ 0 };
     } runtime_state;
 };
 

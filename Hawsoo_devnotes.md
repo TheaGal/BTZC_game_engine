@@ -1100,6 +1100,9 @@ while (running_game_loop)
 
                 - [ ] Detect these events from CPU's enemy. (Do inside `cpu_character_enemy_detection.cpp` since it's something all CPUs should have detection of (ig even "shy" NPCs could use this information!))
                     - [ ] Enemy attack -> 1st CPU guard, then 2nd CPU deflect, then counter attack.
+                        - [x] Create new hitcapsule type that signals aggro to another entity.
+                        - [ ] Process the aggro signal overlap into `cpu_enemy_awareness.h` somehow.
+                            - [ ] Something like `double_t last_aggro_signal_time;` and then use the timer to queue up a ready-parry anim?
                     - [ ] Enemy heal/consumable -> CPU pinch attack.
                     - [ ] Enemy run away -> CPU reapproach attack (can just be pinch attack, or a grab attack, or many ones to pick from).
                     - [ ] Enemy close in -> CPU attack.

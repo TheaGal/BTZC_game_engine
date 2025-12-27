@@ -874,7 +874,7 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                 int32_t cap_grp_type{ cap_grp.get_type() };
                 ImGui::Combo(("Type##" + std::to_string(global_capsule_id_idx)).c_str(),
                              &cap_grp_type,
-                             "Receive hurt\0Give hurt\0");
+                             "Receive hurt\0Give hurt\0Send aggro signal\0");
 
                 ImGui::EndDisabled();
 

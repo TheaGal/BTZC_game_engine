@@ -135,6 +135,12 @@ void BT::Hitcapsule_group::emplace_debug_render_repr() const
                      ? vec4s{ 0.950, 0.427, 0.00 }
                      : vec4s{ 0.530, 0.288, 0.0901 });
             break;
+
+        case HITBOX_TYPE_AGGRESSION_SIGNAL:
+            color = (m_enabled
+                     ? vec4s{ 0.890, 0.472, 0.813 }
+                     : vec4s{ 0.400, 0.0880, 0.343 });
+            break;
     }
 
     // "Draw" hitcapsules.
@@ -296,6 +302,8 @@ BT::Overlap_result_set BT::Hitcapsule_group_overlap_solver::update_overlaps()
     {   // Collect capsules for check.
         auto give_hurt_caps_a{ grp_set_ptr_a->fetch_all_enabled_hitcapsules(
             Hitcapsule_group::HITBOX_TYPE_GIVE_HURT) };
+        auto aggro_sign_caps_a{ grp_set_ptr_a->fetch_all_enabled_hitcapsules(
+            Hitcapsule_group::HITBOX_TYPE_AGGRESSION_SIGNAL) };
         auto rece_hurt_caps_b{ grp_set_ptr_b->fetch_all_enabled_hitcapsules(
             Hitcapsule_group::HITBOX_TYPE_RECEIVE_HURT) };
 
@@ -303,24 +311,44 @@ BT::Overlap_result_set BT::Hitcapsule_group_overlap_solver::update_overlaps()
         // Does broad phase first, then if passes, does narrow phase.
         // @NOTE: Only A hurts B is necessary, since the n^2 loops. The reverse case will eventually
         //        be covered with the loops.
-        bool found_overlap{ false };
+        bool found_hurt_overlap{ false };
         {
-            for (size_t a_i = 0; a_i < give_hurt_caps_a.size() && !found_overlap; a_i++)
-            for (size_t b_i = 0; b_i < rece_hurt_caps_b.size() && !found_overlap; b_i++)
+            for (size_t a_i = 0; a_i < give_hurt_caps_a.size() && !found_hurt_overlap; a_i++)
+            for (size_t b_i = 0; b_i < rece_hurt_caps_b.size() && !found_hurt_overlap; b_i++)
             {
                 if (check_broad_phase_hitcapsule_pair(*give_hurt_caps_a[a_i], *rece_hurt_caps_b[b_i]) &&
                     check_narrow_phase_hitcapsule_pair(*give_hurt_caps_a[a_i], *rece_hurt_caps_b[b_i]))
                 {   // Found overlap! No more need to look.
-                    found_overlap = true;
+                    found_hurt_overlap = true;
                     break;
                 }
             }
         }
 
-        if (found_overlap)
+        bool found_aggro_sign_overlap{ false };
+        {
+            for (size_t a_i = 0; a_i < aggro_sign_caps_a.size() && !found_aggro_sign_overlap; a_i++)
+            for (size_t b_i = 0; b_i < rece_hurt_caps_b.size() && !found_aggro_sign_overlap; b_i++)
+            {
+                if (check_broad_phase_hitcapsule_pair(*aggro_sign_caps_a[a_i], *rece_hurt_caps_b[b_i]) &&
+                    check_narrow_phase_hitcapsule_pair(*aggro_sign_caps_a[a_i], *rece_hurt_caps_b[b_i]))
+                {   // Found overlap! No more need to look.
+                    found_aggro_sign_overlap = true;
+                    break;
+                }
+            }
+        }
+
+        if (found_hurt_overlap)
         {   // Report that A hurt B!
-            result.emplace_back(grp_set_ptr_a->get_resp_entity_uuid(),
-                                grp_set_ptr_b->get_resp_entity_uuid());
+            result.give_rece_hurt_pairs.emplace_back(grp_set_ptr_a->get_resp_entity_uuid(),
+                                                     grp_set_ptr_b->get_resp_entity_uuid());
+        }
+
+        if (found_aggro_sign_overlap)
+        {   // Report that A signaled aggro to B!
+            result.signal_aggro_send_rece_pairs.emplace_back(grp_set_ptr_a->get_resp_entity_uuid(),
+                                                             grp_set_ptr_b->get_resp_entity_uuid());
         }
     }
 

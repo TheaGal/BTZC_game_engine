@@ -230,6 +230,16 @@
                     "ctrl_item_idx": 20,
                     "end_frame": 54,
                     "start_frame": 47
+                },
+                {
+                    "ctrl_item_idx": 21,
+                    "end_frame": 18,
+                    "start_frame": 17
+                },
+                {
+                    "ctrl_item_idx": 21,
+                    "end_frame": 47,
+                    "start_frame": 46
                 }
             ],
             "state_name": "st_attack_0"
@@ -428,6 +438,9 @@
         },
         {
             "name": "can_cancel_attack_w_parry:ov:true"
+        },
+        {
+            "name": "hitcapsule_group_2_enabled:ov:true"
         }
     ],
     "hitcapsule_group_set_template": {
@@ -593,6 +606,27 @@
                 ],
                 "m_enabled": false,
                 "m_type": 1
+            },
+            {
+                "m_capsules": [
+                    {
+                        "connecting_bone_name": "",
+                        "connecting_bone_name_2": "",
+                        "origin_a": {
+                            "x": 0.0,
+                            "y": 0.9879999756813049,
+                            "z": 3.486999988555908
+                        },
+                        "origin_b": {
+                            "x": 0.0,
+                            "y": 0.9509999752044678,
+                            "z": 0.6380000114440918
+                        },
+                        "radius": 1.1380000114440918
+                    }
+                ],
+                "m_enabled": false,
+                "m_type": 2
             }
         ]
     }
