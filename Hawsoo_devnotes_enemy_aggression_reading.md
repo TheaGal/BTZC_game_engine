@@ -20,9 +20,14 @@ I guess these are the cases in battle I could think of:
     - CPU will rest by not attacking, essentially a 様子見.
     > Mmmm for this, I think just not paying attention to the posture buildup is fine.
 
+    > So only if PC is not aggressive, then CPU has the ability to decide to idle, which helps lower posture buildup meter.
+
 
 3. CPU detects PC entered close-range.
     - CPU will interpret this as aggression, and perform an attack.
+
+    > For case 3 and case 4, there should just be a "activate close-range" distance (`acrd`), and then a "deactivate close-range" distance (`dcrd`).
+        > `dcrd > acrd` should be true always (and `acrd` and `dcrd` should not be close together), so that there's a solid difference between the distances, and there's deadzone instead of being fickle.
 
 
 4. CPU detects PC running away (distance keeps growing for x-seconds).
@@ -43,6 +48,10 @@ I guess these are the cases in battle I could think of:
         - And then if CPU's AFA data allows for ready-parry action, then will do it.
         - The trigger is just a big capsule in front of the PC model that gets switched on-off,
         - but for a shuriken-like thing it can be a capsule left on that runs ahead of the actual collider.
+
+
+6. CPU detects PC is using consumable (e.g. healing).
+    - Attempts to get an attack in if programmed to respond to this.
 
 
 ## Glossary
