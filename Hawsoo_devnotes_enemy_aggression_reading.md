@@ -27,6 +27,10 @@ I guess these are the cases in battle I could think of:
 
 4. CPU detects PC running away (distance keeps growing for x-seconds).
     > This may be finicky due to CPU running away to do a charge-in attack.
+    > Maybe just have a certain kind of attack that only happens when really really far away?
+        > Thinking maybe moreso if this is a boss kind of thing.
+        > For ranged enemies, they could pull out their ranged weapon and shoot.
+
 
 5. CPU detects PC is attacking.
     - Attempts to block (guard/parry) the attack, then attempt to do a counter attack.
