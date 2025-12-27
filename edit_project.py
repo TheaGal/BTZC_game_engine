@@ -1,3 +1,6 @@
+# @NOTE: UNFINISHED: This needs work with parsing the tokens into different modules (`extract_modules_from_tokens()`).
+# Perhaps, if you decide to pick this up again, it may be good to just take a different approach to parsing. For example, just parsing everything! Or idk.
+
 from pathlib import Path
 import re
 
