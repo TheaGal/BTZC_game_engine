@@ -1080,11 +1080,6 @@ while (running_game_loop)
 
                 - [x] Enter awareness animation (something like drawing out a sword, or an aggression show).
 
-                - [ ] Make one of each attack type animation.
-                    - [ ] Attack.
-                    - [ ] Counter attack (more aggressive attack).
-                    - [ ] Pinch attack.
-
                 - [x] Attack cancels.
                     - If CPU's enemy deflect/parries a certain attack, the sequence is stopped. Usually the last attack of the sequence, but could also be stopped by mikiri in the middle (think kensei isshin).
                     - The attack cancel should contain enough time for other enemy to do a counter attack.
@@ -1099,6 +1094,9 @@ while (running_game_loop)
 
                 - [ ] ~~If attack canceled, then don't have defender knockback.~~
                     - Actually, this shouldn't be the case I think.
+                
+                - [x] When hit by its enemy, CPU is made aware of that enemy.
+                    - Maybe just turn CPU towards its enemy all the time.
 
                 - [ ] Detect these events from CPU's enemy. (Do inside `cpu_character_enemy_detection.cpp` since it's something all CPUs should have detection of (ig even "shy" NPCs could use this information!))
                     - [ ] Enemy attack -> 1st CPU guard, then 2nd CPU deflect, then counter attack.
@@ -1106,9 +1104,12 @@ while (running_game_loop)
                     - [ ] Enemy run away -> CPU reapproach attack (can just be pinch attack, or a grab attack, or many ones to pick from).
                     - [ ] Enemy close in -> CPU attack.
                     - [ ] Enemy do nothing -> CPU 様子見, or CPU attack, or CPU guard.
-                
-                - [x] When hit by its enemy, CPU is made aware of that enemy.
-                    - Maybe just turn CPU towards its enemy all the time.
+                    - @NOTE: See `Hawsoo_devnotes_enemy_aggression_reading.md` for more info.
+
+                - [ ] Make one of each attack type animation.
+                    - [ ] Attack.
+                    - [ ] Counter attack (more aggressive attack).
+                    - [ ] Pinch attack.
 
         - [ ] Revisit detection: Add line-of-sight detection with raycast. (`@FIXME` tags)
         - [ ] Revisit detection: Ignore suspicious sight cone during SUSPICIOUS state.
