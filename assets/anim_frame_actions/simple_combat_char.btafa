@@ -606,27 +606,6 @@
                 ],
                 "m_enabled": false,
                 "m_type": 1
-            },
-            {
-                "m_capsules": [
-                    {
-                        "connecting_bone_name": "",
-                        "connecting_bone_name_2": "",
-                        "origin_a": {
-                            "x": 0.0,
-                            "y": 0.9879999756813049,
-                            "z": 3.486999988555908
-                        },
-                        "origin_b": {
-                            "x": 0.0,
-                            "y": 0.9509999752044678,
-                            "z": 0.6380000114440918
-                        },
-                        "radius": 1.1380000114440918
-                    }
-                ],
-                "m_enabled": false,
-                "m_type": 2
             }
         ]
     }

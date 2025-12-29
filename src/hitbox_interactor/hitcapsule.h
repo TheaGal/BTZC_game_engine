@@ -56,8 +56,7 @@ public:
     enum Type : uint8_t
     {
         HITBOX_TYPE_RECEIVE_HURT,
-        HITBOX_TYPE_GIVE_HURT,
-        HITBOX_TYPE_AGGRESSION_SIGNAL,
+        HITBOX_TYPE_GIVE_HURT,  // @TODO: This could be a stabbing, sweeping, normal, or grab attack. This needs some kind of specification in the future at some point!  -Thea 2025/12/28
     };
 
     void set_enabled(bool enabled);
@@ -119,7 +118,6 @@ struct Overlap_result_set
 {
     using Entity_pair_list = std::vector<std::pair<UUID, UUID>>;
     Entity_pair_list give_rece_hurt_pairs;
-    Entity_pair_list signal_aggro_send_rece_pairs;
 };
 
 /// Solver for groups of overlapping hitcapsule group sets (i.e. entity-to-entity hitcapsule

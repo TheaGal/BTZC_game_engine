@@ -1112,6 +1112,12 @@ while (running_game_loop)
                     
                     - [ ] Remove new hitcapsule type and change to an event to broadcast signal that a char is going to attack in 2 frames and they are at `origin` and have `facing_direction` (float/flat/2d) and have `sword_range` distance.
                         - Enemies to that char can determine whether they are in the hitting direction and range, and if they are facing in the direction close to opposite of `facing_direction`, they will put up a ready-parry to oppose the attack. If not, there's nothing they can do.
+                        - [x] Removed new hitcapsule type and also the capsule interaction system too.
+                        - [ ] Convert the "enable hitcapsule group 2" to an event.
+                        - [ ] Plug in the event into the `cpu_character_enemy_detection.cpp` system, and create a message to get broadcasted to all other `cpu_enemy_awareness.h` components.
+                        - [ ] Create another system that runs after CPU char enemy detection system.
+                            - Have this one process the broadcasts if any (so that there's no tick lag for this broadcasted message).
+
                     - [ ] If any type of hurt (including parry/guard) occurs, add a random attack to the attack queue.
                     - [ ] If enemy uses heal/consumable, add attack to attack queue to be executed immediately.
                     - [ ] If enemy rushes in or enters into a closer range, add close range attack into attack queue to be executed immediately.

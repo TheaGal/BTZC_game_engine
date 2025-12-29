@@ -308,21 +308,6 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
                                    defender_uuid);
     }
 
-    // Process all aggression signals.
-    for (auto&& [sender_uuid, receiver_uuid] :
-         s_overlap_pairs_buffer[s_cur_ovrl_pir_buf % k_ovrl_pir_buf_size]
-             .signal_aggro_send_rece_pairs)
-    {
-        if (!entity_container.entity_exists(sender_uuid) ||
-            !entity_container.entity_exists(receiver_uuid))
-        {   // Skip evaluation since pair is invalid now (1 or 2 entity(s) destroyed).
-            continue;
-        }
-
-        // Send the signal to receiver.
-        assert(false);  // @TODO: Implement!
-    }
-
     // Update attack timer.
     s_global_attack_timer += delta_time;
 }
