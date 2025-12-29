@@ -1103,17 +1103,22 @@ while (running_game_loop)
                         - [x] Create new hitcapsule type that signals aggro to another entity.
                         - [ ] ~~Process the aggro signal overlap into `cpu_enemy_awareness.h` somehow.~~
                             - [ ] ~~Something like `double_t last_aggro_signal_time;` and then use the timer to queue up a ready-parry anim?~~
-                    - [ ] Enemy heal/consumable -> CPU pinch attack.
+                    - [ ] ~~Enemy heal/consumable -> CPU pinch attack.~~
                         - [ ] 
-                    - [ ] Enemy run away -> CPU reapproach attack (can just be pinch attack, or a grab attack, or many ones to pick from).
-                    - [ ] Enemy close in -> CPU attack.
-                    - [ ] Enemy do nothing -> CPU 様子見, or CPU attack, or CPU guard.
+                    - [ ] ~~Enemy run away -> CPU reapproach attack (can just be pinch attack, or a grab attack, or many ones to pick from).~~
+                    - [ ] ~~Enemy close in -> CPU attack.~~
+                    - [ ] ~~Enemy do nothing -> CPU 様子見, or CPU attack, or CPU guard.~~
                     - @NOTE: See `Hawsoo_devnotes_enemy_aggression_reading.md` for more info.
                     
                     - [ ] Remove new hitcapsule type and change to an event to broadcast signal that a char is going to attack in 2 frames and they are at `origin` and have `facing_direction` (float/flat/2d) and have `sword_range` distance.
                         - Enemies to that char can determine whether they are in the hitting direction and range, and if they are facing in the direction close to opposite of `facing_direction`, they will put up a ready-parry to oppose the attack. If not, there's nothing they can do.
                     - [ ] If any type of hurt (including parry/guard) occurs, add a random attack to the attack queue.
                     - [ ] If enemy uses heal/consumable, add attack to attack queue to be executed immediately.
+                    - [ ] If enemy rushes in or enters into a closer range, add close range attack into attack queue to be executed immediately.
+                    - [ ] If enemy doesn't do anything back, no attacks are added to attack queue, so it eventually empties.
+                        - [ ] When it empties, CPU can jump back and 様子見, or can just 様子見 right in front of their enemy. Whatever is inside the "move" queue I guess.
+                            - If the move queue is ever empty, the move queue should just get refilled automatically with random things.
+                            - And then occasionally there should be an attack inserted into the attack queue (generating events should happen around when the 様子見 is about over, so that it doesn't feel like it ended ubruptly.)
                     
 
                 - [ ] Make one of each attack type animation.

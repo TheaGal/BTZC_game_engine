@@ -68,7 +68,7 @@ For getting hurt, there are 3 types:
     - This is the default.
 - Light hurt (no anim change. Use particles and/or addive anim (if have the time for that))
     - This will happen if CPU/PC is doing a special attack that will not be interrupted.
-        - The region will be marked with "Use light hurt".
+        - The region will be marked with ~~"Use light hurt"~~ "can_hurt_anim_change = false".
         - @NOTE: "superarmor break hurt" will interrupt this, however.
 - Superarmor break hurt (anim change and long. Could also trigger more aggressive attack anim).
     - This happens when health decreases a certain amount.
