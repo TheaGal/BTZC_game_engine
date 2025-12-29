@@ -1099,15 +1099,22 @@ while (running_game_loop)
                     - Maybe just turn CPU towards its enemy all the time.
 
                 - [ ] Detect these events from CPU's enemy. (Do inside `cpu_character_enemy_detection.cpp` since it's something all CPUs should have detection of (ig even "shy" NPCs could use this information!))
-                    - [ ] Enemy attack -> 1st CPU guard, then 2nd CPU deflect, then counter attack.
+                    - [ ] ~~Enemy attack -> 1st CPU guard, then 2nd CPU deflect, then counter attack.~~
                         - [x] Create new hitcapsule type that signals aggro to another entity.
-                        - [ ] Process the aggro signal overlap into `cpu_enemy_awareness.h` somehow.
-                            - [ ] Something like `double_t last_aggro_signal_time;` and then use the timer to queue up a ready-parry anim?
+                        - [ ] ~~Process the aggro signal overlap into `cpu_enemy_awareness.h` somehow.~~
+                            - [ ] ~~Something like `double_t last_aggro_signal_time;` and then use the timer to queue up a ready-parry anim?~~
                     - [ ] Enemy heal/consumable -> CPU pinch attack.
+                        - [ ] 
                     - [ ] Enemy run away -> CPU reapproach attack (can just be pinch attack, or a grab attack, or many ones to pick from).
                     - [ ] Enemy close in -> CPU attack.
                     - [ ] Enemy do nothing -> CPU 様子見, or CPU attack, or CPU guard.
                     - @NOTE: See `Hawsoo_devnotes_enemy_aggression_reading.md` for more info.
+                    
+                    - [ ] Remove new hitcapsule type and change to an event to broadcast signal that a char is going to attack in 2 frames and they are at `origin` and have `facing_direction` (float/flat/2d) and have `sword_range` distance.
+                        - Enemies to that char can determine whether they are in the hitting direction and range, and if they are facing in the direction close to opposite of `facing_direction`, they will put up a ready-parry to oppose the attack. If not, there's nothing they can do.
+                    - [ ] If any type of hurt (including parry/guard) occurs, add a random attack to the attack queue.
+                    - [ ] If enemy uses heal/consumable, add attack to attack queue to be executed immediately.
+                    
 
                 - [ ] Make one of each attack type animation.
                     - [ ] Attack.
