@@ -1119,6 +1119,8 @@ while (running_game_loop)
                             - Have this one process the broadcasts if any (so that there's no tick lag for this broadcasted message).
 
                     - [ ] If any type of hurt (including parry/guard) occurs, add a random attack to the attack queue.
+                        - [x] 一応 (i.e. just put 0 as the attack index)
+
                     - [ ] If enemy uses heal/consumable, add attack to attack queue to be executed immediately.
                     - [ ] If enemy rushes in or enters into a closer range, add close range attack into attack queue to be executed immediately.
                     - [ ] If enemy doesn't do anything back, no attacks are added to attack queue, so it eventually empties.
@@ -1126,6 +1128,9 @@ while (running_game_loop)
                             - If the move queue is ever empty, the move queue should just get refilled automatically with random things.
                             - And then occasionally there should be an attack inserted into the attack queue (generating events should happen around when the 様子見 is about over, so that it doesn't feel like it ended ubruptly.)
                     
+                    - [ ] Create jumptable for transitioning if there are attacks in the attack queue.
+                        - This will require adding functionality to the AFA system.
+
 
                 - [ ] Make one of each attack type animation.
                     - [ ] Attack.

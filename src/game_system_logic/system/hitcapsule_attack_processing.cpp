@@ -241,6 +241,13 @@ void process_attack_interaction(Entity_container& entity_container,
 
     s_apply_dmg_results_fn(offe_health_stats, atk_res.offender);
     s_apply_dmg_results_fn(defe_health_stats, atk_res.defender);
+
+    // Push random attack to attack queue.
+    if (auto attack_queue{ reg.try_get<component::Attack_queue>(defender_ecs_entity) };
+        attack_queue != nullptr)
+    {
+        attack_queue->push_attack_to_queue(global_attack_timer, 0);  // @HARDCODE: @TODO: @NOCHECKIN
+    }
 }
 
 }  // namespace
