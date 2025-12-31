@@ -5,6 +5,7 @@
 #include "game_system_logic/entity_container.h"
 #include "game_system_logic/system/_dev_animation_frame_action_editor.h"
 #include "game_system_logic/system/animator_driven_hitcapsule_sets_update.h"
+#include "game_system_logic/system/character_broadcast_attack_msg_to_enemies.h"
 #include "game_system_logic/system/cpu_character_enemy_detection.h"
 #include "game_system_logic/system/cpu_character_world_space_input.h"
 #include "game_system_logic/system/hitcapsule_attack_processing.h"
@@ -308,11 +309,12 @@ int32_t main()
         {   // Performance measure.
             BT::Timer perf_timer;
             perf_timer.start_timer();
-            
+
             // Pre-physics.
             BT::system::process_physics_object_lifetime();
             BT::system::tick_sim_char_mvt_animator();
 
+            BT::system::character_broadcast_attack_msg_to_enemies();
             BT::system::cpu_character_enemy_detection();
             BT::system::cpu_character_world_space_input();
             BT::system::player_character_world_space_input();
@@ -343,7 +345,7 @@ int32_t main()
         {   // Performance measure.
             BT::Timer perf_timer;
             perf_timer.start_timer();
-            
+
             // Run all pre-render systems.
             bool is_afa_editor_context{
                 main_renderer_imgui_renderer.is_anim_frame_data_editor_context() };

@@ -47,6 +47,7 @@ struct Attack_queue
     /// Runtime State.
     struct Runtime_state
     {
+        /// Queue of attack animation indices.
         std::vector<std::pair<double_t, uint32_t>> atk_anim_idxs_queue;
     } state;
 

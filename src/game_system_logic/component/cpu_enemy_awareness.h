@@ -121,6 +121,18 @@ struct Detectable_character
         type,
         transform_offset
     );
+
+    struct Runtime_state
+    {
+        /// List of received broadcasted attack messages.
+        /// (NOTE: Only char types that are enemies are included in the list)
+        struct Enemy_atk_msg
+        {
+            vec3 other_to_this_delta_pos;
+            vec3 other_facing_dir;
+        };
+        std::vector<Enemy_atk_msg> broadcasted_enemy_atk_msgs;
+    } state;
 };
 
 }  // namespace component

@@ -440,7 +440,7 @@
             "name": "can_cancel_attack_w_parry:ov:true"
         },
         {
-            "name": "hitcapsule_group_2_enabled:ov:true"
+            "name": "broadcast_attack_to_enemies:tr"
         }
     ],
     "hitcapsule_group_set_template": {
