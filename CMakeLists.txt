@@ -50,7 +50,7 @@ set(ASSET_DIR
 
 # Dependencies.
 set(DEPENDENCY_INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/cglm/include  # Header only.
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/cpp_glm/include  # Header only.
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/entt/src  # Header only.
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/fastgltf/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/fmt/include
