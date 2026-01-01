@@ -50,6 +50,7 @@ I guess these are the cases in battle I could think of:
         - but for a shuriken-like thing it can be a capsule left on that runs ahead of the actual collider.
     
     - Actually, instead of having the collider type, just comparing the flat dot product (zero out Y) over some kind of broadcast event in the AFA that gets the message of origin,direction is attacking right now would be great. (So then direction and distance can get compared instead).
+        - So it turns out putting the on-guard event 2 ticks after the hurtbox turns on.
 
 
 6. CPU detects PC is using consumable (e.g. healing).

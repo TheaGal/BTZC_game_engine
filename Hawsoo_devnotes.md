@@ -1116,7 +1116,7 @@ while (running_game_loop)
                         - [x] Convert the "enable hitcapsule group 2" to an event.
                         - [x] Plug in the event into the `cpu_character_enemy_detection.cpp` system, and create a message to get broadcasted to all other `cpu_enemy_awareness.h` components.
                             - See `BT_TRACE("Emplaced attack msg broadcast.");`
-                        - [ ] Create another system that runs after CPU char enemy detection system.
+                        - [x] ~~Create another system that runs after CPU char enemy detection system.~~ Use `cpu_character_world_sppace_input` to process the broadcasted msgs and try to guard.
                             - Have this one process the broadcasts if any (so that there's no tick lag for this broadcasted message).
 
                     - [ ] If any type of hurt (including parry/guard) occurs, add a random attack to the attack queue.

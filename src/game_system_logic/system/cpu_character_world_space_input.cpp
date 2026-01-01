@@ -110,20 +110,46 @@ void BT::system::cpu_character_world_space_input()
                 if (auto detect_char{ reg.try_get<component::Detectable_character>(entity) };
                     detect_char != nullptr)
                 {
+                    size_t num_accepted_msgs{ 0 };
+
                     if (auto char_mvt_st{ reg.try_get<component::Character_mvt_state>(entity) };  // @NOTE: I don't really like how this is getting accessed before `system::input_controlled_character_movement()` is run.
                         char_mvt_st != nullptr)
                     {
                         for (auto const& msg : detect_char->state.broadcasted_enemy_atk_msgs)
                         {
-                            float_t flat_distance{ glm_vec3_norm(
-                                vec3{ msg.other_to_this_delta_pos[0],
-                                    0,  // Zero out Y.
+                            float_t flat_distance2{ glm_vec2_norm2(  // @NOTE: Ignore Y axis.
+                                vec2{ msg.other_to_this_delta_pos[0],
                                     msg.other_to_this_delta_pos[2] }) };
 
-                            // Get similarity of .
-                            char_mvt_st->get_facing_angle();  // @TODO.
-                            msg.other_facing_angle;  // @TODO: Get the angle difference and use these two facing angles for comparison.
+                            // Get similarity of facing angles.
+                            auto ang_diff{ std::abs(msg.other_facing_angle - char_mvt_st->get_facing_angle()) };
+                            while (ang_diff > glm_rad(180.0f)) ang_diff -= glm_rad(360.0f);
+                            while (ang_diff <= glm_rad(-180.0f)) ang_diff += glm_rad(360.0f);
+
+                            constexpr float_t k_max_flat_distance{ 7.5f };
+                            constexpr float_t k_min_ang_diff{ glm_rad(45.0f) };
+                            if (flat_distance2 < k_max_flat_distance * k_max_flat_distance &&
+                                ang_diff > k_min_ang_diff)
+                            {   // Accept this msg and attempt to parry attack.
+                                char_mvt_anim_state.write_to_animator_data.on_guard = true;
+
+                                // // @DEBUG: Just print out what's up.
+                                // BT_TRACEF("Accept msg: flat_dist:%.3f \tang_diff(deg):%.3f",
+                                //           std::sqrtf(flat_distance2),
+                                //           glm_deg(ang_diff));
+
+                                num_accepted_msgs++;
+                            }
                         }
+                    }
+
+                    // Clear msgs.
+                    if (!detect_char->state.broadcasted_enemy_atk_msgs.empty())
+                    {
+                        BT_TRACEF("Used %llu/%llu broadcasted atk msgs.",
+                                  num_accepted_msgs,
+                                  detect_char->state.broadcasted_enemy_atk_msgs.size());
+                        detect_char->state.broadcasted_enemy_atk_msgs.clear();
                     }
                 }
             }

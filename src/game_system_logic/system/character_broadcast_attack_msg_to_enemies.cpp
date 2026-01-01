@@ -99,7 +99,7 @@ void BT::system::character_broadcast_attack_msg_to_enemies()
             new_msg.other_facing_angle = char_mvt_st.get_facing_angle();
 
             detect_char2.state.broadcasted_enemy_atk_msgs.emplace_back(std::move(new_msg));
-            BT_TRACE("Emplaced attack msg broadcast.");
+            BT_TRACE("Broadcasted atk msg.");
         }
     }
 }

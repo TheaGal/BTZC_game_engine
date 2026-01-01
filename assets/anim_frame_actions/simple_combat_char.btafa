@@ -188,8 +188,8 @@
                 },
                 {
                     "ctrl_item_idx": 4,
-                    "end_frame": 71,
-                    "start_frame": 0
+                    "end_frame": 103,
+                    "start_frame": 32
                 },
                 {
                     "ctrl_item_idx": 6,
@@ -238,8 +238,8 @@
                 },
                 {
                     "ctrl_item_idx": 21,
-                    "end_frame": 47,
-                    "start_frame": 46
+                    "end_frame": 51,
+                    "start_frame": 50
                 }
             ],
             "state_name": "st_attack_0"
