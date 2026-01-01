@@ -465,25 +465,26 @@ void BT::system::cpu_character_enemy_detection()
             cpu_enemy_awareness.runtime_state.out_of_detection_timer = 0;
         }
 
-        // @DEBUG: Print stats.
-        static std::vector<std::string> const k_awareness_strs{
-            "UNAWARE",
-            "SUSPICIOUS",
-            "AWARE",
-        };
-        BT_TRACEF("state=%s\taware_sdz=%.2f\tsus_sdz=%.2f\toodt=%.2f/%.2f",
-                  k_awareness_strs[cpu_enemy_awareness.runtime_state.enemy_awareness].c_str(),
-                  cpu_enemy_awareness.aware_sdz.current_buildup /
-                      cpu_enemy_awareness.aware_sdz.buildup_threshold,
-                  cpu_enemy_awareness.suspicion_sdz.current_buildup /
-                      cpu_enemy_awareness.suspicion_sdz.buildup_threshold,
-                  cpu_enemy_awareness.runtime_state.out_of_detection_timer,
-                  cpu_enemy_awareness.runtime_state.enemy_awareness ==
-                          component::CPU_enemy_awareness::State::UNAWARE
-                      ? 0.0f
-                      : (cpu_enemy_awareness.runtime_state.enemy_awareness ==
-                                 component::CPU_enemy_awareness::State::SUSPICIOUS
-                             ? cpu_enemy_awareness.lose_suspicion_time
-                             : cpu_enemy_awareness.lose_aware_time));
+        // @NOCHECKIN: Just disabling this for now.
+        // // @DEBUG: Print stats.
+        // static std::vector<std::string> const k_awareness_strs{
+        //     "UNAWARE",
+        //     "SUSPICIOUS",
+        //     "AWARE",
+        // };
+        // BT_TRACEF("state=%s\taware_sdz=%.2f\tsus_sdz=%.2f\toodt=%.2f/%.2f",
+        //           k_awareness_strs[cpu_enemy_awareness.runtime_state.enemy_awareness].c_str(),
+        //           cpu_enemy_awareness.aware_sdz.current_buildup /
+        //               cpu_enemy_awareness.aware_sdz.buildup_threshold,
+        //           cpu_enemy_awareness.suspicion_sdz.current_buildup /
+        //               cpu_enemy_awareness.suspicion_sdz.buildup_threshold,
+        //           cpu_enemy_awareness.runtime_state.out_of_detection_timer,
+        //           cpu_enemy_awareness.runtime_state.enemy_awareness ==
+        //                   component::CPU_enemy_awareness::State::UNAWARE
+        //               ? 0.0f
+        //               : (cpu_enemy_awareness.runtime_state.enemy_awareness ==
+        //                          component::CPU_enemy_awareness::State::SUSPICIOUS
+        //                      ? cpu_enemy_awareness.lose_suspicion_time
+        //                      : cpu_enemy_awareness.lose_aware_time));
     }
 }
