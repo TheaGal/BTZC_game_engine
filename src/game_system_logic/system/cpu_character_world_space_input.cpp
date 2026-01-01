@@ -122,9 +122,7 @@ void BT::system::cpu_character_world_space_input()
 
                             // Get similarity of .
                             char_mvt_st->get_facing_angle();  // @TODO.
-                            
-                            vec3 
-                            msg.other_facing_dir;
+                            msg.other_facing_angle;  // @TODO: Get the angle difference and use these two facing angles for comparison.
                         }
                     }
                 }

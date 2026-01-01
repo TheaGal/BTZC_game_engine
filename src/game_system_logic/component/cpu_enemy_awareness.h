@@ -129,7 +129,7 @@ struct Detectable_character
         struct Enemy_atk_msg
         {
             vec3 other_to_this_delta_pos;
-            vec3 other_facing_dir;
+            float_t other_facing_angle;
         };
         std::vector<Enemy_atk_msg> broadcasted_enemy_atk_msgs;
     } state;

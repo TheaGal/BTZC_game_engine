@@ -36,6 +36,7 @@ void BT::system::character_broadcast_attack_msg_to_enemies()
 
     auto view{ reg.view<component::Transform const,
                         component::Display_repr_transform_ref const,
+                        component::Character_mvt_state const,
                         component::Detectable_character const>() };
 
     auto view_sub{ reg.view<component::Created_render_object_reference>() };
@@ -44,7 +45,7 @@ void BT::system::character_broadcast_attack_msg_to_enemies()
                          component::CPU_enemy_awareness const,  // These 2 are on the same layer (NTD).
                          component::Detectable_character>() };  // These 2 are on the same layer (NTD).
 
-    for (auto&& [ecs_entity, transform, disp_repr_ref, detect_char] : view.each())
+    for (auto&& [ecs_entity, transform, disp_repr_ref, char_mvt_st, detect_char] : view.each())
     {   // Check if event to do attack broadcast exists.
         bool do_broadcast{ false };
         if (view_sub.contains(entity_container.find_entity(disp_repr_ref.display_repr_uuid)))
@@ -95,10 +96,7 @@ void BT::system::character_broadcast_attack_msg_to_enemies()
             component::Detectable_character::Runtime_state::Enemy_atk_msg new_msg;
             glm_vec3_copy(delta_pos.raw, new_msg.other_to_this_delta_pos);
 
-            mat3 rot;
-            glm_quat_mat3(const_cast<float_t*>(transform.rotation.raw), rot);
-
-            glm_mat3_mulv(rot, vec3{ 0, 0, 1 }, new_msg.other_facing_dir);
+            new_msg.other_facing_angle = char_mvt_st.get_facing_angle();
 
             detect_char2.state.broadcasted_enemy_atk_msgs.emplace_back(std::move(new_msg));
             BT_TRACE("Emplaced attack msg broadcast.");
