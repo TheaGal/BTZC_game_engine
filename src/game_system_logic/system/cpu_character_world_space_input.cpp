@@ -105,6 +105,29 @@ void BT::system::cpu_character_world_space_input()
                 char_ws_input.ws_flat_clamped_input.raw[0] = desired_direction[0];
                 char_ws_input.ws_flat_clamped_input.raw[1] = 0;  // desired_direction[1];
                 char_ws_input.ws_flat_clamped_input.raw[2] = desired_direction[2];
+
+                // Reads broadcasts that other enemy is attacking.
+                if (auto detect_char{ reg.try_get<component::Detectable_character>(entity) };
+                    detect_char != nullptr)
+                {
+                    if (auto char_mvt_st{ reg.try_get<component::Character_mvt_state>(entity) };  // @NOTE: I don't really like how this is getting accessed before `system::input_controlled_character_movement()` is run.
+                        char_mvt_st != nullptr)
+                    {
+                        for (auto const& msg : detect_char->state.broadcasted_enemy_atk_msgs)
+                        {
+                            float_t flat_distance{ glm_vec3_norm(
+                                vec3{ msg.other_to_this_delta_pos[0],
+                                    0,  // Zero out Y.
+                                    msg.other_to_this_delta_pos[2] }) };
+
+                            // Get similarity of .
+                            char_mvt_st->get_facing_angle();  // @TODO.
+                            
+                            vec3 
+                            msg.other_facing_dir;
+                        }
+                    }
+                }
             }
             break;
 
