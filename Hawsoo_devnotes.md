@@ -1119,10 +1119,17 @@ while (running_game_loop)
                         - [x] ~~Create another system that runs after CPU char enemy detection system.~~ Use `cpu_character_world_sppace_input` to process the broadcasted msgs and try to guard.
                             - Have this one process the broadcasts if any (so that there's no tick lag for this broadcasted message).
 
+                    - [ ] If enemy uses heal/consumable, add attack to attack queue to be executed immediately.
+                        - [ ] For now..
+                            - [x] Create runtime data event for using consumable.
+                            - [x] Broadcast that event in the same way attack is broadcasted.
+                            - [ ] If enemy, use the broadcasted event to add an attack.
+                        - [ ] Once jumptable feature is added..
+                            - [ ] @TODO
+
                     - [ ] If any type of hurt (including parry/guard) occurs, add a random attack to the attack queue.
                         - [x] 一応 (i.e. just put 0 as the attack index)
 
-                    - [ ] If enemy uses heal/consumable, add attack to attack queue to be executed immediately.
                     - [ ] If enemy rushes in or enters into a closer range, add close range attack into attack queue to be executed immediately.
                     - [ ] If enemy doesn't do anything back, no attacks are added to attack queue, so it eventually empties.
                         - [ ] When it empties, CPU can jump back and 様子見, or can just 様子見 right in front of their enemy. Whatever is inside the "move" queue I guess.

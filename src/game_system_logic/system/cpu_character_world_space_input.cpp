@@ -141,6 +141,33 @@ void BT::system::cpu_character_world_space_input()
                                 num_accepted_msgs++;
                             }
                         }
+
+                        for (auto const& msg : detect_char->state.broadcasted_enemy_heal_msgs)
+                        {
+                            float_t flat_distance2{ glm_vec2_norm2(  // @NOTE: Ignore Y axis.
+                                vec2{ msg.other_to_this_delta_pos[0],
+                                    msg.other_to_this_delta_pos[2] }) };
+
+                            // Get similarity of facing angles.
+                            auto ang_diff{ std::abs(msg.other_facing_angle - char_mvt_st->get_facing_angle()) };
+                            while (ang_diff > glm_rad(180.0f)) ang_diff -= glm_rad(360.0f);
+                            while (ang_diff <= glm_rad(-180.0f)) ang_diff += glm_rad(360.0f);
+
+                            constexpr float_t k_max_flat_distance{ 7.5f };
+                            constexpr float_t k_min_ang_diff{ glm_rad(45.0f) };
+                            if (flat_distance2 < k_max_flat_distance * k_max_flat_distance &&
+                                ang_diff > k_min_ang_diff)
+                            {   // Accept this msg and attempt to parry attack.
+                                add_attack_to_jumptable();
+
+                                // // @DEBUG: Just print out what's up.
+                                // BT_TRACEF("Accept msg: flat_dist:%.3f \tang_diff(deg):%.3f",
+                                //           std::sqrtf(flat_distance2),
+                                //           glm_deg(ang_diff));
+
+                                num_accepted_msgs++;
+                            }
+                        }
                     }
 
                     // Clear msgs.

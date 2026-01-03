@@ -132,6 +132,14 @@ struct Detectable_character
             float_t other_facing_angle;
         };
         std::vector<Enemy_atk_msg> broadcasted_enemy_atk_msgs;
+
+        /// List of received broadcasted healing messages.
+        /// (NOTE: Only char types that are enemies are included in the list)
+        struct Enemy_heal_msg
+        {
+            vec3 other_to_this_delta_pos;
+        };
+        std::vector<Enemy_heal_msg> broadcasted_enemy_heal_msgs;
     } state;
 };
 
