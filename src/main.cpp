@@ -306,6 +306,13 @@ int32_t main()
             main_physics_engine.limit_delta_time(
                 main_timer.calc_delta_time());
 
+        // @NOCHECKIN: @DEBUG: Fun little sfx for audio engine.
+        if (iter_type == Iteration_type::FIRST_RUNNING_ITERATION)
+        {
+            auto snd_key{ BT::audio::mark_snd_required("test_sfx_0.ogg", false, false, false) };
+            BT::audio::play_sound(snd_key);
+        }
+
         // Simulation loop.
         main_physics_engine.accumulate_delta_time(delta_time);
         while (main_physics_engine.calc_wants_to_tick() ||  // @TODO: Change the `wants_to_tick()` to something that's not the physics engine. Perhaps a simulation manager or something???  -Thea 2025/10/31
@@ -335,6 +342,9 @@ int32_t main()
 
             BT::system::animator_driven_hitcapsule_sets_update();
             BT::system::hitcapsule_attack_processing(BT::Physics_engine::k_simulation_delta_time);
+
+            // Audio tick.
+            BT::audio::update();
 
             // Performance measure.
             main_renderer_imgui_renderer.set_sim_loop_perf_time(perf_timer.calc_delta_time());

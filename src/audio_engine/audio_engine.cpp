@@ -23,6 +23,12 @@ public:
         return s_inst;
     }
 
+    /// Updates impl's audio thread and state.
+    void update()
+    {
+        m_pimpl->update();
+    }
+
     /// Gets or registers new sound.
     snd_key_t get_or_emplace_sound(std::string const& snd_name,
                                    bool is_3d,
@@ -100,6 +106,8 @@ public:
         m_pimpl->set_channel_volume(chan_key, db);
         m_pimpl->set_channel_paused(chan_key, false);
 
+        BT_TRACEF("Started playing snd %i", snd_key);
+
         return chan_key;
     }
 
@@ -139,6 +147,11 @@ private:
 void BT::audio::initialize()
 {
     (void)Audio_engine::instance();
+}
+
+void BT::audio::update()
+{
+    Audio_engine::instance().update();
 }
 
 snd_key_t BT::audio::mark_snd_required(std::string const& snd_name, bool is_3d, bool is_looping, bool stream)

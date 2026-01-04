@@ -344,6 +344,12 @@ target_link_libraries(${PROJECT_NAME}
     nlohmann_json::nlohmann_json
     stduuid)
 
+# Copy dynamic libs.
+execute_process(
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${FMOD_LIBRARY_PATH}${FMOD_LIB_FILE_PREFIX}.dll
+        ${CMAKE_CURRENT_BINARY_DIR})
+
 # Create symlink to assets folder.
 if(DEFINED ASSET_DIR)
     set(dir_name ${ASSET_DIR})

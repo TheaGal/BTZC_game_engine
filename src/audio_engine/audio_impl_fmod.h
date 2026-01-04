@@ -64,7 +64,10 @@ private:
     FMOD::System* m_system{ nullptr };
 
     std::unordered_map<snd_key_t, FMOD::Sound*> m_loaded_snds;
+    std::unordered_map<channel_key_t, FMOD::Channel*> m_alive_channels;
+    using Alive_channels_iterator_t = std::unordered_map<channel_key_t, FMOD::Channel*>::iterator;
 
+    channel_key_t m_next_key{ 80085 };
 };
 
 }  // namespace impl

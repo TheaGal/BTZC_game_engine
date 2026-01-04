@@ -15,6 +15,9 @@ namespace audio
 /// OPTIONAL. Creates audio engine object. Omitting this will lazy-load the audio engine.
 void initialize();
 
+/// Ticks audio engine's update thread. Needed once per simulation tick.
+void update();
+
 /// Marks a sound as required. If the first one to mark a sound as required, audio engine will load
 /// this sound into its memory.
 snd_key_t mark_snd_required(std::string const& snd_name, bool is_3d, bool is_looping, bool stream);
