@@ -3,7 +3,6 @@
 #include "btglm.h"
 #include "sound_key.h"
 
-#include <cmath>
 #include <string>
 
 
@@ -33,18 +32,6 @@ channel_key_t play_sound_3d(snd_key_t key, vec3s const& pos, float_t db = 0);
 
 /// Sets the position of the 3D listener.
 void set_3d_listener_trans(vec3s const& pos, vec3s const& forward);
-
-/// Helper for db -> volume.
-inline float_t db_to_volume(float_t db)
-{
-    return std::powf(10.0f, 0.05f * db);
-}
-
-/// Helper for volume -> db.
-inline float_t volume_to_db(float_t volume)
-{
-    return 20.0f * std::log10f(volume);
-}
 
 }  // namespace audio
 }  // namespace BT

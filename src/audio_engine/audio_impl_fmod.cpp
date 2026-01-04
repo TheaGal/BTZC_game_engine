@@ -30,8 +30,14 @@ void _error_check(FMOD_RESULT result, char const* file, int32_t line)
 BT::audio::impl::Audio_impl_FMOD::Audio_impl_FMOD()
 {
     ERRCHECK(FMOD::System_Create(&m_system));
-    ERRCHECK(m_system->setSoftwareFormat(0, FMOD_SPEAKERMODE_5POINT1, 0));
-    ERRCHECK(m_system->init(k_max_channels, FMOD_INIT_NORMAL, nullptr));
+
+    auto init_mode{ FMOD_INIT_NORMAL };
+    if constexpr (false)
+    {   // Enable profiling.
+        init_mode |= FMOD_INIT_PROFILE_ENABLE;
+    }
+
+    ERRCHECK(m_system->init(k_max_channels, init_mode, nullptr));
 }
 
 BT::audio::impl::Audio_impl_FMOD::~Audio_impl_FMOD()
@@ -141,7 +147,7 @@ void BT::audio::impl::Audio_impl_FMOD::set_channel_3d_props(channel_key_t key,
 
 void BT::audio::impl::Audio_impl_FMOD::set_channel_volume(channel_key_t key, float_t db)
 {
-    ERRCHECK(m_alive_channels.at(key)->setVolume(db));
+    ERRCHECK(m_alive_channels.at(key)->setVolume(db_to_volume(db)));
 }
 
 void BT::audio::impl::Audio_impl_FMOD::set_channel_paused(channel_key_t key, bool is_paused)
