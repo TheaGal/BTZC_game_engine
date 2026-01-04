@@ -100,7 +100,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_engine/audio_engine.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_engine/audio_impl_fmod.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_engine/audio_impl_fmod.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_engine/sound_key.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_engine/util.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btglm.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btjson.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btjson.h
