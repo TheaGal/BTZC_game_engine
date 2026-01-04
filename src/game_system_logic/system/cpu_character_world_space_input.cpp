@@ -151,12 +151,10 @@ void BT::system::cpu_character_world_space_input()
                             constexpr float_t k_max_flat_distance{ 50.0f };  // Very far for far reaching pinch attacks.
                             if (flat_distance2 < k_max_flat_distance * k_max_flat_distance)
                             {   // Accept this msg and attempt to pinch in distance and attack.
-                                add_combo_attack_to_jumptable();
 
-                                // // @DEBUG: Just print out what's up.
-                                // BT_TRACEF("Accept msg: flat_dist:%.3f \tang_diff(deg):%.3f",
-                                //           std::sqrtf(flat_distance2),
-                                //           glm_deg(ang_diff));
+                                // @TODO: Add the commented out func!
+                                assert(false);
+                                // add_combo_attack_to_jumptable();
 
                                 num_accepted_msgs++;
                             }
