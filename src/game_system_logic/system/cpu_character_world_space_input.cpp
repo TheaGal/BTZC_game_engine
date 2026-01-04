@@ -93,7 +93,7 @@ void BT::system::cpu_character_world_space_input()
             }
             else
             {   // @TEMP: @DEBUG: Keep attack anim up!
-                char_mvt_anim_state.write_to_animator_data.on_attack = true;
+                // char_mvt_anim_state.write_to_animator_data.on_attack = true;
                 
                 // Calc desired direction. (@COPYPASTA, also @TEMP bc this just assumes the attack anim.)
                 rvec3 desired_direction{ 0, 0, 0 };
@@ -148,17 +148,10 @@ void BT::system::cpu_character_world_space_input()
                                 vec2{ msg.other_to_this_delta_pos[0],
                                     msg.other_to_this_delta_pos[2] }) };
 
-                            // Get similarity of facing angles.
-                            auto ang_diff{ std::abs(msg.other_facing_angle - char_mvt_st->get_facing_angle()) };
-                            while (ang_diff > glm_rad(180.0f)) ang_diff -= glm_rad(360.0f);
-                            while (ang_diff <= glm_rad(-180.0f)) ang_diff += glm_rad(360.0f);
-
-                            constexpr float_t k_max_flat_distance{ 7.5f };
-                            constexpr float_t k_min_ang_diff{ glm_rad(45.0f) };
-                            if (flat_distance2 < k_max_flat_distance * k_max_flat_distance &&
-                                ang_diff > k_min_ang_diff)
-                            {   // Accept this msg and attempt to parry attack.
-                                add_attack_to_jumptable();
+                            constexpr float_t k_max_flat_distance{ 50.0f };  // Very far for far reaching pinch attacks.
+                            if (flat_distance2 < k_max_flat_distance * k_max_flat_distance)
+                            {   // Accept this msg and attempt to pinch in distance and attack.
+                                add_combo_attack_to_jumptable();
 
                                 // // @DEBUG: Just print out what's up.
                                 // BT_TRACEF("Accept msg: flat_dist:%.3f \tang_diff(deg):%.3f",

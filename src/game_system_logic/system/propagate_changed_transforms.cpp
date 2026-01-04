@@ -1,7 +1,6 @@
 #include "propagate_changed_transforms.h"
 
 #include "btglm.h"
-#include "cglm/quat.h"
 #include "entt/entity/fwd.hpp"
 #include "entt/entity/registry.hpp"
 #include "game_system_logic/component/transform.h"

@@ -8,12 +8,16 @@ project(btzc_game_engine
 # When turning this option on, the library will be compiled using assertions. By default asserts are enabled in Debug build.
 option(ENABLE_PROFILING "Enable profiling" OFF)
 
+# When turning this option on, the logging version of the FMOD library will be linked.
+option(ENABLE_FMOD_LOGGING "Enable FMOD logging" OFF)
+
 # Print out all options.
 message(
     "\n"
     "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n"
     "|               ::OPTION VALUES::                \n"
-    "| ENABLE_PROFILING : ${ENABLE_PROFILING}\n"
+    "| ENABLE_PROFILING    : ${ENABLE_PROFILING}\n"
+    "| ENABLE_FMOD_LOGGING : ${ENABLE_FMOD_LOGGING}\n"
     "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-\n")
 
 # App icon.
@@ -33,6 +37,12 @@ if(MSVC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
+# Ensure 64-bit build.
+if(NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
+    message(FATAL_ERROR "Only x64 build allowed.")
+    return()
+endif()
+
 # Multithreaded build.
 set(CMAKE_BUILD_PARALLEL_LEVEL 16)
 if(MSVC)
@@ -40,7 +50,7 @@ if(MSVC)
 endif()
 
 # Profiling.
-if (ENABLE_PROFILING)
+if(ENABLE_PROFILING)
     message(FATAL_ERROR "@TODO: Implement profiling libraries here!")
 endif()
 
@@ -48,12 +58,18 @@ endif()
 set(ASSET_DIR
     ${CMAKE_CURRENT_SOURCE_DIR}/assets)
 
+# Check certain env vars exist before dependency list.
+if(NOT DEFINED ENV{FMOD_STUDIO_API_DIR})
+    message(FATAL_ERROR "Env var \"FMOD_STUDIO_API_DIR\" is not defined. Set it to the base dir of the FMOD API and retry.")
+endif()
+
 # Dependencies.
 set(DEPENDENCY_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/cpp_glm/include  # Header only.
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/entt/src  # Header only.
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/fastgltf/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/fmt/include
+    $ENV{FMOD_STUDIO_API_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/glad/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/glfw/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui  # Header only.
@@ -80,6 +96,11 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/animation_frame_action_tool/editor_state.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/animation_frame_action_tool/runtime_data.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/animation_frame_action_tool/runtime_data.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_engine/audio_engine.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_engine/audio_engine.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_engine/audio_impl_fmod.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_engine/audio_impl_fmod.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_engine/sound_key.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btglm.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btjson.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btjson.h
@@ -298,8 +319,24 @@ target_include_directories(${PROJECT_NAME}
         ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib
         ${DEPENDENCY_INCLUDE_DIRS})
 
+# Build FMOD link library path.
+if(ENABLE_FMOD_LOGGING)
+    set(FMOD_LIB_FILE_PREFIX fmodL)
+else()
+    set(FMOD_LIB_FILE_PREFIX fmod)
+endif()
+if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm64|aarch64")
+    set(FMOD_LIBRARY_PATH
+        $ENV{FMOD_STUDIO_API_DIR}/api/core/lib/arm64/)
+else()
+    set(FMOD_LIBRARY_PATH
+        $ENV{FMOD_STUDIO_API_DIR}/api/core/lib/x64/)
+endif()
+message("FMOD lib path: ${FMOD_LIBRARY_PATH}${FMOD_LIB_FILE_PREFIX}_vc.lib")
+
 target_link_libraries(${PROJECT_NAME}
     fastgltf
+    ${FMOD_LIBRARY_PATH}${FMOD_LIB_FILE_PREFIX}_vc.lib
     fmt::fmt
     glfw
     ${GLFW_LIBRARIES}

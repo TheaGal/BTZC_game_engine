@@ -5,8 +5,6 @@
 #include "../service_finder/service_finder.h"
 #include "btglm.h"
 #include "btlogger.h"
-#include "cglm/util.h"
-#include "cglm/vec3.h"
 
 #include <cassert>
 

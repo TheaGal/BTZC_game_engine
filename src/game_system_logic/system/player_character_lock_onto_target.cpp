@@ -2,7 +2,6 @@
 
 #include "btglm.h"
 #include "btlogger.h"
-#include "cglm/vec2.h"
 #include "game_system_logic/component/follow_camera.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"

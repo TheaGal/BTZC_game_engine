@@ -1,4 +1,5 @@
 #include "animation_frame_action_tool/runtime_data.h"
+#include "audio_engine/audio_engine.h"
 #include "btzc_game_engine.h"
 #include "btglm.h"
 #include "game_system_logic/component/component_registry.h"
@@ -268,6 +269,9 @@ int32_t main()
     main_renderer_imgui_renderer.set_camera_ref(main_renderer.get_camera_obj());
     main_renderer_imgui_renderer.set_renderer_ref(&main_renderer);
     main_renderer_imgui_renderer.set_input_handler_ref(&main_input_handler);
+
+    // Setup audio engine.
+    BT::audio::initialize();
 
     // Setup world properties.
     BT::world::World_properties_container world_properties;

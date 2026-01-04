@@ -23,9 +23,9 @@ public:
     Phys_obj_impl_tri_mesh(Model const* model,
                            JPH::EMotionType motion_type,
                            Physics_transform&& init_transform);
-    Phys_obj_impl_tri_mesh(const Phys_obj_impl_tri_mesh&)            = delete;
+    Phys_obj_impl_tri_mesh(Phys_obj_impl_tri_mesh const&)            = delete;
     Phys_obj_impl_tri_mesh(Phys_obj_impl_tri_mesh&&)                 = delete;
-    Phys_obj_impl_tri_mesh& operator=(const Phys_obj_impl_tri_mesh&) = delete;
+    Phys_obj_impl_tri_mesh& operator=(Phys_obj_impl_tri_mesh const&) = delete;
     Phys_obj_impl_tri_mesh& operator=(Phys_obj_impl_tri_mesh&&)      = delete;
     ~Phys_obj_impl_tri_mesh();
 
