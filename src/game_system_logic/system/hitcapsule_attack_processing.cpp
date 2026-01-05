@@ -246,7 +246,6 @@ void process_attack_interaction(Entity_container& entity_container,
     if (auto attack_queue{ reg.try_get<component::Attack_queue>(defender_ecs_entity) };
         attack_queue != nullptr)
     {
-        attack_queue->update_attack_timer(global_attack_timer);
         attack_queue->push_attack_to_queue(0);  // @HARDCODE: @TODO: @NOCHECKIN
     }
 }
@@ -318,4 +317,8 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
 
     // Update attack timer.
     s_global_attack_timer += delta_time;
+    for (auto&& [_, atk_queue] : reg.view<component::Attack_queue>().each())
+    {
+        atk_queue.update_attack_timer(s_global_attack_timer);
+    }
 }
