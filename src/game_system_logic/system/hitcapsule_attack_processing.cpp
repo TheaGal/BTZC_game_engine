@@ -317,6 +317,7 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
 
     // Update attack timer.
     s_global_attack_timer += delta_time;
+
     for (auto&& [_, atk_queue] : reg.view<component::Attack_queue>().each())
     {
         atk_queue.update_attack_timer(s_global_attack_timer);
