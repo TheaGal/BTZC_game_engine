@@ -246,7 +246,8 @@ void process_attack_interaction(Entity_container& entity_container,
     if (auto attack_queue{ reg.try_get<component::Attack_queue>(defender_ecs_entity) };
         attack_queue != nullptr)
     {
-        attack_queue->push_attack_to_queue(global_attack_timer, 0);  // @HARDCODE: @TODO: @NOCHECKIN
+        attack_queue->update_attack_timer(global_attack_timer);
+        attack_queue->push_attack_to_queue(0);  // @HARDCODE: @TODO: @NOCHECKIN
     }
 }
 

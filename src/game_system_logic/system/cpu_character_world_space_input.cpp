@@ -2,6 +2,7 @@
 
 #include "btglm.h"
 #include "game_system_logic/component/character_movement.h"
+#include "game_system_logic/component/combat_stats.h"
 #include "game_system_logic/component/cpu_enemy_awareness.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
@@ -142,21 +143,22 @@ void BT::system::cpu_character_world_space_input()
                             }
                         }
 
-                        for (auto const& msg : detect_char->state.broadcasted_enemy_heal_msgs)
+                        if (auto attack_queue{ reg.try_get<component::Attack_queue>(entity) };
+                            attack_queue != nullptr)
                         {
-                            float_t flat_distance2{ glm_vec2_norm2(  // @NOTE: Ignore Y axis.
-                                vec2{ msg.other_to_this_delta_pos[0],
-                                    msg.other_to_this_delta_pos[2] }) };
+                            for (auto const& msg : detect_char->state.broadcasted_enemy_heal_msgs)
+                            {
+                                float_t flat_distance2{ glm_vec2_norm2(  // @NOTE: Ignore Y axis.
+                                    vec2{ msg.other_to_this_delta_pos[0],
+                                          msg.other_to_this_delta_pos[2] }) };
 
-                            constexpr float_t k_max_flat_distance{ 50.0f };  // Very far for far reaching pinch attacks.
-                            if (flat_distance2 < k_max_flat_distance * k_max_flat_distance)
-                            {   // Accept this msg and attempt to pinch in distance and attack.
+                                constexpr float_t k_max_flat_distance{ 50.0f };  // Very far for far reaching pinch attacks.
+                                if (flat_distance2 < k_max_flat_distance * k_max_flat_distance)
+                                {   // Accept this msg and attempt to pinch in distance and attack.
+                                    attack_queue->push_attack_to_queue(0);  // @HARDCODE: @TODO: @NOCHECKIN
 
-                                // @TODO: Add the commented out func!
-                                assert(false);
-                                // add_combo_attack_to_jumptable();
-
-                                num_accepted_msgs++;
+                                    num_accepted_msgs++;
+                                }
                             }
                         }
                     }
