@@ -543,6 +543,7 @@ Uncomment `third_party/cglm/include/cglm/simd/intrin.h:98` (where it includes "a
         - Blocks the deferred task above.
         - @NOTE: ended up deciding to replace with EnTT ecs.
     - [x] Animation root motion.
+    - [ ] Redo combat AFA and animator (use jumptable system instead of condition transitions).
     - [ ] Have CPU character attack, and have there be guard, parry, hurt -type interaction.
 
     - [ ] Walking machine to prevent falling off edges.

@@ -1130,16 +1130,31 @@ while (running_game_loop)
                     - [ ] If any type of hurt (including parry/guard) occurs, add a random attack to the attack queue.
                         - [x] 一応 (i.e. just put 0 as the attack index)
 
+## (detour) Redo combat AFA and animator to use jumptable system instead of conditional transitions.
+
+- [ ] No more conditional transitions.
+- [ ] Change AFA to use a string function in its region instead of the row dictating the region.
+- [ ] Use jumptable (higher row has precedence in the check).
+    > @NOTE: If there is a transition from the jumptable, no other conditions or mutations will be checked or adhered to in the sim tick.
+- [ ] Change player char to use jumptable.
+    - [ ] Add movement thing in queue to do a "start-move" and then another for "stop-move".
+
+
+## (return) Have CPU character attack, and have there be guard, parry, hurt-type interation.
+
+- Stuff that has already been addressed w "Redo combat AFA and animator".
+                    - [ ] ~~Create jumptable for transitioning if there are attacks in the attack queue.~~
+                        - Include parrying in this too.
+                        - 
+                        - This will require adding functionality to the AFA system.
+
+- New stuff to work on after "Redo combat AFA and animator".
                     - [ ] If enemy rushes in or enters into a closer range, add close range attack into attack queue to be executed immediately.
                     - [ ] If enemy doesn't do anything back, no attacks are added to attack queue, so it eventually empties.
                         - [ ] When it empties, CPU can jump back and 様子見, or can just 様子見 right in front of their enemy. Whatever is inside the "move" queue I guess.
                             - If the move queue is ever empty, the move queue should just get refilled automatically with random things.
                             - And then occasionally there should be an attack inserted into the attack queue (generating events should happen around when the 様子見 is about over, so that it doesn't feel like it ended ubruptly.)
                     
-                    - [ ] Create jumptable for transitioning if there are attacks in the attack queue.
-                        - Include parrying in this too.
-                        - 
-                        - This will require adding functionality to the AFA system.
 
 
                 - [ ] Make one of each attack type animation.
