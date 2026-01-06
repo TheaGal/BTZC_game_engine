@@ -184,10 +184,10 @@ int32_t main()
         "simple_combat_char",
         make_unique<BT::Model>(BTZC_GAME_ENGINE_ASSET_MODEL_PATH "simple_combat_char.glb",
                                "textured_material"));
-    BT::Model_bank::emplace_model(  // @NOCHECKIN: REMOVE THIS MODEL ONCE DONE TESTING SKINNING (and remove from `s_scene_as_json`).
-        "SlimeGirl",
-        make_unique<BT::Model>(BTZC_GAME_ENGINE_ASSET_MODEL_PATH "SlimeGirl.glb",
-                               "textured_material"));
+    // BT::Model_bank::emplace_model(  // @NOCHECKIN: REMOVE THIS MODEL ONCE DONE TESTING SKINNING (and remove from `s_scene_as_json`).
+    //     "SlimeGirl",
+    //     make_unique<BT::Model>(BTZC_GAME_ENGINE_ASSET_MODEL_PATH "SlimeGirl.glb",
+    //                            "textured_material"));
     // BT::Model_bank::emplace_model(  // @NOCHECKIN: REMOVE THIS MODEL ONCE DONE TESTING SKINNING (and remove from `s_scene_as_json`).
     //     "test_gltf",
     //     make_unique<BT::Model>(BTZC_GAME_ENGINE_ASSET_MODEL_PATH "Leever.glb",
@@ -203,7 +203,7 @@ int32_t main()
     // ]
     std::vector<std::string> const afa_names{
         "simple_combat_char",
-        "SlimeGirl",
+        // "SlimeGirl",
     };
     for (auto const& afa_name : afa_names)
     {
