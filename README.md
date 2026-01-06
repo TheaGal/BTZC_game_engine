@@ -12,9 +12,17 @@ Bozzy-Thea Zelda-like Collectathon Game Engine. Simple to get off the ground.
 - OpenGL 4.5 (In the future Vulkan 1.3)
 - Blender 3.2.2
 - Milton 1.9.1
+- FMOD Engine 2.03
 
 
 ## Build gotchas.
+
+### FMOD
+
+Install the same FMOD version in "Software Versions" and set `FMOD_STUDIO_API_DIR` in the env vars to the root dir of the API directory.
+
+> @NOTE: I know it says FMOD Studio in the name of the env var, but just ignore that. It's just FMOD Engine. It _may_ become FMOD Studio in the future, however.
+
 
 ### Windows ARM64
 

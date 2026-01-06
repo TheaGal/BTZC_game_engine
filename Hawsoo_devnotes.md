@@ -1123,7 +1123,7 @@ while (running_game_loop)
                         - [ ] For now..
                             - [x] Create runtime data event for using consumable.
                             - [x] Broadcast that event in the same way attack is broadcasted.
-                            - [ ] If enemy, use the broadcasted event to add an attack.
+                            - [x] If enemy, use the broadcasted event to add an attack.
                         - [ ] Once jumptable feature is added..
                             - [ ] @TODO
 
@@ -1137,6 +1137,8 @@ while (running_game_loop)
                             - And then occasionally there should be an attack inserted into the attack queue (generating events should happen around when the 様子見 is about over, so that it doesn't feel like it ended ubruptly.)
                     
                     - [ ] Create jumptable for transitioning if there are attacks in the attack queue.
+                        - Include parrying in this too.
+                        - 
                         - This will require adding functionality to the AFA system.
 
 
