@@ -473,80 +473,8 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
         {   // Keep track of whether state changes.
             prev_state_idx = curr_state_idx;
 
-            // Look for possible state transitions.
-            for (auto const& state_trans : m_animator_state_transitions)
-            for (auto from_state_idx : state_trans.from_to_state.first)
-            if (from_state_idx == curr_state_idx)
-            {   // Possible state transition.
-                bool do_transition{ true };
+            // @TODO: @HERE: rewrite "Look for possible state transitions".  -Thea 2025/01/08
 
-                for (auto const& trans_cond : state_trans.list_of_and_conditions)
-                {   // Check if condition is fulfilled (all of them in an AND chain must be
-                    // fulfilled to transition).
-                    bool cond_fulfilled{ false };
-
-                    if (trans_cond.condition_var_idx == anim_tmpl_types::k_on_anim_end_var_idx)
-                    {
-                        if (!state_changed)
-                        {   // Special ON_ANIM_END case.
-                            // @NOTE: Since this is frame dependent, we need to make sure that we're
-                            //        using the correct animation idx (hence `!state_changed` check).
-                            //        -Thea 2025/11/23
-                            auto const& model_anim{ m_model_animations[anim_state.animation_idx] };
-                            if (model_anim.calc_frame_idx(time_handle.load(),
-                                                          false,
-                                                          Model_joint_animation::FLOOR) ==
-                                model_anim.get_num_frames() - 1)
-                            {
-                                cond_fulfilled = true;
-                            }
-                        }
-                    }
-                    else
-                    {   // Normal condition var.
-                        auto const& anim_var{ m_animator_variables[trans_cond.condition_var_idx] };
-
-                        switch (trans_cond.compare_operator)
-                        {
-                        case anim_tmpl_types::Animator_state_transition::Condition::COMP_EQ:
-                            cond_fulfilled = glm_eq(anim_var.var_value, trans_cond.compare_value);
-                            break;
-
-                        case anim_tmpl_types::Animator_state_transition::Condition::COMP_NEQ:
-                            cond_fulfilled = !glm_eq(anim_var.var_value, trans_cond.compare_value);
-                            break;
-
-                        case anim_tmpl_types::Animator_state_transition::Condition::COMP_LESS:
-                            cond_fulfilled = (anim_var.var_value < trans_cond.compare_value);
-                            break;
-
-                        case anim_tmpl_types::Animator_state_transition::Condition::COMP_LEQ:
-                            cond_fulfilled = (anim_var.var_value <= trans_cond.compare_value);
-                            break;
-
-                        case anim_tmpl_types::Animator_state_transition::Condition::COMP_GREATER:
-                            cond_fulfilled = (anim_var.var_value > trans_cond.compare_value);
-                            break;
-
-                        case anim_tmpl_types::Animator_state_transition::Condition::COMP_GEQ:
-                            cond_fulfilled = (anim_var.var_value >= trans_cond.compare_value);
-                            break;
-
-                        default: assert(false); break;
-                        }
-                    }
-
-                    // AND on this condition.
-                    do_transition = (do_transition && cond_fulfilled);
-                }
-
-                if (do_transition)
-                {   // Transition states!
-                    curr_state_idx = state_trans.from_to_state.second;
-                    state_changed = true;
-                    break;
-                }
-            }
         } while (prev_state_idx != curr_state_idx);
 
         // Erase all trigger activations!
