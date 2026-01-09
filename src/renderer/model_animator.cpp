@@ -281,14 +281,12 @@ BT::Model_skin const& BT::Model_animator::get_model_skin() const
 
 void BT::Model_animator::configure_animator_states(
     std::vector<anim_tmpl_types::Animator_state> animator_states,
-    std::vector<anim_tmpl_types::Animator_variable> animator_variables,
-    std::vector<anim_tmpl_types::Animator_state_transition> animator_state_transitions)
+    std::vector<anim_tmpl_types::Animator_variable> animator_variables)
 {
     // Idk why I put this into a separate method instead of in the constructor but hey, here we are.
     // @NOTE: A lot of copying, but I'm @TEMP temporarily doing this for a looser interface.
     m_animator_states = animator_states;
     m_animator_variables = animator_variables;
-    m_animator_state_transitions = animator_state_transitions;
 }
 
 void BT::Model_animator::configure_anim_frame_action_controls(

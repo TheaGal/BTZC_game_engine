@@ -117,8 +117,7 @@ public:
 
     void configure_animator_states(
         std::vector<anim_tmpl_types::Animator_state> animator_states,
-        std::vector<anim_tmpl_types::Animator_variable> animator_variables,
-        std::vector<anim_tmpl_types::Animator_state_transition> animator_state_transitions);
+        std::vector<anim_tmpl_types::Animator_variable> animator_variables);
 
     void configure_anim_frame_action_controls(
         anim_frame_action::Runtime_data_controls const* anim_frame_action_controls,
@@ -210,7 +209,6 @@ private:
 
     std::vector<anim_tmpl_types::Animator_state> m_animator_states;
     std::vector<anim_tmpl_types::Animator_variable> m_animator_variables;
-    std::vector<anim_tmpl_types::Animator_state_transition> m_animator_state_transitions;
     anim_frame_action::Runtime_data_controls const* m_anim_frame_action_controls{ nullptr };
     anim_frame_action::Runtime_controllable_data m_anim_frame_action_data;
 

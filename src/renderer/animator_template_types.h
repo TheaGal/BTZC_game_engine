@@ -53,31 +53,6 @@ struct Animator_variable
     float_t var_value{ 0 };
 };
 
-struct Animator_state_transition
-{
-    std::pair<std::vector<size_t>, size_t> from_to_state;  // Many "from" states to one "to" state.
-
-    struct Condition
-    {
-        size_t condition_var_idx;
-
-        enum Compare_op : int32_t
-        {
-            COMP_EQ,       // equal ==
-            COMP_NEQ,      // not equal !=
-            COMP_LESS,     // less than <
-            COMP_LEQ,      // less than or equal to <=
-            COMP_GREATER,  // greater than >
-            COMP_GEQ,      // greater than or equal to >=
-        } compare_operator;
-
-        float_t compare_value;
-    };
-
-    /// If all of these conditions resolve to true, then commit to this transition.
-    std::vector<Condition> list_of_and_conditions;
-};
-
 /// Special condition var indexes.
 static constexpr size_t k_on_anim_end_var_idx{ (size_t)-2 };
 

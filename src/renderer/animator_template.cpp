@@ -100,14 +100,6 @@ void BT::Animator_template_bank::load_animator_template_into_animator(
 
     // @TODO: Also include transition states in model animator.
 
-    std::vector<anim_tmpl_types::Animator_state_transition> anim_state_transitions;
-    anim_state_transitions.reserve(anim_temp.state_transitions.size());
-    for (auto const& temp_state_trans : anim_temp.state_transitions)
-    {
-        anim_state_transitions.emplace_back(temp_state_trans.cooked);
-    }
-
     animator.configure_animator_states(anim_states,
-                                       anim_temp.variables_cooked,
-                                       anim_state_transitions);
+                                       anim_temp.variables_cooked);
 }
