@@ -16,20 +16,6 @@ class Model;
 namespace anim_frame_action
 {
 
-enum Serialization_mode
-{
-    SERIAL_MODE_SERIALIZE = 0,
-    SERIAL_MODE_DESERIALIZE
-};
-
-enum Control_item_type
-{
-    CTRL_ITEM_TYPE_UNDEFINED = 0,
-    CTRL_ITEM_TYPE_DATA_WRITE,  // @NOTE: Lerped data write is a different type.
-    CTRL_ITEM_TYPE_DATA_OVERRIDE,
-    CTRL_ITEM_TYPE_EVENT_TRIGGER,
-};
-
 // Controllable data.
 enum Controllable_data_label : std::uint32_t
 {
@@ -279,30 +265,22 @@ struct Runtime_data_controls
     {
         std::string animated_model_name;
 
-        struct Control_item
-        {
-            std::string name;  // Only this needs to get saved. Other members are calculated.
-
-            Control_item_type type{ CTRL_ITEM_TYPE_UNDEFINED };
-            Controllable_data_label affecting_data_label{ 0 };
-
-            uint32_t data_point0;  // Bool, Int, and Float can be encoded into uint32.
-            uint32_t data_point1;
-
-            NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Control_item,
-                                                        name);
-        };
-        std::vector<Control_item> control_items;
-
         struct Animation_frame_action_timeline
         {
             struct Region
             {
-                uint32_t ctrl_item_idx;  // Idx in `control_items`.
                 int32_t  start_frame;
                 int32_t  end_frame;
 
-                NLOHMANN_DEFINE_TYPE_INTRUSIVE(Region, ctrl_item_idx, start_frame, end_frame);
+                struct Control_command
+                {
+                    std::string cmd_name;
+                    std::vector<std::string> argv;
+
+                    NLOHMANN_DEFINE_TYPE_INTRUSIVE(Control_command, cmd_name, argv);
+                } ctrl_cmd;
+
+                NLOHMANN_DEFINE_TYPE_INTRUSIVE(Region, start_frame, end_frame, ctrl_cmd);
             };
             std::vector<Region> regions;
             std::string state_name;  // The corresponding animator state name this timeline belongs to.
@@ -315,7 +293,6 @@ struct Runtime_data_controls
 
         NLOHMANN_DEFINE_TYPE_INTRUSIVE(Data,
                                        animated_model_name,
-                                       control_items,
                                        anim_frame_action_timelines,
                                        hitcapsule_group_set_template);
     } data;
