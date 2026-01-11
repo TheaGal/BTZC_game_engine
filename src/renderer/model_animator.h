@@ -208,6 +208,16 @@ private:
     animator_frame_t m_sim_prev_frame{ (uint32_t)-1 };  // -1 means unset.
 
     bool m_is_using_root_motion;
+
+    /// Type for interpreted code.
+    using cmd_code_t = anim_frame_action::Runtime_data_controls::Data::
+        Animation_frame_action_timeline::Region::Control_command;
+
+    /// Interprets and executes sent command code.
+    void execute_command_code(cmd_code_t const& cmd_code,
+                              bool is_reg_first_frame,
+                              bool is_reg_last_frame);
+
     ///////////////////////////////////////////////////
 
     std::vector<anim_tmpl_types::Animator_state> m_animator_states;

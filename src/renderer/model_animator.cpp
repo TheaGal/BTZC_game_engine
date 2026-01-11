@@ -534,10 +534,9 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
             // Check if within region.
             if (frame_idx >= region.start_frame && frame_idx < region.end_frame)
             {
-                bool on_enter{ frame_idx == region.start_frame };
-                bool on_last{ frame_idx == region.end_frame - 1 };  // Or is `on_exit` better? It just kinda doesn't seem right...
-
-                // @TODO: START HERE!!!!!!
+                execute_command_code(region.ctrl_cmd,
+                                     frame_idx == region.start_frame,
+                                     frame_idx == region.end_frame - 1);
             }
 
 
@@ -827,6 +826,14 @@ BT::Model_animator::animator_frame_t& BT::Model_animator::get_profile_prev_frame
         return *reinterpret_cast<animator_frame_t*>(0xDEADBEEF);
         break;
     }
+}
+
+void BT::Model_animator::execute_command_code(cmd_code_t const& cmd_code,
+                                              bool is_reg_first_frame,
+                                              bool is_reg_last_frame)
+{
+    // @TODO: implement!
+    assert(false);
 }
 
 BT::anim_tmpl_types::Animator_variable& BT::Model_animator::find_animator_variable(
