@@ -1136,7 +1136,7 @@ while (running_game_loop)
 - [ ] Change AFA to use a string function in its region instead of the row dictating the region.
     - [x] Cut out everything and redo the data structures.
     - [ ] Fix the compilation errors.
-        - [ ] `update()` fn.
+        - [x] `update()` fn.
         - [ ] `imgui_renderer.cpp`
 
 - [ ] Use jumptable (higher row has precedence in the check).
