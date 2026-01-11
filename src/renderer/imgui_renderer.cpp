@@ -1114,7 +1114,7 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
             static float_t s_sequencer_y_offset{ 0.0f };
 
             // Clip rects.
-            constexpr float_t k_item_list_width_ratio{ 0.3f };
+            constexpr float_t k_item_list_width_ratio{ 0.01f };
             ImVec2 cr_item_list_min{ canvas_pos };
             ImVec2 cr_item_list_max{ std::floorf(canvas_pos.x + canvas_size.x * k_item_list_width_ratio),
                                      canvas_pos.y + canvas_size.y };
