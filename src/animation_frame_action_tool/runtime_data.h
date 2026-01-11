@@ -265,13 +265,19 @@ struct Runtime_data_controls
     {
         std::string animated_model_name;
 
+        /// A timeline is paired with an animation state from the .btanitor file.
         struct Animation_frame_action_timeline
         {
+            /// Multiple regions make up an action timeline. A region has a command run when the
+            /// executing frame is within bounds.
             struct Region
             {
+                uint32_t row_idx;
                 int32_t  start_frame;
                 int32_t  end_frame;
 
+                /// The command run when the region is active. There are `on_first_frame` and
+                /// `on_last_frame` flags.
                 struct Control_command
                 {
                     std::string cmd_name;
@@ -280,7 +286,7 @@ struct Runtime_data_controls
                     NLOHMANN_DEFINE_TYPE_INTRUSIVE(Control_command, cmd_name, argv);
                 } ctrl_cmd;
 
-                NLOHMANN_DEFINE_TYPE_INTRUSIVE(Region, start_frame, end_frame, ctrl_cmd);
+                NLOHMANN_DEFINE_TYPE_INTRUSIVE(Region, row_idx, start_frame, end_frame, ctrl_cmd);
             };
             std::vector<Region> regions;
             std::string state_name;  // The corresponding animator state name this timeline belongs to.
