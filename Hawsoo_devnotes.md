@@ -1132,10 +1132,18 @@ while (running_game_loop)
 
 ## (detour) Redo combat AFA and animator to use jumptable system instead of conditional transitions.
 
-- [ ] No more conditional transitions.
+- [x] No more conditional transitions.
 - [ ] Change AFA to use a string function in its region instead of the row dictating the region.
+    - [x] Cut out everything and redo the data structures.
+    - [ ] Fix the compilation errors.
+        - [ ] `update()` fn.
+        - [ ] `imgui_renderer.cpp`
+
 - [ ] Use jumptable (higher row has precedence in the check).
     > @NOTE: If there is a transition from the jumptable, no other conditions or mutations will be checked or adhered to in the sim tick.
+    - [x] Some planning for how it's gonna work.
+    - [ ] jjj.
+
 - [ ] Change player char to use jumptable.
     - [ ] Add movement thing in queue to do a "start-move" and then another for "stop-move".
 

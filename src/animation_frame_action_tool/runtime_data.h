@@ -257,8 +257,6 @@ struct Runtime_data_controls
 {
     Runtime_data_controls(std::string const& fname);
 
-    void calculate_all_ctrl_item_types();
-
     Model const* animated_model{ nullptr };
 
     struct Data

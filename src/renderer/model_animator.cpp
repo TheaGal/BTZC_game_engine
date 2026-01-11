@@ -344,7 +344,7 @@ void BT::Model_animator::change_state_idx(uint32_t to_state)
                                                     to_state))
     {   // Reset all time profiles.
         set_time(0.0f);
-        m_prev_sim_time = std::numeric_limits<float_t>::lowest();  // @TODO: Make abstract?
+        m_sim_prev_frame = (uint32_t)-1;
     }
 }
 
@@ -492,13 +492,7 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
     // Process anim frame action controls.
     if (profile == SIMULATION_PROFILE &&
         m_anim_frame_action_controls != nullptr)
-    {   // Get prev timer to work with.
-        animator_time_t& prev_time_handle{ get_profile_prev_time_handle(profile) };
-
-        // Copy current and previous times.
-        float_t prev_time{ prev_time_handle };
-        float_t curr_time{ time_handle };
-
+    {
         // Process anim frame action runtime.
         auto current_action_timeline_idx{
             m_anim_frame_action_data.anim_state_idx_to_timeline_idx_map.at(m_current_state_idx)
@@ -508,10 +502,45 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
 
         m_anim_frame_action_data.clear_all_data_overrides();
 
+        // Copy current and previous times.
+        float_t curr_time{ time_handle };
+
+        // Get anim frame idx.
+        auto const& anim_state{ m_animator_states[m_current_state_idx] };
+        auto frame_idx =
+            m_model_animations[anim_state.state_type == anim_state.SINGLE_ANIM
+                                   ? anim_state.animation_idx
+                                   : anim_state.blend_anims.front().animation_idx]  // @TEMP.
+                .calc_frame_idx(curr_time, anim_state.loop, Model_joint_animation::FLOOR);
+
+        // Get prev anim frame idx.
+        animator_frame_t& prev_frame_handle{ get_profile_prev_frame_handle(profile) };
+        uint32_t prev_frame_idx{ prev_frame_handle };
+
+        // Test to make sure that frames only advance one at a time.
+        // Test case: ensure that (1) the prev frame is unset and the current frame is 0, or (2) the
+        //            prev frame is exactly 1 behind the current frame.
+        // @CHECK: @THEA: is looping covered in this test case???
+        if (!((prev_frame_idx == (uint32_t)-1 && frame_idx == 0) ||
+              (prev_frame_idx + 1 == frame_idx)))
+        {
+            BT_ERROR("Frame advanced in SIMULATION_PROFILE in an unusual way.");  // @NOCHECKIN: I'm pretty sure this is gonna fail so fix it!
+            assert(false);
+        }
+
+        // Process timeline regions.
         for (auto const& region : afa_timeline.regions)
         {
-            auto& ctrl_item{
-                m_anim_frame_action_controls->data.control_items[region.ctrl_item_idx] };
+            // Check if within region.
+            if (frame_idx >= region.start_frame && frame_idx < region.end_frame)
+            {
+                bool on_enter{ frame_idx == region.start_frame };
+                bool on_last{ frame_idx == region.end_frame - 1 };  // Or is `on_exit` better? It just kinda doesn't seem right...
+
+                // @TODO: START HERE!!!!!!
+            }
+
+
             if (ctrl_item.type == anim_frame_action::CTRL_ITEM_TYPE_EVENT_TRIGGER)
             {   // Check if rising edge (start_frame) of event is within prev_time/curr_time.
                 float_t rising_edge_time = region.start_frame
@@ -526,12 +555,6 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
             }
             else
             {   // Check if time within frame bounds.
-                auto const& anim_state{ m_animator_states[m_current_state_idx] };
-                auto frame_idx =
-                    m_model_animations[anim_state.state_type == anim_state.SINGLE_ANIM
-                                           ? anim_state.animation_idx
-                                           : anim_state.blend_anims.front().animation_idx]  // @TEMP.
-                        .calc_frame_idx(curr_time, anim_state.loop, Model_joint_animation::FLOOR);
                 if (frame_idx >= region.start_frame && frame_idx < region.end_frame)
                 {   // Add override/write mutation.
                     bool is_bool_type{ anim_frame_action::Runtime_controllable_data
@@ -579,8 +602,8 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
             }
         }
 
-        // Update prev time.
-        prev_time_handle = time_handle.load();
+        // Update prev frame.
+        prev_frame_handle = frame_idx;
     }
 }
 
@@ -792,16 +815,16 @@ BT::Model_animator::animator_time_t& BT::Model_animator::get_profile_time_handle
     }
 }
 
-BT::Model_animator::animator_time_t& BT::Model_animator::get_profile_prev_time_handle(
+BT::Model_animator::animator_frame_t& BT::Model_animator::get_profile_prev_frame_handle(
     Animator_timer_profile profile) const
 {
     switch (profile)
     {
-    case SIMULATION_PROFILE: return const_cast<animator_time_t&>(m_prev_sim_time);
+    case SIMULATION_PROFILE: return const_cast<animator_frame_t&>(m_sim_prev_frame);
 
     default:
         assert(false);
-        return *reinterpret_cast<animator_time_t*>(0xDEADBEEF);
+        return *reinterpret_cast<animator_frame_t*>(0xDEADBEEF);
         break;
     }
 }

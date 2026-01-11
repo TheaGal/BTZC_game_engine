@@ -196,13 +196,16 @@ private:
     // @NOTE: Times need to be atomic since `change_state_idx()` and `set_time()` can be called from
     //        any thread.
     using animator_time_t = typename std::atomic<float_t>;
+    using animator_frame_t = typename std::atomic_uint32_t;
 
     animator_time_t& get_profile_time_handle(Animator_timer_profile profile) const;
-    animator_time_t& get_profile_prev_time_handle(Animator_timer_profile profile) const;
 
     animator_time_t m_sim_time{ 0.0f };
-    animator_time_t m_prev_sim_time{ std::numeric_limits<float_t>::lowest() };  // For rising edge events.
     animator_time_t m_rend_time{ 0.0f };
+
+    animator_frame_t& get_profile_prev_frame_handle(Animator_timer_profile profile) const;
+
+    animator_frame_t m_sim_prev_frame{ (uint32_t)-1 };  // -1 means unset.
 
     bool m_is_using_root_motion;
     ///////////////////////////////////////////////////

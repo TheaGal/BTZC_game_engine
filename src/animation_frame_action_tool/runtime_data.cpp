@@ -235,100 +235,36 @@ BT::anim_frame_action::Runtime_data_controls::Runtime_data_controls(std::string 
     // Deserialize json into data.
     data = Data(json_load_from_disk(fname));
 
+    // Check timeline regions are sorted.
+    for (auto const& tmln : data.anim_frame_action_timelines)
+    {
+        uint32_t cur_row{ 0 };
+        for (auto const& region : tmln.regions)
+        {
+            if (region.row_idx < cur_row)
+            {
+                BT_ERRORF("Timeline regions not sorted. Prev=%u Cur=%u State_name=%s",
+                          cur_row,
+                          region.row_idx,
+                          tmln.state_name.c_str());
+                assert(false);
+            }
+            else
+            {
+                // Is sorted correctly.
+                cur_row = region.row_idx;
+            }
+        }
+    }
+
     // Load model from bank.
     animated_model = Model_bank::get_model(data.animated_model_name);
     assert(animated_model != nullptr);
 
-    // Ctrl items type calculation.
-    calculate_all_ctrl_item_types();
+    // @TODO: @THEA: add some kind of string->bytecode "compilation" step right here (really only
+    //               for optimization in the future of course).  -Thea 2025/01/10
 }
 
-void BT::anim_frame_action::Runtime_data_controls::calculate_all_ctrl_item_types()
-{
-    for (auto& ctrl_item : data.control_items)
-    {
-        std::vector<std::string> tokens;
-        {   // Get tokens in ctrl item name.
-            std::stringstream ss(ctrl_item.name);
-            std::string token;
-            while (std::getline(ss, token, ':'))
-            {
-                tokens.emplace_back(token);
-            }
-        }
-
-        {   // Get data label.
-            auto& data_label_str{ tokens[0] };
-            ctrl_item.affecting_data_label =
-                anim_frame_action::Runtime_controllable_data::str_label_to_enum(data_label_str);
-        }
-        {   // Get control type.
-            auto& ctrl_type_str{ tokens[1] };
-            if (ctrl_type_str == "wr")
-                ctrl_item.type = anim_frame_action::CTRL_ITEM_TYPE_DATA_WRITE;
-            else if (ctrl_type_str == "ov")
-                ctrl_item.type = anim_frame_action::CTRL_ITEM_TYPE_DATA_OVERRIDE;
-            else if (ctrl_type_str == "tr")
-                ctrl_item.type = anim_frame_action::CTRL_ITEM_TYPE_EVENT_TRIGGER;
-            else
-            {   // @TODO: Implement this new type of ctrl type.
-                assert(false);
-            }
-        }
-        {   // Get data point(s).
-            static auto s_read_data_pt_fn = [](anim_frame_action::Controllable_data_label data_label,
-                                               std::string const& str_token,
-                                               uint32_t& out_data_point) {
-                // Deduce how to read string token from data label data type.
-                switch (anim_frame_action::Runtime_controllable_data::get_data_type(data_label))
-                {
-                    case anim_frame_action::Runtime_controllable_data::CTRL_DATA_TYPE_FLOAT:
-                    {
-                        float_t token_as_float = std::stof(str_token);
-
-                        static_assert(sizeof(out_data_point) >= sizeof(token_as_float));
-                        *reinterpret_cast<float_t*>(&out_data_point) = token_as_float;
-                        break;
-                    }
-
-                    case anim_frame_action::Runtime_controllable_data::CTRL_DATA_TYPE_BOOL:
-                    {
-                        bool token_as_bool{ str_token == "true" ? true : false };
-
-                        static_assert(sizeof(out_data_point) >= sizeof(token_as_bool));
-                        *reinterpret_cast<bool*>(&out_data_point) = token_as_bool;
-                        break;
-                    }
-
-                    default:
-                        // Unsupported data type.
-                        assert(false);
-                        out_data_point = 0;
-                        break;
-                }
-            };
-            switch (ctrl_item.type)
-            {
-                case anim_frame_action::CTRL_ITEM_TYPE_DATA_WRITE:
-                case anim_frame_action::CTRL_ITEM_TYPE_DATA_OVERRIDE:
-                    // Read one data point.
-                    s_read_data_pt_fn(ctrl_item.affecting_data_label,
-                                      tokens[2],
-                                      ctrl_item.data_point0);
-                    break;
-
-                case anim_frame_action::CTRL_ITEM_TYPE_EVENT_TRIGGER:
-                    // Do nothing.
-                    break;
-
-                default:
-                    // @TODO: Implement this new type of ctrl type.
-                    assert(false);
-                    break;
-            }
-        }
-    }
-}
 
 // Bank of data controls.
 void BT::anim_frame_action::Bank::emplace(std::string const& name,
