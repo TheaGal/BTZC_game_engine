@@ -1020,6 +1020,7 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                     Model_joint_animation::k_frames_per_second);
         ImGui::InputInt("Selected Frame", &s_current_frame);
 
+        #if 0  // vv Create control item modal (could be useful)
         {   // Create new control item.
             static std::string s_new_ctrl_item_name_buffer{ "" };
             static bool s_new_ctrl_item_popup_first;
@@ -1066,6 +1067,7 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                 ImGui::EndPopup();
             }
         }
+        #endif  // 0  // ^^ Create control item modal (could be useful)
 
         ImGui::PopItemWidth();
 
@@ -1085,8 +1087,16 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
         {
             ImGui::SetWindowFontScale(1.0f);
 
-            auto& afa_ctrl_items{ anim_frame_action::s_editor_state
-                                      .working_afa_ctrls_copy->data.control_items };
+            // @THEA: @NOCHECKIN: temp code to mock the previous `control_items`. //
+            struct AFA_ctrl_item_mock
+            {
+                std::string name;
+            };
+            auto afa_ctrl_items{ std::vector<AFA_ctrl_item_mock>{} };
+            for (size_t i = 0; i < 100; i++)
+                afa_ctrl_items.emplace_back("CTRLITEM" + std::to_string(i));
+            ////////////////////////////////////////////////////////////////////////
+
             auto& afa_timeline_regions{
                 anim_frame_action::s_editor_state.working_afa_ctrls_copy->data
                     .anim_frame_action_timelines[anim_frame_action::s_editor_state
@@ -1179,12 +1189,15 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                                                    ImVec2{ cr_item_list_max.x, y_top_btm.t }) &&
                         on_rmb_press)
                     {   // Right click to rename.
+
+                        assert(false);  // @NOTE: vv Below is going to be changed.
                         s_afa_ctrl_item_renaming_idx = i;
                         s_renaming_popup_first = true;
                         ImGui::OpenPopup("control_item_rename_popup");
                     }
                 }
 
+                #if 0  // vv Rename ctrl item modal (could be useful)
                 if (ImGui::BeginPopup("control_item_rename_popup"))
                 {   // Rename control item.
                     auto& renaming_afa_ctrl_item{ afa_ctrl_items[s_afa_ctrl_item_renaming_idx] };
@@ -1224,6 +1237,7 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                     s_renaming_popup_first = false;
                     ImGui::EndPopup();
                 }
+                #endif  // 0  // ^^ Rename ctrl item modal (could be useful)
             }
             ImGui::PopClipRect();
 
@@ -1378,8 +1392,8 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                 for (auto& region : afa_timeline_regions)
                 {   // Draw bars for regions.
                     vec2s region_bar_top_bottom{
-                        cr_timeline_min.y + s_sequencer_y_offset + k_top_measuring_region_height + 2 + (s_timeline_cell_size.y * region.ctrl_item_idx) + 1,
-                        cr_timeline_min.y + s_sequencer_y_offset + k_top_measuring_region_height + 2 + (s_timeline_cell_size.y * (region.ctrl_item_idx + 1)) - 1 };
+                        cr_timeline_min.y + s_sequencer_y_offset + k_top_measuring_region_height + 2 + (s_timeline_cell_size.y * region.row_idx) + 1,
+                        cr_timeline_min.y + s_sequencer_y_offset + k_top_measuring_region_height + 2 + (s_timeline_cell_size.y * (region.row_idx + 1)) - 1 };
                     ImVec2 p_min{ cr_timeline_min.x + s_sequencer_x_offset + (region.start_frame * s_timeline_cell_size.x) + 1, region_bar_top_bottom.s };
                     ImVec2 p_max{ cr_timeline_min.x + s_sequencer_x_offset + (region.end_frame * s_timeline_cell_size.x) - 1, region_bar_top_bottom.t };
                     draw_list->AddRectFilled(p_min,
@@ -1527,7 +1541,7 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                         float_t zoom_relative_mouse_x{ (mouse_pos.x
                                                         - (cr_timeline_min.x + s_sequencer_x_offset))
                                                        / s_timeline_cell_size.x };
-                        uint32_t ctrl_item_idx{
+                        uint32_t hover_row_idx{
                             static_cast<uint32_t>((mouse_pos.y
                                                    - (cr_timeline_min.y
                                                       + s_sequencer_y_offset
@@ -1536,7 +1550,9 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                         int32_t start_frame{
                             static_cast<int32_t>(std::floorf(zoom_relative_mouse_x)) };
 
-                        afa_timeline_regions.emplace_back(ctrl_item_idx, start_frame, start_frame + 4);
+                        afa_timeline_regions.emplace_back(hover_row_idx,
+                                                          start_frame,
+                                                          start_frame + 4);
 
                         // Immediately assign created region as selected.
                         // (Just in case there may be some kind of vector resizing
