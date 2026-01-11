@@ -39,7 +39,7 @@ endif()
 
 # Ensure 64-bit build.
 if(NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
-    message(FATAL_ERROR "Only x64 build allowed.")
+    message(FATAL_ERROR "Only 64-bit build allowed.")
     return()
 endif()
 
@@ -325,7 +325,8 @@ if(ENABLE_FMOD_LOGGING)
 else()
     set(FMOD_LIB_FILE_PREFIX fmod)
 endif()
-if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "arm64|aarch64")
+string(TOLOWER ${CMAKE_SYSTEM_PROCESSOR} SYS_PROCESSOR_LOWER)
+if(${SYS_PROCESSOR_LOWER} MATCHES "arm64|aarch64")
     set(FMOD_LIBRARY_PATH
         $ENV{FMOD_STUDIO_API_DIR}/api/core/lib/arm64/)
 else()
