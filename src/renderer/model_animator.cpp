@@ -538,67 +538,6 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
                                      frame_idx == region.start_frame,
                                      frame_idx == region.end_frame - 1);
             }
-
-
-            if (ctrl_item.type == anim_frame_action::CTRL_ITEM_TYPE_EVENT_TRIGGER)
-            {   // Check if rising edge (start_frame) of event is within prev_time/curr_time.
-                float_t rising_edge_time = region.start_frame
-                                           / Model_joint_animation::k_frames_per_second
-                                           ;//* state_speed;  <-- @TODO: Include this when it's not editor mode (I think is the best decision)!!!!
-                if (prev_time < rising_edge_time && rising_edge_time <= curr_time)
-                {   // Add rising edge event trigger mark.
-                    m_anim_frame_action_data
-                        .get_reeve_data_handle(ctrl_item.affecting_data_label)
-                        .mark_rising_edge();
-                }
-            }
-            else
-            {   // Check if time within frame bounds.
-                if (frame_idx >= region.start_frame && frame_idx < region.end_frame)
-                {   // Add override/write mutation.
-                    bool is_bool_type{ anim_frame_action::Runtime_controllable_data
-                                           ::get_data_type(ctrl_item.affecting_data_label)
-                                       == anim_frame_action::Runtime_controllable_data
-                                           ::CTRL_DATA_TYPE_BOOL };
-                    switch (ctrl_item.type)
-                    {   // @TODO: @NOCHECKIN: @IMPROVE: I wish this logic section would improve. It kinda sucks ngl.  -Thea 2025/09/15
-                        case anim_frame_action::CTRL_ITEM_TYPE_DATA_OVERRIDE:
-                            if (!is_bool_type)
-                            {
-                                m_anim_frame_action_data
-                                    .get_float_data_handle(ctrl_item.affecting_data_label)
-                                    .override_val(*reinterpret_cast<float_t const*>(&ctrl_item.data_point0));
-                            }
-                            else
-                            {
-                                m_anim_frame_action_data
-                                    .get_bool_data_handle(ctrl_item.affecting_data_label)
-                                    .override_val(*reinterpret_cast<bool const*>(&ctrl_item.data_point0));
-                            }
-                            break;
-
-                        case anim_frame_action::CTRL_ITEM_TYPE_DATA_WRITE:
-                            if (!is_bool_type)
-                            {
-                                m_anim_frame_action_data
-                                    .get_float_data_handle(ctrl_item.affecting_data_label)
-                                    .write_val(*reinterpret_cast<float_t const*>(&ctrl_item.data_point0));
-                            }
-                            else
-                            {
-                                m_anim_frame_action_data
-                                    .get_bool_data_handle(ctrl_item.affecting_data_label)
-                                    .write_val(*reinterpret_cast<bool const*>(&ctrl_item.data_point0));
-                            }
-                            break;
-
-                        default:
-                            // Unsupported ctrl item type.
-                            assert(false);
-                            break;
-                    }
-                }
-            }
         }
 
         // Update prev frame.
