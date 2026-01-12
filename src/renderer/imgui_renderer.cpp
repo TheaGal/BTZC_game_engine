@@ -968,16 +968,8 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
             }
         }
 
-
-
-
-
-
-
-
-
-        
-        {   // Listbox of anim state names.
+        // Listbox of anim state names.
+        {
             ImVec2 canvas_size = ImGui::GetContentRegionAvail();
 
             ImGui::BeginDisabled(anim_frame_action::s_editor_state.is_working_afa_dirty);
@@ -1009,48 +1001,7 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
             ImGui::SameLine();
         }
 
-
-
-
-
-
-
-
-
-
-
-
-        #if 0  // vv Dropdown for changing anim state clips.
-        ImGui::BeginDisabled(anim_frame_action::s_editor_state.is_working_afa_dirty);
-
-        if (ImGui::Combo("Animation clip action timelines",
-                         &s_current_animation_clip,
-                         anim_names_0_delim.c_str()))
-        {   // Change selected anim idx.
-            anim_frame_action::s_editor_state.selected_anim_state_idx =
-                anim_frame_action::s_editor_state.anim_state_name_to_idx_map.at(
-                    anim_names_as_list[s_current_animation_clip]);
-        }
-        if (ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled) &&
-            anim_frame_action::s_editor_state.is_working_afa_dirty)
-        {   // Set tooltip if disabled.
-            ImGui::SetTooltip(
-                "Working timeline is dirty. Changing animation clip\n"
-                "is disabled until changes are saved or discarded.");
-        }
-
-        ImGui::EndDisabled();
-        #endif  // 0  // ^^ Dropdown for changing anim state clips.
-
-
-
-
-
-
-
-
-
-        // BT sequencer.
+        // BT sequencer widget.
         ImGui::BeginChild("BT_sequencer");
         if (anim_frame_action::s_editor_state.anim_state_name_to_idx_map.empty())
         {
