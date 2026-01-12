@@ -310,7 +310,7 @@ int32_t main()
         if (iter_type == Iteration_type::FIRST_RUNNING_ITERATION)
         {
             auto snd_key{ BT::audio::mark_snd_required("test_sfx_0.ogg", false, false, false) };
-            BT::audio::play_sound(snd_key);
+            BT::audio::play_sound(snd_key, BT::audio::volume_to_db(0.25f));
         }
 
         // Simulation loop.
