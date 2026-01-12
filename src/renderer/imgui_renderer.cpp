@@ -942,7 +942,10 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
     ImGui::Begin("Animation timeline", nullptr, (anim_frame_action::s_editor_state.is_working_afa_dirty
                                                  ? ImGuiWindowFlags_UnsavedDocument
                                                  : 0));
-    {   // Build anim clips \0 string set.
+    {
+
+        #if 0  // vv Compiles \0 delimited string of anim names.
+        // Build anim clips \0 string set.
         std::string anim_names_0_delim{ "\0" };
         std::vector<std::string> anim_names_as_list;  // If new anim gets selected.
         {
@@ -967,25 +970,112 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                 current_str_pos += (anim_name.size() + 1);
             }
         }
+        #endif  // 0  // ^^ Compiles \0 delimited string of anim names.
 
+
+
+
+
+        // Fill out anim state names.
+        static std::vector<std::string> s_anim_names_as_list;
+
+        // Set animation clip idx to currently set selected anim state idx.
         if (s_current_animation_clip == -1 &&
             !anim_frame_action::s_editor_state.anim_state_name_to_idx_map.empty())
-        {   // Set animation clip idx to currently set selected anim state idx.
+        {
+            s_anim_names_as_list.clear();
+            s_anim_names_as_list.reserve(
+                anim_frame_action::s_editor_state.anim_state_name_to_idx_map.size());
+
             size_t new_clip_idx{ 0 };
             for (auto&& [anim_name, idx] : anim_frame_action::s_editor_state.anim_state_name_to_idx_map)
+            {
+                s_anim_names_as_list.emplace_back(anim_name);
+
                 if (idx == anim_frame_action::s_editor_state.selected_anim_state_idx)
-                {   // Found.
-                    break;
-                }
-                else
-                {
-                    new_clip_idx++;
+                {   // Set found idx.
+                    s_current_animation_clip = new_clip_idx;
                 }
 
-            // Set found idx.
-            s_current_animation_clip = new_clip_idx;
+                new_clip_idx++;
+            }
         }
 
+
+
+
+
+
+
+
+
+        // Draw listbox here.
+        {
+            auto const& items{ s_anim_names_as_list };
+            auto& item_idx{ s_current_animation_clip };
+
+            ImVec2 canvas_size = ImGui::GetContentRegionAvail();
+
+            ImGui::BeginDisabled(anim_frame_action::s_editor_state.is_working_afa_dirty);
+
+            // Listbox.
+            bool changed{ false };
+            if (ImGui::BeginListBox("##Theas listbox DEBUG DEBUG",
+                                    ImVec2(canvas_size.x * 0.3f, canvas_size.y)))
+            {
+                for (size_t i = 0; i < items.size(); i++)
+                {
+                    bool const is_selected = (item_idx == i);
+                    if (ImGui::Selectable(
+                            (items[i] + "##Theas listbox DEBUG DEBUG" + std::to_string(i))
+                                .c_str(),
+                            is_selected))
+                    {
+                        item_idx = i;
+                        changed = true;
+                    }
+                    if (is_selected)
+                        ImGui::SetItemDefaultFocus();
+                }
+
+                ImGui::EndListBox();
+            }
+
+            // Change selected anim idx in editor state.
+            if (changed)
+            {
+                anim_frame_action::s_editor_state.selected_anim_state_idx =
+                    anim_frame_action::s_editor_state.anim_state_name_to_idx_map.at(
+                        items[item_idx]);
+            }
+
+            // Tooltip: cannot switch anim states while working AFA timeline is dirty.
+            if (anim_frame_action::s_editor_state.is_working_afa_dirty &&
+                ImGui::IsItemHovered(ImGuiHoveredFlags_AllowWhenDisabled))
+            {   // Set tooltip if disabled.
+                ImGui::SetTooltip(
+                    "Working timeline is dirty. Changing animation clip\n"
+                    "is disabled until changes are saved or discarded.");
+            }
+
+            ImGui::EndDisabled();
+
+            // For upcoming custom widget.
+            ImGui::SameLine();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+        #if 0  // vv Dropdown for changing anim state clips.
         ImGui::BeginDisabled(anim_frame_action::s_editor_state.is_working_afa_dirty);
 
         if (ImGui::Combo("Animation clip action timelines",
@@ -1005,71 +1095,15 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
         }
 
         ImGui::EndDisabled();
+        #endif  // 0  // ^^ Dropdown for changing anim state clips.
 
-        // Sequencer component.
-        static int32_t s_current_frame = 0;
-        static int32_t s_final_frame = 60;
 
-        anim_frame_action::s_editor_state.anim_current_frame =  // A frame late but oh well.
-            std::min(std::max(0, s_current_frame), s_final_frame);
 
-        ImGui::PushItemWidth(130);
-        ImGui::Text("Displaying frame %llu/%d. %.2f FPS",
-                    anim_frame_action::s_editor_state.anim_current_frame,
-                    s_final_frame,
-                    Model_joint_animation::k_frames_per_second);
-        ImGui::InputInt("Selected Frame", &s_current_frame);
 
-        #if 0  // vv Create control item modal (could be useful)
-        {   // Create new control item.
-            static std::string s_new_ctrl_item_name_buffer{ "" };
-            static bool s_new_ctrl_item_popup_first;
-            if (ImGui::Button("Create new control item.."))
-            {
-                s_new_ctrl_item_name_buffer = "";
-                s_new_ctrl_item_popup_first = true;
-                ImGui::OpenPopup("create_new_control_item_popup");
-            }
-            if (ImGui::BeginPopup("create_new_control_item_popup"))
-            {
-                if (s_new_ctrl_item_popup_first)
-                {
-                    ImGui::SetKeyboardFocusHere();
-                }
-                ImGui::InputText("Name##new_ctrl_item_popup", &s_new_ctrl_item_name_buffer);
 
-                if (ImGui::Button("Confirm##new_ctrl_item_popup") ||
-                    m_input_handler->is_key_pressed(BT_KEY_ENTER))
-                {   // Create new ctrl item.
-                    auto& afa_ctrl_items{ anim_frame_action::s_editor_state
-                                              .working_afa_ctrls_copy->data.control_items };
-                    afa_ctrl_items.emplace_back(s_new_ctrl_item_name_buffer);
 
-                    // Ctrl items type calculation.
-                    anim_frame_action::s_editor_state
-                        .working_afa_ctrls_copy->calculate_all_ctrl_item_types();
 
-                    anim_frame_action::s_editor_state.is_working_afa_dirty = true;
-                    ImGui::CloseCurrentPopup();
-                }
 
-                ImGui::SameLine();
-
-                if (ImGui::Button("Cancel##new_ctrl_item_popup") ||
-                    m_input_handler->is_key_pressed(BT_KEY_ESCAPE))
-                {   // Cancel!!!
-                    ImGui::CloseCurrentPopup();
-                }
-
-                ImGui::Text("%s", "Press <Enter> to confirm rename or <Esc> to cancel.");
-
-                s_new_ctrl_item_popup_first = false;
-                ImGui::EndPopup();
-            }
-        }
-        #endif  // 0  // ^^ Create control item modal (could be useful)
-
-        ImGui::PopItemWidth();
 
         // BT sequencer.
         ImGui::BeginChild("BT_sequencer");
@@ -1087,37 +1121,82 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
         {
             ImGui::SetWindowFontScale(1.0f);
 
-            // Draw listbox here.
-            {
-                ImVec2 canvas_size = ImGui::GetContentRegionAvail();
+            // Sequencer controls.
+            static int32_t s_current_frame = 0;
+            static int32_t s_final_frame = 60;
 
-                static std::vector<std::string> items{"asdf", "jojos", "siwa", "gyoza", "yummi"};
-                static int32_t item_idx{ 1 };
+            anim_frame_action::s_editor_state.anim_current_frame =  // A frame late but oh well.
+                std::min(std::max(0, s_current_frame), s_final_frame);
 
-                // Listbox full available height.
-                if (ImGui::BeginListBox("##Theas listbox DEBUG DEBUG",
-                                        ImVec2(canvas_size.x * 0.3f, canvas_size.y)))
+            ImGui::PushItemWidth(130);
+            ImGui::Text("Displaying frame %llu/%d. %.2f FPS",
+                        anim_frame_action::s_editor_state.anim_current_frame,
+                        s_final_frame,
+                        Model_joint_animation::k_frames_per_second);
+            ImGui::InputInt("Selected Frame", &s_current_frame);
+
+            #if 0  // vv Create control item modal (could be useful)
+            {   // Create new control item.
+                static std::string s_new_ctrl_item_name_buffer{ "" };
+                static bool s_new_ctrl_item_popup_first;
+                if (ImGui::Button("Create new control item.."))
                 {
-                    for (size_t i = 0; i < items.size(); i++)
+                    s_new_ctrl_item_name_buffer = "";
+                    s_new_ctrl_item_popup_first = true;
+                    ImGui::OpenPopup("create_new_control_item_popup");
+                }
+                if (ImGui::BeginPopup("create_new_control_item_popup"))
+                {
+                    if (s_new_ctrl_item_popup_first)
                     {
-                        bool const is_selected = (item_idx == i);
-                        if (ImGui::Selectable(
-                                (items[i] + "##Theas listbox DEBUG DEBUG" + std::to_string(i))
-                                    .c_str(),
-                                is_selected))
-                        {
-                            item_idx = i;
-                        }
-                        if (is_selected)
-                            ImGui::SetItemDefaultFocus();
+                        ImGui::SetKeyboardFocusHere();
+                    }
+                    ImGui::InputText("Name##new_ctrl_item_popup", &s_new_ctrl_item_name_buffer);
+
+                    if (ImGui::Button("Confirm##new_ctrl_item_popup") ||
+                        m_input_handler->is_key_pressed(BT_KEY_ENTER))
+                    {   // Create new ctrl item.
+                        auto& afa_ctrl_items{ anim_frame_action::s_editor_state
+                                                .working_afa_ctrls_copy->data.control_items };
+                        afa_ctrl_items.emplace_back(s_new_ctrl_item_name_buffer);
+
+                        // Ctrl items type calculation.
+                        anim_frame_action::s_editor_state
+                            .working_afa_ctrls_copy->calculate_all_ctrl_item_types();
+
+                        anim_frame_action::s_editor_state.is_working_afa_dirty = true;
+                        ImGui::CloseCurrentPopup();
                     }
 
-                    ImGui::EndListBox();
-                }
+                    ImGui::SameLine();
 
-                // For upcoming custom widget.
-                ImGui::SameLine();
+                    if (ImGui::Button("Cancel##new_ctrl_item_popup") ||
+                        m_input_handler->is_key_pressed(BT_KEY_ESCAPE))
+                    {   // Cancel!!!
+                        ImGui::CloseCurrentPopup();
+                    }
+
+                    ImGui::Text("%s", "Press <Enter> to confirm rename or <Esc> to cancel.");
+
+                    s_new_ctrl_item_popup_first = false;
+                    ImGui::EndPopup();
+                }
             }
+            #endif  // 0  // ^^ Create control item modal (could be useful)
+
+            ImGui::PopItemWidth();
+
+
+
+
+
+
+            ////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
 
             // @THEA: @NOCHECKIN: temp code to mock the previous `control_items`. //
             struct AFA_ctrl_item_mock
