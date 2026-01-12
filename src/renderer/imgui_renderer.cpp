@@ -943,39 +943,6 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                                                  ? ImGuiWindowFlags_UnsavedDocument
                                                  : 0));
     {
-
-        #if 0  // vv Compiles \0 delimited string of anim names.
-        // Build anim clips \0 string set.
-        std::string anim_names_0_delim{ "\0" };
-        std::vector<std::string> anim_names_as_list;  // If new anim gets selected.
-        {
-            size_t alloc_size{ 0 };
-            for (auto& [anim_name, idx] : anim_frame_action::s_editor_state.anim_state_name_to_idx_map)
-            {
-                alloc_size += (anim_name.size() + 1);  // +1 for delimiting \0.
-            }
-
-            // Allocate proper size in string.
-            anim_names_0_delim.resize(alloc_size + 1, '\0');  // +1 for final \0.
-            anim_names_as_list.reserve(
-                anim_frame_action::s_editor_state.anim_state_name_to_idx_map.size());
-
-            size_t current_str_pos{ 0 };
-            for (auto& [anim_name, idx] : anim_frame_action::s_editor_state.anim_state_name_to_idx_map)
-            {
-                strncpy(const_cast<char*>(anim_names_0_delim.c_str() + current_str_pos),
-                        anim_name.c_str(),
-                        anim_name.size());
-                anim_names_as_list.emplace_back(anim_name);
-                current_str_pos += (anim_name.size() + 1);
-            }
-        }
-        #endif  // 0  // ^^ Compiles \0 delimited string of anim names.
-
-
-
-
-
         // Fill out anim state names.
         static std::vector<std::string> s_anim_names_as_list;
 
@@ -1009,44 +976,22 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
 
 
 
-        // Draw listbox here.
-        {
-            auto const& items{ s_anim_names_as_list };
-            auto& item_idx{ s_current_animation_clip };
-
+        
+        {   // Listbox of anim state names.
             ImVec2 canvas_size = ImGui::GetContentRegionAvail();
 
             ImGui::BeginDisabled(anim_frame_action::s_editor_state.is_working_afa_dirty);
 
-            // Listbox.
-            bool changed{ false };
-            if (ImGui::BeginListBox("##Theas listbox DEBUG DEBUG",
-                                    ImVec2(canvas_size.x * 0.3f, canvas_size.y)))
-            {
-                for (size_t i = 0; i < items.size(); i++)
-                {
-                    bool const is_selected = (item_idx == i);
-                    if (ImGui::Selectable(
-                            (items[i] + "##Theas listbox DEBUG DEBUG" + std::to_string(i))
-                                .c_str(),
-                            is_selected))
-                    {
-                        item_idx = i;
-                        changed = true;
-                    }
-                    if (is_selected)
-                        ImGui::SetItemDefaultFocus();
-                }
-
-                ImGui::EndListBox();
-            }
-
             // Change selected anim idx in editor state.
-            if (changed)
+            if (custom_imgui_listbox("anim_state_name_listbox",
+                                     canvas_size.x * 0.3f,
+                                     canvas_size.y,
+                                     s_anim_names_as_list,
+                                     s_current_animation_clip))
             {
                 anim_frame_action::s_editor_state.selected_anim_state_idx =
                     anim_frame_action::s_editor_state.anim_state_name_to_idx_map.at(
-                        items[item_idx]);
+                        s_anim_names_as_list[s_current_animation_clip]);
             }
 
             // Tooltip: cannot switch anim states while working AFA timeline is dirty.
@@ -1707,4 +1652,34 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
         ImGui::EndChild();
     }
     ImGui::End();
+}
+
+bool BT::ImGui_renderer::custom_imgui_listbox(std::string const& id,
+                                              float_t w,
+                                              float_t h,
+                                              std::vector<std::string> const& items,
+                                              int32_t& selected_idx) const
+{
+    std::string id_str{ "##" + id };
+
+    bool changed{ false };
+    if (ImGui::BeginListBox(id_str.c_str(),
+                            ImVec2(w, h)))
+    {
+        for (size_t i = 0; i < items.size(); i++)
+        {
+            bool const is_selected = (selected_idx == i);
+            if (ImGui::Selectable((items[i] + id_str + std::to_string(i)).c_str(), is_selected))
+            {
+                selected_idx = i;
+                changed = true;
+            }
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+
+        ImGui::EndListBox();
+    }
+
+    return changed;
 }

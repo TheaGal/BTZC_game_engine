@@ -1,6 +1,8 @@
 #pragma once
 
+#include <cstdint>
 #include <string>
+#include <vector>
 
 using std::string;
 
@@ -45,6 +47,13 @@ private:
 
     void render_imgui__level_editor_context(bool enter, float_t delta_time);
     void render_imgui__animation_frame_data_editor_context(bool enter, float_t delta_time);
+
+    /// Draws listbox with a size.
+    bool custom_imgui_listbox(std::string const& id,
+                              float_t w,
+                              float_t h,
+                              std::vector<std::string> const& items,
+                              int32_t& selected_idx) const;
 };
 
 }  // namespace BT
