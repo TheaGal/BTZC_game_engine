@@ -1087,6 +1087,38 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
         {
             ImGui::SetWindowFontScale(1.0f);
 
+            // Draw listbox here.
+            {
+                ImVec2 canvas_size = ImGui::GetContentRegionAvail();
+
+                static std::vector<std::string> items{"asdf", "jojos", "siwa", "gyoza", "yummi"};
+                static int32_t item_idx{ 1 };
+
+                // Listbox full available height.
+                if (ImGui::BeginListBox("##Theas listbox DEBUG DEBUG",
+                                        ImVec2(canvas_size.x * 0.3f, canvas_size.y)))
+                {
+                    for (size_t i = 0; i < items.size(); i++)
+                    {
+                        bool const is_selected = (item_idx == i);
+                        if (ImGui::Selectable(
+                                (items[i] + "##Theas listbox DEBUG DEBUG" + std::to_string(i))
+                                    .c_str(),
+                                is_selected))
+                        {
+                            item_idx = i;
+                        }
+                        if (is_selected)
+                            ImGui::SetItemDefaultFocus();
+                    }
+
+                    ImGui::EndListBox();
+                }
+
+                // For upcoming custom widget.
+                ImGui::SameLine();
+            }
+
             // @THEA: @NOCHECKIN: temp code to mock the previous `control_items`. //
             struct AFA_ctrl_item_mock
             {
@@ -1114,16 +1146,13 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
             static float_t s_sequencer_y_offset{ 0.0f };
 
             // Clip rects.
-            constexpr float_t k_item_list_width_ratio{ 0.01f };
-            ImVec2 cr_item_list_min{ canvas_pos };
-            ImVec2 cr_item_list_max{ std::floorf(canvas_pos.x + canvas_size.x * k_item_list_width_ratio),
-                                     canvas_pos.y + canvas_size.y };
-            ImVec2 cr_timeline_min{ cr_item_list_max.x + 1, canvas_pos.y };
+            ImVec2 cr_timeline_min{ canvas_pos };
             ImVec2 cr_timeline_max{ canvas_pos.x + canvas_size.x,
                                     canvas_pos.y + canvas_size.y };
 
             constexpr int32_t k_top_measuring_region_height{ 20 };
 
+            #if 0  // vv Remove this ctrl item list it's kinda useless frankly.
             // Sequencer control item list.
             ImGui::PushClipRect(cr_item_list_min, cr_item_list_max, true);
             {   // Draw bg.
@@ -1240,6 +1269,7 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                 #endif  // 0  // ^^ Rename ctrl item modal (could be useful)
             }
             ImGui::PopClipRect();
+            #endif  // 0  // ^^ Remove this ctrl item list it's kinda useless frankly.
 
             // Sequencer timeline.
             ImGui::PushClipRect(cr_timeline_min, cr_timeline_max, true);
@@ -1259,9 +1289,8 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                     }
                     else
                     {
-                        s_sequencer_x_offset +=
-                            m_input_handler->get_input_state().ui_scroll_delta.val
-                            * 40.0f;
+                        (ins.le_lshift_mod.val ? s_sequencer_x_offset : s_sequencer_y_offset) +=
+                            m_input_handler->get_input_state().ui_scroll_delta.val * 40.0f;
                     }
                 }
 
