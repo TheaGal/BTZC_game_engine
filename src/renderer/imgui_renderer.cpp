@@ -939,9 +939,11 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
     ImGui::End();
 
     // Animation timeline.
-    ImGui::Begin("Animation timeline", nullptr, (anim_frame_action::s_editor_state.is_working_afa_dirty
-                                                 ? ImGuiWindowFlags_UnsavedDocument
-                                                 : 0));
+    ImGui::Begin("Animation timeline",
+                 nullptr,
+                 (anim_frame_action::s_editor_state.is_working_afa_dirty
+                      ? ImGuiWindowFlags_UnsavedDocument
+                      : 0));
     {
         // Fill out anim state names.
         static std::vector<std::string> s_anim_names_as_list;
@@ -1045,17 +1047,6 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
 
 
 
-
-            // @THEA: @NOCHECKIN: temp code to mock the previous `control_items`. //
-            struct AFA_ctrl_item_mock
-            {
-                std::string name;
-            };
-            auto afa_ctrl_items{ std::vector<AFA_ctrl_item_mock>{} };
-            for (size_t i = 0; i < 100; i++)
-                afa_ctrl_items.emplace_back("CTRLITEM" + std::to_string(i));
-            ////////////////////////////////////////////////////////////////////////
-
             auto& afa_timeline_regions{
                 anim_frame_action::s_editor_state.working_afa_ctrls_copy->data
                     .anim_frame_action_timelines[anim_frame_action::s_editor_state
@@ -1102,7 +1093,8 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                     }
                 }
 
-                for (size_t i = 0; i < afa_ctrl_items.size(); i++)
+                constexpr size_t k_num_timeline_rows{ 100 };
+                for (size_t i = 0; i < k_num_timeline_rows; i++)
                 {
                     vec2s y_top_btm;
                     {
@@ -1124,7 +1116,7 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                                            0x99DDDDDD);
                     }
 
-                    if (i == afa_ctrl_items.size() - 1)
+                    if (i == k_num_timeline_rows - 1)
                     {   // Draw below line.
                         draw_list->AddLine(ImVec2{ cr_timeline_min.x, y_top_btm.t },
                                            ImVec2{ cr_timeline_max.x, y_top_btm.t },
@@ -1223,7 +1215,7 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                 bool is_hovering_over_timeline{
                     ImGui::IsWindowHovered() &&
                     ImGui::IsMouseHoveringRect(ImVec2(cr_timeline_min.x, cr_timeline_min.y + glm_max(0, s_sequencer_y_offset) + k_top_measuring_region_height + 2),
-                                               ImVec2(cr_timeline_max.x, glm_min(cr_timeline_max.y, cr_timeline_min.y + s_sequencer_y_offset + k_top_measuring_region_height + 2 + (s_timeline_cell_size.y * afa_ctrl_items.size())))) };
+                                               ImVec2(cr_timeline_max.x, glm_min(cr_timeline_max.y, cr_timeline_min.y + s_sequencer_y_offset + k_top_measuring_region_height + 2 + (s_timeline_cell_size.y * k_num_timeline_rows)))) };
                 bool is_hovering_over_timeline_region{ false };  // Check in upcoming block.
 
                 for (auto& region : afa_timeline_regions)
