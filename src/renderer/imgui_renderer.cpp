@@ -1219,7 +1219,11 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                 bool is_hovering_over_timeline_region{ false };  // Check in upcoming block.
 
                 for (auto& region : afa_timeline_regions)
-                {   // Draw bars for regions.
+                {   // Check that the sequencer current frame has this region active.
+                    bool is_active_this_frame{ s_current_frame >= region.start_frame &&
+                                               s_current_frame < region.end_frame };
+
+                    // Draw bars for regions.
                     vec2s region_bar_top_bottom{
                         cr_timeline_min.y + s_sequencer_y_offset + k_top_measuring_region_height + 2 + (s_timeline_cell_size.y * region.row_idx) + 1,
                         cr_timeline_min.y + s_sequencer_y_offset + k_top_measuring_region_height + 2 + (s_timeline_cell_size.y * (region.row_idx + 1)) - 1 };
@@ -1227,7 +1231,7 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                     ImVec2 p_max{ cr_timeline_min.x + s_sequencer_x_offset + (region.end_frame * s_timeline_cell_size.x) - 1, region_bar_top_bottom.t };
                     draw_list->AddRectFilled(p_min,
                                              p_max,
-                                             0x5500FF00,
+                                             (is_active_this_frame ? 0x5500FF00 : 0x556DFC6D),
                                              4.0f);
                     bool is_selected_region{ &region == s_reg_sel.sel_reg };
                     draw_list->AddRect(p_min,
