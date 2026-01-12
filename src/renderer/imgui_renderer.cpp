@@ -1025,60 +1025,12 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                 std::min(std::max(0, s_current_frame), s_final_frame);
 
             ImGui::PushItemWidth(130);
+
             ImGui::Text("Displaying frame %llu/%d. %.2f FPS",
                         anim_frame_action::s_editor_state.anim_current_frame,
                         s_final_frame,
                         Model_joint_animation::k_frames_per_second);
             ImGui::InputInt("Selected Frame", &s_current_frame);
-
-            #if 0  // vv Create control item modal (could be useful)
-            {   // Create new control item.
-                static std::string s_new_ctrl_item_name_buffer{ "" };
-                static bool s_new_ctrl_item_popup_first;
-                if (ImGui::Button("Create new control item.."))
-                {
-                    s_new_ctrl_item_name_buffer = "";
-                    s_new_ctrl_item_popup_first = true;
-                    ImGui::OpenPopup("create_new_control_item_popup");
-                }
-                if (ImGui::BeginPopup("create_new_control_item_popup"))
-                {
-                    if (s_new_ctrl_item_popup_first)
-                    {
-                        ImGui::SetKeyboardFocusHere();
-                    }
-                    ImGui::InputText("Name##new_ctrl_item_popup", &s_new_ctrl_item_name_buffer);
-
-                    if (ImGui::Button("Confirm##new_ctrl_item_popup") ||
-                        m_input_handler->is_key_pressed(BT_KEY_ENTER))
-                    {   // Create new ctrl item.
-                        auto& afa_ctrl_items{ anim_frame_action::s_editor_state
-                                                .working_afa_ctrls_copy->data.control_items };
-                        afa_ctrl_items.emplace_back(s_new_ctrl_item_name_buffer);
-
-                        // Ctrl items type calculation.
-                        anim_frame_action::s_editor_state
-                            .working_afa_ctrls_copy->calculate_all_ctrl_item_types();
-
-                        anim_frame_action::s_editor_state.is_working_afa_dirty = true;
-                        ImGui::CloseCurrentPopup();
-                    }
-
-                    ImGui::SameLine();
-
-                    if (ImGui::Button("Cancel##new_ctrl_item_popup") ||
-                        m_input_handler->is_key_pressed(BT_KEY_ESCAPE))
-                    {   // Cancel!!!
-                        ImGui::CloseCurrentPopup();
-                    }
-
-                    ImGui::Text("%s", "Press <Enter> to confirm rename or <Esc> to cancel.");
-
-                    s_new_ctrl_item_popup_first = false;
-                    ImGui::EndPopup();
-                }
-            }
-            #endif  // 0  // ^^ Create control item modal (could be useful)
 
             ImGui::PopItemWidth();
 
@@ -1200,48 +1152,6 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                         ImGui::OpenPopup("control_item_rename_popup");
                     }
                 }
-
-                #if 0  // vv Rename ctrl item modal (could be useful)
-                if (ImGui::BeginPopup("control_item_rename_popup"))
-                {   // Rename control item.
-                    auto& renaming_afa_ctrl_item{ afa_ctrl_items[s_afa_ctrl_item_renaming_idx] };
-                    ImGui::Text("Rename control item \"%s\"", renaming_afa_ctrl_item.name.c_str());
-
-                    static std::string s_rename_buffer;
-                    if (s_renaming_popup_first)
-                    {   // Setup renaming input text.
-                        s_rename_buffer = renaming_afa_ctrl_item.name;
-                        ImGui::SetKeyboardFocusHere();
-                    }
-                    ImGui::InputText("New name##rename_popup", &s_rename_buffer);
-
-                    if (ImGui::Button("Confirm##rename_popup") ||
-                        m_input_handler->is_key_pressed(BT_KEY_ENTER))
-                    {   // Submit rename.
-                        renaming_afa_ctrl_item.name = std::move(s_rename_buffer);
-
-                        // Ctrl items type calculation.
-                        anim_frame_action::s_editor_state
-                            .working_afa_ctrls_copy->calculate_all_ctrl_item_types();
-
-                        anim_frame_action::s_editor_state.is_working_afa_dirty = true;
-                        ImGui::CloseCurrentPopup();
-                    }
-
-                    ImGui::SameLine();
-
-                    if (ImGui::Button("Cancel##rename_popup") ||
-                        m_input_handler->is_key_pressed(BT_KEY_ESCAPE))
-                    {   // Cancel!!!
-                        ImGui::CloseCurrentPopup();
-                    }
-
-                    ImGui::Text("%s", "Press <Enter> to confirm rename or <Esc> to cancel.");
-
-                    s_renaming_popup_first = false;
-                    ImGui::EndPopup();
-                }
-                #endif  // 0  // ^^ Rename ctrl item modal (could be useful)
             }
             ImGui::PopClipRect();
             #endif  // 0  // ^^ Remove this ctrl item list it's kinda useless frankly.
