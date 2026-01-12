@@ -1140,6 +1140,8 @@ while (running_game_loop)
         - [ ] `imgui_renderer.cpp`
             - [x] Very shotty pullout (to get ready for editing the actual tool).
             - [ ] Edit the actual tool to use the correct interface.
+                - [ ] Figure out issue with popup not showing up. (ig this is the second time aaaa)
+                    > @NOTE: The RMB click and the `open_popup()` are getting triggered at the breakpoint.
 
 - [ ] Use jumptable (higher row has precedence in the check).
     > @NOTE: If there is a transition from the jumptable, no other conditions or mutations will be checked or adhered to in the sim tick.

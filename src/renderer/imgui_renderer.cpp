@@ -29,6 +29,7 @@
 #include <cstdint>
 #include <cstring>
 #include <filesystem>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -1003,6 +1004,26 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
             ImGui::SameLine();
         }
 
+        // Region cmd editing popup.
+        using Control_command = anim_frame_action::Runtime_data_controls::Data::
+            Animation_frame_action_timeline::Region::Control_command;
+        static Control_command* s_editing_region_cmd{ nullptr };
+        if (ImGui::BeginPopup("region_cmd_edit_popup"))
+        {
+            assert(false);  // Hello? Are you working?
+
+            if (s_editing_region_cmd == nullptr)
+            {   // No editing region. Exit.
+                ImGui::CloseCurrentPopup();
+            }
+            else
+            {
+                ImGui::Text("TODO: Make popup. Region idx: %p", s_editing_region_cmd);
+            }
+
+            ImGui::EndPopup();
+        }
+
         // BT sequencer widget.
         ImGui::BeginChild("BT_sequencer");
         if (anim_frame_action::s_editor_state.anim_state_name_to_idx_map.empty())
@@ -1141,6 +1162,7 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                     Region* sel_reg{ nullptr };
                     float_t drag_x_amount{ 0.0f };
                     bool prev_lmb_pressed{ false };
+                    bool prev_rmb_pressed{ false };
                     bool prev_del_pressed{ false };
                 };
                 static Region_selecting s_reg_sel;
@@ -1150,6 +1172,11 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                 bool on_lmb_press{ cur_lmb_pressed && !s_reg_sel.prev_lmb_pressed };
                 bool on_lmb_release{ !cur_lmb_pressed && s_reg_sel.prev_lmb_pressed };
                 s_reg_sel.prev_lmb_pressed = cur_lmb_pressed;
+
+                bool cur_rmb_pressed{ m_input_handler->get_input_state().le_rclick_cam.val };
+                bool on_rmb_press{ cur_rmb_pressed && !s_reg_sel.prev_rmb_pressed };
+                bool on_rmb_release{ !cur_rmb_pressed && s_reg_sel.prev_rmb_pressed };
+                s_reg_sel.prev_rmb_pressed = cur_rmb_pressed;
 
                 bool cur_del_pressed{ m_input_handler->is_key_pressed(BT_KEY_DELETE) ||
                                       m_input_handler->is_key_pressed(BT_KEY_X) };
@@ -1233,6 +1260,7 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                                              p_max,
                                              (is_active_this_frame ? 0x5500FF00 : 0x556DFC6D),
                                              4.0f);
+
                     bool is_selected_region{ &region == s_reg_sel.sel_reg };
                     draw_list->AddRect(p_min,
                                        p_max,
@@ -1241,10 +1269,26 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                                        NULL,
                                        (is_selected_region ? 4.0f : 2.0f));
 
+                    // Draw text inside bar.
+                    std::stringstream complete_cmd;
+                    complete_cmd << region.ctrl_cmd.cmd_name << "(";
+                    for (auto const& a : region.ctrl_cmd.argv)
+                        complete_cmd << a;
+                    complete_cmd << ")";
+                    constexpr ImVec2 k_cmd_txt_padding{ 4, 4 };
+                    draw_list->AddText(
+                        ImVec2(p_min.x + k_cmd_txt_padding.x, p_min.y + k_cmd_txt_padding.y),
+                        0xFFCCCCCC,
+                        complete_cmd.str().c_str());
+
+                    // Open the cmd editing popup.
+                    bool open_cmd_edit_popup{ false };
+
                     // Adjustment handles.
                     constexpr int32_t k_side_handle_size{ 4 };
                     if (ImGui::IsWindowHovered() &&
-                        ImGui::IsMouseHoveringRect(ImVec2(p_min),
+                        is_hovering_over_timeline &&
+                        ImGui::IsMouseHoveringRect(p_min,
                                                    ImVec2(p_min.x + k_side_handle_size, p_max.y)))
                     {   // Left side.
                         is_hovering_over_timeline_region = true;
@@ -1255,8 +1299,13 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                             s_reg_sel.sel_reg = &region;
                             s_reg_sel.drag_x_amount = 0.0f;
                         }
+                        else if (on_rmb_press)
+                        {
+                            open_cmd_edit_popup = true;
+                        }
                     }
                     else if (ImGui::IsWindowHovered() &&
+                             is_hovering_over_timeline &&
                              ImGui::IsMouseHoveringRect(ImVec2(p_min.x + k_side_handle_size, p_min.y),
                                                         ImVec2(p_max.x - k_side_handle_size, p_max.y)))
                     {   // Move region.
@@ -1268,8 +1317,13 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                             s_reg_sel.sel_reg = &region;
                             s_reg_sel.drag_x_amount = 0.0f;
                         }
+                        else if (on_rmb_press)
+                        {
+                            open_cmd_edit_popup = true;
+                        }
                     }
                     else if (ImGui::IsWindowHovered() &&
+                             is_hovering_over_timeline &&
                              ImGui::IsMouseHoveringRect(ImVec2(p_max.x - k_side_handle_size, p_min.y),
                                                         ImVec2(p_max)))
                     {   // Right side.
@@ -1281,6 +1335,17 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                             s_reg_sel.sel_reg = &region;
                             s_reg_sel.drag_x_amount = 0.0f;
                         }
+                        else if (on_rmb_press)
+                        {
+                            open_cmd_edit_popup = true;
+                        }
+                    }
+
+                    // Open cmd edit popup (cont.)
+                    if (open_cmd_edit_popup)
+                    {
+                        s_editing_region_cmd = &region.ctrl_cmd;
+                        ImGui::OpenPopup("region_cmd_edit_popup");
                     }
                 }
 
@@ -1358,6 +1423,13 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                                                    / s_timeline_cell_size.x };
                     s_current_frame = std::roundf(zoom_relative_mouse_x);
                 }
+                else if (is_hovering_over_timeline && is_hovering_over_timeline_region)
+                {
+                    ImGui::SetTooltip("Left click to select/move.\n"
+                                      "Right click to edit region\'s cmd.");
+
+                    // @NOTE: LMB and RMB inputs are handled when inside the region's drawing code.
+                }
                 else if (is_hovering_over_timeline &&
                          !is_hovering_over_timeline_region &&
                          s_reg_sel.sel_state <= Region_selecting::SELECTED)  // Not doing a drag operation.
@@ -1386,6 +1458,8 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                         afa_timeline_regions.emplace_back(hover_row_idx,
                                                           start_frame,
                                                           start_frame + 4);
+                        afa_timeline_regions.back().ctrl_cmd.cmd_name = "nop";  // Default, no-op command.
+                        afa_timeline_regions.back().ctrl_cmd.argv.clear();
 
                         // Immediately assign created region as selected.
                         // (Just in case there may be some kind of vector resizing
