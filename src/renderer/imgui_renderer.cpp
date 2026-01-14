@@ -1024,6 +1024,53 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
         {
             ImGui::Text("TODO: Make popup. Region idx: %p", s_cmd_edit_popup_handle.second);
 
+            // Cmd list.
+            static std::vector<std::string> const k_cmd_list{  // @HARDCODE
+                "nop",
+                "blend",
+                "jump_table",
+            };
+            static auto const k_cmd_list_as_zero_term_str_fn = []() {  // @TODO: this is a useful little func!! @THEA
+                size_t n{ 0 };
+                for (auto const& cmd_str : k_cmd_list)
+                    n += cmd_str.size() + 1;  // +1 for \0
+
+                std::string zts(n, '\0');
+                size_t i{ 0 };
+                for (auto const& cmd_str : k_cmd_list)
+                {
+                    for (auto cmd_str_char : cmd_str)
+                    {
+                        zts.at(i) = cmd_str_char;
+                        i++;
+                    }
+                    i++;  // +1 for \0
+                }
+
+                return zts;
+            };
+            static std::string const k_cmd_list_as_zero_term_str{
+                k_cmd_list_as_zero_term_str_fn()
+            };
+
+            // Find cmd idx from string.
+            int32_t cmd_idx{ -1 };
+            size_t i{ 0 };
+            for (auto const& cmd_str : k_cmd_list)
+            {
+                if (cmd_str == s_cmd_edit_popup_handle.second->cmd_name)
+                {
+                    cmd_idx = i;
+                    break;
+                }
+                i++;
+            }
+
+            if (ImGui::Combo("Command", &cmd_idx, k_cmd_list_as_zero_term_str.c_str()))
+            {   // Assign new cmd name.
+                s_cmd_edit_popup_handle.second->cmd_name = k_cmd_list[cmd_idx];
+            }
+
             ImGui::EndPopup();
         }
 
