@@ -1007,19 +1007,22 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
         // Region cmd editing popup.
         using Control_command = anim_frame_action::Runtime_data_controls::Data::
             Animation_frame_action_timeline::Region::Control_command;
-        static Control_command* s_editing_region_cmd{ nullptr };
-        if (ImGui::BeginPopup("region_cmd_edit_popup"))
-        {
-            assert(false);  // Hello? Are you working?
+        static std::pair<bool, Control_command*> s_cmd_edit_popup_handle{ false, nullptr };
 
-            if (s_editing_region_cmd == nullptr)
-            {   // No editing region. Exit.
-                ImGui::CloseCurrentPopup();
+        if (!ImGui::IsPopupOpen("region_cmd_edit_popup") &&
+            s_cmd_edit_popup_handle.second != nullptr)
+        {
+            if (s_cmd_edit_popup_handle.first)
+            {
+                s_cmd_edit_popup_handle.first = false;
+                ImGui::OpenPopup("region_cmd_edit_popup");
             }
             else
-            {
-                ImGui::Text("TODO: Make popup. Region idx: %p", s_editing_region_cmd);
-            }
+                s_cmd_edit_popup_handle.second = nullptr;
+        }
+        if (ImGui::BeginPopup("region_cmd_edit_popup"))
+        {
+            ImGui::Text("TODO: Make popup. Region idx: %p", s_cmd_edit_popup_handle.second);
 
             ImGui::EndPopup();
         }
@@ -1344,8 +1347,9 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                     // Open cmd edit popup (cont.)
                     if (open_cmd_edit_popup)
                     {
-                        s_editing_region_cmd = &region.ctrl_cmd;
-                        ImGui::OpenPopup("region_cmd_edit_popup");
+                        // Setting this val triggers opening edit popup.
+                        s_cmd_edit_popup_handle.first = true;
+                        s_cmd_edit_popup_handle.second = &region.ctrl_cmd;
                     }
                 }
 
