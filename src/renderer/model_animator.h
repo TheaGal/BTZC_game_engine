@@ -184,7 +184,29 @@ public:
     void get_anim_root_motion_delta_pos(Animator_timer_profile profile,
                                         vec3& out_root_motion_delta_pos) const;
 
+    /// Gets reference to AFA (animation frame action) data.
     anim_frame_action::Runtime_controllable_data& get_anim_frame_action_data_handle();
+
+    /// Documentation type for a control command.
+    struct Ctrl_cmd_documentation
+    {
+        struct Name_w_desc
+        {
+            std::string name;
+            std::string desc;
+        } cmd;
+
+        struct Name_w_desc_w_type
+        {
+            std::string name;
+            std::string desc;
+            std::string type;
+        };
+        std::vector<Name_w_desc_w_type> argv;
+    };
+
+    /// Gets documentation for all control cmds.
+    static std::vector<Ctrl_cmd_documentation> const& get_control_command_codes_documentation();
 
 private:
     std::vector<Model_joint_animation> const& m_model_animations;

@@ -736,6 +736,44 @@ BT::Model_animator::get_anim_frame_action_data_handle()
     return m_anim_frame_action_data;
 }
 
+std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animator::
+    get_control_command_codes_documentation()
+{
+    static std::vector<Ctrl_cmd_documentation> const k_all_cmd_docs{
+        {
+            .cmd{
+                .name = "nop",
+                .desc = "No operation"
+            },
+            .argv{}
+        },
+        {
+            .cmd{
+                .name = "blend",
+                .desc = "Blends current animation with previous one set as an anchor pose, lerping "
+                        "from 0-1 over the cmd region."
+            },
+            .argv{}
+        },
+        {
+            .cmd{
+                .name = "jump_state",
+                .desc = "Checks the specified animation state queue to see if an available state "
+                        "exists, and if so, jumps to that animation state."
+            },
+            .argv{
+                {
+                    .name = "anim_state_queue",
+                    .desc = "Queue to check for anim state queues",
+                    .type = "str"
+                }
+            }
+        },
+    };
+
+    return k_all_cmd_docs;
+}
+
 // Please ignore the const_cast's below!! (^_^;)
 
 BT::Model_animator::animator_time_t& BT::Model_animator::get_profile_time_handle(

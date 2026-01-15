@@ -1025,21 +1025,19 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
             ImGui::Text("TODO: Make popup. Region idx: %p", s_cmd_edit_popup_handle.second);
 
             // Cmd list.
-            static std::vector<std::string> const k_cmd_list{  // @HARDCODE
-                "nop",
-                "blend",
-                "jump_table",
+            static auto const& k_cmd_docs{
+                Model_animator::get_control_command_codes_documentation()
             };
             static auto const k_cmd_list_as_zero_term_str_fn = []() {  // @TODO: this is a useful little func!! @THEA
                 size_t n{ 0 };
-                for (auto const& cmd_str : k_cmd_list)
-                    n += cmd_str.size() + 1;  // +1 for \0
+                for (auto const& cmd_doc : k_cmd_docs)
+                    n += cmd_doc.cmd.name.size() + 1;  // +1 for \0
 
                 std::string zts(n, '\0');
                 size_t i{ 0 };
-                for (auto const& cmd_str : k_cmd_list)
+                for (auto const& cmd_doc : k_cmd_docs)
                 {
-                    for (auto cmd_str_char : cmd_str)
+                    for (auto cmd_str_char : cmd_doc.cmd.name)
                     {
                         zts.at(i) = cmd_str_char;
                         i++;
@@ -1056,20 +1054,77 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
             // Find cmd idx from string.
             int32_t cmd_idx{ -1 };
             size_t i{ 0 };
-            for (auto const& cmd_str : k_cmd_list)
+            for (auto const& cmd_doc : k_cmd_docs)
             {
-                if (cmd_str == s_cmd_edit_popup_handle.second->cmd_name)
+                if (cmd_doc.cmd.name == s_cmd_edit_popup_handle.second->cmd_name)
                 {
                     cmd_idx = i;
                     break;
                 }
                 i++;
             }
+            assert(cmd_idx >= 0);
 
             if (ImGui::Combo("Command", &cmd_idx, k_cmd_list_as_zero_term_str.c_str()))
-            {   // Assign new cmd name.
-                s_cmd_edit_popup_handle.second->cmd_name = k_cmd_list[cmd_idx];
+            {   // Switch to selected cmd.
+                s_cmd_edit_popup_handle.second->cmd_name = k_cmd_docs[cmd_idx].cmd.name;
+                s_cmd_edit_popup_handle.second->argv.resize(k_cmd_docs[cmd_idx].argv.size());
             }
+
+            // Separator.
+            ImGui::SeparatorText(
+                ("Arguments (" + std::to_string(k_cmd_docs[cmd_idx].argv.size()) + ")").c_str());
+
+            // Fill in command args.
+            assert(k_cmd_docs[cmd_idx].argv.size() == s_cmd_edit_popup_handle.second->argv.size());
+            for (size_t i = 0; i < k_cmd_docs[cmd_idx].argv.size(); i++)
+            {
+                auto const& cmd_arg{ k_cmd_docs[cmd_idx].argv[i] };
+                auto& editing_cmd_arg{ s_cmd_edit_popup_handle.second->argv[i] };
+
+                // Use different editor depending on type (tho underlying is str).
+                auto lbl_txt{ cmd_arg.name + ": " + cmd_arg.type };
+                if (cmd_arg.type == "str")
+                {
+                    ImGui::InputText(lbl_txt.c_str(), &editing_cmd_arg);
+                }
+                else if (cmd_arg.type == "int")
+                {
+                    int32_t arg_val{ std::stoi(editing_cmd_arg) };
+                    if (ImGui::InputInt(lbl_txt.c_str(), &arg_val))
+                        editing_cmd_arg = std::to_string(arg_val);
+                }
+                else if (cmd_arg.type == "float")
+                {
+                    float_t arg_val{ std::stof(editing_cmd_arg) };
+                    if (ImGui::InputFloat(lbl_txt.c_str(), &arg_val))
+                        editing_cmd_arg = std::to_string(arg_val);
+                }
+            }
+
+            // Confirm/Cancel buttons.
+            if (ImGui::Button("Confirm") ||
+                m_input_handler->is_key_pressed(BT_KEY_ENTER))
+            {   // Submit rename.
+                renaming_afa_ctrl_item.name = std::move(s_rename_buffer);
+
+                // Ctrl items type calculation.
+                anim_frame_action::s_editor_state
+                    .working_afa_ctrls_copy->calculate_all_ctrl_item_types();
+
+                anim_frame_action::s_editor_state.is_working_afa_dirty = true;
+                ImGui::CloseCurrentPopup();
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Cancel") ||
+                m_input_handler->is_key_pressed(BT_KEY_ESCAPE))
+            {   // Cancel!!!
+                ImGui::CloseCurrentPopup();
+            }
+
+            ImGui::Text("%s", "Press <Enter> to confirm rename or <Esc> to cancel.");
 
             ImGui::EndPopup();
         }
