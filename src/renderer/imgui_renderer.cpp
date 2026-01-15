@@ -1005,25 +1005,29 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
         }
 
         // Region cmd editing popup.
-        using Control_command = anim_frame_action::Runtime_data_controls::Data::
-            Animation_frame_action_timeline::Region::Control_command;
-        static std::pair<bool, Control_command*> s_cmd_edit_popup_handle{ false, nullptr };
+        struct Cmd_edit_data
+        {
+            using Control_command = anim_frame_action::Runtime_data_controls::Data::
+                Animation_frame_action_timeline::Region::Control_command;
+            bool not_been_accessed{ false };
+            Control_command ctrl_cmd_copy;
+            Control_command* write_ptr{ nullptr };
+        };
+        static Cmd_edit_data s_cmd_edit_popup_data;
 
         if (!ImGui::IsPopupOpen("region_cmd_edit_popup") &&
-            s_cmd_edit_popup_handle.second != nullptr)
+            s_cmd_edit_popup_data.write_ptr != nullptr)
         {
-            if (s_cmd_edit_popup_handle.first)
+            if (s_cmd_edit_popup_data.not_been_accessed)
             {
-                s_cmd_edit_popup_handle.first = false;
+                s_cmd_edit_popup_data.not_been_accessed = false;
                 ImGui::OpenPopup("region_cmd_edit_popup");
             }
             else
-                s_cmd_edit_popup_handle.second = nullptr;
+                s_cmd_edit_popup_data.write_ptr = nullptr;
         }
         if (ImGui::BeginPopup("region_cmd_edit_popup"))
         {
-            ImGui::Text("TODO: Make popup. Region idx: %p", s_cmd_edit_popup_handle.second);
-
             // Cmd list.
             static auto const& k_cmd_docs{
                 Model_animator::get_control_command_codes_documentation()
@@ -1056,7 +1060,7 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
             size_t i{ 0 };
             for (auto const& cmd_doc : k_cmd_docs)
             {
-                if (cmd_doc.cmd.name == s_cmd_edit_popup_handle.second->cmd_name)
+                if (cmd_doc.cmd.name == s_cmd_edit_popup_data.ctrl_cmd_copy.cmd_name)
                 {
                     cmd_idx = i;
                     break;
@@ -1067,8 +1071,8 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
 
             if (ImGui::Combo("Command", &cmd_idx, k_cmd_list_as_zero_term_str.c_str()))
             {   // Switch to selected cmd.
-                s_cmd_edit_popup_handle.second->cmd_name = k_cmd_docs[cmd_idx].cmd.name;
-                s_cmd_edit_popup_handle.second->argv.resize(k_cmd_docs[cmd_idx].argv.size());
+                s_cmd_edit_popup_data.ctrl_cmd_copy.cmd_name = k_cmd_docs[cmd_idx].cmd.name;
+                s_cmd_edit_popup_data.ctrl_cmd_copy.argv.resize(k_cmd_docs[cmd_idx].argv.size());
             }
 
             // Separator.
@@ -1076,11 +1080,12 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                 ("Arguments (" + std::to_string(k_cmd_docs[cmd_idx].argv.size()) + ")").c_str());
 
             // Fill in command args.
-            assert(k_cmd_docs[cmd_idx].argv.size() == s_cmd_edit_popup_handle.second->argv.size());
+            assert(k_cmd_docs[cmd_idx].argv.size() ==
+                   s_cmd_edit_popup_data.ctrl_cmd_copy.argv.size());
             for (size_t i = 0; i < k_cmd_docs[cmd_idx].argv.size(); i++)
             {
                 auto const& cmd_arg{ k_cmd_docs[cmd_idx].argv[i] };
-                auto& editing_cmd_arg{ s_cmd_edit_popup_handle.second->argv[i] };
+                auto& editing_cmd_arg{ s_cmd_edit_popup_data.ctrl_cmd_copy.argv[i] };
 
                 // Use different editor depending on type (tho underlying is str).
                 auto lbl_txt{ cmd_arg.name + ": " + cmd_arg.type };
@@ -1103,14 +1108,12 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
             }
 
             // Confirm/Cancel buttons.
+            ImGui::Separator();
+
             if (ImGui::Button("Confirm") ||
                 m_input_handler->is_key_pressed(BT_KEY_ENTER))
             {   // Submit rename.
-                renaming_afa_ctrl_item.name = std::move(s_rename_buffer);
-
-                // Ctrl items type calculation.
-                anim_frame_action::s_editor_state
-                    .working_afa_ctrls_copy->calculate_all_ctrl_item_types();
+                *s_cmd_edit_popup_data.write_ptr = s_cmd_edit_popup_data.ctrl_cmd_copy;
 
                 anim_frame_action::s_editor_state.is_working_afa_dirty = true;
                 ImGui::CloseCurrentPopup();
@@ -1450,8 +1453,9 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                     if (open_cmd_edit_popup)
                     {
                         // Setting this val triggers opening edit popup.
-                        s_cmd_edit_popup_handle.first = true;
-                        s_cmd_edit_popup_handle.second = &region.ctrl_cmd;
+                        s_cmd_edit_popup_data.not_been_accessed = true;
+                        s_cmd_edit_popup_data.ctrl_cmd_copy = region.ctrl_cmd;
+                        s_cmd_edit_popup_data.write_ptr = &region.ctrl_cmd;
                     }
                 }
 
