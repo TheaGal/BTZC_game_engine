@@ -1133,17 +1133,18 @@ while (running_game_loop)
 ## (detour) Redo combat AFA and animator to use jumptable system instead of conditional transitions.
 
 - [x] No more conditional transitions.
-- [ ] Change AFA to use a string function in its region instead of the row dictating the region.
+- [x] Change AFA to use a string function in its region instead of the row dictating the region.
     - [x] Cut out everything and redo the data structures.
-    - [ ] Fix the compilation errors.
+    - [x] Fix the compilation errors.
         - [x] `update()` fn.
-        - [ ] `imgui_renderer.cpp`
+        - [x] `imgui_renderer.cpp`
             - [x] Very shotty pullout (to get ready for editing the actual tool).
-            - [ ] Edit the actual tool to use the correct interface.
-                - [ ] Figure out issue with popup not showing up. (ig this is the second time aaaa)
+            - [x] Edit the actual tool to use the correct interface.
+                - [x] Figure out issue with popup not showing up. (ig this is the second time aaaa)
                     > @NOTE: The RMB click and the `open_popup()` are getting triggered at the breakpoint.
+    > @NOTE: in the future, i may need to ensure that it won't crash if there's the wrong datatype in an argv when a cmd changes in the popup.
 
-- [ ] Use jumptable (higher row has precedence in the check).
+- [ ] Use ~~jumptable~~ jump-state-anim-state-queue (higher row has precedence in the check).
     > @NOTE: If there is a transition from the jumptable, no other conditions or mutations will be checked or adhered to in the sim tick.
     - [x] Some planning for how it's gonna work.
     - [ ] jjj.
