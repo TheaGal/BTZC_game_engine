@@ -1269,6 +1269,7 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                         Animation_frame_action_timeline::Region;
                     Region* sel_reg{ nullptr };
                     float_t drag_x_amount{ 0.0f };
+                    float_t drag_y_amount{ 0.0f };
                     bool prev_lmb_pressed{ false };
                     bool prev_rmb_pressed{ false };
                     bool prev_del_pressed{ false };
@@ -1292,10 +1293,10 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                 s_reg_sel.prev_del_pressed = cur_del_pressed;
 
                 if (s_reg_sel.sel_reg != nullptr)
-                {   // Drag region.
+                {   // Drag region (horizontal).
                     s_reg_sel.drag_x_amount += m_input_handler->get_input_state()
                                                .look_delta.x.val;
-                    while (abs(s_reg_sel.drag_x_amount) >= s_timeline_cell_size.x)
+                    while (abs(s_reg_sel.drag_x_amount) > s_timeline_cell_size.x * 0.5f)
                     {   // Modulate dragged amount and apply to dragging region.
                         int32_t drag_sign{
                             static_cast<int32_t>(glm_signf(s_reg_sel.drag_x_amount)) };
@@ -1332,6 +1333,24 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
 
                         // Mark working timeline as dirty.
                         anim_frame_action::s_editor_state.is_working_afa_dirty = true;
+                    }
+
+                    if (s_reg_sel.sel_state == Region_selecting::WHOLE_DRAG)
+                    {   // Drag region (vertical).
+                        s_reg_sel.drag_y_amount +=
+                            m_input_handler->get_input_state().look_delta.y.val;
+                        while (abs(s_reg_sel.drag_y_amount) > s_timeline_cell_size.y * 0.5f)
+                        {   // Modulate dragged amount and apply to dragging region.
+                            int32_t drag_sign{
+                                static_cast<int32_t>(glm_signf(s_reg_sel.drag_y_amount)) };
+                            s_reg_sel.drag_y_amount -= (s_timeline_cell_size.y * drag_sign);
+
+                            // Move row depending on drag direction.
+                            s_reg_sel.sel_reg->row_idx += drag_sign;
+
+                            // Mark working timeline as dirty.
+                            anim_frame_action::s_editor_state.is_working_afa_dirty = true;
+                        }
                     }
 
                     if (on_lmb_release)
@@ -1424,6 +1443,7 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                             s_reg_sel.sel_state = Region_selecting::WHOLE_DRAG;
                             s_reg_sel.sel_reg = &region;
                             s_reg_sel.drag_x_amount = 0.0f;
+                            s_reg_sel.drag_y_amount = 0.0f;
                         }
                         else if (on_rmb_press)
                         {
