@@ -1146,9 +1146,9 @@ while (running_game_loop)
 
 - [x] Add ability to drag vertically regions (only on whole-drag mode).
 
-- [ ] Do cleanup when saving AFA.
-    - [ ] Sort regions by (1) row_idx, (2) start_frame, then (3) end_frame.
-    - [ ] Ensure that the cmd names and number of argv's are correct.
+- [x] Do cleanup when saving AFA.
+    - [x] Sort regions by (1) row_idx, (2) start_frame, then (3) end_frame.
+    - [x] Ensure that the cmd names and number of argv's are correct.
 
 - [ ] Use ~~jumptable~~ jump-state-anim-state-queue (higher row has precedence in the check).
     > @NOTE: If there is a transition from the jumptable, no other conditions or mutations will be checked or adhered to in the sim tick.

@@ -708,6 +708,76 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                         };
                         hitcapsule_grp_set.unregister_from_overlap_solver();
 
+                        // Sort regions so they're sorted when loaded.
+                        for (auto& tmln : anim_frame_action::s_editor_state.working_afa_ctrls_copy
+                                              ->data.anim_frame_action_timelines)
+                        {
+                            using Region = anim_frame_action::Runtime_data_controls::Data::
+                                Animation_frame_action_timeline::Region;
+                            std::sort(tmln.regions.begin(),
+                                      tmln.regions.end(),
+                                      [](Region const& a, Region const& b) -> bool {
+                                          // Really inefficient sorting algo but it's only for an
+                                          // editor tool and so fuck it.  -Thea 2026/01/16
+                                          if (a.row_idx != b.row_idx)
+                                              return a.row_idx < b.row_idx;
+                                          if (a.start_frame != b.start_frame)
+                                              return a.start_frame < b.start_frame;
+                                          if (a.end_frame != b.end_frame)
+                                              return a.end_frame < b.end_frame;
+
+                                          // These are equal, so just false it.
+                                          return false;
+                                      });
+                        }
+
+                        // Error if cmd names and/or argv's are invalid.
+                        static auto const& k_cmd_docs{
+                            Model_animator::get_control_command_codes_documentation()
+                        };
+                        for (auto const& tmln :
+                             anim_frame_action::s_editor_state.working_afa_ctrls_copy->data
+                                 .anim_frame_action_timelines)
+                        {
+                            for (auto const& region : tmln.regions)
+                            {
+                                auto const& ctrl_cmd{ region.ctrl_cmd };
+
+                                // Ensure that command name exists.
+                                using Ctrl_cmd_documentation =
+                                    Model_animator::Ctrl_cmd_documentation;
+                                Ctrl_cmd_documentation const* found_cmd_doc{ nullptr };
+
+                                for (auto const& cmd_doc : k_cmd_docs)
+                                {
+                                    if (ctrl_cmd.cmd_name == cmd_doc.cmd.name)
+                                    {
+                                        found_cmd_doc = &cmd_doc;
+                                        break;
+                                    }
+                                }
+                                if (found_cmd_doc == nullptr)
+                                {
+                                    BT_ERRORF("Could not find control command: %s",
+                                              ctrl_cmd.cmd_name.c_str());
+                                    assert(false);
+                                    abort();
+                                }
+
+                                // Ensure that argv count is correct.
+                                if (ctrl_cmd.argv.size() != found_cmd_doc->argv.size())
+                                {
+                                    BT_ERRORF(
+                                        "Control command has %llu number of argv instead of "
+                                        "required %llu number of argv.",
+                                        ctrl_cmd.argv.size(),
+                                        found_cmd_doc->argv.size());
+                                    assert(false);
+                                    abort();
+                                }
+                            }
+                        }
+
                         // Apply hitcapsule group set to template copy for saving.
                         anim_frame_action::s_editor_state.working_afa_ctrls_copy->data
                             .hitcapsule_group_set_template = hitcapsule_grp_set;

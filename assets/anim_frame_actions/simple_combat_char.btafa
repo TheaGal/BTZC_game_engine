@@ -7,22 +7,22 @@
         {
             "regions": [
                 {
-                    "row_idx": 4,
-                    "end_frame": 11,
-                    "start_frame": 0,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 12,
+                    "row_idx": 2,
+                    "start_frame": 1
                 },
                 {
-                    "row_idx": 7,
-                    "end_frame": 11,
-                    "start_frame": 0,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 11,
+                    "row_idx": 4,
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_idle"
@@ -30,22 +30,22 @@
         {
             "regions": [
                 {
-                    "row_idx": 4,
-                    "end_frame": 41,
-                    "start_frame": 0,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 41,
+                    "row_idx": 4,
+                    "start_frame": 0
                 },
                 {
-                    "row_idx": 8,
-                    "end_frame": 41,
-                    "start_frame": 0,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 41,
+                    "row_idx": 8,
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_running"
@@ -53,22 +53,22 @@
         {
             "regions": [
                 {
-                    "row_idx": 8,
-                    "end_frame": 10,
-                    "start_frame": 0,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 10,
+                    "row_idx": 8,
+                    "start_frame": 0
                 },
                 {
-                    "row_idx": 8,
-                    "end_frame": 41,
-                    "start_frame": 33,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 41,
+                    "row_idx": 8,
+                    "start_frame": 33
                 }
             ],
             "state_name": "st_running_turnaround"
@@ -76,13 +76,13 @@
         {
             "regions": [
                 {
-                    "row_idx": 6,
-                    "end_frame": 41,
-                    "start_frame": 0,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 41,
+                    "row_idx": 6,
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_awareness_suspicion_begin"
@@ -90,13 +90,13 @@
         {
             "regions": [
                 {
-                    "row_idx": 10,
-                    "end_frame": 41,
-                    "start_frame": 0,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 41,
+                    "row_idx": 10,
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_awareness_suspicion_walking"
@@ -104,22 +104,22 @@
         {
             "regions": [
                 {
-                    "row_idx": 6,
-                    "end_frame": 121,
-                    "start_frame": 0,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 121,
+                    "row_idx": 6,
+                    "start_frame": 0
                 },
                 {
-                    "row_idx": 19,
-                    "end_frame": 111,
-                    "start_frame": 110,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 111,
+                    "row_idx": 19,
+                    "start_frame": 110
                 }
             ],
             "state_name": "st_awareness_suspicion_end"
@@ -127,22 +127,22 @@
         {
             "regions": [
                 {
-                    "row_idx": 4,
-                    "end_frame": 61,
-                    "start_frame": 0,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 4,
+                    "start_frame": 0
                 },
                 {
-                    "row_idx": 10,
-                    "end_frame": 61,
-                    "start_frame": 0,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 10,
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_awareness_aware_begin"
@@ -150,49 +150,49 @@
         {
             "regions": [
                 {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 11,
                     "row_idx": 7,
-                    "end_frame": 11,
-                    "start_frame": 0,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "start_frame": 0
                 },
                 {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 11,
                     "row_idx": 11,
-                    "end_frame": 11,
-                    "start_frame": 0,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "start_frame": 0
                 },
                 {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 11,
                     "row_idx": 12,
-                    "end_frame": 11,
-                    "start_frame": 0,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "start_frame": 0
                 },
                 {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 11,
                     "row_idx": 13,
-                    "end_frame": 11,
-                    "start_frame": 0,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "start_frame": 0
                 },
                 {
-                    "row_idx": 14,
-                    "end_frame": 11,
-                    "start_frame": 0,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 11,
+                    "row_idx": 14,
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_jump"
@@ -200,49 +200,49 @@
         {
             "regions": [
                 {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 15,
                     "row_idx": 10,
-                    "end_frame": 15,
-                    "start_frame": 0,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "start_frame": 0
                 },
                 {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 15,
                     "row_idx": 11,
-                    "end_frame": 15,
-                    "start_frame": 0,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "start_frame": 0
                 },
                 {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 15,
                     "row_idx": 12,
-                    "end_frame": 15,
-                    "start_frame": 0,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "start_frame": 0
                 },
                 {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 15,
                     "row_idx": 13,
-                    "end_frame": 15,
-                    "start_frame": 0,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "start_frame": 0
                 },
                 {
-                    "row_idx": 14,
-                    "end_frame": 15,
-                    "start_frame": 0,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 15,
+                    "row_idx": 14,
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_fall"
@@ -250,148 +250,148 @@
         {
             "regions": [
                 {
-                    "row_idx": 2,
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
                     "end_frame": 19,
-                    "start_frame": 15,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "row_idx": 2,
+                    "start_frame": 15
                 },
                 {
-                    "row_idx": 3,
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
                     "end_frame": 40,
-                    "start_frame": 39,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
-                },
-                {
                     "row_idx": 3,
+                    "start_frame": 39
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
                     "end_frame": 62,
-                    "start_frame": 61,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "row_idx": 3,
+                    "start_frame": 61
                 },
                 {
-                    "row_idx": 4,
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
                     "end_frame": 103,
-                    "start_frame": 32,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "row_idx": 4,
+                    "start_frame": 32
                 },
                 {
-                    "row_idx": 5,
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
                     "end_frame": 22,
-                    "start_frame": 15,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
-                },
-                {
                     "row_idx": 5,
-                    "end_frame": 54,
-                    "start_frame": 48,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "start_frame": 15
                 },
                 {
-                    "row_idx": 6,
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 54,
+                    "row_idx": 5,
+                    "start_frame": 48
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
                     "end_frame": 22,
-                    "start_frame": 14,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
-                },
-                {
                     "row_idx": 6,
-                    "end_frame": 54,
-                    "start_frame": 47,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "start_frame": 14
                 },
                 {
-                    "row_idx": 8,
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 54,
+                    "row_idx": 6,
+                    "start_frame": 47
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
                     "end_frame": 16,
-                    "start_frame": 0,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "row_idx": 8,
+                    "start_frame": 0
                 },
                 {
-                    "row_idx": 8,
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
                     "end_frame": 48,
-                    "start_frame": 21,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
-                },
-                {
                     "row_idx": 8,
+                    "start_frame": 21
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
                     "end_frame": 71,
-                    "start_frame": 53,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "row_idx": 8,
+                    "start_frame": 53
                 },
                 {
-                    "row_idx": 16,
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
                     "end_frame": 22,
-                    "start_frame": 14,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "row_idx": 16,
+                    "start_frame": 14
                 },
                 {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 54,
                     "row_idx": 17,
-                    "end_frame": 54,
-                    "start_frame": 47,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "start_frame": 47
                 },
                 {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 54,
                     "row_idx": 20,
-                    "end_frame": 54,
-                    "start_frame": 47,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "start_frame": 47
                 },
                 {
-                    "row_idx": 21,
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
                     "end_frame": 17,
-                    "start_frame": 16,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "row_idx": 21,
+                    "start_frame": 16
                 },
                 {
-                    "row_idx": 21,
-                    "end_frame": 50,
-                    "start_frame": 49,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 50,
+                    "row_idx": 21,
+                    "start_frame": 49
                 }
             ],
             "state_name": "st_attack_0"
@@ -403,13 +403,13 @@
         {
             "regions": [
                 {
-                    "row_idx": 18,
-                    "end_frame": 17,
-                    "start_frame": 8,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 17,
+                    "row_idx": 18,
+                    "start_frame": 8
                 }
             ],
             "state_name": "st_hurt_parry"
@@ -417,13 +417,13 @@
         {
             "regions": [
                 {
-                    "row_idx": 18,
-                    "end_frame": 31,
-                    "start_frame": 8,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 31,
+                    "row_idx": 18,
+                    "start_frame": 8
                 }
             ],
             "state_name": "st_hurt_guard"
@@ -431,13 +431,13 @@
         {
             "regions": [
                 {
-                    "row_idx": 18,
-                    "end_frame": 21,
-                    "start_frame": 8,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 21,
+                    "row_idx": 18,
+                    "start_frame": 8
                 }
             ],
             "state_name": "st_hurt_receive"
@@ -445,13 +445,13 @@
         {
             "regions": [
                 {
-                    "row_idx": 18,
-                    "end_frame": 21,
-                    "start_frame": 8,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 21,
+                    "row_idx": 18,
+                    "start_frame": 8
                 }
             ],
             "state_name": "st_hurt_receive_from_back"
@@ -459,40 +459,40 @@
         {
             "regions": [
                 {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 12,
                     "row_idx": 2,
-                    "end_frame": 12,
-                    "start_frame": 0,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "start_frame": 0
                 },
                 {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 17,
                     "row_idx": 4,
-                    "end_frame": 17,
-                    "start_frame": 0,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "start_frame": 0
                 },
                 {
-                    "row_idx": 8,
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
                     "end_frame": 12,
-                    "start_frame": 0,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "row_idx": 8,
+                    "start_frame": 0
                 },
                 {
-                    "row_idx": 15,
-                    "end_frame": 17,
-                    "start_frame": 12,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 17,
+                    "row_idx": 15,
+                    "start_frame": 12
                 }
             ],
             "state_name": "st_ready_parry"
@@ -500,40 +500,40 @@
         {
             "regions": [
                 {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 22,
                     "row_idx": 2,
-                    "end_frame": 22,
-                    "start_frame": 0,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "start_frame": 0
                 },
                 {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 49,
                     "row_idx": 4,
-                    "end_frame": 49,
-                    "start_frame": 0,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "start_frame": 0
                 },
                 {
-                    "row_idx": 8,
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
                     "end_frame": 22,
-                    "start_frame": 0,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "row_idx": 8,
+                    "start_frame": 0
                 },
                 {
-                    "row_idx": 15,
-                    "end_frame": 49,
-                    "start_frame": 22,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 49,
+                    "row_idx": 15,
+                    "start_frame": 22
                 }
             ],
             "state_name": "st_ready_parry_from_running"
@@ -541,22 +541,22 @@
         {
             "regions": [
                 {
-                    "row_idx": 4,
-                    "end_frame": 11,
-                    "start_frame": 0,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 11,
+                    "row_idx": 4,
+                    "start_frame": 0
                 },
                 {
-                    "row_idx": 15,
-                    "end_frame": 11,
-                    "start_frame": 0,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 11,
+                    "row_idx": 15,
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_hold_guard_idle"
@@ -564,31 +564,31 @@
         {
             "regions": [
                 {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 21,
                     "row_idx": 4,
-                    "end_frame": 21,
-                    "start_frame": 0,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "start_frame": 0
                 },
                 {
-                    "row_idx": 8,
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
                     "end_frame": 41,
-                    "start_frame": 0,
-                    "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                    "row_idx": 8,
+                    "start_frame": 0
                 },
                 {
-                    "row_idx": 15,
-                    "end_frame": 21,
-                    "start_frame": 0,
                     "ctrl_cmd": {
-                        "cmd_name": "nop",
-                        "argv": []
-                    }
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 21,
+                    "row_idx": 15,
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_hold_guard_walking"
