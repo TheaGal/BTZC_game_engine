@@ -781,9 +781,8 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
             },
             .argv{},
             .exec_fn = [](std::vector<std::string> const& argv) {
-                
-                BT_WARN("blend() executed.");
-                
+                BT_ERROR("NOT IMPLEMENTED YET: blend().");
+                assert(false);
             }
         },
         {
@@ -800,8 +799,8 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
                 }
             },
             .exec_fn = [](std::vector<std::string> const& argv) {
-                
-                BT_WARN("jump_state_queue() executed.");
+                BT_ERROR("jump_state_queue() NOT IMPLEMENTED.");
+                assert(false);
             }
         },
     };

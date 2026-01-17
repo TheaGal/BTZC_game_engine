@@ -1158,7 +1158,19 @@ while (running_game_loop)
 
 - [ ] Implement `execute_command_code()`
     - [x] Implements the actual function, but it fetches the documentation which contains the real funcs.
-    - 
+    - [ ] THINKING OF THE DESIGN
+        - So basically I want there to be a set of moves to transition to 
+            - EX: moving from idle.
+                1. insert into "mvt interrupt queue" << start-running and into "mvt queue" << running
+                    1. If start-running goes to the end then it will pick up something from "mvt queue" (running).
+                2. during either start-running or running, player decides to stop.
+                3. insert into "mvt interrupt queue" << cancel-running.
+                4. if player decides to jump, then the jump action is in "mvt_interrupt_queue" and then the fall action is in the "mvt_queue" to play right after (unless it gets interrupted by something like an attack or parry).
+                    > Ig at this point is where things should probably get separated into their own queues since there should be type filtering.
+                - [ ] @TODO: @PROBLEM: I'm thinking there should be a better way to show continuation. Maybe just having a hardcoded "goto this anim next" at the end?
+
+        - Items inside the queue do not last forever. If an anim state in the queue is expired, it is automatically discarded.
+
 
 - [ ] Use ~~jumptable~~ jump-state-anim-state-queue (higher row has precedence in the check).
     > @NOTE: If there is a transition from the jumptable, no other conditions or mutations will be checked or adhered to in the sim tick.
