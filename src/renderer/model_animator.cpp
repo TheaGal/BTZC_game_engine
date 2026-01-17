@@ -757,7 +757,7 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
         },
         {
             .cmd{
-                .name = "jump_state",
+                .name = "jump_state_queue",
                 .desc = "Checks the specified animation state queue to see if an available state "
                         "exists, and if so, jumps to that animation state."
             },
