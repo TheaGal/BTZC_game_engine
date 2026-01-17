@@ -1157,7 +1157,8 @@ while (running_game_loop)
     > Got to `execute_command_code()` assert!!!
 
 - [ ] Implement `execute_command_code()`
-    - @TODO
+    - [x] Implements the actual function, but it fetches the documentation which contains the real funcs.
+    - 
 
 - [ ] Use ~~jumptable~~ jump-state-anim-state-queue (higher row has precedence in the check).
     > @NOTE: If there is a transition from the jumptable, no other conditions or mutations will be checked or adhered to in the sim tick.

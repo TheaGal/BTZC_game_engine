@@ -6,6 +6,7 @@
 #include "uuid/uuid.h"
 
 #include <atomic>
+#include <functional>
 #include <limits>
 #include <string>
 #include <unordered_map>
@@ -203,6 +204,8 @@ public:
             std::string type;
         };
         std::vector<Name_w_desc_w_type> argv;
+
+        std::function<void(std::vector<std::string> const&)> exec_fn;
     };
 
     /// Gets documentation for all control cmds.

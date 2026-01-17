@@ -464,8 +464,12 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
 
     // First tick of update() will just setup the timer so that it always starts on 0,
     // instead of never starting on 0.
+    // @NOTE: since SIMULATION_PROFILE floors for calc frame idx, set to start at 1/2 one frame to
+    //        prevent floating-pt error accumulation.  -Thea 2026/01/17
     if (time_handle < 0)
-        time_handle = 0;
+        time_handle = (profile == SIMULATION_PROFILE
+                       ? 0.5f / Model_joint_animation::k_frames_per_second
+                       : 0);
     else
         time_handle += delta_time * anim_state.speed;
 
@@ -531,17 +535,19 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
         // Test case: ensure that
         //     (1) the prev frame is unset and the current frame is 0, or
         //     (2) the prev frame is the last frame of a looping anim and the current frame is 0, or
-        //     (3) the prev frame is exactly 1 behind the current frame.
+        //     (3) the prev frame and current frame are both at the last frame of non-looped anim, or
+        //     (4) the prev frame is exactly 1 behind the current frame.
         if (!((prev_frame_idx == (uint32_t)-1 && frame_idx == 0) ||
               (anim_state.loop && prev_frame_idx + 1 == num_frames && frame_idx == 0) ||
+              (!anim_state.loop && prev_frame_idx + 1 == num_frames && frame_idx + 1 == num_frames) ||
               (prev_frame_idx + 1 == frame_idx)))
         {
-            // @NOCHECKIN: I'm pretty sure this is gonna fail so fix it!
             BT_ERRORF(
                 "Frame advanced in SIMULATION_PROFILE in an unusual way. prev_frame_idx=%u "
-                "frame_idx=%u",
+                "frame_idx=%u num_frames=%u",
                 prev_frame_idx,
-                frame_idx);
+                frame_idx,
+                num_frames);
             assert(false);
         }
 
@@ -762,7 +768,10 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
                 .name = "nop",
                 .desc = "No operation"
             },
-            .argv{}
+            .argv{},
+            .exec_fn = [](std::vector<std::string> const& argv) {
+                BT_WARN("nop() executed.");
+            }
         },
         {
             .cmd{
@@ -770,7 +779,12 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
                 .desc = "Blends current animation with previous one set as an anchor pose, lerping "
                         "from 0-1 over the cmd region."
             },
-            .argv{}
+            .argv{},
+            .exec_fn = [](std::vector<std::string> const& argv) {
+                
+                BT_WARN("blend() executed.");
+                
+            }
         },
         {
             .cmd{
@@ -784,6 +798,10 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
                     .desc = "Queue to check for anim state queues",
                     .type = "str"
                 }
+            },
+            .exec_fn = [](std::vector<std::string> const& argv) {
+                
+                BT_WARN("jump_state_queue() executed.");
             }
         },
     };
@@ -826,8 +844,23 @@ void BT::Model_animator::execute_command_code(cmd_code_t const& cmd_code,
                                               bool is_reg_first_frame,
                                               bool is_reg_last_frame)
 {
-    // @TODO: implement!
-    assert(false);
+    auto const& cmd_docs{ get_control_command_codes_documentation() };
+    bool executed{ false };
+    for (auto const& cmd_doc : cmd_docs)
+    {
+        if (cmd_code.cmd_name == cmd_doc.cmd.name)
+        {   // Execute this cmd.
+            cmd_doc.exec_fn(cmd_code.argv);
+            executed = true;
+            break;
+        }
+    }
+
+    if (!executed)
+    {
+        BT_ERRORF("Executing cmd code not found: \"%s\"", cmd_code.cmd_name.c_str());
+        assert(false);
+    }
 }
 
 BT::anim_tmpl_types::Animator_variable& BT::Model_animator::find_animator_variable(
