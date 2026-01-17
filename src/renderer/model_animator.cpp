@@ -830,7 +830,7 @@ BT::anim_tmpl_types::Animator_variable const& BT::Model_animator::find_animator_
 
     // Crash the program when don't find the var.
     assert(false);
-    throw new std::exception(("Did not find var name: " + var_name).c_str());
+    throw std::exception(("Did not find var name: " + var_name).c_str());
 }
 
 BT::Model_animator::Blend_value_result BT::Model_animator::calc_blend_value_ffffffff(
