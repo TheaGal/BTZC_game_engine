@@ -1150,6 +1150,15 @@ while (running_game_loop)
     - [x] Sort regions by (1) row_idx, (2) start_frame, then (3) end_frame.
     - [x] Ensure that the cmd names and number of argv's are correct.
 
+- [x] Some testing.
+    - [x] TEMP: remove old animator var setting (causing asserts ofc).
+    - [x] BUGFIX: fix jumping to frame 1 on first tick.
+        - Will have to ensure render version of timer is also not ahead.
+    > Got to `execute_command_code()` assert!!!
+
+- [ ] Implement `execute_command_code()`
+    - @TODO
+
 - [ ] Use ~~jumptable~~ jump-state-anim-state-queue (higher row has precedence in the check).
     > @NOTE: If there is a transition from the jumptable, no other conditions or mutations will be checked or adhered to in the sim tick.
     - [x] Some planning for how it's gonna work.

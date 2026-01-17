@@ -343,7 +343,7 @@ void BT::Model_animator::change_state_idx(uint32_t to_state)
     if (m_current_state_idx.compare_exchange_strong(from_state_copy,
                                                     to_state))
     {   // Reset all time profiles.
-        set_time(0.0f);
+        set_time(-1.0f);  // -1 for showing timer is unset on first update().
         m_sim_prev_frame = (uint32_t)-1;
     }
 }
@@ -461,7 +461,13 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
 
     // Tick forward.
     auto const& anim_state{ m_animator_states[m_current_state_idx] };
-    time_handle += delta_time * anim_state.speed;
+
+    // First tick of update() will just setup the timer so that it always starts on 0,
+    // instead of never starting on 0.
+    if (time_handle < 0)
+        time_handle = 0;
+    else
+        time_handle += delta_time * anim_state.speed;
 
     // Process animator state transitions.
     if (profile == SIMULATION_PROFILE)
@@ -507,24 +513,35 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
 
         // Get anim frame idx.
         auto const& anim_state{ m_animator_states[m_current_state_idx] };
-        auto frame_idx =
+        auto const& current_anim_for_state{
             m_model_animations[anim_state.state_type == anim_state.SINGLE_ANIM
                                    ? anim_state.animation_idx
                                    : anim_state.blend_anims.front().animation_idx]  // @TEMP.
-                .calc_frame_idx(curr_time, anim_state.loop, Model_joint_animation::FLOOR);
+        };
+        auto frame_idx{ current_anim_for_state.calc_frame_idx(curr_time,
+                                                              anim_state.loop,
+                                                              Model_joint_animation::FLOOR) };
+        auto num_frames{ current_anim_for_state.get_num_frames() };
 
         // Get prev anim frame idx.
         animator_frame_t& prev_frame_handle{ get_profile_prev_frame_handle(profile) };
         uint32_t prev_frame_idx{ prev_frame_handle };
 
         // Test to make sure that frames only advance one at a time.
-        // Test case: ensure that (1) the prev frame is unset and the current frame is 0, or (2) the
-        //            prev frame is exactly 1 behind the current frame.
-        // @CHECK: @THEA: is looping covered in this test case???
+        // Test case: ensure that
+        //     (1) the prev frame is unset and the current frame is 0, or
+        //     (2) the prev frame is the last frame of a looping anim and the current frame is 0, or
+        //     (3) the prev frame is exactly 1 behind the current frame.
         if (!((prev_frame_idx == (uint32_t)-1 && frame_idx == 0) ||
+              (anim_state.loop && prev_frame_idx + 1 == num_frames && frame_idx == 0) ||
               (prev_frame_idx + 1 == frame_idx)))
         {
-            BT_ERROR("Frame advanced in SIMULATION_PROFILE in an unusual way.");  // @NOCHECKIN: I'm pretty sure this is gonna fail so fix it!
+            // @NOCHECKIN: I'm pretty sure this is gonna fail so fix it!
+            BT_ERRORF(
+                "Frame advanced in SIMULATION_PROFILE in an unusual way. prev_frame_idx=%u "
+                "frame_idx=%u",
+                prev_frame_idx,
+                frame_idx);
             assert(false);
         }
 
