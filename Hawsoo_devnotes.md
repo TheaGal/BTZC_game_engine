@@ -1167,9 +1167,42 @@ while (running_game_loop)
                 3. insert into "mvt interrupt queue" << cancel-running.
                 4. if player decides to jump, then the jump action is in "mvt_interrupt_queue" and then the fall action is in the "mvt_queue" to play right after (unless it gets interrupted by something like an attack or parry).
                     > Ig at this point is where things should probably get separated into their own queues since there should be type filtering.
-                - [ ] @TODO: @PROBLEM: I'm thinking there should be a better way to show continuation. Maybe just having a hardcoded "goto this anim next" at the end?
+                - [x] @TODO: @PROBLEM: I'm thinking there should be a better way to show continuation. Maybe just having a hardcoded "goto this anim next" at the end?
+                    - It could be like "a set of animation states that run in a line" -type setup?
+                        - This would give more control to the driving script of the anim, since this kind of state switching could dictate whether animations are looped or end at the end.
+                        - There needs to still be basic definitions of anim state, however.
+                            - What anim(s) (if blendtree, what var to use for stuff)
+                            - ~~Looping~~ doesn't seem necessary.
+                            - ~~Speed~~ doesn't seem necessary.
+                                - Ig it could be global speed in the animator for this? (e.g. for something like a speedup potion or whatever)
+                    - SOLUTION: Make the animator hold a packet of animation states that run in a line, and put that packet into the jump_state_queue instead of a single anim state.
 
         - Items inside the queue do not last forever. If an anim state in the queue is expired, it is automatically discarded.
+
+    - [ ] ALTERNATE DESIGN
+        - Have the anim states be manually controlled so that the anim state driver system can just immediately switch states.
+        - They would have to know what state the animator is in, and then whether the current anim state's AFA is in an uninterruptable state.
+        - Really useful for something like falling and landing -based events.
+        - These states have to happen immediately, no matter the anim state.
+            - Getting hurt anim.
+                - Blocked by "invincible_frames" var? (default: false)
+            - Falling/midair anim.
+                - Blocked by "should_be_midair" var? (default: false)
+            - Landing in water.
+            - Landing on ground.
+                - Blocked by "should_be_midair" var? (default: false)
+        - These states can only happen when the animation allows it.
+            - Attack anim.
+                - Allowed by "can_attack" var? (default: false)
+            - Jump anim.
+                - Allowed by "can_jump" var? (default: false)
+            - etc. (There are a lot of these cases it really seems)
+        
+    - [ ] IS THERE A MIDDLE GROUND BETWEEN THE TWO DESIGNS??? (bc they both solve different problems)
+
+
+
+- [ ] Extra check: Assert that the length of animation clips for a blendtree state are all equal (since they all share the same AFA).
 
 
 - [ ] Use ~~jumptable~~ jump-state-anim-state-queue (higher row has precedence in the check).
