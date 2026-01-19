@@ -55,7 +55,7 @@ void BT::system::tick_sim_char_mvt_animator()
                     animator->set_trigger_variable(#_var);                                          \
                 char_mvt_anim_state.write_to_animator_data._var = false;
 
-            // @THEA: @TEMP: @REFACTOR: for refactor into watch_jump_state_queue() ctrl cmd.
+            // @THEA: @TEMP: @REFACTOR: for refactor into watch_jump_queue() ctrl cmd.
             // SET_ANIMATOR_BOOL_VAR(is_moving)
             // SET_ANIMATOR_BOOL_VAR(is_locked_on)
             // SET_ANIMATOR_TRIGGER(on_suspicion)

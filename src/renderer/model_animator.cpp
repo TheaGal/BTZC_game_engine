@@ -794,7 +794,7 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
         },
         {
             .cmd{
-                .name = "watch_jump_state_queue",
+                .name = "watch_jump_queue",
                 .desc = "Checks the specified animation state queue to see if an available state "
                         "exists, and if so, jumps to that animation state."
             },
@@ -809,14 +809,14 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
                           bool is_first_frame,
                           bool is_last_frame,
                           std::vector<std::string> const& argv) {
-                // Submit `anim_state_queue` for watching this frame.
-                auto anim_state_queue{ Jump_state_queue::anim_state_queue_from_str(argv[0]) };
-                watching_jump_state_queues.add(anim_state_queue, row_idx);  // priority=row_idx
+                // Add `anim_state_queue` for watching this frame.
+                auto anim_state_queue{ Jump_queue::anim_state_queue_from_str(argv[0]) };
+                jump_queues.add(anim_state_queue, row_idx);  // priority=row_idx
             }
         },
         {
             .cmd{
-                .name = "ignore_jump_state_queue",
+                .name = "ignore_jump_queue",
                 .desc = "Ignores the specified animation state queue to prevent it from jumping "
                         "anim states."
             },
@@ -831,9 +831,9 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
                           bool is_first_frame,
                           bool is_last_frame,
                           std::vector<std::string> const& argv) {
-                // Submit `anim_state_queue` for watching this frame.
-                auto anim_state_queue{ Jump_state_queue::anim_state_queue_from_str(argv[0]) };
-                watching_jump_state_queues.remove(anim_state_queue);
+                // Remove `anim_state_queue` from watching for this frame.
+                auto anim_state_queue{ Jump_queue::anim_state_queue_from_str(argv[0]) };
+                jump_queues.remove(anim_state_queue);
             }
         },
     };
