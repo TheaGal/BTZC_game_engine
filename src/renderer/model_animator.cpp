@@ -558,6 +558,7 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
             if (frame_idx >= region.start_frame && frame_idx < region.end_frame)
             {
                 execute_command_code(region.ctrl_cmd,
+                                     region.row_idx,
                                      frame_idx == region.start_frame,
                                      frame_idx == region.end_frame - 1);
             }
@@ -769,7 +770,10 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
                 .desc = "No operation"
             },
             .argv{},
-            .exec_fn = [](std::vector<std::string> const& argv) {
+            .exec_fn = [](uint32_t row_idx,
+                          bool is_first_frame,
+                          bool is_last_frame,
+                          std::vector<std::string> const& argv) {
                 BT_WARN("nop() executed.");
             }
         },
@@ -780,27 +784,56 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
                         "from 0-1 over the cmd region."
             },
             .argv{},
-            .exec_fn = [](std::vector<std::string> const& argv) {
+            .exec_fn = [](uint32_t row_idx,
+                          bool is_first_frame,
+                          bool is_last_frame,
+                          std::vector<std::string> const& argv) {
                 BT_ERROR("NOT IMPLEMENTED YET: blend().");
                 assert(false);
             }
         },
         {
             .cmd{
-                .name = "jump_state_queue",
+                .name = "watch_jump_state_queue",
                 .desc = "Checks the specified animation state queue to see if an available state "
                         "exists, and if so, jumps to that animation state."
             },
             .argv{
                 {
                     .name = "anim_state_queue",
-                    .desc = "Queue to check for anim state queues",
+                    .desc = "Queue to check for anim state queues this frame",
                     .type = "str"
                 }
             },
-            .exec_fn = [](std::vector<std::string> const& argv) {
-                BT_ERROR("jump_state_queue() NOT IMPLEMENTED.");
-                assert(false);
+            .exec_fn = [](uint32_t row_idx,
+                          bool is_first_frame,
+                          bool is_last_frame,
+                          std::vector<std::string> const& argv) {
+                // Submit `anim_state_queue` for watching this frame.
+                auto anim_state_queue{ Jump_state_queue::anim_state_queue_from_str(argv[0]) };
+                watching_jump_state_queues.add(anim_state_queue, row_idx);  // priority=row_idx
+            }
+        },
+        {
+            .cmd{
+                .name = "ignore_jump_state_queue",
+                .desc = "Ignores the specified animation state queue to prevent it from jumping "
+                        "anim states."
+            },
+            .argv{
+                {
+                    .name = "anim_state_queue",
+                    .desc = "Queue to ignore this frame",
+                    .type = "str"
+                }
+            },
+            .exec_fn = [](uint32_t row_idx,
+                          bool is_first_frame,
+                          bool is_last_frame,
+                          std::vector<std::string> const& argv) {
+                // Submit `anim_state_queue` for watching this frame.
+                auto anim_state_queue{ Jump_state_queue::anim_state_queue_from_str(argv[0]) };
+                watching_jump_state_queues.remove(anim_state_queue);
             }
         },
     };
@@ -840,6 +873,7 @@ BT::Model_animator::animator_frame_t& BT::Model_animator::get_profile_prev_frame
 }
 
 void BT::Model_animator::execute_command_code(cmd_code_t const& cmd_code,
+                                              uint32_t row_idx,
                                               bool is_reg_first_frame,
                                               bool is_reg_last_frame)
 {
@@ -849,7 +883,7 @@ void BT::Model_animator::execute_command_code(cmd_code_t const& cmd_code,
     {
         if (cmd_code.cmd_name == cmd_doc.cmd.name)
         {   // Execute this cmd.
-            cmd_doc.exec_fn(cmd_code.argv);
+            cmd_doc.exec_fn(row_idx, is_reg_first_frame, is_reg_last_frame, cmd_code.argv);
             executed = true;
             break;
         }

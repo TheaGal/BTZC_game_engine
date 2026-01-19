@@ -1168,7 +1168,7 @@ while (running_game_loop)
                 4. if player decides to jump, then the jump action is in "mvt_interrupt_queue" and then the fall action is in the "mvt_queue" to play right after (unless it gets interrupted by something like an attack or parry).
                     > Ig at this point is where things should probably get separated into their own queues since there should be type filtering.
                 - [x] @TODO: @PROBLEM: I'm thinking there should be a better way to show continuation. Maybe just having a hardcoded "goto this anim next" at the end?
-                    - It could be like "a set of animation states that run in a line" -type setup?
+                    - It could be like "a set of animation states that run in a line" -type setup? (anim state set)
                         - This would give more control to the driving script of the anim, since this kind of state switching could dictate whether animations are looped or end at the end.
                         - There needs to still be basic definitions of anim state, however.
                             - What anim(s) (if blendtree, what var to use for stuff)
@@ -1199,6 +1199,15 @@ while (running_game_loop)
             - etc. (There are a lot of these cases it really seems)
         
     - [ ] IS THERE A MIDDLE GROUND BETWEEN THE TWO DESIGNS??? (bc they both solve different problems)
+        > TTD: "THINKING OF THE DESIGN"
+        > ALD: "ALTERNATE DESIGN"
+        > UNQ: unique to the prev 2 designs.
+        - UNQ: have a state transition checking list of "jump_state_queue"'s (each w their own priority lvls) to check on every system tick, with this list having the immediate transitioning states (see ALD) being there by default.
+            - New jump-state-queues are added to this state transition checking list via the "jump_state_queue" control cmd (see TTD). Their priorities are set to be higher than the defaultly entered ones.
+            - Instead of having a bool var for something like "invincible_frames" (see ALD), there will be a func type that's like "ignore_jump_state_queue" for removing the immediate transitioning states from that state transition checking list.
+            - Then, once the state transition checking list is modified for the frame, it gets checked for if there is actually an anim state set (see TTD) inside the queue (check in order of highest-priority first).
+                - TTD: Items in these queues expire after a certain amount of time, but that provides a buffer too.
+                    - The "queues" are 1 item long, but anything that gets inserted, regardless of whether the existing 'anim state set' is expired or not, it will be overwritten. (that makes this just a variable you can set ig).
 
 
 

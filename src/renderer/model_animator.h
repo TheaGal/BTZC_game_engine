@@ -205,7 +205,7 @@ public:
         };
         std::vector<Name_w_desc_w_type> argv;
 
-        std::function<void(std::vector<std::string> const&)> exec_fn;
+        std::function<void(uint32_t, bool, bool, std::vector<std::string> const&)> exec_fn;
     };
 
     /// Gets documentation for all control cmds.
@@ -240,6 +240,7 @@ private:
 
     /// Interprets and executes sent command code.
     void execute_command_code(cmd_code_t const& cmd_code,
+                              uint32_t row_idx,
                               bool is_reg_first_frame,
                               bool is_reg_last_frame);
 
