@@ -143,6 +143,7 @@ void create_staged_render_objects(Entity_container& entity_container,
             if (afa_ctrller != nullptr)
             {   // Configure anim frame action data.
                 new_rend_obj.get_model_animator()->configure_anim_frame_action_controls(
+                    {}, // @TODO: @THEA: implement!!!!
                     &anim_frame_action::Bank::get(afa_ctrller->anim_frame_action_controller_name),
                     entity_container.find_entity_uuid(entity));
 

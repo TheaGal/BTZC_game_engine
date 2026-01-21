@@ -290,10 +290,20 @@ void BT::Model_animator::configure_animator_states(
 }
 
 void BT::Model_animator::configure_anim_frame_action_controls(
+    std::vector<Jump_queue_create>&& jump_queues,
     anim_frame_action::Runtime_data_controls const* anim_frame_action_controls,
     UUID resp_entity_uuid)
 {
     // Idk why I put this into a separate method instead of in the constructor but hey, here we are.
+    assert(m_jump_queue_name_to_jump_queue_map.empty());
+    for (auto const& jq : jump_queues)
+        m_jump_queue_name_to_jump_queue_map.emplace(
+            jq.queue_name,
+            Jump_queue_data{
+                .is_watching = jq.default_is_watching,
+                .default_is_watching = jq.default_is_watching,
+            });
+
     m_anim_frame_action_controls = anim_frame_action_controls;
 
     m_anim_frame_action_data.map_animator_to_control_regions(*this, *m_anim_frame_action_controls);
@@ -337,16 +347,23 @@ BT::anim_tmpl_types::Animator_variable& BT::Model_animator::get_animator_variabl
     return m_animator_variables[idx];
 }
 
-void BT::Model_animator::change_state_idx(uint32_t to_state)
+void BT::Model_animator::change_state_set(Animator_state_set const& to_state_set)
 {
-    uint32_t from_state_copy{ m_current_state_idx.load() };
-    if (m_current_state_idx.compare_exchange_strong(from_state_copy,
-                                                    to_state))
-    {   // Reset all time profiles.
-        set_time(-1.0f);  // -1 for showing timer is unset on first update().
-        m_sim_prev_frame = (uint32_t)-1;
-    }
+    // @TODO: implement!!
+    assert(false);
 }
+
+//---- @TODO: USE vv BELOW vv !!!!
+// void BT::Model_animator::change_state_idx(uint32_t to_state)
+// {
+//     uint32_t from_state_copy{ m_current_state_idx.load() };
+//     if (m_current_state_idx.compare_exchange_strong(from_state_copy,
+//                                                     to_state))
+//     {   // Reset all time profiles.
+//         set_time(-1.0f);  // -1 for showing timer is unset on first update().
+//         m_sim_prev_frame = (uint32_t)-1;
+//     }
+// }
 
 size_t BT::Model_animator::get_model_animation_idx(std::string anim_name) const
 {
@@ -494,9 +511,12 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
             anim_var.var_value = 0;
         }
 
+        assert(false);  // @TODO: rewrite to `change_state_set()`
+        #if 0 // @TODO: rewrite to `change_state_set()`
         // Perform actual state change!
         if (state_changed)
             change_state_idx(curr_state_idx);
+        #endif // 0 // @TODO: rewrite to `change_state_set()`
     }
 
     // Process anim frame action controls.
@@ -760,6 +780,32 @@ BT::Model_animator::get_anim_frame_action_data_handle()
     return m_anim_frame_action_data;
 }
 
+void BT::Model_animator::emplace_jump_queue_state_set(std::string const& jump_queue_name,
+                                                      Animator_state_set const& state_set,
+                                                      float_t queue_expire_time)
+{
+    // @TODO: implement!!
+    assert(false);
+}
+
+void BT::Model_animator::reset_jump_queue_watchlist()
+{
+    // @TODO: implement!!
+    assert(false);
+}
+
+void BT::Model_animator::set_watch_jump_queue(std::string const& jump_queue_name, bool watch)
+{
+    // @TODO: implement!!
+    assert(false);
+}
+
+BT::Model_animator::Animator_state_set const* BT::Model_animator::pop_one_state_set()
+{
+    // @TODO: implement!!
+    assert(false);
+}
+
 std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animator::
     get_control_command_codes_documentation()
 {
@@ -770,7 +816,8 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
                 .desc = "No operation"
             },
             .argv{},
-            .exec_fn = [](uint32_t row_idx,
+            .exec_fn = [](Model_animator& animator,
+                          uint32_t row_idx,
                           bool is_first_frame,
                           bool is_last_frame,
                           std::vector<std::string> const& argv) {
@@ -784,7 +831,8 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
                         "from 0-1 over the cmd region."
             },
             .argv{},
-            .exec_fn = [](uint32_t row_idx,
+            .exec_fn = [](Model_animator& animator,
+                          uint32_t row_idx,
                           bool is_first_frame,
                           bool is_last_frame,
                           std::vector<std::string> const& argv) {
@@ -805,13 +853,13 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
                     .type = "str"
                 }
             },
-            .exec_fn = [](uint32_t row_idx,
+            .exec_fn = [](Model_animator& animator,
+                          uint32_t row_idx,
                           bool is_first_frame,
                           bool is_last_frame,
                           std::vector<std::string> const& argv) {
                 // Add `anim_state_queue` for watching this frame.
-                auto anim_state_queue{ Jump_queue::anim_state_queue_from_str(argv[0]) };
-                jump_queues.add(anim_state_queue, row_idx);  // priority=row_idx
+                animator.set_watch_jump_queue(argv[0], true);
             }
         },
         {
@@ -827,13 +875,13 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
                     .type = "str"
                 }
             },
-            .exec_fn = [](uint32_t row_idx,
+            .exec_fn = [](Model_animator& animator,
+                          uint32_t row_idx,
                           bool is_first_frame,
                           bool is_last_frame,
                           std::vector<std::string> const& argv) {
                 // Remove `anim_state_queue` from watching for this frame.
-                auto anim_state_queue{ Jump_queue::anim_state_queue_from_str(argv[0]) };
-                jump_queues.remove(anim_state_queue);
+                animator.set_watch_jump_queue(argv[0], false);
             }
         },
     };
@@ -883,7 +931,7 @@ void BT::Model_animator::execute_command_code(cmd_code_t const& cmd_code,
     {
         if (cmd_code.cmd_name == cmd_doc.cmd.name)
         {   // Execute this cmd.
-            cmd_doc.exec_fn(row_idx, is_reg_first_frame, is_reg_last_frame, cmd_code.argv);
+            cmd_doc.exec_fn(*this, row_idx, is_reg_first_frame, is_reg_last_frame, cmd_code.argv);
             executed = true;
             break;
         }

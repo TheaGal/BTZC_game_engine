@@ -104,6 +104,7 @@ void BT::system::_dev_animation_frame_action_editor()
                 //        controller is assigned on this dynamic entity, this component is not
                 //        attached.
                 eds.working_model_animator->configure_anim_frame_action_controls(
+                    {},  // @TODO: @THEA: implement!!!!
                     eds.working_afa_ctrls_copy,
                     eds.working_entity_uuid);
 
@@ -131,8 +132,11 @@ void BT::system::_dev_animation_frame_action_editor()
                     eds.working_model_animator->get_anim_frame_action_data_handle()
                         .anim_state_idx_to_timeline_idx_map.at(afa_agent.working_anim_state_idx);
 
+                assert(false);  // @TODO: rewrite to `change_state_set()`
+                #if 0 // @TODO: rewrite to `change_state_set()`
                 // Set initial animator state.
                 eds.working_model_animator->change_state_idx(afa_agent.working_anim_state_idx);
+                #endif // 0 // @TODO: rewrite to `change_state_set()`
 
                 // Set editor state from animator.
                 auto const& anim_state{ eds.working_model_animator->get_animator_state(

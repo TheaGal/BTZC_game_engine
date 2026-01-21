@@ -120,7 +120,15 @@ public:
         std::vector<anim_tmpl_types::Animator_state> animator_states,
         std::vector<anim_tmpl_types::Animator_variable> animator_variables);
 
+    /// Information to create a jump queue.
+    struct Jump_queue_create
+    {
+        std::string queue_name;
+        bool default_is_watching;
+    };
+
     void configure_anim_frame_action_controls(
+        std::vector<Jump_queue_create>&& jump_queues,
         anim_frame_action::Runtime_data_controls const* anim_frame_action_controls,
         UUID resp_entity_uuid);
 
@@ -132,7 +140,17 @@ public:
     anim_tmpl_types::Animator_variable const& get_animator_variable(size_t idx) const;
     anim_tmpl_types::Animator_variable& get_animator_variable_write_handle(size_t idx);
 
-    void change_state_idx(uint32_t to_state);
+    /// State set. Once an animation state finishes, the animator changes to the next state in the
+    /// `anim_state_indices` list. Once the final state finishes, it will either stop, or loop
+    /// depending on `loop_final_state`.
+    struct Animator_state_set
+    {
+        std::vector<uint32_t> anim_state_indices;
+        bool loop_final_state;
+    };
+
+    /// Changes state-set.
+    void change_state_set(Animator_state_set const& to_state_set);
 
     size_t get_model_animation_idx(std::string anim_name) const;
     Model_joint_animation const& get_model_animation(size_t idx) const;
@@ -205,11 +223,26 @@ public:
         };
         std::vector<Name_w_desc_w_type> argv;
 
-        std::function<void(uint32_t, bool, bool, std::vector<std::string> const&)> exec_fn;
+        std::function<void(Model_animator&, uint32_t, bool, bool, std::vector<std::string> const&)>
+            exec_fn;
     };
 
     /// Gets documentation for all control cmds.
     static std::vector<Ctrl_cmd_documentation> const& get_control_command_codes_documentation();
+
+    /// Adds a state set to a jump queue.
+    void emplace_jump_queue_state_set(std::string const& jump_queue_name,
+                                      Animator_state_set const& state_set,
+                                      float_t queue_expire_time);
+
+    /// Resets jump queue watchlist to default values.
+    void reset_jump_queue_watchlist();
+
+    /// Sets whether watching a jump queue.
+    void set_watch_jump_queue(std::string const& jump_queue_name, bool watch);
+
+    /// Fetches/pops first top priority state-set from set of watching jump queues.
+    Animator_state_set const* pop_one_state_set();
 
 private:
     std::vector<Model_joint_animation> const& m_model_animations;
@@ -248,6 +281,15 @@ private:
 
     std::vector<anim_tmpl_types::Animator_state> m_animator_states;
     std::vector<anim_tmpl_types::Animator_variable> m_animator_variables;
+
+    struct Jump_queue_data
+    {
+        bool is_watching;
+        bool default_is_watching;
+        std::vector<Animator_state_set const*> state_set_queue;
+    };
+    std::unordered_map<std::string, Jump_queue_data> m_jump_queue_name_to_jump_queue_map;
+
     anim_frame_action::Runtime_data_controls const* m_anim_frame_action_controls{ nullptr };
     anim_frame_action::Runtime_controllable_data m_anim_frame_action_data;
 
