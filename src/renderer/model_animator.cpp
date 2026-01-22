@@ -341,23 +341,6 @@ BT::Model_animator::get_animator_state_write_handle(size_t idx)
     return m_animator_states[idx];
 }
 
-#if 0 // @TODO: Delete this!!
-size_t BT::Model_animator::get_num_animator_variables() const
-{
-    return m_animator_variables.size();
-}
-
-BT::anim_tmpl_types::Animator_variable const& BT::Model_animator::get_animator_variable(size_t idx) const
-{
-    return m_animator_variables[idx];
-}
-
-BT::anim_tmpl_types::Animator_variable& BT::Model_animator::get_animator_variable_write_handle(size_t idx)
-{
-    return m_animator_variables[idx];
-}
-#endif // 0 // @TODO: Delete this!!
-
 void BT::Model_animator::change_state_set(Animator_state_set const& to_state_set)
 {
     // @TODO: implement!!
@@ -404,34 +387,6 @@ BT::Model_joint_animation const& BT::Model_animator::get_model_animation(size_t 
     return m_model_animations[idx];
 }
 
-#if 0 // @TODO: remove animator vars.
-void BT::Model_animator::set_bool_variable(std::string const& var_name, bool value)
-{
-    auto& var_handle{ find_animator_variable(var_name) };
-
-    if (var_handle.type != anim_tmpl_types::Animator_variable::TYPE_BOOL)
-    {
-        assert(false);
-        return;
-    }
-
-    var_handle.var_value = (value ? anim_tmpl_types::k_bool_true
-                                  : anim_tmpl_types::k_bool_false);
-}
-
-void BT::Model_animator::set_int_variable(std::string const& var_name, int32_t value)
-{
-    auto& var_handle{ find_animator_variable(var_name) };
-
-    if (var_handle.type != anim_tmpl_types::Animator_variable::TYPE_INT)
-    {
-        assert(false);
-        return;
-    }
-
-    var_handle.var_value = value;
-}
-
 void BT::Model_animator::set_float_variable(std::string const& var_name, float_t value)
 {
     auto& var_handle{ find_animator_variable(var_name) };
@@ -457,20 +412,6 @@ float_t BT::Model_animator::get_float_variable(std::string const& var_name) cons
 
     return var_handle.var_value;
 }
-
-void BT::Model_animator::set_trigger_variable(std::string const& var_name)
-{
-    auto& var_handle{ find_animator_variable(var_name) };
-
-    if (var_handle.type != anim_tmpl_types::Animator_variable::TYPE_TRIGGER)
-    {
-        assert(false);
-        return;
-    }
-
-    var_handle.var_value = anim_tmpl_types::k_trig_triggered;
-}
-#endif // 0 // @TODO: remove animator vars.
 
 void BT::Model_animator::set_time(float_t time)
 {

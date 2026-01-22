@@ -136,12 +136,6 @@ public:
     anim_tmpl_types::Animator_state const& get_animator_state(size_t idx) const;
     anim_tmpl_types::Animator_state& get_animator_state_write_handle(size_t idx);
 
-#if 0 // @TODO: Delete this!!
-    size_t get_num_animator_variables() const;
-    anim_tmpl_types::Animator_variable const& get_animator_variable(size_t idx) const;
-    anim_tmpl_types::Animator_variable& get_animator_variable_write_handle(size_t idx);
-#endif // 0 // @TODO: Delete this!!
-
     /// State set. Once an animation state finishes, the animator changes to the next state in the
     /// `anim_state_indices` list. Once the final state finishes, it will either stop, or loop
     /// depending on `loop_final_state`.
@@ -157,17 +151,13 @@ public:
     size_t get_model_animation_idx(std::string anim_name) const;
     Model_joint_animation const& get_model_animation(size_t idx) const;
 
-#if 0 // @TODO: remove animator vars.
-    /// Sets a variable inside the state machine.
-    void set_bool_variable(std::string const& var_name, bool value);
-
-    /// Sets a variable inside the state machine.
-    void set_int_variable(std::string const& var_name, int32_t value);
-#endif // 0 // @TODO: remove animator vars.
-
     // @NOTE: vv BELOW vv it really seems like at least float vars are still needed for specifically
     //   blend trees. This functionality will be kept for now, however, it might become a good idea
     //   to rework this into a better system or de-abstract the `Animator_variable` system.
+    //     -Thea 2026/01/22
+    //
+    // @REF: see commit <> for when other data type set/get funcs were deleted (e.g.
+    //   `set_int_variable()`).
     //     -Thea 2026/01/22
 
     /// Sets a variable inside the state machine.
@@ -175,11 +165,6 @@ public:
 
     /// Gets a variable inside the state machine.
     float_t get_float_variable(std::string const& var_name) const;
-
-#if 0 // @TODO: remove animator vars.
-    /// Sets a variable inside the state machine.
-    void set_trigger_variable(std::string const& var_name);
-#endif // 0 // @TODO: remove animator vars.
 
     /// Sets time for all timer profiles of the animator.
     void set_time(float_t time);
