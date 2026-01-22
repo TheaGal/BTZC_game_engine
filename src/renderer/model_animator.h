@@ -300,7 +300,7 @@ private:
         uint32_t anim_idx_b;
         float_t blend_t;
     };
-    Blend_value_result calc_blend_value_ffffffff(
+    Blend_value_result calc_blend_value_of_blendtree(
         anim_tmpl_types::Animator_state const& anim_state) const;
 };
 

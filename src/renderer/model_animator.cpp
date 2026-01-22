@@ -568,7 +568,7 @@ void BT::Model_animator::calc_anim_pose(Animator_timer_profile profile,
 
     case anim_tmpl_types::Animator_state::BLENDTREE:
     {
-        auto [anim_idx_a, anim_idx_b, blend_t]{ calc_blend_value_ffffffff(anim_state) };
+        auto [anim_idx_a, anim_idx_b, blend_t]{ calc_blend_value_of_blendtree(anim_state) };
 
         // Calc model animations of both anims.
         constexpr size_t k_num_sets{ 2 };
@@ -630,7 +630,7 @@ void BT::Model_animator::get_anim_floored_frame_pose(Animator_timer_profile prof
 
     case anim_tmpl_types::Animator_state::BLENDTREE:
     {
-        auto [anim_idx_a, anim_idx_b, blend_t]{ calc_blend_value_ffffffff(anim_state) };
+        auto [anim_idx_a, anim_idx_b, blend_t]{ calc_blend_value_of_blendtree(anim_state) };
 
         // Calc model animations of both anims.
         constexpr size_t k_num_sets{ 2 };
@@ -685,7 +685,7 @@ void BT::Model_animator::get_anim_root_motion_delta_pos(Animator_timer_profile p
 
     case anim_tmpl_types::Animator_state::BLENDTREE:
     {
-        auto [anim_idx_a, anim_idx_b, blend_t]{ calc_blend_value_ffffffff(anim_state) };
+        auto [anim_idx_a, anim_idx_b, blend_t]{ calc_blend_value_of_blendtree(anim_state) };
         
         // Get root motion of both anims.
         constexpr size_t k_num_root_motions{ 2 };
@@ -925,7 +925,7 @@ BT::anim_tmpl_types::Animator_variable const& BT::Model_animator::find_animator_
     throw std::exception(("Did not find var name: " + var_name).c_str());
 }
 
-BT::Model_animator::Blend_value_result BT::Model_animator::calc_blend_value_ffffffff(
+BT::Model_animator::Blend_value_result BT::Model_animator::calc_blend_value_of_blendtree(
     anim_tmpl_types::Animator_state const& anim_state) const
 {   // Look for two animations that are closest.
     float_t blend_var_value{ get_float_variable(anim_state.blend_var) };

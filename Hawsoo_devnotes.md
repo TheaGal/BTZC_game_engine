@@ -1158,7 +1158,7 @@ while (running_game_loop)
 
 - [ ] Implement `execute_command_code()`
     - [x] Implements the actual function, but it fetches the documentation which contains the real funcs.
-    - [ ] THINKING OF THE DESIGN
+    - [x] THINKING OF THE DESIGN
         - So basically I want there to be a set of moves to transition to 
             - EX: moving from idle.
                 1. insert into "mvt interrupt queue" << start-running and into "mvt queue" << running
@@ -1179,7 +1179,7 @@ while (running_game_loop)
 
         - Items inside the queue do not last forever. If an anim state in the queue is expired, it is automatically discarded.
 
-    - [ ] ALTERNATE DESIGN
+    - [x] ALTERNATE DESIGN
         - Have the anim states be manually controlled so that the anim state driver system can just immediately switch states.
         - They would have to know what state the animator is in, and then whether the current anim state's AFA is in an uninterruptable state.
         - Really useful for something like falling and landing -based events.
@@ -1198,7 +1198,7 @@ while (running_game_loop)
                 - Allowed by "can_jump" var? (default: false)
             - etc. (There are a lot of these cases it really seems)
         
-    - [ ] IS THERE A MIDDLE GROUND BETWEEN THE TWO DESIGNS??? (bc they both solve different problems)
+    - [x] IS THERE A MIDDLE GROUND BETWEEN THE TWO DESIGNS??? (bc they both solve different problems)
         > TTD: "THINKING OF THE DESIGN"
         > ALD: "ALTERNATE DESIGN"
         > UNQ: unique to the prev 2 designs.
@@ -1208,6 +1208,14 @@ while (running_game_loop)
             - Then, once the state transition checking list is modified for the frame, it gets checked for if there is actually an anim state set (see TTD) inside the queue (check in order of highest-priority first).
                 - TTD: Items in these queues expire after a certain amount of time, but that provides a buffer too.
                     - The "queues" are 1 item long, but anything that gets inserted, regardless of whether the existing 'anim state set' is expired or not, it will be overwritten. (that makes this just a variable you can set ig).
+    
+    - [ ] IMPLEMENTATION of "IS THERE A MIDDLE GROUND.."
+        - [x] Initial gut out.
+        - [x] Write new data structures.
+        - [ ] Implement new jump queues when configuring animator ctrl AFA information.
+            - [x] Marked everything w `static_assert()` where it needed implemented.
+            > Does there need to be some kind of default jump queue list?
+                > Is this a crutch or... maybe that's what should be there in the .btafa file?
 
 
 
