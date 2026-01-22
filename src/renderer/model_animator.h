@@ -156,8 +156,8 @@ public:
     //   to rework this into a better system or de-abstract the `Animator_variable` system.
     //     -Thea 2026/01/22
     //
-    // @REF: see commit <> for when other data type set/get funcs were deleted (e.g.
-    //   `set_int_variable()`).
+    // @REF: see commit 3695cfba4873b8551ab404f40ff47eabc62b5700 for when other data type set/get
+    //   funcs were deleted (e.g. `set_int_variable()`).
     //     -Thea 2026/01/22
 
     /// Sets a variable inside the state machine.
