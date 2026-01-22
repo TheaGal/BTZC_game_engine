@@ -142,6 +142,7 @@ void create_staged_render_objects(Entity_container& entity_container,
             auto afa_ctrller{ reg.try_get<component::Anim_frame_action_controller>(entity) };
             if (afa_ctrller != nullptr)
             {   // Configure anim frame action data.
+                static_assert(false);  // @THEA: Implement vv below vv !!!!
                 new_rend_obj.get_model_animator()->configure_anim_frame_action_controls(
                     {}, // @TODO: @THEA: implement!!!!
                     &anim_frame_action::Bank::get(afa_ctrller->anim_frame_action_controller_name),

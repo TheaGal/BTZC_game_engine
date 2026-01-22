@@ -296,13 +296,22 @@ void BT::Model_animator::configure_anim_frame_action_controls(
 {
     // Idk why I put this into a separate method instead of in the constructor but hey, here we are.
     assert(m_jump_queue_name_to_jump_queue_map.empty());
+
+    uint32_t next_def_watch_priority{ 0x80000000 };  // Place default-watching queues at least this low of priority.
     for (auto const& jq : jump_queues)
+    {
+        uint32_t default_priority{ jq.default_is_watching ? next_def_watch_priority++
+                                                          : (uint32_t)-1 };
+
         m_jump_queue_name_to_jump_queue_map.emplace(
             jq.queue_name,
             Jump_queue_data{
                 .is_watching = jq.default_is_watching,
                 .default_is_watching = jq.default_is_watching,
+                .priority = default_priority,
+                .default_priority = default_priority,
             });
+    }
 
     m_anim_frame_action_controls = anim_frame_action_controls;
 
@@ -393,6 +402,7 @@ BT::Model_joint_animation const& BT::Model_animator::get_model_animation(size_t 
     return m_model_animations[idx];
 }
 
+#if 0 // @TODO: remove animator vars.
 void BT::Model_animator::set_bool_variable(std::string const& var_name, bool value)
 {
     auto& var_handle{ find_animator_variable(var_name) };
@@ -458,6 +468,7 @@ void BT::Model_animator::set_trigger_variable(std::string const& var_name)
 
     var_handle.var_value = anim_tmpl_types::k_trig_triggered;
 }
+#endif // 0 // @TODO: remove animator vars.
 
 void BT::Model_animator::set_time(float_t time)
 {
@@ -511,6 +522,7 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
             anim_var.var_value = 0;
         }
 
+        static_assert(false);
         assert(false);  // @TODO: rewrite to `change_state_set()`
         #if 0 // @TODO: rewrite to `change_state_set()`
         // Perform actual state change!
@@ -789,15 +801,21 @@ void BT::Model_animator::emplace_jump_queue_state_set(std::string const& jump_qu
 }
 
 void BT::Model_animator::reset_jump_queue_watchlist()
-{
-    // @TODO: implement!!
-    assert(false);
+{   // Reset back to defaults.
+    for (auto& [_, jq] : m_jump_queue_name_to_jump_queue_map)
+    {
+        jq.is_watching = jq.default_is_watching;
+        jq.priority = jq.default_priority;
+    }
 }
 
-void BT::Model_animator::set_watch_jump_queue(std::string const& jump_queue_name, bool watch)
+void BT::Model_animator::set_watch_jump_queue(std::string const& jump_queue_name,
+                                              bool watch,
+                                              uint32_t priority)
 {
-    // @TODO: implement!!
-    assert(false);
+    auto& jq{ m_jump_queue_name_to_jump_queue_map.at(jump_queue_name) };
+    jq.is_watching = watch;
+    jq.priority = priority;
 }
 
 BT::Model_animator::Animator_state_set const* BT::Model_animator::pop_one_state_set()
@@ -859,7 +877,7 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
                           bool is_last_frame,
                           std::vector<std::string> const& argv) {
                 // Add `anim_state_queue` for watching this frame.
-                animator.set_watch_jump_queue(argv[0], true);
+                animator.set_watch_jump_queue(argv[0], true, row_idx);
             }
         },
         {
@@ -881,7 +899,7 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
                           bool is_last_frame,
                           std::vector<std::string> const& argv) {
                 // Remove `anim_state_queue` from watching for this frame.
-                animator.set_watch_jump_queue(argv[0], false);
+                animator.set_watch_jump_queue(argv[0], false, -1);
             }
         },
     };

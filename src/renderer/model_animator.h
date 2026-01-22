@@ -155,6 +155,7 @@ public:
     size_t get_model_animation_idx(std::string anim_name) const;
     Model_joint_animation const& get_model_animation(size_t idx) const;
 
+#if 0 // @TODO: remove animator vars.
     /// Sets a variable inside the state machine.
     void set_bool_variable(std::string const& var_name, bool value);
 
@@ -169,6 +170,7 @@ public:
 
     /// Sets a variable inside the state machine.
     void set_trigger_variable(std::string const& var_name);
+#endif // 0 // @TODO: remove animator vars.
 
     /// Sets time for all timer profiles of the animator.
     void set_time(float_t time);
@@ -239,7 +241,7 @@ public:
     void reset_jump_queue_watchlist();
 
     /// Sets whether watching a jump queue.
-    void set_watch_jump_queue(std::string const& jump_queue_name, bool watch);
+    void set_watch_jump_queue(std::string const& jump_queue_name, bool watch, uint32_t priority);
 
     /// Fetches/pops first top priority state-set from set of watching jump queues.
     Animator_state_set const* pop_one_state_set();
@@ -286,6 +288,8 @@ private:
     {
         bool is_watching;
         bool default_is_watching;
+        uint32_t priority;
+        uint32_t default_priority;
         std::vector<Animator_state_set const*> state_set_queue;
     };
     std::unordered_map<std::string, Jump_queue_data> m_jump_queue_name_to_jump_queue_map;
