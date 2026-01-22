@@ -381,6 +381,7 @@ void BT::component::edit::imgui_edit__created_render_object_reference(entt::regi
     ImGui::TextWrapped("A render object is created in the renderer.\n  UUID: %s",
                        UUID_helper::to_pretty_repr(rend_obj_ref.render_obj_uuid_ref).c_str());
 
+    #if 0 // @TODO: remove these extras.
     // Extras for if there's an animator.
     auto& rend_obj_pool{ service_finder::find_service<Renderer>().get_render_object_pool() };
     auto& rend_obj{
@@ -443,6 +444,7 @@ void BT::component::edit::imgui_edit__created_render_object_reference(entt::regi
     }
 
     rend_obj_pool.return_render_objs({ &rend_obj });
+    #endif // 0 // @TODO: remove these extras.
 
     ImGui::PopID();
 }

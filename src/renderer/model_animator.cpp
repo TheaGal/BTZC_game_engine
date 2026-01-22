@@ -341,6 +341,7 @@ BT::Model_animator::get_animator_state_write_handle(size_t idx)
     return m_animator_states[idx];
 }
 
+#if 0 // @TODO: Delete this!!
 size_t BT::Model_animator::get_num_animator_variables() const
 {
     return m_animator_variables.size();
@@ -355,6 +356,7 @@ BT::anim_tmpl_types::Animator_variable& BT::Model_animator::get_animator_variabl
 {
     return m_animator_variables[idx];
 }
+#endif // 0 // @TODO: Delete this!!
 
 void BT::Model_animator::change_state_set(Animator_state_set const& to_state_set)
 {
