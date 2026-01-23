@@ -1216,6 +1216,17 @@ while (running_game_loop)
             - [x] Marked everything w `static_assert()` where it needed implemented.
             > Does there need to be some kind of default jump queue list?
                 > Is this a crutch or... maybe that's what should be there in the .btafa file?
+                > This is something that gets created at the time that the animator gets created, so it should be together with the animator. There is no reason to have a default jump queue list. Systems like player movement or enemy movement would have to expect the .btafa to have certain jump queues and certain anim states to be able to construct their anim state sets.
+                    > Which, ig is kind of just something that's hardcoded in. But, all of these different movement ecs-systems shouldn't know about the animator's existance, nor have a say in what the animator should do.
+                    > Having duplicate info in the .btafa file is fine, just ASSERT that the expected info is real.
+            - [x] Fix _dev_aniamtion_frame_action_editor.cpp assert.
+            - [x] Fix model_animator.cpp assert.
+            - [x] fix process_render_object_lifetime.cpp assert.
+                - [x] Get the jump queues listed in the AFA file.
+                - [x] Load the jump queue lists.
+                    - Just have the strings and whether by default they should be watched, and use the priority-assignment feature of the func!!!
+                - [x] Put it into this func that's asserted out.
+            - [ ] Implement changing state set func.
 
 
 

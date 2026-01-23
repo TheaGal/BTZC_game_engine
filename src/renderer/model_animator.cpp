@@ -289,12 +289,38 @@ void BT::Model_animator::configure_animator_states(
     m_animator_variables = animator_variables;
 }
 
+std::vector<BT::Model_animator::Jump_queue_create> BT::Model_animator::
+    make_jump_queue_create_list_from_anim_frame_action_controls(
+        anim_frame_action::Runtime_data_controls const& anim_frame_action_controls)
+{
+    std::vector<Jump_queue_create> jqc;
+    jqc.reserve(anim_frame_action_controls.data.anim_state_set_jump_queues.size());
+
+    for (auto const& jq : anim_frame_action_controls.data.anim_state_set_jump_queues)
+    {
+        jqc.emplace_back(jq.name, jq.default_is_watching);
+    }
+
+    return jqc;
+}
+
 void BT::Model_animator::configure_anim_frame_action_controls(
-    std::vector<Jump_queue_create>&& jump_queues,
     anim_frame_action::Runtime_data_controls const* anim_frame_action_controls,
-    UUID resp_entity_uuid)
+    UUID resp_entity_uuid,
+    std::vector<Jump_queue_create> const& jump_queues)
 {
     // Idk why I put this into a separate method instead of in the constructor but hey, here we are.
+    m_anim_frame_action_controls = anim_frame_action_controls;
+
+    m_anim_frame_action_data.map_animator_to_control_regions(*this, *m_anim_frame_action_controls);
+
+    m_anim_frame_action_data.hitcapsule_group_set.replace_and_reregister(
+        m_anim_frame_action_controls->data.hitcapsule_group_set_template,
+        resp_entity_uuid);
+    m_anim_frame_action_data.hitcapsule_group_set.connect_animator(*this);
+    
+    // Insert jump queues.
+    // @NOTE: if `jump_queues` is empty, read from the AFA ctrl jump queue.
     assert(m_jump_queue_name_to_jump_queue_map.empty());
 
     uint32_t next_def_watch_priority{ 0x80000000 };  // Place default-watching queues at least this low of priority.
@@ -312,15 +338,6 @@ void BT::Model_animator::configure_anim_frame_action_controls(
                 .default_priority = default_priority,
             });
     }
-
-    m_anim_frame_action_controls = anim_frame_action_controls;
-
-    m_anim_frame_action_data.map_animator_to_control_regions(*this, *m_anim_frame_action_controls);
-
-    m_anim_frame_action_data.hitcapsule_group_set.replace_and_reregister(
-        m_anim_frame_action_controls->data.hitcapsule_group_set_template,
-        resp_entity_uuid);
-    m_anim_frame_action_data.hitcapsule_group_set.connect_animator(*this);
 }
 
 std::vector<BT::anim_tmpl_types::Animator_state> const&
@@ -447,31 +464,19 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
     // Process animator state transitions.
     if (profile == SIMULATION_PROFILE)
     {
-        bool state_changed{ false };
-        uint32_t prev_state_idx;
-        uint32_t curr_state_idx{ m_current_state_idx };
-        do
-        {   // Keep track of whether state changes.
-            prev_state_idx = curr_state_idx;
+        // Get state-set transition from watching jump queues.
+        Animator_state_set const* trans_state_set{ pop_one_state_set() };
 
-            // @TODO: @HERE: rewrite "Look for possible state transitions".  -Thea 2025/01/08
-
-        } while (prev_state_idx != curr_state_idx);
-
-        // Erase all trigger activations!
+        // Erase all trigger activations!  (@NOTE: currently @UNUSED)
         for (auto& anim_var : m_animator_variables)
         if (anim_var.type == anim_tmpl_types::Animator_variable::TYPE_TRIGGER)
         {
             anim_var.var_value = 0;
         }
 
-        static_assert(false);
-        assert(false);  // @TODO: rewrite to `change_state_set()`
-        #if 0 // @TODO: rewrite to `change_state_set()`
-        // Perform actual state change!
-        if (state_changed)
-            change_state_idx(curr_state_idx);
-        #endif // 0 // @TODO: rewrite to `change_state_set()`
+        // Perform actual state-set change!
+        if (trans_state_set != nullptr)
+            change_state_set(*trans_state_set);
     }
 
     // Process anim frame action controls.

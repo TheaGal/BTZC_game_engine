@@ -104,9 +104,10 @@ void BT::system::_dev_animation_frame_action_editor()
                 //        controller is assigned on this dynamic entity, this component is not
                 //        attached.
                 eds.working_model_animator->configure_anim_frame_action_controls(
-                    { { .queue_name = "_dev_afa_editor_master", .default_is_watching = true } },
                     eds.working_afa_ctrls_copy,
-                    eds.working_entity_uuid);
+                    eds.working_entity_uuid,
+                    // { { .queue_name = "_dev_afa_editor_master", .default_is_watching = true } });  @THEA: Idk if it should be like this or not.
+                    {});
 
                 // Create and attach hitcapsule set driver.
                 // @NOTE: This is also manually added.
@@ -132,12 +133,10 @@ void BT::system::_dev_animation_frame_action_editor()
                     eds.working_model_animator->get_anim_frame_action_data_handle()
                         .anim_state_idx_to_timeline_idx_map.at(afa_agent.working_anim_state_idx);
 
-                static_assert(false);
-                assert(false);  // @TODO: rewrite to `change_state_set()`
-                #if 0 // @TODO: rewrite to `change_state_set()`
                 // Set initial animator state.
-                eds.working_model_animator->change_state_idx(afa_agent.working_anim_state_idx);
-                #endif // 0 // @TODO: rewrite to `change_state_set()`
+                eds.working_model_animator->change_state_set(
+                    { .anim_state_indices = { afa_agent.working_anim_state_idx },
+                      .loop_final_state = false });
 
                 // Set editor state from animator.
                 auto const& anim_state{ eds.working_model_animator->get_animator_state(

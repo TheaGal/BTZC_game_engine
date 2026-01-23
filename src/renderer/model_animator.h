@@ -127,10 +127,14 @@ public:
         bool default_is_watching;
     };
 
+    static std::vector<Jump_queue_create>
+    make_jump_queue_create_list_from_anim_frame_action_controls(
+        anim_frame_action::Runtime_data_controls const& anim_frame_action_controls);
+
     void configure_anim_frame_action_controls(
-        std::vector<Jump_queue_create>&& jump_queues,
         anim_frame_action::Runtime_data_controls const* anim_frame_action_controls,
-        UUID resp_entity_uuid);
+        UUID resp_entity_uuid,
+        std::vector<Jump_queue_create> const& jump_queues);
 
     std::vector<anim_tmpl_types::Animator_state> const& get_animator_states() const;
     anim_tmpl_types::Animator_state const& get_animator_state(size_t idx) const;
@@ -284,7 +288,13 @@ private:
         bool default_is_watching;
         uint32_t priority;
         uint32_t default_priority;
-        std::vector<Animator_state_set const*> state_set_queue;
+
+        struct State_set_queue_item
+        {
+            Animator_state_set const* state_set;
+            float_t queue_expire_time;
+        };
+        std::vector<State_set_queue_item> state_set_queue;
     };
     std::unordered_map<std::string, Jump_queue_data> m_jump_queue_name_to_jump_queue_map;
 

@@ -594,6 +594,24 @@
             "state_name": "st_hold_guard_walking"
         }
     ],
+    "anim_state_set_jump_queues": [
+        {
+            "name": "jq_moving",
+            "default_is_watching": true
+        },
+        {
+            "name": "jq_jump",
+            "default_is_watching": true
+        },
+        {
+            "name": "jq_attack",
+            "default_is_watching": false
+        },
+        {
+            "name": "jq_parry",
+            "default_is_watching": false
+        }
+    ],
     "animated_model_name": "simple_combat_char",
     "hitcapsule_group_set_template": {
         "m_hitcapsule_grps": [

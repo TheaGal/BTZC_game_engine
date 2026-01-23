@@ -142,11 +142,14 @@ void create_staged_render_objects(Entity_container& entity_container,
             auto afa_ctrller{ reg.try_get<component::Anim_frame_action_controller>(entity) };
             if (afa_ctrller != nullptr)
             {   // Configure anim frame action data.
-                static_assert(false);  // @THEA: Implement vv below vv !!!!
+                auto const& afa_ctrller_ref{ anim_frame_action::Bank::get(
+                    afa_ctrller->anim_frame_action_controller_name) };
+
                 new_rend_obj.get_model_animator()->configure_anim_frame_action_controls(
-                    {}, // @TODO: @THEA: implement!!!!
-                    &anim_frame_action::Bank::get(afa_ctrller->anim_frame_action_controller_name),
-                    entity_container.find_entity_uuid(entity));
+                    &afa_ctrller_ref,
+                    entity_container.find_entity_uuid(entity),
+                    Model_animator::make_jump_queue_create_list_from_anim_frame_action_controls(
+                        afa_ctrller_ref));
 
                 // Add hitcapsule set driver.
                 reg.emplace_or_replace<component::Animator_driven_hitcapsule_set>(entity);
