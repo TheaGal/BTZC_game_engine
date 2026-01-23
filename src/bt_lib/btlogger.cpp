@@ -16,9 +16,7 @@
 using std::array;
 using std::atomic_uint32_t;
 using std::atomic_uint64_t;
-using std::lock_guard;
 using std::min;
-using std::mutex;
 using std::stringstream;
 using std::to_string;
 using std::vector;
@@ -216,8 +214,8 @@ void BT::logger::printe(Log_type type, string entry)
     if (check_show_type(type))
     {
         // Print out to stdout.
-        static mutex s_print_mutex;
-        lock_guard<mutex> lock{ s_print_mutex };
+        static std::mutex s_print_mutex;
+        std::lock_guard<std::mutex> lock{ s_print_mutex };
 
         for (auto& row : rows)
         {

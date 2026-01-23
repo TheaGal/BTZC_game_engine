@@ -1228,7 +1228,15 @@ while (running_game_loop)
                 - [x] Put it into this func that's asserted out.
             - [x] Implement pop_one_state_set() and emplace_jump_queue_state_set()
             - [ ] Test that the expired entries work correctly in pop_one_state_set()
-            - [ ] Implement changing state set func.
+            - [x] Implement changing state set func.
+                - I think this is done correctly.
+            - [x] Change state set state idx inside update()
+
+        - [ ] Remove `.speed` and `.loop` from anim state data structure.
+            - Looping is supposed to come from the new state-sets
+            - Speed should be coming from the model animator level.
+
+        - [ ] Make looping be based off whether is last state idx in the state-set and if the state-set says last anim should loop.
 
 
 

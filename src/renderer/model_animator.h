@@ -8,6 +8,7 @@
 #include <atomic>
 #include <functional>
 #include <limits>
+#include <mutex>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -251,9 +252,6 @@ private:
     std::vector<Model_joint_animation> const& m_model_animations;
     Model_skin const& m_model_skin;
 
-    // @TEMP: Super simple animator right here for now.
-    std::atomic_uint32_t m_current_state_idx{ 0 };
-
     // @NOTE: Times need to be atomic since `change_state_idx()` and `set_time()` can be called from
     //        any thread.
     using animator_time_t = typename std::atomic<float_t>;
@@ -300,6 +298,15 @@ private:
         std::vector<State_set_queue_item> state_set_queue;
     };
     std::unordered_map<std::string, Jump_queue_data> m_jump_queue_name_to_jump_queue_map;
+
+    struct State_set_state
+    {
+        std::mutex mutex;
+        Animator_state_set const* state_set{ nullptr };
+    } m_current_state_set;
+    std::atomic_uint32_t m_current_state_set_state_idx{ 0 };
+
+    void change_state_set_state_idx_goto_next(bool reset_count);
 
     anim_frame_action::Runtime_data_controls const* m_anim_frame_action_controls{ nullptr };
     anim_frame_action::Runtime_controllable_data m_anim_frame_action_data;

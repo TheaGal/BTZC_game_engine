@@ -42,8 +42,6 @@
 #include <string>
 #include <vector>
 
-using std::mutex;
-using std::lock_guard;
 using std::string;
 using std::stringstream;
 using std::vector;
@@ -157,8 +155,8 @@ BT::Renderer::Impl::Impl(Renderer& renderer, ImGui_renderer& imgui_renderer, Inp
     , m_imgui_renderer{ imgui_renderer }
     , m_input_handler{ input_handler }
 {
-    static mutex s_renderer_creation_mutex;
-    lock_guard lock{ s_renderer_creation_mutex };
+    static std::mutex s_renderer_creation_mutex;
+    std::lock_guard lock{ s_renderer_creation_mutex };
 
     static bool s_created{ false };
     assert(!s_created);

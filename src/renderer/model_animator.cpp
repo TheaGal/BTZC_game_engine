@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <limits>
 #include <map>
+#include <mutex>
 
 
 BT::Model_joint_animation_frame::Joint_local_transform
@@ -360,8 +361,12 @@ BT::Model_animator::get_animator_state_write_handle(size_t idx)
 
 void BT::Model_animator::change_state_set(Animator_state_set const& to_state_set)
 {
-    // @TODO: implement!!
-    assert(false);
+    {
+        std::lock_guard<std::mutex> lock{ m_current_state_set.mutex };
+        m_current_state_set.state_set = &to_state_set;
+    }
+
+    change_state_set_state_idx_goto_next(true);
 }
 
 //---- @TODO: USE vv BELOW vv !!!!
@@ -437,8 +442,15 @@ void BT::Model_animator::set_time(float_t time)
 }
 
 void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_time)
-{   // Get timer to work with.
+{   // Get current animator state idx.
+    uint32_t current_state_idx;
+    {
+        std::lock_guard<std::mutex> lock{ m_current_state_set.mutex };
+        current_state_idx =
+            m_current_state_set.state_set->anim_state_indices[m_current_state_set_state_idx.load()];
+    }
     animator_time_t& time_handle{ get_profile_time_handle(profile) };
+    auto const& anim_state{ m_animator_states[current_state_idx] };
 
     // @TODO: There needs to be some kind of time syncing between timers. Since the creation of
     //        setting triggers and variables to switch states, there will be issues when changing
@@ -448,8 +460,7 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
     //           the animator.
 
     // Tick forward.
-    auto const& anim_state{ m_animator_states[m_current_state_idx] };
-
+    //
     // First tick of update() will just setup the timer so that it always starts on 0,
     // instead of never starting on 0.
     // @NOTE: since SIMULATION_PROFILE floors for calc frame idx, set to start at 1/2 one frame to
@@ -464,6 +475,8 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
     // Process animator state transitions.
     if (profile == SIMULATION_PROFILE)
     {
+        bool state_set_changed{ false };
+
         // Get state-set transition from watching jump queues.
         Animator_state_set const* trans_state_set{ pop_one_state_set() };
 
@@ -476,7 +489,24 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
 
         // Perform actual state-set change!
         if (trans_state_set != nullptr)
+        {
             change_state_set(*trans_state_set);
+            state_set_changed = true;
+        }
+
+        // Check for end of anim case to move to next state idx.
+        // @NOTE: lesser priority than state-set change.
+        if (!state_set_changed)
+        {
+            auto const& model_anim{ m_model_animations[anim_state.animation_idx] };
+            if (model_anim.calc_frame_idx(time_handle.load(),
+                                          false,
+                                          Model_joint_animation::FLOOR) ==
+                model_anim.get_num_frames() - 1)
+            {
+                change_state_set_state_idx_goto_next(false);
+            }
+        }
     }
 
     // Process anim frame action controls.
@@ -485,7 +515,7 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
     {
         // Process anim frame action runtime.
         auto current_action_timeline_idx{
-            m_anim_frame_action_data.anim_state_idx_to_timeline_idx_map.at(m_current_state_idx)
+            m_anim_frame_action_data.anim_state_idx_to_timeline_idx_map.at(current_state_idx)
         };
         auto& afa_timeline{ m_anim_frame_action_controls->data
                                 .anim_frame_action_timelines[current_action_timeline_idx] };
@@ -496,7 +526,7 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
         float_t curr_time{ time_handle };
 
         // Get anim frame idx.
-        auto const& anim_state{ m_animator_states[m_current_state_idx] };
+        auto const& anim_state{ m_animator_states[current_state_idx] };
         auto const& current_anim_for_state{
             m_model_animations[anim_state.state_type == anim_state.SINGLE_ANIM
                                    ? anim_state.animation_idx
@@ -552,9 +582,15 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
 void BT::Model_animator::calc_anim_pose(Animator_timer_profile profile,
                                         bool root_motion_zeroing,
                                         std::vector<mat4s>& out_joint_matrices) const
-{
+{   // Get current animator state idx.
+    uint32_t current_state_idx;
+    {
+        std::lock_guard<std::mutex> lock{ *const_cast<std::mutex*>(&m_current_state_set.mutex) };
+        current_state_idx =
+            m_current_state_set.state_set->anim_state_indices[m_current_state_set_state_idx.load()];
+    }
     auto time{ get_profile_time_handle(profile).load() };
-    auto& anim_state{ m_animator_states[m_current_state_idx] };
+    auto& anim_state{ m_animator_states[current_state_idx] };
 
     switch (anim_state.state_type)
     {
@@ -614,9 +650,15 @@ bool BT::Model_animator::get_is_using_root_motion() const
 void BT::Model_animator::get_anim_floored_frame_pose(Animator_timer_profile profile,
                                                      bool root_motion_zeroing,
                                                      std::vector<mat4s>& out_joint_matrices) const
-{
+{   // Get current animator state idx.
+    uint32_t current_state_idx;
+    {
+        std::lock_guard<std::mutex> lock{ *const_cast<std::mutex*>(&m_current_state_set.mutex) };
+        current_state_idx =
+            m_current_state_set.state_set->anim_state_indices[m_current_state_set_state_idx.load()];
+    }
     auto time{ get_profile_time_handle(profile).load() };
-    auto& anim_state{ m_animator_states[m_current_state_idx] };
+    auto& anim_state{ m_animator_states[current_state_idx] };
 
     switch (anim_state.state_type)
     {
@@ -670,9 +712,15 @@ void BT::Model_animator::get_anim_floored_frame_pose(Animator_timer_profile prof
 
 void BT::Model_animator::get_anim_root_motion_delta_pos(Animator_timer_profile profile,
                                                         vec3& out_root_motion_delta_pos) const
-{
+{   // Get current animator state idx.
+    uint32_t current_state_idx;
+    {
+        std::lock_guard<std::mutex> lock{ *const_cast<std::mutex*>(&m_current_state_set.mutex) };
+        current_state_idx =
+            m_current_state_set.state_set->anim_state_indices[m_current_state_set_state_idx.load()];
+    }
     auto time{ get_profile_time_handle(profile).load() };
-    auto& anim_state{ m_animator_states[m_current_state_idx] };
+    auto& anim_state{ m_animator_states[current_state_idx] };
 
     switch (anim_state.state_type)
     {
@@ -958,6 +1006,41 @@ void BT::Model_animator::execute_command_code(cmd_code_t const& cmd_code,
     {
         BT_ERRORF("Executing cmd code not found: \"%s\"", cmd_code.cmd_name.c_str());
         assert(false);
+    }
+}
+
+void BT::Model_animator::change_state_set_state_idx_goto_next(bool reset_count)
+{
+    uint32_t from_state_copy{ m_current_state_set_state_idx.load() };
+    uint32_t to_state{ reset_count ? 0 : from_state_copy + 1 };
+
+    std::lock_guard<std::mutex> lock{ m_current_state_set.mutex };
+    uint32_t num_states_in_state_set = m_current_state_set.state_set->anim_state_indices.size();
+    assert(num_states_in_state_set >= 1);
+
+    if (!reset_count && to_state == num_states_in_state_set - 1)
+    {   // No transition.
+        // @NOTE: no transition for last transition since animator will detect whether to loop or
+        //   pause at end, with this function having no responsibility in that.
+        //     -Thea 2026/01/23
+        return;
+    }
+
+    // Do state idx transition.
+    if (!(to_state < num_states_in_state_set))
+    {
+        BT_ERRORF("Invalid state-set state idx: %u (when there are %u in the state-set)",
+                  to_state,
+                  num_states_in_state_set);
+        assert(false);
+        return;
+    }
+    if (m_current_state_set_state_idx
+            .compare_exchange_strong(from_state_copy,
+                                     to_state))
+    {   // Reset all time profiles.
+        set_time(-1.0f);  // -1 for showing timer is unset on first update().
+        m_sim_prev_frame = (uint32_t)-1;
     }
 }
 
