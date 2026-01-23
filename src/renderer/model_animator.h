@@ -230,6 +230,9 @@ public:
     /// Gets documentation for all control cmds.
     static std::vector<Ctrl_cmd_documentation> const& get_control_command_codes_documentation();
 
+    /// Accumulates delta time to update a timer for queue item expiring (runs in simulation loop).
+    static void advance_sim_timer(float_t delta_time);
+
     /// Adds a state set to a jump queue.
     void emplace_jump_queue_state_set(std::string const& jump_queue_name,
                                       Animator_state_set const& state_set,
@@ -292,7 +295,7 @@ private:
         struct State_set_queue_item
         {
             Animator_state_set const* state_set;
-            float_t queue_expire_time;
+            double_t queue_expire_time_absolute;
         };
         std::vector<State_set_queue_item> state_set_queue;
     };

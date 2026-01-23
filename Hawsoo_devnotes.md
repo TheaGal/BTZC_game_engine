@@ -1226,6 +1226,8 @@ while (running_game_loop)
                 - [x] Load the jump queue lists.
                     - Just have the strings and whether by default they should be watched, and use the priority-assignment feature of the func!!!
                 - [x] Put it into this func that's asserted out.
+            - [x] Implement pop_one_state_set() and emplace_jump_queue_state_set()
+            - [ ] Test that the expired entries work correctly in pop_one_state_set()
             - [ ] Implement changing state set func.
 
 

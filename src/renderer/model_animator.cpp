@@ -740,38 +740,6 @@ BT::Model_animator::get_anim_frame_action_data_handle()
     return m_anim_frame_action_data;
 }
 
-void BT::Model_animator::emplace_jump_queue_state_set(std::string const& jump_queue_name,
-                                                      Animator_state_set const& state_set,
-                                                      float_t queue_expire_time)
-{
-    // @TODO: implement!!
-    assert(false);
-}
-
-void BT::Model_animator::reset_jump_queue_watchlist()
-{   // Reset back to defaults.
-    for (auto& [_, jq] : m_jump_queue_name_to_jump_queue_map)
-    {
-        jq.is_watching = jq.default_is_watching;
-        jq.priority = jq.default_priority;
-    }
-}
-
-void BT::Model_animator::set_watch_jump_queue(std::string const& jump_queue_name,
-                                              bool watch,
-                                              uint32_t priority)
-{
-    auto& jq{ m_jump_queue_name_to_jump_queue_map.at(jump_queue_name) };
-    jq.is_watching = watch;
-    jq.priority = priority;
-}
-
-BT::Model_animator::Animator_state_set const* BT::Model_animator::pop_one_state_set()
-{
-    // @TODO: implement!!
-    assert(false);
-}
-
 std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animator::
     get_control_command_codes_documentation()
 {
@@ -853,6 +821,89 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
     };
 
     return k_all_cmd_docs;
+}
+
+namespace
+{
+    static std::atomic<double_t> s_sim_timer{ 0 };
+}
+
+void BT::Model_animator::advance_sim_timer(float_t delta_time)
+{
+    s_sim_timer += delta_time;
+}
+
+void BT::Model_animator::emplace_jump_queue_state_set(std::string const& jump_queue_name,
+                                                      Animator_state_set const& state_set,
+                                                      float_t queue_expire_time)
+{
+    m_jump_queue_name_to_jump_queue_map.at(jump_queue_name)
+        .state_set_queue.emplace_back(&state_set, s_sim_timer + queue_expire_time);
+}
+
+void BT::Model_animator::reset_jump_queue_watchlist()
+{   // Reset back to defaults.
+    for (auto& [_, jq] : m_jump_queue_name_to_jump_queue_map)
+    {
+        jq.is_watching = jq.default_is_watching;
+        jq.priority = jq.default_priority;
+    }
+}
+
+void BT::Model_animator::set_watch_jump_queue(std::string const& jump_queue_name,
+                                              bool watch,
+                                              uint32_t priority)
+{
+    auto& jq{ m_jump_queue_name_to_jump_queue_map.at(jump_queue_name) };
+    jq.is_watching = watch;
+    jq.priority = priority;
+}
+
+BT::Model_animator::Animator_state_set const* BT::Model_animator::pop_one_state_set()
+{
+    Animator_state_set const* state_set{ nullptr };
+
+    // Collect watching jump queues sorted by priority.
+    std::map<uint32_t, std::vector<Jump_queue_data::State_set_queue_item>*>
+        sorted_priority_to_state_set_queue;
+    for (auto& [_, jq] : m_jump_queue_name_to_jump_queue_map)
+    {
+        if (jq.is_watching)
+        {
+            bool success =
+                sorted_priority_to_state_set_queue.emplace(jq.priority, &jq.state_set_queue).second;
+            if (!success)
+            {
+                BT_ERRORF("Doubled-up priority level: %u", jq.priority);
+                assert(false);
+            }
+        }
+    }
+
+    // Fetch first non-expired state-set (first one is highest priority).
+    for (auto& [_, jq] : sorted_priority_to_state_set_queue)
+    {
+        size_t i{ 0 };
+        for (; i < jq->size(); i++)
+        {
+            if (s_sim_timer.load() < (*jq)[i].queue_expire_time_absolute)
+            {
+                state_set = (*jq)[i].state_set;
+                break;
+            }
+        }
+
+        // Remove expired queue items.
+        for (size_t j = 0; j < i; j++)
+            jq->erase(jq->begin());
+        assert(false);  // @TODO: @CHECK!!!
+
+        // Exit early if state set is found.
+        if (state_set != nullptr)
+            break;
+    }
+
+    return state_set;
 }
 
 // Please ignore the const_cast's below!! (^_^;)

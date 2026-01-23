@@ -323,6 +323,8 @@ int32_t main()
 
             // Pre-physics.
             BT::system::process_physics_object_lifetime();
+
+            BT::Model_animator::advance_sim_timer(main_physics_engine.k_simulation_delta_time);
             BT::system::tick_sim_char_mvt_animator();
 
             BT::system::character_broadcast_attack_msg_to_enemies();
