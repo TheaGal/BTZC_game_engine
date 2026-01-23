@@ -442,15 +442,9 @@ void BT::Model_animator::set_time(float_t time)
 }
 
 void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_time)
-{   // Get current animator state idx.
-    uint32_t current_state_idx;
-    {
-        std::lock_guard<std::mutex> lock{ m_current_state_set.mutex };
-        current_state_idx =
-            m_current_state_set.state_set->anim_state_indices[m_current_state_set_state_idx.load()];
-    }
+{
     animator_time_t& time_handle{ get_profile_time_handle(profile) };
-    auto const& anim_state{ m_animator_states[current_state_idx] };
+    auto const& anim_state{ m_animator_states[get_animator_state_idx_from_current_state_set()] };
 
     // @TODO: There needs to be some kind of time syncing between timers. Since the creation of
     //        setting triggers and variables to switch states, there will be issues when changing
@@ -582,15 +576,9 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
 void BT::Model_animator::calc_anim_pose(Animator_timer_profile profile,
                                         bool root_motion_zeroing,
                                         std::vector<mat4s>& out_joint_matrices) const
-{   // Get current animator state idx.
-    uint32_t current_state_idx;
-    {
-        std::lock_guard<std::mutex> lock{ *const_cast<std::mutex*>(&m_current_state_set.mutex) };
-        current_state_idx =
-            m_current_state_set.state_set->anim_state_indices[m_current_state_set_state_idx.load()];
-    }
+{
     auto time{ get_profile_time_handle(profile).load() };
-    auto& anim_state{ m_animator_states[current_state_idx] };
+    auto& anim_state{ m_animator_states[get_animator_state_idx_from_current_state_set()] };
 
     switch (anim_state.state_type)
     {
@@ -650,15 +638,9 @@ bool BT::Model_animator::get_is_using_root_motion() const
 void BT::Model_animator::get_anim_floored_frame_pose(Animator_timer_profile profile,
                                                      bool root_motion_zeroing,
                                                      std::vector<mat4s>& out_joint_matrices) const
-{   // Get current animator state idx.
-    uint32_t current_state_idx;
-    {
-        std::lock_guard<std::mutex> lock{ *const_cast<std::mutex*>(&m_current_state_set.mutex) };
-        current_state_idx =
-            m_current_state_set.state_set->anim_state_indices[m_current_state_set_state_idx.load()];
-    }
+{
     auto time{ get_profile_time_handle(profile).load() };
-    auto& anim_state{ m_animator_states[current_state_idx] };
+    auto& anim_state{ m_animator_states[get_animator_state_idx_from_current_state_set()] };
 
     switch (anim_state.state_type)
     {
@@ -712,15 +694,9 @@ void BT::Model_animator::get_anim_floored_frame_pose(Animator_timer_profile prof
 
 void BT::Model_animator::get_anim_root_motion_delta_pos(Animator_timer_profile profile,
                                                         vec3& out_root_motion_delta_pos) const
-{   // Get current animator state idx.
-    uint32_t current_state_idx;
-    {
-        std::lock_guard<std::mutex> lock{ *const_cast<std::mutex*>(&m_current_state_set.mutex) };
-        current_state_idx =
-            m_current_state_set.state_set->anim_state_indices[m_current_state_set_state_idx.load()];
-    }
+{
     auto time{ get_profile_time_handle(profile).load() };
-    auto& anim_state{ m_animator_states[current_state_idx] };
+    auto& anim_state{ m_animator_states[get_animator_state_idx_from_current_state_set()] };
 
     switch (anim_state.state_type)
     {
@@ -1042,6 +1018,12 @@ void BT::Model_animator::change_state_set_state_idx_goto_next(bool reset_count)
         set_time(-1.0f);  // -1 for showing timer is unset on first update().
         m_sim_prev_frame = (uint32_t)-1;
     }
+}
+
+uint32_t BT::Model_animator::get_animator_state_idx_from_current_state_set() const
+{
+    std::lock_guard<std::mutex> lock{ *const_cast<std::mutex*>(&m_current_state_set.mutex) };  // @HACK
+    return m_current_state_set.state_set->anim_state_indices[m_current_state_set_state_idx.load()];
 }
 
 BT::anim_tmpl_types::Animator_variable& BT::Model_animator::find_animator_variable(

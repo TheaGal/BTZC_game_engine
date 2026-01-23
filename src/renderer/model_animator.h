@@ -307,6 +307,7 @@ private:
     std::atomic_uint32_t m_current_state_set_state_idx{ 0 };
 
     void change_state_set_state_idx_goto_next(bool reset_count);
+    uint32_t get_animator_state_idx_from_current_state_set() const;
 
     anim_frame_action::Runtime_data_controls const* m_anim_frame_action_controls{ nullptr };
     anim_frame_action::Runtime_controllable_data m_anim_frame_action_data;

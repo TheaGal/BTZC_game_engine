@@ -1231,6 +1231,7 @@ while (running_game_loop)
             - [x] Implement changing state set func.
                 - I think this is done correctly.
             - [x] Change state set state idx inside update()
+            - [x] Add helper func for accessing proper anim state idx.
 
         - [ ] Remove `.speed` and `.loop` from anim state data structure.
             - Looping is supposed to come from the new state-sets
