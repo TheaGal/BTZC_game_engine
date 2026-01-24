@@ -302,7 +302,7 @@ private:
     struct State_set_state
     {
         std::mutex mutex;
-        Animator_state_set const* state_set{ nullptr };
+        Animator_state_set state_set;
     } m_current_state_set;
     std::atomic_uint32_t m_current_state_set_state_idx{ 0 };
 

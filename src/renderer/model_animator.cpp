@@ -361,9 +361,24 @@ BT::Model_animator::get_animator_state_write_handle(size_t idx)
 
 void BT::Model_animator::change_state_set(Animator_state_set const& to_state_set)
 {
+    if (to_state_set.anim_state_indices.empty())
+    {
+        BT_ERROR("Supplied state set number of states is 0.");
+        assert(false);
+        return;
+    }
     {
         std::lock_guard<std::mutex> lock{ m_current_state_set.mutex };
-        m_current_state_set.state_set = &to_state_set;
+        m_current_state_set.state_set = to_state_set;  // Make copy of state set.
+
+        BT_TRACEF("Inserted state-set (loop_final=%u):",
+                  m_current_state_set.state_set.loop_final_state);
+
+        for (size_t i = 0; i < m_current_state_set.state_set.anim_state_indices.size(); i++)
+        {
+            auto state_idx = m_current_state_set.state_set.anim_state_indices[i];
+            BT_TRACEF("   state-idx[%llu]=%u", i, state_idx);
+        }
     }
 
     change_state_set_state_idx_goto_next(true);
@@ -444,7 +459,8 @@ void BT::Model_animator::set_time(float_t time)
 void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_time)
 {
     animator_time_t& time_handle{ get_profile_time_handle(profile) };
-    auto const& anim_state{ m_animator_states[get_animator_state_idx_from_current_state_set()] };
+    auto current_state_idx{ get_animator_state_idx_from_current_state_set() };
+    auto const& anim_state{ m_animator_states[current_state_idx] };
 
     // @TODO: There needs to be some kind of time syncing between timers. Since the creation of
     //        setting triggers and variables to switch states, there will be issues when changing
@@ -991,7 +1007,7 @@ void BT::Model_animator::change_state_set_state_idx_goto_next(bool reset_count)
     uint32_t to_state{ reset_count ? 0 : from_state_copy + 1 };
 
     std::lock_guard<std::mutex> lock{ m_current_state_set.mutex };
-    uint32_t num_states_in_state_set = m_current_state_set.state_set->anim_state_indices.size();
+    uint32_t num_states_in_state_set = m_current_state_set.state_set.anim_state_indices.size();
     assert(num_states_in_state_set >= 1);
 
     if (!reset_count && to_state == num_states_in_state_set - 1)
@@ -1023,7 +1039,10 @@ void BT::Model_animator::change_state_set_state_idx_goto_next(bool reset_count)
 uint32_t BT::Model_animator::get_animator_state_idx_from_current_state_set() const
 {
     std::lock_guard<std::mutex> lock{ *const_cast<std::mutex*>(&m_current_state_set.mutex) };  // @HACK
-    return m_current_state_set.state_set->anim_state_indices[m_current_state_set_state_idx.load()];
+    return (m_current_state_set.state_set.anim_state_indices.empty()
+                ? 0
+                : m_current_state_set.state_set
+                      .anim_state_indices[m_current_state_set_state_idx.load()]);
 }
 
 BT::anim_tmpl_types::Animator_variable& BT::Model_animator::find_animator_variable(

@@ -1233,6 +1233,8 @@ while (running_game_loop)
             - [x] Change state set state idx inside update()
             - [x] Add helper func for accessing proper anim state idx.
 
+            - [x] Fix memory corruption with using state-set pointer.
+
         - [ ] Remove `.speed` and `.loop` from anim state data structure.
             - Looping is supposed to come from the new state-sets
             - Speed should be coming from the model animator level.
