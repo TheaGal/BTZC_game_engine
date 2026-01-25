@@ -1261,7 +1261,9 @@ while (running_game_loop)
 - [ ] Use ~~jumptable~~ jump-state-anim-state-queue (higher row has precedence in the check).
     > @NOTE: If there is a transition from the jumptable, no other conditions or mutations will be checked or adhered to in the sim tick.
     - [x] Some planning for how it's gonna work.
-    - [ ] jjj.
+    - [ ] Change ifc for adding state-sets (and also pre-configured state sets?)
+        - Maybe pretty deep interface?
+    - [ ] Change `tick_sim_char_mvt_animator.cpp` to use new state-set insertion interface.
 
 - [ ] Change player char to use jumptable.
     - [ ] Add movement thing in queue to do a "start-move" and then another for "stop-move".
