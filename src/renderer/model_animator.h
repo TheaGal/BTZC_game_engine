@@ -179,6 +179,9 @@ public:
     /// Sets timers for all timer profiles of the animator.
     void set_time(float_t time);
 
+    /// Sets whether animator is paused.
+    void set_paused(bool paused);
+
     /// Profile enum for which timing of the animator to base calculations off of.
     enum Animator_timer_profile
     {
@@ -270,6 +273,8 @@ private:
     animator_frame_t& get_profile_prev_frame_handle(Animator_timer_profile profile) const;
 
     animator_frame_t m_sim_prev_frame{ (uint32_t)-1 };  // -1 means unset.
+
+    std::atomic_bool m_is_paused{ false };
 
     bool m_is_using_root_motion;
 

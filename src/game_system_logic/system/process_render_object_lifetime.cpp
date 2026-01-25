@@ -138,6 +138,11 @@ void create_staged_render_objects(Entity_container& entity_container,
             new_rend_obj.set_deformed_model(std::move(deformed_model));
             new_rend_obj.set_model_animator(std::move(model_animator));
 
+            // Set first anim as default state-set.
+            assert(new_rend_obj.get_model_animator()->get_animator_states().size() >= 1);
+            new_rend_obj.get_model_animator()->change_state_set(
+                { .anim_state_indices = { 0 }, .loop_final_state = true });
+
             // Check for anim frame action controller configuration.
             auto afa_ctrller{ reg.try_get<component::Anim_frame_action_controller>(entity) };
             if (afa_ctrller != nullptr)

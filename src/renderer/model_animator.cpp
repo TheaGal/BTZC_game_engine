@@ -372,13 +372,13 @@ void BT::Model_animator::change_state_set(Animator_state_set const& to_state_set
         std::lock_guard<std::mutex> lock{ m_current_state_set.mutex };
         m_current_state_set.state_set = to_state_set;  // Make copy of state set.
 
-        BT_TRACEF("Inserted state-set (loop_final=%u):",
+        BT_WARNF("Inserted state-set (loop_final=%u):",
                   m_current_state_set.state_set.loop_final_state);
 
         for (size_t i = 0; i < m_current_state_set.state_set.anim_state_indices.size(); i++)
         {
             auto state_idx = m_current_state_set.state_set.anim_state_indices[i];
-            BT_TRACEF("   state-idx[%llu]=%u", i, state_idx);
+            BT_WARNF("   state-idx[%llu]=%u", i, state_idx);
         }
     }
 
@@ -456,6 +456,11 @@ void BT::Model_animator::set_time(float_t time)
 
     m_sim_time  = time_floored_to_frame + k_half_frame_offset;
     m_rend_time = time;
+}
+
+void BT::Model_animator::set_paused(bool paused)
+{
+    m_is_paused.store(paused);
 }
 
 void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_time)
@@ -592,7 +597,7 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
     // Tick forward.
     // @NOTE: if just performed a state transition earlier,
     //        do *not* change time so that frame 0 isn't skipped.  -Thea 2026/01/24
-    if (!performed_state_transition)
+    if (!m_is_paused.load() && !performed_state_transition)
     {
         time_handle += delta_time;
 

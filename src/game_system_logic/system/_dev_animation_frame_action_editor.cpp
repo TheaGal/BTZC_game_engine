@@ -84,6 +84,9 @@ void BT::system::_dev_animation_frame_action_editor()
 
                 rend_obj_pool.return_render_objs({ render_obj });
 
+                // Pause animator.
+                eds.working_model_animator->set_paused(true);
+
                 // Fill in animator state name to idx map.
                 auto const& anim_states{ eds.working_model_animator->get_animator_states() };
 
@@ -122,14 +125,6 @@ void BT::system::_dev_animation_frame_action_editor()
             if (afa_agent.working_anim_state_idx != eds.selected_anim_state_idx)
             {
                 afa_agent.working_anim_state_idx = eds.selected_anim_state_idx;
-
-                // Pause this animation state.
-                assert(false);
-                #if 0  // @TODO FIX THIS!
-                eds.working_model_animator
-                    ->get_animator_state_write_handle(afa_agent.working_anim_state_idx)
-                    .speed = 0.0f;
-                #endif // 0
 
                 // Set control region idx.
                 eds.selected_action_timeline_idx =
