@@ -480,7 +480,7 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
                        ? 0.5f / Model_joint_animation::k_frames_per_second
                        : 0);
     else
-        time_handle += delta_time * anim_state.speed;
+        time_handle += delta_time;
 
     // Process animator state transitions.
     if (profile == SIMULATION_PROFILE)

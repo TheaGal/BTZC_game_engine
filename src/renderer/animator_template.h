@@ -38,17 +38,12 @@ struct Animator_template
         };
         std::vector<Blend_anim> blend_anims;
 
-        float_t speed{ 1.0f };
-        bool    loop{ false };
-
         NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Animator_state,
                                                     state_name,
                                                     state_type,
                                                     anim_name,
                                                     blend_var,
-                                                    blend_anims,
-                                                    speed,
-                                                    loop);
+                                                    blend_anims);
     };
     std::vector<Animator_state> animator_states;
 

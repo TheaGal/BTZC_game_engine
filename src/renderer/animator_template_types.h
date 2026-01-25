@@ -32,9 +32,6 @@ struct Animator_state
         float_t value;
     };
     std::vector<Blend_anim> blend_anims;
-
-    float_t speed{ 1.0f };
-    bool loop{ true };
 };
 
 struct Animator_variable

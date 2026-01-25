@@ -93,9 +93,7 @@ void BT::Animator_template_bank::load_animator_template_into_animator(
                                      ? animator.get_model_animation_idx(temp_anim_state.anim_name)
                                      : (uint32_t)-1,
                                  temp_anim_state.blend_var,
-                                 std::move(blend_anims),
-                                 temp_anim_state.speed,
-                                 temp_anim_state.loop);
+                                 std::move(blend_anims));
     }
 
     // @TODO: Also include transition states in model animator.

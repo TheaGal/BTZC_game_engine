@@ -3,9 +3,7 @@
         {
             "state_name": "st_idle",
             "state_type": "single_anim",
-            "anim_name": "Idle",
-            "speed": 1.0,
-            "loop": true
+            "anim_name": "Idle"
         },
         {
             "state_name": "st_running",
@@ -32,121 +30,87 @@
                     "anim_name": "Running",
                     "value": 6.28319
                 }
-            ],
-            "speed": 1.0,
-            "loop": true
+            ]
         },
         {
             "state_name": "st_running_turnaround",
             "state_type": "single_anim",
-            "anim_name": "Running_turnaround",
-            "speed": 1.0,
-            "loop": false
+            "anim_name": "Running_turnaround"
         },
         {
             "state_name": "st_awareness_suspicion_begin",
             "state_type": "single_anim",
-            "anim_name": "Awareness_suspicion_begin",
-            "speed": 1.0,
-            "loop": false
+            "anim_name": "Awareness_suspicion_begin"
         },
         {
             "state_name": "st_awareness_suspicion_walking",
             "state_type": "single_anim",
-            "anim_name": "Awareness_suspicion_walking",
-            "speed": 1.0,
-            "loop": false
+            "anim_name": "Awareness_suspicion_walking"
         },
         {
             "state_name": "st_awareness_suspicion_end",
             "state_type": "single_anim",
-            "anim_name": "Awareness_suspicion_end",
-            "speed": 1.0,
-            "loop": false
+            "anim_name": "Awareness_suspicion_end"
         },
         {
             "state_name": "st_awareness_aware_begin",
             "state_type": "single_anim",
-            "anim_name": "Awareness_aware_begin",
-            "speed": 1.0,
-            "loop": false
+            "anim_name": "Awareness_aware_begin"
         },
         {
             "state_name": "st_jump",
             "state_type": "single_anim",
-            "anim_name": "Jump",
-            "speed": 1.0,
-            "loop": false
+            "anim_name": "Jump"
         },
         {
             "state_name": "st_fall",
             "state_type": "single_anim",
-            "anim_name": "Fall",
-            "speed": 1.0,
-            "loop": false
+            "anim_name": "Fall"
         },
         {
             "state_name": "st_attack_0",
             "state_type": "single_anim",
-            "anim_name": "Sample_attack",
-            "speed": 1.0,
-            "loop": false
+            "anim_name": "Sample_attack"
         },
         {
             "state_name": "st_cancel_parried_attack",
             "state_type": "single_anim",
-            "anim_name": "Cancel_parried_attack",
-            "speed": 1.0,
-            "loop": false
+            "anim_name": "Cancel_parried_attack"
         },
         {
             "state_name": "st_hurt_parry",
             "state_type": "single_anim",
-            "anim_name": "Hurt_parry_left",
-            "speed": 1.0,
-            "loop": false
+            "anim_name": "Hurt_parry_left"
         },
         {
             "state_name": "st_hurt_guard",
             "state_type": "single_anim",
-            "anim_name": "Hurt_guard",
-            "speed": 1.0,
-            "loop": false
+            "anim_name": "Hurt_guard"
         },
         {
             "state_name": "st_hurt_receive",
             "state_type": "single_anim",
-            "anim_name": "Hurt_receive",
-            "speed": 1.0,
-            "loop": false
+            "anim_name": "Hurt_receive"
         },
         {
             "state_name": "st_hurt_receive_from_back",
             "state_type": "single_anim",
-            "anim_name": "Hurt_receive_from_back",
-            "speed": 1.0,
-            "loop": false
+            "anim_name": "Hurt_receive_from_back"
         },
         {
             "state_name": "st_ready_parry",
             "state_type": "single_anim",
-            "anim_name": "Ready_parry",
-            "speed": 1.0,
-            "loop": false
+            "anim_name": "Ready_parry"
         },
         {
             "state_name": "st_ready_parry_from_running",
             "state_type": "single_anim",
-            "anim_name": "Ready_parry_from_running",
-            "speed": 1.0,
-            "loop": false
+            "anim_name": "Ready_parry_from_running"
         },
         {
             "state_name": "st_hold_guard_idle",
             "state_type": "single_anim",
-            "anim_name": "Hold_guard",
-            "speed": 1.0,
-            "loop": true
+            "anim_name": "Hold_guard"
         },
         {
             "state_name": "st_hold_guard_walking",
@@ -173,16 +137,12 @@
                     "anim_name": "Hold_guard_walking",
                     "value": 6.28319
                 }
-            ],
-            "speed": 1.0,
-            "loop": true
+            ]
         },
         {
             "state_name": "_DEBUG_STATE",
             "state_type": "single_anim",
-            "anim_name": "0_TPose",
-            "speed": 1.0,
-            "loop": true
+            "anim_name": "0_TPose"
         }
     ],
     "variables": [
