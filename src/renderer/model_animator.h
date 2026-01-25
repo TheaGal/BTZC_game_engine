@@ -151,6 +151,8 @@ public:
     };
 
     /// Changes state-set.
+    /// @note Public for being able to manually change state-sets instead of thru watching
+    ///       jump-queues.
     void change_state_set(Animator_state_set const& to_state_set);
 
     size_t get_model_animation_idx(std::string anim_name) const;
@@ -171,8 +173,8 @@ public:
     /// Gets a variable inside the state machine.
     float_t get_float_variable(std::string const& var_name) const;
 
-    /// Sets time for all timer profiles of the animator.
-    void set_time(float_t time);
+    /// Resets timers for all timer profiles of the animator.
+    void reset_time();
 
     /// Profile enum for which timing of the animator to base calculations off of.
     enum Animator_timer_profile

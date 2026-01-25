@@ -1242,6 +1242,17 @@ while (running_game_loop)
         - [x] Make looping be based off whether is last state idx in the state-set and if the state-set says last anim should loop.
             - [x] Whoops bug fix.
 
+        - [x] Rework the `update()` func for model_animator.
+            - [x] When changing state, set time to 0 instead of -1.
+                > Actually, make the settime(0) thing to set the sim timer to `0.5 / sim_frames_per_sec` to ensure no flooring issues.
+            - [x] Make the state transitions happen at the end.
+                - Order:
+                    1. (sim-only) Process current time's AFA stuff.
+                    2. Increment timer.
+                    3. (sim-only) Check for state changes.
+                > @NOTE: Ended up changing the order to 1 3 2 (and 2 runs only if 3 did not change any states).
+                > Why: checking if animator is at the last frame of an anim needs to happen before the timer is incremented, so 3 needs to run before 2.
+
 
 
 - [ ] Extra check: Assert that the length of animation clips for a blendtree state are all equal (since they all share the same AFA).

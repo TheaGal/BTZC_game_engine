@@ -5,6 +5,7 @@
 #include "btglm.h"
 #include "btlogger.h"
 #include "mesh.h"
+#include "physics_engine/physics_engine.h"
 #include "uuid/uuid.h"
 
 #include <algorithm>
@@ -384,18 +385,6 @@ void BT::Model_animator::change_state_set(Animator_state_set const& to_state_set
     change_state_set_state_idx_goto_next(true);
 }
 
-//---- @TODO: USE vv BELOW vv !!!!
-// void BT::Model_animator::change_state_idx(uint32_t to_state)
-// {
-//     uint32_t from_state_copy{ m_current_state_idx.load() };
-//     if (m_current_state_idx.compare_exchange_strong(from_state_copy,
-//                                                     to_state))
-//     {   // Reset all time profiles.
-//         set_time(-1.0f);  // -1 for showing timer is unset on first update().
-//         m_sim_prev_frame = (uint32_t)-1;
-//     }
-// }
-
 size_t BT::Model_animator::get_model_animation_idx(std::string anim_name) const
 {
     size_t idx{ (size_t)-1 };
@@ -450,76 +439,29 @@ float_t BT::Model_animator::get_float_variable(std::string const& var_name) cons
     return var_handle.var_value;
 }
 
-void BT::Model_animator::set_time(float_t time)
+void BT::Model_animator::reset_time()
 {
-    m_sim_time  = time;
-    m_rend_time = time;
+    // @NOTE: since SIMULATION_PROFILE floors for calc frame idx, set to start at 1/2 one frame to
+    //        prevent floating-pt error accumulation.  -Thea 2026/01/17
+    m_sim_time  = 0.5f / Model_joint_animation::k_frames_per_second;
+    m_sim_prev_frame = (uint32_t)-1;
+
+    m_rend_time = 0.0f;
 }
 
 void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_time)
-{
-    animator_time_t& time_handle{ get_profile_time_handle(profile) };
-    auto [anim_state_idx, anim_loop]{ get_animator_state_info_from_current_state_set() };
-    auto const& anim_state{ m_animator_states[anim_state_idx] };
-
-    // @TODO: There needs to be some kind of time syncing between timers. Since the creation of
+{   // @TODO: There needs to be some kind of time syncing between timers. Since the creation of
     //        setting triggers and variables to switch states, there will be issues when changing
     //        states.
     // @THOUGHT: Well, ig since `set_time()` will be setting all the timers, then it will start out
     //           synced up enough? Only the simulation loop is going to be changing states inside
     //           the animator.
 
-    // Tick forward.
-    //
-    // First tick of update() will just setup the timer so that it always starts on 0,
-    // instead of never starting on 0.
-    // @NOTE: since SIMULATION_PROFILE floors for calc frame idx, set to start at 1/2 one frame to
-    //        prevent floating-pt error accumulation.  -Thea 2026/01/17
-    if (time_handle < 0)
-        time_handle = (profile == SIMULATION_PROFILE
-                       ? 0.5f / Model_joint_animation::k_frames_per_second
-                       : 0);
-    else
-        time_handle += delta_time;
+    animator_time_t& time_handle{ get_profile_time_handle(profile) };
+    auto [anim_state_idx, anim_loop]{ get_animator_state_info_from_current_state_set() };
+    auto const& anim_state{ m_animator_states[anim_state_idx] };
 
-    // Process animator state transitions.
-    static_assert(false);  // @TODO: make this happen in a different order!!!?!?!?! See above as well where the time_handle branching ocurrs. There may be cahgenges needed!!!!!  -Thea
-    if (profile == SIMULATION_PROFILE)
-    {
-        bool state_set_changed{ false };
-
-        // Get state-set transition from watching jump queues.
-        Animator_state_set const* trans_state_set{ pop_one_state_set() };
-
-        // Erase all trigger activations!  (@NOTE: currently @UNUSED)
-        for (auto& anim_var : m_animator_variables)
-        if (anim_var.type == anim_tmpl_types::Animator_variable::TYPE_TRIGGER)
-        {
-            anim_var.var_value = 0;
-        }
-
-        // Perform actual state-set change!
-        if (trans_state_set != nullptr)
-        {
-            change_state_set(*trans_state_set);
-            state_set_changed = true;
-        }
-
-        // Check for end of anim case to move to next state idx.
-        // @NOTE: lesser priority than state-set change.
-        if (!state_set_changed)
-        {
-            auto const& model_anim{ m_model_animations[anim_state.animation_idx] };
-            if (model_anim.calc_frame_idx(time_handle.load(),
-                                          false,
-                                          Model_joint_animation::FLOOR) ==
-                model_anim.get_num_frames() - 1)
-            {
-                change_state_set_state_idx_goto_next(false);
-            }
-        }
-    }
-
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     // Process anim frame action controls.
     if (profile == SIMULATION_PROFILE &&
         m_anim_frame_action_controls != nullptr)
@@ -587,6 +529,76 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
 
         // Update prev frame.
         prev_frame_handle = frame_idx;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Process animator state transitions.
+    bool performed_state_transition{ false };
+
+    if (profile == SIMULATION_PROFILE)
+    {
+        bool state_set_changed{ false };
+
+        // Get state-set transition from watching jump queues.
+        Animator_state_set const* trans_state_set{ pop_one_state_set() };
+
+        // Perform actual state-set change!
+        if (trans_state_set != nullptr)
+        {
+            change_state_set(*trans_state_set);
+            state_set_changed = true;
+            performed_state_transition = true;
+        }
+
+        // Check for end of anim case to move to next state idx.
+        // @NOTE: lesser priority than state-set change.
+        if (!state_set_changed)
+        {
+            auto const& model_anim{ m_model_animations[anim_state.animation_idx] };
+
+            bool is_at_last_frame{ model_anim.calc_frame_idx(time_handle.load(),
+                                                             false,
+                                                             Model_joint_animation::FLOOR) ==
+                                   model_anim.get_num_frames() - 1 };
+            if (is_at_last_frame)
+            {
+                change_state_set_state_idx_goto_next(false);
+                performed_state_transition = true;
+            }
+        }
+
+        // vv (@NOTE: currently @UNUSED) vv
+
+        // Erase all trigger activations!
+        for (auto& anim_var : m_animator_variables)
+        if (anim_var.type == anim_tmpl_types::Animator_variable::TYPE_TRIGGER)
+        {
+            anim_var.var_value = 0;
+        }
+
+        // ^^ (@NOTE: currently @UNUSED) ^^
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Tick forward.
+    // @NOTE: if just performed a state transition earlier,
+    //        do *not* change time so that frame 0 isn't skipped.  -Thea 2026/01/24
+    if (!performed_state_transition)
+    {
+        time_handle += delta_time;
+
+        // @NOTE: time dilation in the simulation profile is not allowed.
+        if (profile == SIMULATION_PROFILE && delta_time != Physics_engine::k_simulation_delta_time)
+        {
+            BT_ERRORF(
+                "SIMULATION_PROFILE animator tick did not match simulation delta-time.  "
+                "k_simulation_delta_time=%0.6f  delta_time=%0.6f",
+                Physics_engine::k_simulation_delta_time,
+                delta_time);
+            assert(false);
+            abort();
+            return;
+        }
     }
 }
 
@@ -1035,8 +1047,7 @@ void BT::Model_animator::change_state_set_state_idx_goto_next(bool reset_count)
             .compare_exchange_strong(from_state_copy,
                                      to_state))
     {   // Reset all time profiles.
-        set_time(-1.0f);  // -1 for showing timer is unset on first update().
-        m_sim_prev_frame = (uint32_t)-1;
+        reset_time();
     }
 }
 
