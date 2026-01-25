@@ -316,7 +316,7 @@ private:
     } m_current_state_set;
     std::atomic_uint32_t m_current_state_set_state_idx{ 0 };
 
-    void change_state_set_state_idx_goto_next(bool reset_count);
+    bool change_state_set_state_idx_goto_next(bool reset_count);
 
     struct Pair_state_set_info
     {

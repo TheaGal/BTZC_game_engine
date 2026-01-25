@@ -382,7 +382,7 @@ void BT::Model_animator::change_state_set(Animator_state_set const& to_state_set
         }
     }
 
-    change_state_set_state_idx_goto_next(true);
+    (void)change_state_set_state_idx_goto_next(true);
 }
 
 size_t BT::Model_animator::get_model_animation_idx(std::string anim_name) const
@@ -497,7 +497,7 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
         auto const& current_anim_for_state{
             m_model_animations[anim_state.state_type == anim_state.SINGLE_ANIM
                                    ? anim_state.animation_idx
-                                   : anim_state.blend_anims.front().animation_idx]  // @TEMP.
+                                   : anim_state.blend_anims.front().animation_idx]
         };
         auto frame_idx{ current_anim_for_state.calc_frame_idx(curr_time,
                                                               anim_loop,
@@ -568,7 +568,11 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
         // @NOTE: lesser priority than state-set change.
         if (!state_set_changed)
         {
-            auto const& model_anim{ m_model_animations[anim_state.animation_idx] };
+            auto const& model_anim{
+                m_model_animations[anim_state.state_type == anim_state.SINGLE_ANIM
+                                       ? anim_state.animation_idx
+                                       : anim_state.blend_anims.front().animation_idx]
+            };
 
             bool is_at_last_frame{ model_anim.calc_frame_idx(time_handle.load(),
                                                              false,
@@ -576,8 +580,11 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
                                    model_anim.get_num_frames() - 1 };
             if (is_at_last_frame)
             {
-                change_state_set_state_idx_goto_next(false);
-                performed_state_transition = true;
+                auto success = change_state_set_state_idx_goto_next(false);
+                if (success)
+                {   // Performed a transition!
+                    performed_state_transition = true;
+                }
             }
         }
 
@@ -1041,7 +1048,7 @@ void BT::Model_animator::execute_command_code(cmd_code_t const& cmd_code,
     }
 }
 
-void BT::Model_animator::change_state_set_state_idx_goto_next(bool reset_count)
+bool BT::Model_animator::change_state_set_state_idx_goto_next(bool reset_count)
 {
     uint32_t from_state_copy{ m_current_state_set_state_idx.load() };
     uint32_t to_state{ reset_count ? 0 : from_state_copy + 1 };
@@ -1050,12 +1057,12 @@ void BT::Model_animator::change_state_set_state_idx_goto_next(bool reset_count)
     uint32_t num_states_in_state_set = m_current_state_set.state_set.anim_state_indices.size();
     assert(num_states_in_state_set >= 1);
 
-    if (!reset_count && to_state == num_states_in_state_set - 1)
+    if (!reset_count && to_state >= num_states_in_state_set)
     {   // No transition.
         // @NOTE: no transition for last transition since animator will detect whether to loop or
         //   pause at end, with this function having no responsibility in that.
         //     -Thea 2026/01/23
-        return;
+        return false;
     }
 
     // Do state idx transition.
@@ -1065,7 +1072,7 @@ void BT::Model_animator::change_state_set_state_idx_goto_next(bool reset_count)
                   to_state,
                   num_states_in_state_set);
         assert(false);
-        return;
+        return false;
     }
     if (m_current_state_set_state_idx
             .compare_exchange_strong(from_state_copy,
@@ -1073,6 +1080,9 @@ void BT::Model_animator::change_state_set_state_idx_goto_next(bool reset_count)
     {   // Reset all time profiles.
         reset_time();
     }
+
+    // Successful transition!
+    return true;
 }
 
 BT::Model_animator::Pair_state_set_info BT::Model_animator::

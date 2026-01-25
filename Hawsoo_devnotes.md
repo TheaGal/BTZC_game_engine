@@ -1267,6 +1267,9 @@ while (running_game_loop)
     - [ ] Add movement thing in queue to do a "start-move" and then another for "stop-move".
 
 - [ ] Extra check: Assert that the length of animation clips for a blendtree state are all equal (since they all share the same AFA).
+    > The reason why this is necessary is so that you can do `anim_state.blend_anims.front().animation_idx` in order to access the timing or frames of an animation within a blendtree.
+        > And if all anims in the blendtree don't match up then this method blows up into a hellish super-nightmare.
+    - [ ] Crash program if they are not equal.
 
 
 ## (return) Have CPU character attack, and have there be guard, parry, hurt-type interation.
