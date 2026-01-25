@@ -899,7 +899,9 @@ namespace
 }
 
 void BT::Model_animator::advance_sim_timer(float_t delta_time)
-{
+{  // @NOTE: this does not pay attention to time-scale (if it is ever implemented) because
+   //        `s_sim_timer` is used for expiring queue items, not for the actual animator.
+   //          -Thea 2026/01/25
     s_sim_timer += delta_time;
 }
 
@@ -959,14 +961,22 @@ BT::Model_animator::Animator_state_set const* BT::Model_animator::pop_one_state_
             if (s_sim_timer.load() < (*jq)[i].queue_expire_time_absolute)
             {
                 state_set = (*jq)[i].state_set;
+                i++;  // To ensure that this state-set gets deleted as well.
                 break;
             }
         }
 
+        size_t pre_delete_size{ jq->size() };
+
         // Remove expired queue items.
         for (size_t j = 0; j < i; j++)
             jq->erase(jq->begin());
-        assert(false);  // @TODO: @CHECK!!!
+
+        size_t post_delete_size{ jq->size() };
+        if (pre_delete_size != post_delete_size)
+        {
+            BT_WARNF("Jump-queue %u : size %llu -> %llu", _, pre_delete_size, post_delete_size);
+        }
 
         // Exit early if state set is found.
         if (state_set != nullptr)
