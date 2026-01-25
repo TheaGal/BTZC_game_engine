@@ -441,12 +441,21 @@ float_t BT::Model_animator::get_float_variable(std::string const& var_name) cons
 
 void BT::Model_animator::reset_time()
 {
+    set_time(0.0f);
+    m_sim_prev_frame = (uint32_t)-1;
+}
+
+void BT::Model_animator::set_time(float_t time)
+{
     // @NOTE: since SIMULATION_PROFILE floors for calc frame idx, set to start at 1/2 one frame to
     //        prevent floating-pt error accumulation.  -Thea 2026/01/17
-    m_sim_time  = 0.5f / Model_joint_animation::k_frames_per_second;
-    m_sim_prev_frame = (uint32_t)-1;
+    constexpr float_t k_half_frame_offset{ 0.5f / Model_joint_animation::k_frames_per_second };
 
-    m_rend_time = 0.0f;
+    auto time_floored_to_frame{ std::floor(time * Model_joint_animation::k_frames_per_second) /
+                                Model_joint_animation::k_frames_per_second };
+
+    m_sim_time  = time_floored_to_frame + k_half_frame_offset;
+    m_rend_time = time;
 }
 
 void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_time)

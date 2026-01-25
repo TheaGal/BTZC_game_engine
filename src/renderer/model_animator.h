@@ -176,6 +176,9 @@ public:
     /// Resets timers for all timer profiles of the animator.
     void reset_time();
 
+    /// Sets timers for all timer profiles of the animator.
+    void set_time(float_t time);
+
     /// Profile enum for which timing of the animator to base calculations off of.
     enum Animator_timer_profile
     {
