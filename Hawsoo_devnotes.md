@@ -1235,11 +1235,12 @@ while (running_game_loop)
 
             - [x] Fix memory corruption with using state-set pointer.
 
-        - [ ] Remove `.speed` and `.loop` from anim state data structure.
+        - [x] Remove `.speed` and `.loop` from anim state data structure.
             - Looping is supposed to come from the new state-sets
             - Speed should be coming from the model animator level.
 
-        - [ ] Make looping be based off whether is last state idx in the state-set and if the state-set says last anim should loop.
+        - [x] Make looping be based off whether is last state idx in the state-set and if the state-set says last anim should loop.
+            - [ ] Whoops bug fix.
 
 
 

@@ -299,7 +299,7 @@ private:
     };
     std::unordered_map<std::string, Jump_queue_data> m_jump_queue_name_to_jump_queue_map;
 
-    struct State_set_state
+    struct State_set_runtime_data
     {
         std::mutex mutex;
         Animator_state_set state_set;
@@ -307,7 +307,13 @@ private:
     std::atomic_uint32_t m_current_state_set_state_idx{ 0 };
 
     void change_state_set_state_idx_goto_next(bool reset_count);
-    uint32_t get_animator_state_idx_from_current_state_set() const;
+
+    struct Pair_state_set_info
+    {
+        uint32_t animator_state_idx;
+        bool loop;
+    };
+    Pair_state_set_info get_animator_state_info_from_current_state_set() const;
 
     anim_frame_action::Runtime_data_controls const* m_anim_frame_action_controls{ nullptr };
     anim_frame_action::Runtime_controllable_data m_anim_frame_action_data;

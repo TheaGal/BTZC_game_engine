@@ -459,8 +459,8 @@ void BT::Model_animator::set_time(float_t time)
 void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_time)
 {
     animator_time_t& time_handle{ get_profile_time_handle(profile) };
-    auto current_state_idx{ get_animator_state_idx_from_current_state_set() };
-    auto const& anim_state{ m_animator_states[current_state_idx] };
+    auto [anim_state_idx, anim_loop]{ get_animator_state_info_from_current_state_set() };
+    auto const& anim_state{ m_animator_states[anim_state_idx] };
 
     // @TODO: There needs to be some kind of time syncing between timers. Since the creation of
     //        setting triggers and variables to switch states, there will be issues when changing
@@ -483,6 +483,7 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
         time_handle += delta_time;
 
     // Process animator state transitions.
+    static_assert(false);  // @TODO: make this happen in a different order!!!?!?!?! See above as well where the time_handle branching ocurrs. There may be cahgenges needed!!!!!  -Thea
     if (profile == SIMULATION_PROFILE)
     {
         bool state_set_changed{ false };
@@ -525,7 +526,7 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
     {
         // Process anim frame action runtime.
         auto current_action_timeline_idx{
-            m_anim_frame_action_data.anim_state_idx_to_timeline_idx_map.at(current_state_idx)
+            m_anim_frame_action_data.anim_state_idx_to_timeline_idx_map.at(anim_state_idx)
         };
         auto& afa_timeline{ m_anim_frame_action_controls->data
                                 .anim_frame_action_timelines[current_action_timeline_idx] };
@@ -536,14 +537,14 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
         float_t curr_time{ time_handle };
 
         // Get anim frame idx.
-        auto const& anim_state{ m_animator_states[current_state_idx] };
+        auto const& anim_state{ m_animator_states[anim_state_idx] };
         auto const& current_anim_for_state{
             m_model_animations[anim_state.state_type == anim_state.SINGLE_ANIM
                                    ? anim_state.animation_idx
                                    : anim_state.blend_anims.front().animation_idx]  // @TEMP.
         };
         auto frame_idx{ current_anim_for_state.calc_frame_idx(curr_time,
-                                                              anim_state.loop,
+                                                              anim_loop,
                                                               Model_joint_animation::FLOOR) };
         auto num_frames{ current_anim_for_state.get_num_frames() };
 
@@ -558,8 +559,8 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
         //     (3) the prev frame and current frame are both at the last frame of non-looped anim, or
         //     (4) the prev frame is exactly 1 behind the current frame.
         if (!((prev_frame_idx == (uint32_t)-1 && frame_idx == 0) ||
-              (anim_state.loop && prev_frame_idx + 1 == num_frames && frame_idx == 0) ||
-              (!anim_state.loop && prev_frame_idx + 1 == num_frames && frame_idx + 1 == num_frames) ||
+              (anim_loop && prev_frame_idx + 1 == num_frames && frame_idx == 0) ||
+              (!anim_loop && prev_frame_idx + 1 == num_frames && frame_idx + 1 == num_frames) ||
               (prev_frame_idx + 1 == frame_idx)))
         {
             BT_ERRORF(
@@ -594,7 +595,8 @@ void BT::Model_animator::calc_anim_pose(Animator_timer_profile profile,
                                         std::vector<mat4s>& out_joint_matrices) const
 {
     auto time{ get_profile_time_handle(profile).load() };
-    auto& anim_state{ m_animator_states[get_animator_state_idx_from_current_state_set()] };
+    auto [anim_state_idx, anim_loop]{ get_animator_state_info_from_current_state_set() };
+    auto const& anim_state{ m_animator_states[anim_state_idx] };
 
     switch (anim_state.state_type)
     {
@@ -603,7 +605,7 @@ void BT::Model_animator::calc_anim_pose(Animator_timer_profile profile,
         auto joint_local_transforms{
             m_model_animations[anim_state.animation_idx].calc_joint_local_transforms_interpolated(
                 time,
-                anim_state.loop,
+                anim_loop,
                 root_motion_zeroing)
         };
         m_model_animations[anim_state.animation_idx].calc_joint_matrices(joint_local_transforms,
@@ -625,7 +627,7 @@ void BT::Model_animator::calc_anim_pose(Animator_timer_profile profile,
             joint_trans_sets[i] =
                 m_model_animations[anim_idx].calc_joint_local_transforms_interpolated(
                     time,
-                    anim_state.loop,
+                    anim_loop,
                     root_motion_zeroing);
         }
 
@@ -656,7 +658,8 @@ void BT::Model_animator::get_anim_floored_frame_pose(Animator_timer_profile prof
                                                      std::vector<mat4s>& out_joint_matrices) const
 {
     auto time{ get_profile_time_handle(profile).load() };
-    auto& anim_state{ m_animator_states[get_animator_state_idx_from_current_state_set()] };
+    auto [anim_state_idx, anim_loop]{ get_animator_state_info_from_current_state_set() };
+    auto const& anim_state{ m_animator_states[anim_state_idx] };
 
     switch (anim_state.state_type)
     {
@@ -665,7 +668,7 @@ void BT::Model_animator::get_anim_floored_frame_pose(Animator_timer_profile prof
         auto joint_local_transforms{
             m_model_animations[anim_state.animation_idx].calc_joint_local_transforms_floored(
                 time,
-                anim_state.loop,
+                anim_loop,
                 root_motion_zeroing)
         };
         m_model_animations[anim_state.animation_idx].calc_joint_matrices(joint_local_transforms,
@@ -687,7 +690,7 @@ void BT::Model_animator::get_anim_floored_frame_pose(Animator_timer_profile prof
             joint_trans_sets[i] =
                 m_model_animations[anim_idx].calc_joint_local_transforms_floored(
                     time,
-                    anim_state.loop,
+                    anim_loop,
                     root_motion_zeroing);
         }
 
@@ -712,7 +715,8 @@ void BT::Model_animator::get_anim_root_motion_delta_pos(Animator_timer_profile p
                                                         vec3& out_root_motion_delta_pos) const
 {
     auto time{ get_profile_time_handle(profile).load() };
-    auto& anim_state{ m_animator_states[get_animator_state_idx_from_current_state_set()] };
+    auto [anim_state_idx, anim_loop]{ get_animator_state_info_from_current_state_set() };
+    auto const& anim_state{ m_animator_states[anim_state_idx] };
 
     switch (anim_state.state_type)
     {
@@ -720,7 +724,7 @@ void BT::Model_animator::get_anim_root_motion_delta_pos(Animator_timer_profile p
     {   // Get single anim root motion.
         uint32_t frame_idx{ m_model_animations[anim_state.animation_idx].calc_frame_idx(
             time,
-            anim_state.loop,
+            anim_loop,
             Model_joint_animation::FLOOR) };
         m_model_animations[anim_state.animation_idx].get_root_motion_delta_pos_at_frame(
             frame_idx,
@@ -742,7 +746,7 @@ void BT::Model_animator::get_anim_root_motion_delta_pos(Animator_timer_profile p
 
             uint32_t frame_idx{ m_model_animations[anim_idx].calc_frame_idx(
                 time,
-                anim_state.loop,
+                anim_loop,
                 Model_joint_animation::FLOOR) };
             m_model_animations[anim_idx].get_root_motion_delta_pos_at_frame(
                 frame_idx,
@@ -1036,13 +1040,16 @@ void BT::Model_animator::change_state_set_state_idx_goto_next(bool reset_count)
     }
 }
 
-uint32_t BT::Model_animator::get_animator_state_idx_from_current_state_set() const
+BT::Model_animator::Pair_state_set_info BT::Model_animator::
+    get_animator_state_info_from_current_state_set() const
 {
     std::lock_guard<std::mutex> lock{ *const_cast<std::mutex*>(&m_current_state_set.mutex) };  // @HACK
-    return (m_current_state_set.state_set.anim_state_indices.empty()
-                ? 0
-                : m_current_state_set.state_set
-                      .anim_state_indices[m_current_state_set_state_idx.load()]);
+    return (
+        m_current_state_set.state_set.anim_state_indices.empty()
+            ? Pair_state_set_info{ 0, false }
+            : Pair_state_set_info{ m_current_state_set.state_set
+                                       .anim_state_indices[m_current_state_set_state_idx.load()],
+                                   m_current_state_set.state_set.loop_final_state });
 }
 
 BT::anim_tmpl_types::Animator_variable& BT::Model_animator::find_animator_variable(
