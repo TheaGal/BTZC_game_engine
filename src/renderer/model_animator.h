@@ -301,7 +301,7 @@ private:
 
     struct State_set_runtime_data
     {
-        std::mutex mutex;
+        mutable std::mutex mutex;
         Animator_state_set state_set;
     } m_current_state_set;
     std::atomic_uint32_t m_current_state_set_state_idx{ 0 };

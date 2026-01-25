@@ -1043,13 +1043,23 @@ void BT::Model_animator::change_state_set_state_idx_goto_next(bool reset_count)
 BT::Model_animator::Pair_state_set_info BT::Model_animator::
     get_animator_state_info_from_current_state_set() const
 {
-    std::lock_guard<std::mutex> lock{ *const_cast<std::mutex*>(&m_current_state_set.mutex) };  // @HACK
-    return (
-        m_current_state_set.state_set.anim_state_indices.empty()
-            ? Pair_state_set_info{ 0, false }
-            : Pair_state_set_info{ m_current_state_set.state_set
-                                       .anim_state_indices[m_current_state_set_state_idx.load()],
-                                   m_current_state_set.state_set.loop_final_state });
+    std::lock_guard<std::mutex> lock{ m_current_state_set.mutex };
+
+    auto const& sss_indices{ m_current_state_set.state_set.anim_state_indices };
+
+    // In case of bad/unset state-set, return invalid info.
+    if (sss_indices.empty())
+    {
+        BT_WARN("Empty state-set detected!");
+        return { .animator_state_idx = (uint32_t)-1,
+                 .loop = false };
+    }
+
+    auto cur_sss_idx{ m_current_state_set_state_idx.load() };
+    auto is_final_state{ cur_sss_idx == sss_indices.size() - 1 };
+
+    return { .animator_state_idx = sss_indices[cur_sss_idx],
+             .loop = is_final_state && m_current_state_set.state_set.loop_final_state };
 }
 
 BT::anim_tmpl_types::Animator_variable& BT::Model_animator::find_animator_variable(
