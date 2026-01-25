@@ -1239,6 +1239,10 @@ while (running_game_loop)
             - Looping is supposed to come from the new state-sets
             - Speed should be coming from the model animator level.
 
+            > @THOUGHT: there really isn't a way to have an animator speed since the AFA sim profile would need to be ticking a lot quicker than 60hz.
+                > There probaby could be a way to dilate time, but it would be something like running two ticks in one of the animator depending on the speed.
+                    > Honestly, doable. But no reason to implement this.
+
         - [x] Make looping be based off whether is last state idx in the state-set and if the state-set says last anim should loop.
             - [x] Whoops bug fix.
 
@@ -1254,10 +1258,6 @@ while (running_game_loop)
                 > Why: checking if animator is at the last frame of an anim needs to happen before the timer is incremented, so 3 needs to run before 2.
 
 
-
-- [ ] Extra check: Assert that the length of animation clips for a blendtree state are all equal (since they all share the same AFA).
-
-
 - [ ] Use ~~jumptable~~ jump-state-anim-state-queue (higher row has precedence in the check).
     > @NOTE: If there is a transition from the jumptable, no other conditions or mutations will be checked or adhered to in the sim tick.
     - [x] Some planning for how it's gonna work.
@@ -1265,6 +1265,8 @@ while (running_game_loop)
 
 - [ ] Change player char to use jumptable.
     - [ ] Add movement thing in queue to do a "start-move" and then another for "stop-move".
+
+- [ ] Extra check: Assert that the length of animation clips for a blendtree state are all equal (since they all share the same AFA).
 
 
 ## (return) Have CPU character attack, and have there be guard, parry, hurt-type interation.
