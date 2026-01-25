@@ -1209,10 +1209,10 @@ while (running_game_loop)
                 - TTD: Items in these queues expire after a certain amount of time, but that provides a buffer too.
                     - The "queues" are 1 item long, but anything that gets inserted, regardless of whether the existing 'anim state set' is expired or not, it will be overwritten. (that makes this just a variable you can set ig).
     
-    - [ ] IMPLEMENTATION of "IS THERE A MIDDLE GROUND.."
+    - [x] IMPLEMENTATION of "IS THERE A MIDDLE GROUND.."
         - [x] Initial gut out.
         - [x] Write new data structures.
-        - [ ] Implement new jump queues when configuring animator ctrl AFA information.
+        - [x] Implement new jump queues when configuring animator ctrl AFA information.
             - [x] Marked everything w `static_assert()` where it needed implemented.
             > Does there need to be some kind of default jump queue list?
                 > Is this a crutch or... maybe that's what should be there in the .btafa file?
@@ -1227,7 +1227,7 @@ while (running_game_loop)
                     - Just have the strings and whether by default they should be watched, and use the priority-assignment feature of the func!!!
                 - [x] Put it into this func that's asserted out.
             - [x] Implement pop_one_state_set() and emplace_jump_queue_state_set()
-            - [ ] Test that the expired entries work correctly in pop_one_state_set()
+            - [x] Test that the expired entries work correctly in pop_one_state_set()
             - [x] Implement changing state set func.
                 - I think this is done correctly.
             - [x] Change state set state idx inside update()
@@ -1267,6 +1267,9 @@ while (running_game_loop)
     - [ ] Add movement thing in queue to do a "start-move" and then another for "stop-move".
 
 - [ ] Extra check: Assert that the length of animation clips for a blendtree state are all equal (since they all share the same AFA).
+    > The reason why this is necessary is so that you can do `anim_state.blend_anims.front().animation_idx` in order to access the timing or frames of an animation within a blendtree.
+        > And if all anims in the blendtree don't match up then this method blows up into a hellish super-nightmare.
+    - [ ] Crash program if they are not equal.
 
 
 ## (return) Have CPU character attack, and have there be guard, parry, hurt-type interation.
