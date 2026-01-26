@@ -105,7 +105,7 @@ struct Character_mvt_animated_state
 
             AS_NOT_IMPLEMENTED_YET
         };
-        Char_mvt_anim_state anim_state{ AS_GROUNDED_IDLE };
+        Char_mvt_anim_state next_anim_state{ AS_GROUNDED_IDLE };
         Char_mvt_anim_state prev_anim_state{ AS_UNDEFINED };
 
         // @ANIMATOR_REFACTOR vv

@@ -54,7 +54,8 @@ void BT::system::tick_sim_char_mvt_animator()
                 if (char_mvt_anim_state.write_to_animator_data._var)                                \
                     animator->set_trigger_variable(#_var);                                          \
                 char_mvt_anim_state.write_to_animator_data._var = false;
-
+            // //--------------------------------------------------------------------------------------
+            // @ANIMATOR_REFACTOR: the vv below vv is removed for this refactor.
             // @THEA: @TEMP: @REFACTOR: for refactor into watch_jump_queue() ctrl cmd.
             // SET_ANIMATOR_BOOL_VAR(is_moving)
             // SET_ANIMATOR_BOOL_VAR(is_locked_on)
@@ -62,7 +63,7 @@ void BT::system::tick_sim_char_mvt_animator()
             // SET_ANIMATOR_BOOL_VAR(is_suspicious_approaching)
             // SET_ANIMATOR_TRIGGER(on_unaware)
             // SET_ANIMATOR_TRIGGER(on_aware)
-            // SET_ANIMATOR_FLOAT_VAR(mvt_facing_angle)
+            SET_ANIMATOR_FLOAT_VAR(mvt_facing_angle)  // <- Except this one!!!!!
             // SET_ANIMATOR_TRIGGER(on_turnaround)
             // SET_ANIMATOR_BOOL_VAR(is_grounded)
             // SET_ANIMATOR_TRIGGER(on_jump)
@@ -74,10 +75,51 @@ void BT::system::tick_sim_char_mvt_animator()
             // SET_ANIMATOR_TRIGGER(on_receive_hurt_from_back)
             // SET_ANIMATOR_TRIGGER(on_guard)
             // SET_ANIMATOR_BOOL_VAR(is_guarding)
-
+            // //--------------------------------------------------------------------------------------
             #undef SET_ANIMATOR_BOOL_VAR
             #undef SET_ANIMATOR_FLOAT_VAR
             #undef SET_ANIMATOR_TRIGGER
+
+            // Add jump queue state-sets.
+            auto const& next_anim_state{
+                char_mvt_anim_state.write_to_animator_data.next_anim_state
+            };
+            auto const& prev_anim_state{
+                char_mvt_anim_state.write_to_animator_data.prev_anim_state
+            };
+
+            switch (char_mvt_anim_state.write_to_animator_data.next_anim_state)
+            {
+                using Char_mvt_anim_state = component::Character_mvt_animated_state::
+                    Write_to_animator_data::Char_mvt_anim_state;
+
+                case Char_mvt_anim_state::AS_GROUNDED_IDLE:
+                    if (next_anim_state != prev_anim_state)
+                    {
+                        animator->emplace_jump_queue_state_set(
+                            "jq_grnd_mvt",
+                            { .anim_state_indices = { animator->get_animator_state_idx("st_idle") },
+                              .loop_final_state = true },
+                            1);
+                    }
+                    break;
+
+                case Char_mvt_anim_state::AS_GROUNDED_MOVE:
+                    if (next_anim_state != prev_anim_state)
+                    {
+                        animator->emplace_jump_queue_state_set(
+                            "jq_grnd_mvt",
+                            { .anim_state_indices = { animator->get_animator_state_idx("st_running") },
+                              .loop_final_state = true },
+                            1);
+                    }
+                    break;
+
+                // Anim state not implemented!
+                default: assert(false); break;
+            }
+
+            char_mvt_anim_state.write_to_animator_data.prev_anim_state = next_anim_state;
 
             // Update animator.
             animator->update(Model_animator::SIMULATION_PROFILE,

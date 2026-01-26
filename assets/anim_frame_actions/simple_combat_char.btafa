@@ -596,7 +596,7 @@
     ],
     "anim_state_set_jump_queues": [
         {
-            "name": "jq_moving",
+            "name": "jq_grnd_mvt",
             "default_is_watching": true
         },
         {

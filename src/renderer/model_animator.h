@@ -138,6 +138,7 @@ public:
         std::vector<Jump_queue_create> const& jump_queues);
 
     std::vector<anim_tmpl_types::Animator_state> const& get_animator_states() const;
+    uint32_t get_animator_state_idx(std::string const& state_name) const;
     anim_tmpl_types::Animator_state const& get_animator_state(size_t idx) const;
     anim_tmpl_types::Animator_state& get_animator_state_write_handle(size_t idx);
 
@@ -302,7 +303,7 @@ private:
 
         struct State_set_queue_item
         {
-            Animator_state_set const* state_set;
+            Animator_state_set const state_set;
             double_t queue_expire_time_absolute;
         };
         std::vector<State_set_queue_item> state_set_queue;

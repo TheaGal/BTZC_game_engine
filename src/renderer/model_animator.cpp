@@ -348,6 +348,28 @@ BT::Model_animator::get_animator_states() const
     return m_animator_states;
 }
 
+uint32_t BT::Model_animator::get_animator_state_idx(std::string const& state_name) const
+{
+    uint32_t idx{ (uint32_t)-1 };
+
+    for (uint32_t i = 0; i < m_animator_states.size(); i++)
+        if (m_animator_states[i].state_name == state_name)
+        {   // Found name.
+            idx = i;
+            break;
+        }
+
+    if (idx == (uint32_t)-1)
+    {
+        BT_ERRORF(
+            "Could not find animator state \"%s\". Aborting program.",
+            state_name.c_str());
+        abort();
+    }
+
+    return idx;
+}
+
 BT::anim_tmpl_types::Animator_state const&
 BT::Model_animator::get_animator_state(size_t idx) const
 {
@@ -917,7 +939,7 @@ void BT::Model_animator::emplace_jump_queue_state_set(std::string const& jump_qu
                                                       float_t queue_expire_time)
 {
     m_jump_queue_name_to_jump_queue_map.at(jump_queue_name)
-        .state_set_queue.emplace_back(&state_set, s_sim_timer + queue_expire_time);
+        .state_set_queue.emplace_back(state_set, s_sim_timer + queue_expire_time);
 }
 
 void BT::Model_animator::reset_jump_queue_watchlist()
@@ -967,7 +989,7 @@ BT::Model_animator::Animator_state_set const* BT::Model_animator::pop_one_state_
         {
             if (s_sim_timer.load() < (*jq)[i].queue_expire_time_absolute)
             {
-                state_set = (*jq)[i].state_set;
+                state_set = (*jq)[i].state_set;  // @TODO: START HERE!!! @NOTE: I think that it could be good if the state-sets are copied into here, but there needs to be some way of having a null case, or else I could feel a bit scawwed  -Thea 2026/01/25
                 i++;  // To ensure that this state-set gets deleted as well.
                 break;
             }
