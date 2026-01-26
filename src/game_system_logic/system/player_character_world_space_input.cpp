@@ -116,11 +116,11 @@ void BT::system::player_character_world_space_input()
 
         // On attack trigger.
         bool attack_pressed{ input_state.attack.val };
-        if (camera.is_follow_orbit() &&
-            can_attack_exit &&
-            !char_mvt_anim_state->state.prev_attack_pressed &&
-            attack_pressed)
-            char_mvt_anim_state->write_to_animator_data.on_attack = true;
+        // @ANIMATOR_REFACTOR if (camera.is_follow_orbit() &&
+        // @ANIMATOR_REFACTOR     can_attack_exit &&
+        // @ANIMATOR_REFACTOR     !char_mvt_anim_state->state.prev_attack_pressed &&
+        // @ANIMATOR_REFACTOR     attack_pressed)
+        // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_attack = true;
         char_mvt_anim_state->state.prev_attack_pressed = attack_pressed;
 
         // On guard trigger and is-guarding bool.
@@ -133,8 +133,8 @@ void BT::system::player_character_world_space_input()
 
             char_mvt_anim_state->state.prev_guard_pressed = guard_pressed;
         }
-        char_mvt_anim_state->write_to_animator_data.on_guard = on_guard;
-        char_mvt_anim_state->write_to_animator_data.is_guarding = is_guarding;
+        // @ANIMATOR_REFACTOR char_mvt_anim_state->write_to_animator_data.on_guard = on_guard;
+        // @ANIMATOR_REFACTOR char_mvt_anim_state->write_to_animator_data.is_guarding = is_guarding;
 
         // End of first iteration.
         is_first = false;

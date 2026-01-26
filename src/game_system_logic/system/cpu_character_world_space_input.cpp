@@ -43,7 +43,7 @@ void BT::system::cpu_character_world_space_input()
         case component::CPU_enemy_awareness::State::UNAWARE:
             if (enter_state)
             {   // Trigger new state entered.
-                char_mvt_anim_state.write_to_animator_data.on_unaware = true;
+                // @ANIMATOR_REFACTOR char_mvt_anim_state.write_to_animator_data.on_unaware = true;
             }
 
             // Stand still.
@@ -54,7 +54,7 @@ void BT::system::cpu_character_world_space_input()
         {
             if (enter_state)
             {   // Trigger new state entered.
-                char_mvt_anim_state.write_to_animator_data.on_suspicion = true;
+                // @ANIMATOR_REFACTOR char_mvt_anim_state.write_to_animator_data.on_suspicion = true;
 
                 // Stand still (for just the enter state tick so that animator has a tick to update
                 // the animator state to a different animation than the idle anim which will do an
@@ -75,9 +75,9 @@ void BT::system::cpu_character_world_space_input()
 
                 constexpr float_t k_close_enough_dist{ 0.1f };
                 constexpr float_t k_close_enough_dist2{ k_close_enough_dist * k_close_enough_dist };
-                char_mvt_anim_state.write_to_animator_data.is_suspicious_approaching =
-                    (glm_vec3_norm2(char_ws_input.ws_flat_clamped_input.raw) >
-                     k_close_enough_dist2);
+                // @ANIMATOR_REFACTOR char_mvt_anim_state.write_to_animator_data.is_suspicious_approaching =
+                // @ANIMATOR_REFACTOR     (glm_vec3_norm2(char_ws_input.ws_flat_clamped_input.raw) >
+                // @ANIMATOR_REFACTOR      k_close_enough_dist2);
 
                 // Stand still (put this at the end so that other vars can take advantage of the
                 // desired movement vector).
@@ -90,7 +90,7 @@ void BT::system::cpu_character_world_space_input()
         case component::CPU_enemy_awareness::State::AWARE:
             if (enter_state)
             {   // Trigger new state entered.
-                char_mvt_anim_state.write_to_animator_data.on_aware = true;
+                // @ANIMATOR_REFACTOR char_mvt_anim_state.write_to_animator_data.on_aware = true;
             }
             else
             {   // @TEMP: @DEBUG: Keep attack anim up!
@@ -132,7 +132,7 @@ void BT::system::cpu_character_world_space_input()
                             if (flat_distance2 < k_max_flat_distance * k_max_flat_distance &&
                                 ang_diff > k_min_ang_diff)
                             {   // Accept this msg and attempt to parry attack.
-                                char_mvt_anim_state.write_to_animator_data.on_guard = true;
+                                // @ANIMATOR_REFACTOR char_mvt_anim_state.write_to_animator_data.on_guard = true;
 
                                 // // @DEBUG: Just print out what's up.
                                 // BT_TRACEF("Accept msg: flat_dist:%.3f \tang_diff(deg):%.3f",

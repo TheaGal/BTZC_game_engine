@@ -156,10 +156,10 @@ void process_attack_interaction(Entity_container& entity_container,
                 reg.try_get<component::Character_mvt_animated_state>(offender_parent_ecs_entity) };
             offender_char_mvt_anim_state)
         {
-            if (can_cancel_attack_w_parry && is_parry_active)
-                // If defender is parrying and can cancel the attack, cancel attack from being
-                // parried.
-                offender_char_mvt_anim_state->write_to_animator_data.on_cancel_parried = true;
+            // @ANIMATOR_REFACTOR if (can_cancel_attack_w_parry && is_parry_active)
+            // @ANIMATOR_REFACTOR     // If defender is parrying and can cancel the attack, cancel attack from being
+            // @ANIMATOR_REFACTOR     // parried.
+            // @ANIMATOR_REFACTOR     offender_char_mvt_anim_state->write_to_animator_data.on_cancel_parried = true;
         }
 
         // Get parent of defender.
@@ -211,15 +211,15 @@ void process_attack_interaction(Entity_container& entity_container,
                 defender_parent_ecs_entity) };
             char_mvt_anim_state)
         {
-            if (turn_to_face_away)
-                // Parry/guard undoable when attacked from behind, so just do hurt-forward anim.
-                char_mvt_anim_state->write_to_animator_data.on_receive_hurt_from_back = true;
-            else if (is_parry_active)
-                char_mvt_anim_state->write_to_animator_data.on_parry_hurt = true;
-            else if (is_guard_active)
-                char_mvt_anim_state->write_to_animator_data.on_guard_hurt = true;
-            else
-                char_mvt_anim_state->write_to_animator_data.on_receive_hurt = true;
+            // @ANIMATOR_REFACTOR if (turn_to_face_away)
+            // @ANIMATOR_REFACTOR     // Parry/guard undoable when attacked from behind, so just do hurt-forward anim.
+            // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_receive_hurt_from_back = true;
+            // @ANIMATOR_REFACTOR else if (is_parry_active)
+            // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_parry_hurt = true;
+            // @ANIMATOR_REFACTOR else if (is_guard_active)
+            // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_guard_hurt = true;
+            // @ANIMATOR_REFACTOR else
+            // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_receive_hurt = true;
         }
     }
 

@@ -91,24 +91,43 @@ struct Character_mvt_animated_state
 
     struct Write_to_animator_data
     {
-        bool is_moving{ false };
-        bool is_locked_on{ false };
-        bool on_suspicion{ false };
-        bool is_suspicious_approaching{ false };
-        bool on_unaware{ false };
-        bool on_aware{ false };
+        // To direct assign to anim var.
         float_t mvt_facing_angle{ 0 };
-        bool on_turnaround{ false };
-        bool is_grounded{ false };
-        bool on_jump{ false };
-        bool on_attack{ false };
-        bool on_cancel_parried{ false };
-        bool on_parry_hurt{ false };
-        bool on_guard_hurt{ false };
-        bool on_receive_hurt{ false };
-        bool on_receive_hurt_from_back{ false };
-        bool on_guard{ false };
-        bool is_guarding{ false };
+
+        // To add to jump queues.
+        enum Char_mvt_anim_state
+        {
+            AS_UNDEFINED     = -1,
+
+            AS_GROUNDED_IDLE = 0,
+            AS_GROUNDED_MOVE,
+            AS_FLOOR_IDLE_JUMP,
+
+            AS_NOT_IMPLEMENTED_YET
+        };
+        Char_mvt_anim_state anim_state{ AS_GROUNDED_IDLE };
+        Char_mvt_anim_state prev_anim_state{ AS_UNDEFINED };
+
+        // @ANIMATOR_REFACTOR vv
+        // // vv @NOTE: below the old information to write. vv
+        // bool is_moving{ false };
+        // bool is_locked_on{ false };  // Unused. Had a former use but made every movement blendtrees.
+        // bool on_suspicion{ false };
+        // bool is_suspicious_approaching{ false };
+        // bool on_unaware{ false };
+        // bool on_aware{ false };
+        // float_t mvt_facing_angle{ 0 };
+        // bool on_turnaround{ false };
+        // bool is_grounded{ false };
+        // bool on_jump{ false };
+        // bool on_attack{ false };
+        // bool on_cancel_parried{ false };
+        // bool on_parry_hurt{ false };
+        // bool on_guard_hurt{ false };
+        // bool on_receive_hurt{ false };
+        // bool on_receive_hurt_from_back{ false };
+        // bool on_guard{ false };
+        // bool is_guarding{ false };
     } write_to_animator_data;
 
     struct State

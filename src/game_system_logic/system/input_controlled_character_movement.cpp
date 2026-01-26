@@ -195,8 +195,8 @@ void apply_grounded_facing_angle(component::Character_mvt_state::Grounded_state&
 
     if (do_turnaround_anim)
     {   // Reverse facing angle (by snapping to the desired facing angle).
-        if (char_mvt_anim_state)
-            char_mvt_anim_state->write_to_animator_data.on_turnaround = true;
+        // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
+        // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_turnaround = true;
 
         while (desired_facing_angle > glm_rad(180.0f)) desired_facing_angle -= glm_rad(360.0f);
         while (desired_facing_angle <= glm_rad(-180.0f)) desired_facing_angle += glm_rad(360.0f);
@@ -313,8 +313,8 @@ Char_mvt_logic_results character_controller_movement_logic(
         {   // Jump.
             new_velocity += mvt_settings.jump_speed * up_direction;
 
-            if (char_mvt_anim_state)
-                char_mvt_anim_state->write_to_animator_data.on_jump = true;
+            // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
+            // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_jump = true;
         }
     }
     else
@@ -363,7 +363,7 @@ Char_mvt_logic_results character_controller_movement_logic(
     // Calc movement facing angle.
     if (char_mvt_anim_state)
     {
-        char_mvt_anim_state->write_to_animator_data.is_locked_on = is_locked_on;
+        // @ANIMATOR_REFACTOR char_mvt_anim_state->write_to_animator_data.is_locked_on = is_locked_on;
 
         if (is_locked_on)
         {
@@ -391,8 +391,8 @@ Char_mvt_logic_results character_controller_movement_logic(
                                         desired_facing_angle,
                                         turn_speed);
 
-        if (char_mvt_anim_state)
-            char_mvt_anim_state->write_to_animator_data.is_moving = is_moving;
+        // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
+        // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.is_moving = is_moving;
 
         grounded_state.allow_grounded_sliding = (desired_velocity.LengthSq() > 1e-6f * 1e-6f);
 
@@ -453,8 +453,8 @@ Char_mvt_logic_results character_controller_movement_logic(
     }
     else assert(false);  // Unsupported movement type.
 
-    if (char_mvt_anim_state)
-        char_mvt_anim_state->write_to_animator_data.is_grounded = is_grounded;
+    // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
+    // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.is_grounded = is_grounded;
 
     return { is_grounded, up_rotation, new_velocity, display_facing_angle };
 }

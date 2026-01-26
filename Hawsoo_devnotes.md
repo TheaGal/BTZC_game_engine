@@ -1263,6 +1263,10 @@ while (running_game_loop)
     - [x] Some planning for how it's gonna work.
     - [ ] Change ifc for adding state-sets (and also pre-configured state sets?)
         - Maybe pretty deep interface?
+        - [ ] Remove old interface, and use enums for the new one, while keeping track of prev-cur relationship for the jump queues.
+            - [x] Put in "ichiou" states.
+            - [x] Remove the usage of the old interface (use `@ANIMATOR_REFACTOR` as comment tag)
+            - [ ] ff
     - [ ] Change `tick_sim_char_mvt_animator.cpp` to use new state-set insertion interface.
 
 - [ ] Change player char to use jumptable.
