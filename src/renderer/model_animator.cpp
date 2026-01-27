@@ -576,12 +576,12 @@ void BT::Model_animator::update(Animator_timer_profile profile, float_t delta_ti
         bool state_set_changed{ false };
 
         // Get state-set transition from watching jump queues.
-        Animator_state_set const* trans_state_set{ pop_one_state_set() };
+        auto trans_state_set{ pop_one_state_set() };
 
         // Perform actual state-set change!
-        if (trans_state_set != nullptr)
+        if (trans_state_set.has_value())
         {
-            change_state_set(*trans_state_set);
+            change_state_set(trans_state_set.value());
             state_set_changed = true;
             performed_state_transition = true;
         }
@@ -960,9 +960,9 @@ void BT::Model_animator::set_watch_jump_queue(std::string const& jump_queue_name
     jq.priority = priority;
 }
 
-BT::Model_animator::Animator_state_set const* BT::Model_animator::pop_one_state_set()
+std::optional<BT::Model_animator::Animator_state_set> BT::Model_animator::pop_one_state_set()
 {
-    Animator_state_set const* state_set{ nullptr };
+    std::optional<Animator_state_set> state_set{ std::nullopt };
 
     // Collect watching jump queues sorted by priority.
     std::map<uint32_t, std::vector<Jump_queue_data::State_set_queue_item>*>
@@ -989,7 +989,7 @@ BT::Model_animator::Animator_state_set const* BT::Model_animator::pop_one_state_
         {
             if (s_sim_timer.load() < (*jq)[i].queue_expire_time_absolute)
             {
-                state_set = (*jq)[i].state_set;  // @TODO: START HERE!!! @NOTE: I think that it could be good if the state-sets are copied into here, but there needs to be some way of having a null case, or else I could feel a bit scawwed  -Thea 2026/01/25
+                state_set = (*jq)[i].state_set;
                 i++;  // To ensure that this state-set gets deleted as well.
                 break;
             }
@@ -1008,7 +1008,7 @@ BT::Model_animator::Animator_state_set const* BT::Model_animator::pop_one_state_
         }
 
         // Exit early if state set is found.
-        if (state_set != nullptr)
+        if (state_set.has_value())
             break;
     }
 

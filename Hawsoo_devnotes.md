@@ -1266,6 +1266,7 @@ while (running_game_loop)
         - [ ] Remove old interface, and use enums for the new one, while keeping track of prev-cur relationship for the jump queues.
             - [x] Put in "ichiou" states.
             - [x] Remove the usage of the old interface (use `@ANIMATOR_REFACTOR` as comment tag)
+            - [x] Fix memory corruption: copy `Animator_state_set` instead of capture pointer.
             - [ ] ff
     - [ ] Change `tick_sim_char_mvt_animator.cpp` to use new state-set insertion interface.
 

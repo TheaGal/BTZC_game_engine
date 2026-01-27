@@ -9,6 +9,7 @@
 #include <functional>
 #include <limits>
 #include <mutex>
+#include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -255,7 +256,7 @@ public:
     void set_watch_jump_queue(std::string const& jump_queue_name, bool watch, uint32_t priority);
 
     /// Fetches/pops first top priority state-set from set of watching jump queues.
-    Animator_state_set const* pop_one_state_set();
+    std::optional<Animator_state_set> pop_one_state_set();
 
 private:
     std::vector<Model_joint_animation> const& m_model_animations;
@@ -303,7 +304,7 @@ private:
 
         struct State_set_queue_item
         {
-            Animator_state_set const state_set;
+            Animator_state_set state_set;
             double_t queue_expire_time_absolute;
         };
         std::vector<State_set_queue_item> state_set_queue;
