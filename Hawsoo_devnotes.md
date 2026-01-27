@@ -1267,6 +1267,9 @@ while (running_game_loop)
             - [x] Put in "ichiou" states.
             - [x] Remove the usage of the old interface (use `@ANIMATOR_REFACTOR` as comment tag)
             - [x] Fix memory corruption: copy `Animator_state_set` instead of capture pointer.
+            - [ ] Create ctrl cmd to set (temporarily) AFA controllable data.
+                - [ ] Do it.
+                - [ ] Add ctrl cmd for setting `turn_speed` of the runtime data.
             - [ ] ff
     - [ ] Change `tick_sim_char_mvt_animator.cpp` to use new state-set insertion interface.
 
