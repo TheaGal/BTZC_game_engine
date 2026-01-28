@@ -1261,9 +1261,9 @@ while (running_game_loop)
 - [ ] Use ~~jumptable~~ jump-state-anim-state-queue (higher row has precedence in the check).
     > @NOTE: If there is a transition from the jumptable, no other conditions or mutations will be checked or adhered to in the sim tick.
     - [x] Some planning for how it's gonna work.
-    - [ ] Change ifc for adding state-sets (and also pre-configured state sets?)
+    - [x] Change ifc for adding state-sets (and also pre-configured state sets?)
         - Maybe pretty deep interface?
-        - [ ] Remove old interface, and use enums for the new one, while keeping track of prev-cur relationship for the jump queues.
+        - [x] Remove old interface, and use enums for the new one, while keeping track of prev-cur relationship for the jump queues.
             - [x] Put in "ichiou" states.
             - [x] Remove the usage of the old interface (use `@ANIMATOR_REFACTOR` as comment tag)
             - [x] Fix memory corruption: copy `Animator_state_set` instead of capture pointer.
@@ -1271,7 +1271,6 @@ while (running_game_loop)
                 - [x] Do it.
                 - [x] Add ctrl cmd for setting `turn_speed` of the runtime data.
                 - [x] BUGFIX: why is turning only being done once every second?
-            - [ ] ff
     - [ ] Change `tick_sim_char_mvt_animator.cpp` to use new state-set insertion interface.
 
 - [x] Fix imgui for ctrl cmd window so that it properly deletes ctrl regions.
