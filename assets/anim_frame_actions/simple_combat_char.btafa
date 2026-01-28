@@ -8,6 +8,18 @@
             "regions": [
                 {
                     "ctrl_cmd": {
+                        "argv": [
+                            "turn_speed",
+                            "1000000"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 11,
+                    "row_idx": 0,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
                         "argv": [],
                         "cmd_name": "nop"
                     },
@@ -29,6 +41,18 @@
         },
         {
             "regions": [
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "turn_speed",
+                            "10"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 4,
+                    "row_idx": 0,
+                    "start_frame": 0
+                },
                 {
                     "ctrl_cmd": {
                         "argv": [],
@@ -596,20 +620,20 @@
     ],
     "anim_state_set_jump_queues": [
         {
-            "name": "jq_grnd_mvt",
-            "default_is_watching": true
+            "default_is_watching": true,
+            "name": "jq_grnd_mvt"
         },
         {
-            "name": "jq_jump",
-            "default_is_watching": true
+            "default_is_watching": true,
+            "name": "jq_jump"
         },
         {
-            "name": "jq_attack",
-            "default_is_watching": false
+            "default_is_watching": false,
+            "name": "jq_attack"
         },
         {
-            "name": "jq_parry",
-            "default_is_watching": false
+            "default_is_watching": false,
+            "name": "jq_parry"
         }
     ],
     "animated_model_name": "simple_combat_char",

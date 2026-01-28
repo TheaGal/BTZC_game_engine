@@ -253,7 +253,8 @@ public:
     void reset_jump_queue_watchlist();
 
     /// Sets whether watching a jump queue.
-    void set_watch_jump_queue(std::string const& jump_queue_name, bool watch, uint32_t priority);
+    /// Returns true if flag was changed, false if the flag was already set to that.
+    bool set_watch_jump_queue(std::string const& jump_queue_name, bool watch, uint32_t priority);
 
     /// Fetches/pops first top priority state-set from set of watching jump queues.
     std::optional<Animator_state_set> pop_one_state_set();

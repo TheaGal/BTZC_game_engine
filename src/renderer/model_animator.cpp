@@ -859,6 +859,121 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
         },
         {
             .cmd{
+                .name = "var_ov",
+                .desc = "Sets a variable temporarily for the frame, effectively overriding the "
+                        "default value for just the frame(s) this ctrl cmd is active."
+            },
+            .argv{
+                {
+                    .name = "var_name",
+                    .desc = "Variable name to mutate",
+                    .type = "str"
+                },
+                {
+                    .name = "value",
+                    .desc = "Value to set (will be casted depending on var-type)",
+                    .type = "str"
+                },
+            },
+            .exec_fn = [](Model_animator& animator,
+                          uint32_t row_idx,
+                          bool is_first_frame,
+                          bool is_last_frame,
+                          std::vector<std::string> const& argv) {
+                auto& afa_data{ animator.m_anim_frame_action_data };
+                auto label{ afa_data.str_label_to_enum(argv[0]) };
+                switch (afa_data.get_data_type(label))
+                {
+                    using CD_t = BT::anim_frame_action::Runtime_controllable_data::Controllable_data_type;
+
+                    case CD_t::CTRL_DATA_TYPE_FLOAT:
+                        afa_data.get_float_data_handle(label).override_val(std::stof(argv[1]));
+                        break;
+
+                    case CD_t::CTRL_DATA_TYPE_BOOL:
+                        afa_data.get_bool_data_handle(label).override_val(argv[1] == "true");
+                        break;
+
+                    default: assert(false); break;
+                }
+            }
+        },
+        {
+            .cmd{
+                .name = "var_wr",
+                .desc = "Sets a variable, writing it."
+            },
+            .argv{
+                {
+                    .name = "var_name",
+                    .desc = "Variable name to mutate",
+                    .type = "str"
+                },
+                {
+                    .name = "value",
+                    .desc = "Value to set (will be casted depending on var-type)",
+                    .type = "str"
+                },
+            },
+            .exec_fn = [](Model_animator& animator,
+                          uint32_t row_idx,
+                          bool is_first_frame,
+                          bool is_last_frame,
+                          std::vector<std::string> const& argv) {
+                auto& afa_data{ animator.m_anim_frame_action_data };
+                auto label{ afa_data.str_label_to_enum(argv[0]) };
+                switch (afa_data.get_data_type(label))
+                {
+                    using CD_t = BT::anim_frame_action::Runtime_controllable_data::Controllable_data_type;
+
+                    case CD_t::CTRL_DATA_TYPE_FLOAT:
+                        afa_data.get_float_data_handle(label).write_val(std::stof(argv[1]));
+                        break;
+
+                    case CD_t::CTRL_DATA_TYPE_BOOL:
+                        afa_data.get_bool_data_handle(label).write_val(argv[1] == "true");
+                        break;
+
+                    default: assert(false); break;
+                }
+            }
+        },
+        {
+            .cmd{
+                .name = "var_mark_reeve",
+                .desc = "Marks a rising-edge event."
+            },
+            .argv{
+                {
+                    .name = "var_name",
+                    .desc = "Variable name to mark the rising-edge event of",
+                    .type = "str"
+                },
+            },
+            .exec_fn = [](Model_animator& animator,
+                          uint32_t row_idx,
+                          bool is_first_frame,
+                          bool is_last_frame,
+                          std::vector<std::string> const& argv) {
+                if (!is_first_frame)
+                    return;  // Exit early if not rising edge.
+
+                auto& afa_data{ animator.m_anim_frame_action_data };
+                auto label{ afa_data.str_label_to_enum(argv[0]) };
+                switch (afa_data.get_data_type(label))
+                {
+                    using CD_t = BT::anim_frame_action::Runtime_controllable_data::Controllable_data_type;
+
+                    case CD_t::CTRL_DATA_TYPE_RISING_EDGE_EVENT:
+                            afa_data.get_reeve_data_handle(label).mark_rising_edge();
+                        break;
+
+                    default: assert(false); break;
+                }
+            }
+        },
+        {
+            .cmd{
                 .name = "blend",
                 .desc = "Blends current animation with previous one set as an anchor pose, lerping "
                         "from 0-1 over the cmd region."
@@ -892,7 +1007,9 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
                           bool is_last_frame,
                           std::vector<std::string> const& argv) {
                 // Add `anim_state_queue` for watching this frame.
-                animator.set_watch_jump_queue(argv[0], true, row_idx);
+                bool changed = animator.set_watch_jump_queue(argv[0], true, row_idx);
+                if (!changed)
+                    throw std::exception("Jump queue is already set to the wanted way.");
             }
         },
         {
@@ -914,7 +1031,9 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
                           bool is_last_frame,
                           std::vector<std::string> const& argv) {
                 // Remove `anim_state_queue` from watching for this frame.
-                animator.set_watch_jump_queue(argv[0], false, -1);
+                bool changed = animator.set_watch_jump_queue(argv[0], false, -1);
+                if (!changed)
+                    throw std::exception("Jump queue is already set to the wanted way.");
             }
         },
     };
@@ -951,13 +1070,21 @@ void BT::Model_animator::reset_jump_queue_watchlist()
     }
 }
 
-void BT::Model_animator::set_watch_jump_queue(std::string const& jump_queue_name,
+bool BT::Model_animator::set_watch_jump_queue(std::string const& jump_queue_name,
                                               bool watch,
                                               uint32_t priority)
 {
     auto& jq{ m_jump_queue_name_to_jump_queue_map.at(jump_queue_name) };
-    jq.is_watching = watch;
-    jq.priority = priority;
+    if (jq.is_watching != watch)
+    {
+        jq.is_watching = watch;
+        jq.priority = priority;
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 std::optional<BT::Model_animator::Animator_state_set> BT::Model_animator::pop_one_state_set()
