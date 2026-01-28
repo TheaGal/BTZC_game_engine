@@ -17,24 +17,6 @@
                     "end_frame": 11,
                     "row_idx": 0,
                     "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
-                    },
-                    "end_frame": 12,
-                    "row_idx": 2,
-                    "start_frame": 1
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
-                    },
-                    "end_frame": 11,
-                    "row_idx": 4,
-                    "start_frame": 0
                 }
             ],
             "state_name": "st_idle"
@@ -51,24 +33,6 @@
                     },
                     "end_frame": 41,
                     "row_idx": 0,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
-                    },
-                    "end_frame": 41,
-                    "row_idx": 4,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
-                    },
-                    "end_frame": 41,
-                    "row_idx": 8,
                     "start_frame": 0
                 }
             ],

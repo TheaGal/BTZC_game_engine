@@ -1607,15 +1607,46 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                                        cur_frame_str.c_str());
                 }
 
-                static bool s_move_current_frame_to_mouse_active{ false };  // For click-n-drag.
+                // For click-n-drag.
+                static bool s_move_current_frame_to_mouse_active{ false };
                 if (on_lmb_release)
                     s_move_current_frame_to_mouse_active = false;
-                if ((s_move_current_frame_to_mouse_active && cur_lmb_pressed) ||
-                    (on_lmb_press &&
-                     ImGui::IsWindowHovered() &&
-                     ImGui::IsMouseHoveringRect(ImVec2(cr_timeline_min),
-                                                ImVec2(cr_timeline_max.x,
-                                                       cr_timeline_min.y + k_top_measuring_region_height + 2))))
+
+                if (!cur_lmb_pressed &&
+                    on_del_press &&
+                    s_reg_sel.sel_state == Region_selecting::SELECTED)
+                {   // Delete selected region.
+                    assert(s_reg_sel.sel_reg != nullptr);
+                    for (size_t i = afa_timeline_regions.size() - 1;; i--)
+                    {
+                        if (&afa_timeline_regions[i] == s_reg_sel.sel_reg)
+                        {   // Found the one to delete.
+                            afa_timeline_regions.erase(afa_timeline_regions.begin() + i);
+                            break;
+                        }
+                        if (i == 0)
+                        {   // Searching failed. Abort/exit.
+                            logger::printe(logger::ERROR,
+                                           "Delete selected region searching failed.");
+                            assert(false);
+                            break;
+                        }
+                    }
+
+                    // Clear selection state.
+                    // (Do this right after to prevent stale pointer issues)
+                    s_reg_sel.sel_state = Region_selecting::UNSELECTED;
+                    s_reg_sel.sel_reg = nullptr;
+
+                    // Mark working timeline as dirty.
+                    anim_frame_action::s_editor_state.is_working_afa_dirty = true;
+                }
+                else if ((s_move_current_frame_to_mouse_active && cur_lmb_pressed) ||
+                         (on_lmb_press && ImGui::IsWindowHovered() &&
+                          ImGui::IsMouseHoveringRect(
+                              ImVec2(cr_timeline_min),
+                              ImVec2(cr_timeline_max.x,
+                                     cr_timeline_min.y + k_top_measuring_region_height + 2))))
                 {   // Move current frame to mouse.
                     s_move_current_frame_to_mouse_active = true;
                     float_t zoom_relative_mouse_x{ (ImGui::GetIO().MousePos.x
@@ -1672,33 +1703,6 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                     }
 
                     s_prev_is_key_a_pressed = cur_is_key_a_pressed;
-                }
-                else if (on_del_press && s_reg_sel.sel_state == Region_selecting::SELECTED)
-                {   // Delete selected region.
-                    assert(s_reg_sel.sel_reg != nullptr);
-                    for (size_t i = afa_timeline_regions.size() - 1;; i--)
-                    {
-                        if (&afa_timeline_regions[i] == s_reg_sel.sel_reg)
-                        {   // Found the one to delete.
-                            afa_timeline_regions.erase(afa_timeline_regions.begin() + i);
-                            break;
-                        }
-                        if (i == 0)
-                        {   // Searching failed. Abort/exit.
-                            logger::printe(logger::ERROR,
-                                           "Delete selected region searching failed.");
-                            assert(false);
-                            break;
-                        }
-                    }
-
-                    // Clear selection state.
-                    // (Do this right after to prevent stale pointer issues)
-                    s_reg_sel.sel_state = Region_selecting::UNSELECTED;
-                    s_reg_sel.sel_reg = nullptr;
-
-                    // Mark working timeline as dirty.
-                    anim_frame_action::s_editor_state.is_working_afa_dirty = true;
                 }
             }
             ImGui::PopClipRect();

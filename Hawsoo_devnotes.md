@@ -1267,14 +1267,14 @@ while (running_game_loop)
             - [x] Put in "ichiou" states.
             - [x] Remove the usage of the old interface (use `@ANIMATOR_REFACTOR` as comment tag)
             - [x] Fix memory corruption: copy `Animator_state_set` instead of capture pointer.
-            - [ ] Create ctrl cmd to set (temporarily) AFA controllable data.
+            - [x] Create ctrl cmd to set (temporarily) AFA controllable data.
                 - [x] Do it.
                 - [x] Add ctrl cmd for setting `turn_speed` of the runtime data.
                 - [x] BUGFIX: why is turning only being done once every second?
             - [ ] ff
     - [ ] Change `tick_sim_char_mvt_animator.cpp` to use new state-set insertion interface.
 
-- [ ] Fix imgui for ctrl cmd window so that it properly deletes ctrl regions.
+- [x] Fix imgui for ctrl cmd window so that it properly deletes ctrl regions.
 
 - [ ] Change player char to use jumptable.
     - [ ] Add movement thing in queue to do a "start-move" and then another for "stop-move".
