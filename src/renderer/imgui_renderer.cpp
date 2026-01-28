@@ -1469,6 +1469,7 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                     // Draw text inside bar.
                     std::stringstream complete_cmd;
                     complete_cmd << region.ctrl_cmd.cmd_name << "(";
+
                     bool first{ true };
                     for (auto const& a : region.ctrl_cmd.argv)
                     {
@@ -1476,6 +1477,7 @@ void BT::ImGui_renderer::render_imgui__animation_frame_data_editor_context(bool 
                         first = false;
                     }
                     complete_cmd << ")";
+
                     constexpr ImVec2 k_cmd_txt_padding{ 4, 4 };
                     draw_list->AddText(
                         ImVec2(p_min.x + k_cmd_txt_padding.x, p_min.y + k_cmd_txt_padding.y),
