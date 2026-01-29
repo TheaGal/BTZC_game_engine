@@ -1272,6 +1272,8 @@ while (running_game_loop)
                 - [x] Add ctrl cmd for setting `turn_speed` of the runtime data.
                 - [x] BUGFIX: why is turning only being done once every second?
     - [ ] Change `tick_sim_char_mvt_animator.cpp` to use new state-set insertion interface.
+        - [x] Partial (for run, idle, jump, and fall)
+        - [ ] For attacks.
 
 - [x] Fix imgui for ctrl cmd window so that it properly deletes ctrl regions.
 
