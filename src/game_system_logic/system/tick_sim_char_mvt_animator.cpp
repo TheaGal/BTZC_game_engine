@@ -46,7 +46,7 @@ void BT::system::tick_sim_char_mvt_animator()
                 continue;
             }
 
-            // Set animator vars.
+            // Write animator vars.
             #define SET_ANIMATOR_BOOL_VAR(_var)                                                     \
                 animator->set_bool_variable(#_var, char_mvt_anim_state.write_to_animator_data._var);
             #define SET_ANIMATOR_FLOAT_VAR(_var)                                                    \
@@ -81,7 +81,8 @@ void BT::system::tick_sim_char_mvt_animator()
             #undef SET_ANIMATOR_FLOAT_VAR
             #undef SET_ANIMATOR_TRIGGER
 
-            {   // Calc next anim state.
+            // @TODO: @THEA: @REFACTOR: The vv below vv code for calc'ing jump queues is only good for the player character. For CPUs, use a different system (that probably shouldn't be in here anyway!) (I'd make a system in the ECS for updating player character jump queues and another for CPU jump queues)
+            {   // Calc next anim mvt state.
                 auto const& input{ char_mvt_anim_state.input_mvt_state };
                 auto& next_anim_state{ char_mvt_anim_state.anim_mvt_state.next };
                 auto const& prev_anim_state{ char_mvt_anim_state.anim_mvt_state.prev };

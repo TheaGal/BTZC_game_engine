@@ -91,10 +91,16 @@ struct Character_mvt_animated_state
 
     /// For tracking input data from character.
     struct Input_mvt_state
-    {
+    {   // Movement inputs.
         bool is_moving{ false };
         bool is_grounded{ false };
         bool on_jump{ false };
+
+        // Combat inputs.
+        bool on_attack_press{ false };
+        bool on_attack_release{ false };
+        bool on_parry_press{ false };
+        bool on_parry_release{ false };
     } input_mvt_state;
 
     /// For storing calculated anim state progression.

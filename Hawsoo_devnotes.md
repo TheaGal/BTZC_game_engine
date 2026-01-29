@@ -1258,7 +1258,7 @@ while (running_game_loop)
                 > Why: checking if animator is at the last frame of an anim needs to happen before the timer is incremented, so 3 needs to run before 2.
 
 
-- [ ] Use ~~jumptable~~ jump-state-anim-state-queue (higher row has precedence in the check).
+- [x] Use ~~jumptable~~ jump-state-anim-state-queue (higher row has precedence in the check).
     > @NOTE: If there is a transition from the jumptable, no other conditions or mutations will be checked or adhered to in the sim tick.
     - [x] Some planning for how it's gonna work.
     - [x] Change ifc for adding state-sets (and also pre-configured state sets?)
@@ -1271,7 +1271,7 @@ while (running_game_loop)
                 - [x] Do it.
                 - [x] Add ctrl cmd for setting `turn_speed` of the runtime data.
                 - [x] BUGFIX: why is turning only being done once every second?
-    - [ ] Change `tick_sim_char_mvt_animator.cpp` to use new state-set insertion interface.
+    - [x] Change `tick_sim_char_mvt_animator.cpp` to use new state-set insertion interface.
         - [x] Partial (for run, idle, jump, and fall)
         > So how do we mitigate if a wanted anim-state didn't get set to?
             > Perhaps having that "Event" -type thing along the bottom would be good? Maybe we could be reporting back the anim state -- or rather how it interprets the state to be.
@@ -1282,7 +1282,71 @@ while (running_game_loop)
             - [ ] Use it to ensure that the prev-state and its state are the same before it emplaces any state-sets into jump queues.
             > ALTERNATIVE: just not have this. Maybe this just isn't necessary. It seems like it isn't.
                 > I CHOOSE THIS. Do nothing bc it doesn't matter anyway. It's a bad animator config if it bugs out.
-        - [ ] For attacks.
+
+        - [ ] DEFER ~~For attacks.~~
+
+
+
+> It really seems messy: the "frontend" that adds jump-queue anims.
+> Perhaps the solution is to simply not have any nested logic for each jump queue and just have individual funcs that only care about the one single jump queue.
+```cpp
+update_grnd_mvt_jump_queue();
+update_midair_jump_queue();
+update_attack_jump_queue();
+update_parry_jump_queue();
+input_mvt_state.clear_triggers();  // Clears things such as `.on_jump`
+```
+> Then inside the jump queues, do work to determine what to have in the jump queue.
+```cpp
+void update_grnd_mvt_jump_queue()
+{
+    if (!input_mvt_state.is_grounded)
+    {
+        jump_queue.clear();
+        return;
+    }
+
+    if (input_mvt_state.is_moving)
+        jump_queue.set("st_running");
+    else
+        jump_queue.set("st_idle");
+}
+```
+> So then there's no tracking of previous anim states and trying to assume what state things are in.
+> It is very flat this way. And it relies on the btafa logic to determine what mvt state to be in.
+> Here's another example of a jump queue:
+```cpp
+void update_midair_jump_queue()
+{
+    if (input_mvt_state.is_grounded)
+    {
+        jump_queue.clear();
+        return;
+    }
+
+    if (input_mvt_state.on_jump)
+    {
+        jump_queue.set(input_mvt_state.is_moving ? "st_moving_jump" : "st_jump");
+    }
+    else
+    {   // Just regular midair.
+        jump_queue.set(input_mvt_state.is_moving ? "st_moving_fall" : "st_fall");
+    }
+}
+```
+> Here, it's influenced by whether the char is moving, however does not know if the animator will use this jump queue, or if the animator is already in some midair anim. It's just unknown.
+> So the jump queue should be only cleared or set, it seems.
+> But for something such as CPU-behavior jump queues, that should be very different. Very queue-like in this one.
+> ...
+> It kind of makes me wonder if this is something that should get saved somewhere else? Or that this system will fall apart when using for CPUs?
+> ...
+> Well, after thinking about this, I should keep it in mind and realize I'll have to do refactoring for this in the future.
+
+
+
+- [ ] Implement the ^^ above ^^ comments about a good way to organize all the code for the player character mvt animation.
+    - [ ] ff
+    - [ ] Add attack inputs for player character.
 
 - [x] Fix imgui for ctrl cmd window so that it properly deletes ctrl regions.
 
