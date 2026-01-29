@@ -315,6 +315,8 @@ Char_mvt_logic_results character_controller_movement_logic(
 
             // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
             // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_jump = true;
+            if (char_mvt_anim_state)
+                char_mvt_anim_state->input_mvt_state.on_jump = true;
         }
     }
     else
@@ -394,13 +396,15 @@ Char_mvt_logic_results character_controller_movement_logic(
         // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
         // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.is_moving = is_moving;
         if (char_mvt_anim_state)
-        {
-            char_mvt_anim_state->write_to_animator_data.next_anim_state =
-                (!is_moving ? component::Character_mvt_animated_state::Write_to_animator_data::
-                                  AS_GROUNDED_IDLE
-                            : component::Character_mvt_animated_state::Write_to_animator_data::
-                                  AS_GROUNDED_MOVE);
-        }
+            char_mvt_anim_state->input_mvt_state.is_moving = is_moving;
+        // if (char_mvt_anim_state)
+        // {
+        //     char_mvt_anim_state->write_to_animator_data.next_anim_state =
+        //         (!is_moving ? component::Character_mvt_animated_state::Write_to_animator_data::
+        //                           AS_GROUNDED_IDLE
+        //                     : component::Character_mvt_animated_state::Write_to_animator_data::
+        //                           AS_GROUNDED_MOVE);
+        // }
 
         grounded_state.allow_grounded_sliding = (desired_velocity.LengthSq() > 1e-6f * 1e-6f);
 
@@ -463,6 +467,8 @@ Char_mvt_logic_results character_controller_movement_logic(
 
     // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
     // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.is_grounded = is_grounded;
+    if (char_mvt_anim_state)
+        char_mvt_anim_state->input_mvt_state.is_grounded = is_grounded;
 
     return { is_grounded, up_rotation, new_velocity, display_facing_angle };
 }
