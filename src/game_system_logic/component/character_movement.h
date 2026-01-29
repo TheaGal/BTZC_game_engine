@@ -106,15 +106,13 @@ struct Character_mvt_animated_state
 
             AS_GROUNDED_IDLE = 0,
             AS_GROUNDED_MOVE,
-            AS_FLOOR_IDLE_JUMP,
-            AS_FLOOR_MOVE_JUMP,
             AS_MIDAIR,
 
             AS_NOT_IMPLEMENTED_YET
         };
         Anim_state_enum next{ AS_GROUNDED_IDLE };
         Anim_state_enum prev{ AS_UNDEFINED };
-    } anim_state;
+    } anim_mvt_state;
 
     struct Write_to_animator_data
     {

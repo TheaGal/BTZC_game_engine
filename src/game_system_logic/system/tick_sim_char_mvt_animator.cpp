@@ -6,6 +6,7 @@
 #include "game_system_logic/component/combat_stats.h"
 #include "game_system_logic/component/render_object_settings.h"
 #include "game_system_logic/entity_container.h"
+#include "renderer/model_animator.h"
 #include "renderer/renderer.h"
 #include "service_finder/service_finder.h"
 
@@ -82,95 +83,75 @@ void BT::system::tick_sim_char_mvt_animator()
 
             {   // Calc next anim state.
                 auto const& input{ char_mvt_anim_state.input_mvt_state };
-                auto& next_anim_state{ char_mvt_anim_state.anim_state.next };
+                auto& next_anim_state{ char_mvt_anim_state.anim_mvt_state.next };
+                auto const& prev_anim_state{ char_mvt_anim_state.anim_mvt_state.prev };
+
+                auto const calc_anim_changed_fn = [&next_anim_state, &prev_anim_state]() -> bool {
+                    return (next_anim_state != prev_anim_state);
+                };
+
+                bool is_grounded_real{ input.is_grounded && !input.on_jump };
 
                 using Anim_state_e = component::Character_mvt_animated_state::
                     Anim_state::Anim_state_enum;
 
-                // Logic.
-                if (input.on_jump)
-                {
-                    next_anim_state = (!input.is_moving ? Anim_state_e::AS_FLOOR_IDLE_JUMP
-                                                        : Anim_state_e::AS_FLOOR_MOVE_JUMP);
-                }
-                else if (input.is_grounded)
+                // Ground movement.
+                if (is_grounded_real)
                 {
                     next_anim_state = (!input.is_moving ? Anim_state_e::AS_GROUNDED_IDLE
                                                         : Anim_state_e::AS_GROUNDED_MOVE);
+                    if (calc_anim_changed_fn())
+                    {
+                        animator->emplace_jump_queue_state_set(
+                            "jq_grnd_mvt",
+                            {
+                                .anim_state_indices = {
+                                    animator->get_animator_state_idx(!input.is_moving ? "st_idle"
+                                                                                      : "st_running")
+                                },
+                                .loop_final_state = true
+                            },
+                            1);
+                    }
                 }
+                // Midair movement.
                 else
                 {
                     next_anim_state = Anim_state_e::AS_MIDAIR;
+
+                    if (calc_anim_changed_fn())
+                    {
+                        Model_animator::Animator_state_set state_set;
+                        if (input.on_jump)
+                        {
+                            state_set.anim_state_indices = {
+                                animator->get_animator_state_idx(!input.is_moving ? "st_jump"  // @TODO: separate if move or idle -based jump.
+                                                                                  : "st_jump"),
+                                animator->get_animator_state_idx("st_fall")
+                            };
+                            state_set.loop_final_state = false;
+                        }
+                        else
+                        {
+                            state_set.anim_state_indices = {
+                                animator->get_animator_state_idx("st_fall")
+                            };
+                            state_set.loop_final_state = false;
+                        }
+
+                        animator->emplace_jump_queue_state_set(
+                            "jq_midair",
+                            state_set,
+                            1);
+                    }
                 }
 
                 // Reset inputs.
                 auto& input_mut{ char_mvt_anim_state.input_mvt_state };
                 input_mut.on_jump = false;
-            }
-
-            {   // Apply
-                auto const& next_anim_state{ char_mvt_anim_state.anim_state.next };
-                auto const& prev_anim_state{ char_mvt_anim_state.anim_state.prev };
-                bool anim_changed{ next_anim_state != prev_anim_state };
-
-                using Anim_state_e = component::Character_mvt_animated_state::
-                    Anim_state::Anim_state_enum;
-
-                switch (next_anim_state)
-                {
-                    case Anim_state_e::AS_GROUNDED_IDLE:
-                        if (anim_changed)
-                        {
-                            animator->emplace_jump_queue_state_set(
-                                "jq_grnd_mvt",
-                                { .anim_state_indices = { animator->get_animator_state_idx("st_idle") },
-                                .loop_final_state = true },
-                                1);
-                        }
-                        break;
-
-                    case Anim_state_e::AS_GROUNDED_MOVE:
-                        if (anim_changed)
-                        {
-                            animator->emplace_jump_queue_state_set(
-                                "jq_grnd_mvt",
-                                { .anim_state_indices = { animator->get_animator_state_idx("st_running") },
-                                .loop_final_state = true },
-                                1);
-                        }
-                        break;
-
-                    case Anim_state_e::AS_FLOOR_IDLE_JUMP:
-                    case Anim_state_e::AS_FLOOR_MOVE_JUMP:
-                        if (anim_changed)
-                        {
-                            animator->emplace_jump_queue_state_set(
-                                "jq_midair",
-                                { .anim_state_indices = { animator->get_animator_state_idx("st_jump"),  // @TODO: separate if move or idle -based jump.
-                                                          animator->get_animator_state_idx("st_fall"), },
-                                .loop_final_state = false },
-                                1);
-                        }
-                        break;
-
-                    case Anim_state_e::AS_MIDAIR:
-                        if (anim_changed && (prev_anim_state == Anim_state_e::AS_GROUNDED_IDLE ||
-                                             prev_anim_state == Anim_state_e::AS_GROUNDED_MOVE))
-                        {
-                            animator->emplace_jump_queue_state_set(
-                                "jq_midair",
-                                { .anim_state_indices = { animator->get_animator_state_idx("st_fall"), },
-                                .loop_final_state = false },
-                                1);
-                        }
-                        break;
-
-                    // Anim state not implemented!
-                    default: assert(false); break;
-                }
 
                 // Finish.
-                char_mvt_anim_state.anim_state.prev = next_anim_state;
+                char_mvt_anim_state.anim_mvt_state.prev = next_anim_state;
             }
 
             // Update animator.
