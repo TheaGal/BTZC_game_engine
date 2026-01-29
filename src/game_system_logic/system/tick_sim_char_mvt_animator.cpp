@@ -145,7 +145,7 @@ void BT::system::tick_sim_char_mvt_animator()
                         if (anim_changed)
                         {
                             animator->emplace_jump_queue_state_set(
-                                "jq_jump",
+                                "jq_midair",
                                 { .anim_state_indices = { animator->get_animator_state_idx("st_jump"),  // @TODO: separate if move or idle -based jump.
                                                           animator->get_animator_state_idx("st_fall"), },
                                 .loop_final_state = false },
@@ -158,7 +158,7 @@ void BT::system::tick_sim_char_mvt_animator()
                                              prev_anim_state == Anim_state_e::AS_GROUNDED_MOVE))
                         {
                             animator->emplace_jump_queue_state_set(
-                                "jq_jump",
+                                "jq_midair",
                                 { .anim_state_indices = { animator->get_animator_state_idx("st_fall"), },
                                 .loop_final_state = false },
                                 1);

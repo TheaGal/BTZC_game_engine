@@ -1273,6 +1273,15 @@ while (running_game_loop)
                 - [x] BUGFIX: why is turning only being done once every second?
     - [ ] Change `tick_sim_char_mvt_animator.cpp` to use new state-set insertion interface.
         - [x] Partial (for run, idle, jump, and fall)
+        > So how do we mitigate if a wanted anim-state didn't get set to?
+            > Perhaps having that "Event" -type thing along the bottom would be good? Maybe we could be reporting back the anim state -- or rather how it interprets the state to be.
+                > It will be 1 tick behind. Maybe that's ok? There would have to be some kind of way of tracking animator discrepency.
+        - [ ] ~~DETOUR: add "rep_st" ctrl cmd in animator. (Reports the anim state)~~
+            - [ ] Ctrl cmd.
+            - [ ] Store the content into the model animator.
+            - [ ] Use it to ensure that the prev-state and its state are the same before it emplaces any state-sets into jump queues.
+            > ALTERNATIVE: just not have this. Maybe this just isn't necessary. It seems like it isn't.
+                > I CHOOSE THIS. Do nothing bc it doesn't matter anyway. It's a bad animator config if it bugs out.
         - [ ] For attacks.
 
 - [x] Fix imgui for ctrl cmd window so that it properly deletes ctrl regions.

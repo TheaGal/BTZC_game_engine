@@ -9,6 +9,7 @@ Bozzy-Thea Zelda-like Collectathon Game Engine. Simple to get off the ground.
 
 
 ## Software Versions.
+- Clang 20.1.4
 - OpenGL 4.5 (In the future Vulkan 1.3)
 - Blender 3.2.2
 - Milton 1.9.1
