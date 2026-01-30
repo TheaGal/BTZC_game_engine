@@ -1009,7 +1009,7 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
                 // Add `anim_state_queue` for watching this frame.
                 bool changed = animator.set_watch_jump_queue(argv[0], true, row_idx);
                 if (!changed)
-                    throw std::exception("Jump queue is already set to the wanted way.");
+                    throw std::runtime_error("Jump queue is already set to the wanted way.");
             }
         },
         {
@@ -1033,7 +1033,7 @@ std::vector<BT::Model_animator::Ctrl_cmd_documentation> const& BT::Model_animato
                 // Remove `anim_state_queue` from watching for this frame.
                 bool changed = animator.set_watch_jump_queue(argv[0], false, -1);
                 if (!changed)
-                    throw std::exception("Jump queue is already set to the wanted way.");
+                    throw std::runtime_error("Jump queue is already set to the wanted way.");
             }
         },
     };
@@ -1273,7 +1273,7 @@ BT::anim_tmpl_types::Animator_variable const& BT::Model_animator::find_animator_
 
     // Crash the program when don't find the var.
     assert(false);
-    throw std::exception(("Did not find var name: " + var_name).c_str());
+    throw std::runtime_error(("Did not find var name: " + var_name).c_str());
 }
 
 BT::Model_animator::Blend_value_result BT::Model_animator::calc_blend_value_of_blendtree(

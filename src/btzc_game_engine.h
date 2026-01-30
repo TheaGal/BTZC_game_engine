@@ -4,11 +4,17 @@
 #define BTZC_GAME_ENGINE_DEV_STAGE      "PRE-ALPHA"
 
 #if _WIN64
-#define BTZC_GAME_ENGINE_OS_NAME        "Windows x64"
+    #define BTZC_GAME_ENGINE_OS_NAME        "Windows x64"
 #elif _WIN32
-#error "Windows x86 (32-bit) is unsupported."
+    #error "Windows x86 (32-bit) is unsupported."
+#elif __APPLE__
+    #if __LP64__
+        #define BTZC_GAME_ENGINE_OS_NAME    "MacOS x64"
+    #else
+        #error "MacOS 32-bit is unsupported."
+    #endif
 #else
-#error "Unknown, currently unsupported OS です"
+    #error "Unknown, currently unsupported OS です"
 #endif
 
 /// Paths.

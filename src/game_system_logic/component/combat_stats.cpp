@@ -21,7 +21,7 @@ uint32_t BT::component::Attack_queue::get_attack_index(std::string const& atk_na
         idx++;
     }
 
-    throw std::exception("Could not find attack idx.");
+    throw std::runtime_error("Could not find attack idx.");
 }
 
 void BT::component::Attack_queue::push_attack_to_queue(uint32_t atk_idx)

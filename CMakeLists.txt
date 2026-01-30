@@ -24,6 +24,8 @@ message(
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     enable_language("RC")
     set(WIN64_RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/src/win64/app_icon.rc)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    message(WARNING "MACOS APP ICON STUFF: https://stackoverflow.com/questions/22745728/cmake-set-icon-for-a-mac-os-x-app")
 else()
     message(FATAL_ERROR "Asset folder location must be defined in `ASSET_DIR`")
 endif()
@@ -35,6 +37,10 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 if(MSVC)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    # MacOS requires enabling experimental library for clang-17 (default).
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fexperimental-library")
 endif()
 
 # Ensure 64-bit build.
@@ -320,24 +326,33 @@ target_include_directories(${PROJECT_NAME}
         ${DEPENDENCY_INCLUDE_DIRS})
 
 # Build FMOD link library path.
-if(ENABLE_FMOD_LOGGING)
-    set(FMOD_LIB_FILE_PREFIX fmodL)
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    if(ENABLE_FMOD_LOGGING)
+        set(FMOD_LIB_FILE_PREFIX fmodL)
+    else()
+        set(FMOD_LIB_FILE_PREFIX fmod)
+    endif()
+    string(TOLOWER ${CMAKE_SYSTEM_PROCESSOR} SYS_PROCESSOR_LOWER)
+    if(${SYS_PROCESSOR_LOWER} MATCHES "arm64|aarch64")
+        set(FMOD_LIBRARY_PATH
+            $ENV{FMOD_STUDIO_API_DIR}/api/core/lib/arm64/)
+    else()
+        set(FMOD_LIBRARY_PATH
+            $ENV{FMOD_STUDIO_API_DIR}/api/core/lib/x64/)
+    endif()
+    set(FMOD_STATIC_LIB_ABS_FNAME
+        ${FMOD_LIBRARY_PATH}${FMOD_LIB_FILE_PREFIX}_vc.lib)
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    message(WARNING "Building FMOD link lib missing!")
 else()
-    set(FMOD_LIB_FILE_PREFIX fmod)
+    message(FATAL_ERROR "Building FMOD link lib path missing!")
 endif()
-string(TOLOWER ${CMAKE_SYSTEM_PROCESSOR} SYS_PROCESSOR_LOWER)
-if(${SYS_PROCESSOR_LOWER} MATCHES "arm64|aarch64")
-    set(FMOD_LIBRARY_PATH
-        $ENV{FMOD_STUDIO_API_DIR}/api/core/lib/arm64/)
-else()
-    set(FMOD_LIBRARY_PATH
-        $ENV{FMOD_STUDIO_API_DIR}/api/core/lib/x64/)
-endif()
-message("FMOD lib path: ${FMOD_LIBRARY_PATH}${FMOD_LIB_FILE_PREFIX}_vc.lib")
+
+message("FMOD lib path: ${FMOD_STATIC_LIB_ABS_FNAME}")
 
 target_link_libraries(${PROJECT_NAME}
     fastgltf
-    ${FMOD_LIBRARY_PATH}${FMOD_LIB_FILE_PREFIX}_vc.lib
+    ${FMOD_STATIC_LIB_ABS_FNAME}
     fmt::fmt
     glfw
     ${GLFW_LIBRARIES}
@@ -346,10 +361,16 @@ target_link_libraries(${PROJECT_NAME}
     stduuid)
 
 # Copy dynamic libs.
-execute_process(
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${FMOD_LIBRARY_PATH}${FMOD_LIB_FILE_PREFIX}.dll
-        ${CMAKE_CURRENT_BINARY_DIR})
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    execute_process(
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${FMOD_LIBRARY_PATH}${FMOD_LIB_FILE_PREFIX}.dll
+            ${CMAKE_CURRENT_BINARY_DIR})
+elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    message(WARNING "MACOS APP DYNA-lib stuff (TODO: RESEARCH!!!)")
+else()
+    message(FATAL_ERROR "Copying dynamic libs missing!!")
+endif()
 
 # Create symlink to assets folder.
 if(DEFINED ASSET_DIR)
@@ -367,11 +388,11 @@ if(DEFINED ASSET_DIR)
             COMMAND cmd /C mklink /J ${win32_target_dir_name} ${win32_dir_name}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     else()
-        # @TODO: Probably add the delete symlink code right here?
+        # The way you create a symlink in every single OS except Windows.s
         file(CREATE_LINK ${dir_name} ${target_dir_name} SYMBOLIC)
     endif()
 else()
-    message(FATAL_ERROR "Asset folder location must be defined in `ASSET_DIR`")
+    message(FATAL_ERROR "Asset folder location must be defined in `ASSET_DIR`. Unable to create symlink.")
 endif()
 
 # Set this project as Visual Studio startup project.
