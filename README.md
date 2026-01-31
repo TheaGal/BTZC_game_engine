@@ -12,6 +12,7 @@ Bozzy-Thea Zelda-like Collectathon Game Engine. Simple to get off the ground.
 - Clang 20.1.4
 - OpenGL 4.5 (In the future Vulkan 1.3)
 - Blender 3.2.2
+    > @NOTE: For macOS and future, perhaps using the LTS version (3.3) would be better? Try it out and see.
 - Milton 1.9.1
 - FMOD Engine 2.03
 
