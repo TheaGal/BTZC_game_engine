@@ -69,12 +69,12 @@ Install the same FMOD version in "Software Versions" and set `FMOD_STUDIO_API_DI
 - [x] Gameplay work (not engine work rly).
 - [x] Skeletal animations using compute shaders.
 - [x] Misc logger-related bugfixes.
+- [ ] Create Vulkan 1.3 gfx impl; remove OpenGL 4.5 gfx impl.
 - [ ] Some things I want to create!!!! (script->EnTT ecs, editor improvements, AFA editor/runtime improvements)
 - [ ] ~~Unity to this engine migration.~~
 - [ ] Trenchbroom `.map` loader.
 - [ ] Move from GLSL to SLANG shaders.
 - [ ] Graphics library procedure abstraction (basic).
-- [ ] Create Vulkan 1.3 gfx impl; remove OpenGL 4.5 gfx impl.
 - [ ] Swordplay combat.
 - [ ] Refactor: materials attached to mesh -> material set system.
 - [ ] Small concerns.
@@ -82,3 +82,11 @@ Install the same FMOD version in "Software Versions" and set `FMOD_STUDIO_API_DI
 - [ ] Add cascaded shadow maps to renderer.
     - Nice shadow biasing post: https://www.reddit.com/r/GraphicsProgramming/s/p2HXNVNAXl
 - [ ] PBR Implementation.
+
+
+```mermaid
+gantt
+    title Todo List timeline
+    dateFormat YYYY/MM/DD
+    Create Vulkan 1.3 gfx impl : a1, 2026/01/29, 2026/03/11
+```
