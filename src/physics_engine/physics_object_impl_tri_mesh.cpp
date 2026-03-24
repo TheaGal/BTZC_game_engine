@@ -9,6 +9,7 @@
 #include "Jolt/Physics/Body/MotionType.h"
 #include "Jolt/Physics/Collision/Shape/MeshShape.h"
 #include "Jolt/Physics/EActivation.h"
+#include "btdatecheck.h"
 #include "btglm.h"
 #include "btlogger.h"
 #include "physics_engine.h"
@@ -31,7 +32,14 @@ BT::Phys_obj_impl_tri_mesh::Phys_obj_impl_tri_mesh(Model const* model,
         return;
     }
 
-    auto verts_indices{ m_model->get_all_vertices_and_indices() };
+    BT::date_deadline(2026, 4, 24);
+    // auto verts_indices{ m_model->get_all_vertices_and_indices() };
+    struct TEMP_struct_for_verts
+    {
+        vec3 position;
+    };
+    std::pair<std::vector<TEMP_struct_for_verts>, std::vector<size_t>> verts_indices{};  // TEMP (for compiling)
+    // @END_DEADLINE
 
     // @NOTE: I think there might be some extra stuff Jolt is doing in the behind
     //   that makes the triangle list better than using the inefficient-for-physics
@@ -84,17 +92,19 @@ BT::Phys_obj_impl_tri_mesh::Phys_obj_impl_tri_mesh(Model const* model,
     m_body_id = m_phys_body_ifc.CreateAndAddBody(mesh_body_settings, JPH::EActivation::DontActivate);
 
     // Create debug render job.
-    m_debug_mesh_id = get_main_debug_mesh_pool().emplace_debug_mesh(
-        { m_model,
-          Debug_mesh_pool::k_mask_phys_obj,
-          Material_bank::get_material("debug_physics_wireframe_fore_material"),
-          Material_bank::get_material("debug_physics_wireframe_back_material") });
+    BT::date_deadline(2026, 4, 24);
+    // m_debug_mesh_id = get_main_debug_mesh_pool().emplace_debug_mesh(
+    //     { m_model,
+    //       Debug_mesh_pool::k_mask_phys_obj,
+    //       Material_bank::get_material("debug_physics_wireframe_fore_material"),
+    //       Material_bank::get_material("debug_physics_wireframe_back_material") });
 }
 
 BT::Phys_obj_impl_tri_mesh::~Phys_obj_impl_tri_mesh()
 {
     m_phys_body_ifc.RemoveBody(m_body_id);
-    get_main_debug_mesh_pool().remove_debug_mesh(m_debug_mesh_id);
+    BT::date_deadline(2026, 4, 24);
+    // get_main_debug_mesh_pool().remove_debug_mesh(m_debug_mesh_id);
 }
 
 void BT::Phys_obj_impl_tri_mesh::move_kinematic(Physics_transform&& new_transform)
@@ -137,7 +147,8 @@ void BT::Phys_obj_impl_tri_mesh::update_debug_mesh()
                                            current_trans.rotation.GetY(),
                                            current_trans.rotation.GetZ(),
                                            current_trans.rotation.GetW() }, graphic_trans);
-    glm_mat4_copy(graphic_trans,
-                  get_main_debug_mesh_pool()
-                      .get_debug_mesh_volatile_handle(m_debug_mesh_id).transform);
+    BT::date_deadline(2026, 4, 24);
+    // glm_mat4_copy(graphic_trans,
+    //               get_main_debug_mesh_pool()
+    //                   .get_debug_mesh_volatile_handle(m_debug_mesh_id).transform);
 }

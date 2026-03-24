@@ -8,6 +8,9 @@
 #include <vector>
 
 
+#define CUTOUT_THIS 0
+
+
 namespace BT
 {
 
@@ -230,9 +233,11 @@ public:
     /// Map to get timeline idx for runtime controls.
     std::unordered_map<size_t, size_t> anim_state_idx_to_timeline_idx_map;
 
+#if CUTOUT_THIS
     /// Calculates the mapping of animator state indices to timeline indices.
     void map_animator_to_control_regions(Model_animator const& animator,
                                          Runtime_data_controls const& data_controls);
+#endif // CUTOUT_THIS
 
     // Controlled hitcapsule group set.
     Hitcapsule_group_set hitcapsule_group_set;

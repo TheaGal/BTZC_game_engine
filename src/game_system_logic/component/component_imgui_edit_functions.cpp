@@ -1,5 +1,6 @@
 #include "component_imgui_edit_functions.h"
 
+#include "btdatecheck.h"
 #include "btglm.h"
 #include "character_movement.h"
 #include "combat_stats.h"
@@ -281,169 +282,171 @@ void BT::component::edit::imgui_edit__character_world_space_input(entt::registry
 void BT::component::edit::imgui_edit__render_object_settings(entt::registry& reg,
                                                              entt::entity ecs_entity)
 {
-    auto& rend_obj_settings{ reg.get<component::Render_object_settings>(ecs_entity) };
+    BT::date_deadline(2026, 4, 24);
+    // auto& rend_obj_settings{ reg.get<component::Render_object_settings>(ecs_entity) };
 
-    ImGui::PushID(&rend_obj_settings);
-    ImGui::PushItemWidth(ImGui::GetFontSize() * -10);
+    // ImGui::PushID(&rend_obj_settings);
+    // ImGui::PushItemWidth(ImGui::GetFontSize() * -10);
 
-    bool is_disabled{ reg.any_of<component::Created_render_object_reference>(ecs_entity) };
-    if (is_disabled)
-        ImGui::TextColored(k_color_warning,
-                           "Settings are disabled while a render object is created.");
+    // bool is_disabled{ reg.any_of<component::Created_render_object_reference>(ecs_entity) };
+    // if (is_disabled)
+    //     ImGui::TextColored(k_color_warning,
+    //                        "Settings are disabled while a render object is created.");
 
-    // Settings.
-    ImGui::BeginDisabled(is_disabled);
+    // // Settings.
+    // ImGui::BeginDisabled(is_disabled);
 
-    static std::vector<std::pair<std::string, Render_layer>> const s_layers{
-        { "Default",      RENDER_LAYER_DEFAULT      },
-        { "Invisible",    RENDER_LAYER_INVISIBLE    },
-        { "Level editor", RENDER_LAYER_LEVEL_EDITOR },
-    };
+    // static std::vector<std::pair<std::string, Render_layer>> const s_layers{
+    //     { "Default",      RENDER_LAYER_DEFAULT      },
+    //     { "Invisible",    RENDER_LAYER_INVISIBLE    },
+    //     { "Level editor", RENDER_LAYER_LEVEL_EDITOR },
+    // };
 
-    // @NOTE: I just realized that this isn't applicable for the application (since I only want
-    //        one render layer for the one render object).
-    #if 0
-    ImGui::Text("Render layer mask: %s",
-                convert_number_to_binary_bit_string(8, rend_obj_settings.render_layer).c_str());
-    ImGui::SameLine();
-    if (ImGui::Button("Change.."))
-        ImGui::OpenPopup("change_layer_mask");
-    if (ImGui::BeginPopup("change_layer_mask"))
-    {
+    // // @NOTE: I just realized that this isn't applicable for the application (since I only want
+    // //        one render layer for the one render object).
+    // #if 0
+    // ImGui::Text("Render layer mask: %s",
+    //             convert_number_to_binary_bit_string(8, rend_obj_settings.render_layer).c_str());
+    // ImGui::SameLine();
+    // if (ImGui::Button("Change.."))
+    //     ImGui::OpenPopup("change_layer_mask");
+    // if (ImGui::BeginPopup("change_layer_mask"))
+    // {
 
-        for (auto& [layer_str, layer_mask] : s_layers)
-        {   // Checkbox for layer.
-            bool layer_enabled{ (rend_obj_settings.render_layer & layer_mask) != 0 };
-            if (ImGui::Checkbox(layer_str.c_str(), &layer_enabled))
-            {
-                if (layer_enabled)
-                {
-                    rend_obj_settings.render_layer =
-                        Render_layer(rend_obj_settings.render_layer | layer_mask);
-                }
-                else
-                {
-                    rend_obj_settings.render_layer =
-                        Render_layer(rend_obj_settings.render_layer & ~layer_mask);
-                }
-            }
-        }
+    //     for (auto& [layer_str, layer_mask] : s_layers)
+    //     {   // Checkbox for layer.
+    //         bool layer_enabled{ (rend_obj_settings.render_layer & layer_mask) != 0 };
+    //         if (ImGui::Checkbox(layer_str.c_str(), &layer_enabled))
+    //         {
+    //             if (layer_enabled)
+    //             {
+    //                 rend_obj_settings.render_layer =
+    //                     Render_layer(rend_obj_settings.render_layer | layer_mask);
+    //             }
+    //             else
+    //             {
+    //                 rend_obj_settings.render_layer =
+    //                     Render_layer(rend_obj_settings.render_layer & ~layer_mask);
+    //             }
+    //         }
+    //     }
 
-        ImGui::EndPopup();
-    }
-    #endif  // 0
+    //     ImGui::EndPopup();
+    // }
+    // #endif  // 0
 
-    std::string current_layer_str{ "INVALID LAYER" };
+    // std::string current_layer_str{ "INVALID LAYER" };
 
-    for (auto const& [layer_str, layer_mask] : s_layers)
-        if (rend_obj_settings.render_layer == layer_mask)
-            current_layer_str = layer_str;
+    // for (auto const& [layer_str, layer_mask] : s_layers)
+    //     if (rend_obj_settings.render_layer == layer_mask)
+    //         current_layer_str = layer_str;
 
-    if (ImGui::BeginCombo("Render layer", current_layer_str.c_str()))
-    {
-        for (auto const& [layer_str, layer_mask] : s_layers)
-        {   // Combo selectable item.
-            bool const is_selected{ rend_obj_settings.render_layer == layer_mask };
-            if (ImGui::Selectable(layer_str.c_str(), is_selected))
-                rend_obj_settings.render_layer = layer_mask;
+    // if (ImGui::BeginCombo("Render layer", current_layer_str.c_str()))
+    // {
+    //     for (auto const& [layer_str, layer_mask] : s_layers)
+    //     {   // Combo selectable item.
+    //         bool const is_selected{ rend_obj_settings.render_layer == layer_mask };
+    //         if (ImGui::Selectable(layer_str.c_str(), is_selected))
+    //             rend_obj_settings.render_layer = layer_mask;
 
-            if (is_selected)
-                ImGui::SetItemDefaultFocus();
-        }
+    //         if (is_selected)
+    //             ImGui::SetItemDefaultFocus();
+    //     }
 
-        ImGui::EndCombo();
-    }
+    //     ImGui::EndCombo();
+    // }
 
-    ImGui::InputText("Model name", &rend_obj_settings.model_name);
-    ImGui::Checkbox("Is deformed", &rend_obj_settings.is_deformed);
+    // ImGui::InputText("Model name", &rend_obj_settings.model_name);
+    // ImGui::Checkbox("Is deformed", &rend_obj_settings.is_deformed);
 
-    ImGui::BeginDisabled(!rend_obj_settings.is_deformed);
-    ImGui::InputText("Animator template name", &rend_obj_settings.animator_template_name);
-    ImGui::EndDisabled();
+    // ImGui::BeginDisabled(!rend_obj_settings.is_deformed);
+    // ImGui::InputText("Animator template name", &rend_obj_settings.animator_template_name);
+    // ImGui::EndDisabled();
 
-    ImGui::EndDisabled();
+    // ImGui::EndDisabled();
 
-    ImGui::PopItemWidth();
-    ImGui::PopID();
+    // ImGui::PopItemWidth();
+    // ImGui::PopID();
 }
 
 void BT::component::edit::imgui_edit__created_render_object_reference(entt::registry& reg,
                                                                       entt::entity ecs_entity)
 {
-    auto const& rend_obj_ref{ reg.get<component::Created_render_object_reference const>(
-        ecs_entity) };
+    BT::date_deadline(2026, 4, 24);
+    // auto const& rend_obj_ref{ reg.get<component::Created_render_object_reference const>(
+    //     ecs_entity) };
 
-    ImGui::PushID(&rend_obj_ref);
+    // ImGui::PushID(&rend_obj_ref);
 
-    ImGui::TextWrapped("A render object is created in the renderer.\n  UUID: %s",
-                       UUID_helper::to_pretty_repr(rend_obj_ref.render_obj_uuid_ref).c_str());
+    // ImGui::TextWrapped("A render object is created in the renderer.\n  UUID: %s",
+    //                    UUID_helper::to_pretty_repr(rend_obj_ref.render_obj_uuid_ref).c_str());
 
-    #if 0 // @TODO: remove these extras.
-    // Extras for if there's an animator.
-    auto& rend_obj_pool{ service_finder::find_service<Renderer>().get_render_object_pool() };
-    auto& rend_obj{
-        *rend_obj_pool.checkout_render_obj_by_key({ rend_obj_ref.render_obj_uuid_ref }).front()
-    };
+    // #if 0 // @TODO: remove these extras.
+    // // Extras for if there's an animator.
+    // auto& rend_obj_pool{ service_finder::find_service<Renderer>().get_render_object_pool() };
+    // auto& rend_obj{
+    //     *rend_obj_pool.checkout_render_obj_by_key({ rend_obj_ref.render_obj_uuid_ref }).front()
+    // };
 
-    if (auto animator{ rend_obj.get_model_animator() }; animator != nullptr)
-    {   // EXTRAS!!
-        // Control the state machine!!
-        ImGui::SeparatorText("Extras: animator controls");
+    // if (auto animator{ rend_obj.get_model_animator() }; animator != nullptr)
+    // {   // EXTRAS!!
+    //     // Control the state machine!!
+    //     ImGui::SeparatorText("Extras: animator controls");
 
-        ImGui::Text("is_using_root_motion: %s",
-                    (animator->get_is_using_root_motion() ? "TRUE" : "FALSE"));
+    //     ImGui::Text("is_using_root_motion: %s",
+    //                 (animator->get_is_using_root_motion() ? "TRUE" : "FALSE"));
 
-        for (size_t var_idx = 0; var_idx < animator->get_num_animator_variables(); var_idx++)
-        {
-            auto const& anim_var{ animator->get_animator_variable(var_idx) };
-            switch (anim_var.type)
-            {
-            case anim_tmpl_types::Animator_variable::TYPE_BOOL:
-            {
-                bool var_val{ glm_eq(anim_var.var_value, anim_tmpl_types::k_bool_true) };
-                if (ImGui::Checkbox(anim_var.var_name.c_str(), &var_val))
-                {
-                    animator->set_bool_variable(anim_var.var_name, var_val);
-                }
-                break;
-            }
+    //     for (size_t var_idx = 0; var_idx < animator->get_num_animator_variables(); var_idx++)
+    //     {
+    //         auto const& anim_var{ animator->get_animator_variable(var_idx) };
+    //         switch (anim_var.type)
+    //         {
+    //         case anim_tmpl_types::Animator_variable::TYPE_BOOL:
+    //         {
+    //             bool var_val{ glm_eq(anim_var.var_value, anim_tmpl_types::k_bool_true) };
+    //             if (ImGui::Checkbox(anim_var.var_name.c_str(), &var_val))
+    //             {
+    //                 animator->set_bool_variable(anim_var.var_name, var_val);
+    //             }
+    //             break;
+    //         }
 
-            case anim_tmpl_types::Animator_variable::TYPE_INT:
-            {
-                int32_t var_val{ static_cast<int32_t>(anim_var.var_value) };
-                if (ImGui::InputInt(anim_var.var_name.c_str(), &var_val))
-                {
-                    animator->set_int_variable(anim_var.var_name, var_val);
-                }
-                break;
-            }
+    //         case anim_tmpl_types::Animator_variable::TYPE_INT:
+    //         {
+    //             int32_t var_val{ static_cast<int32_t>(anim_var.var_value) };
+    //             if (ImGui::InputInt(anim_var.var_name.c_str(), &var_val))
+    //             {
+    //                 animator->set_int_variable(anim_var.var_name, var_val);
+    //             }
+    //             break;
+    //         }
 
-            case anim_tmpl_types::Animator_variable::TYPE_FLOAT:
-            {
-                float_t var_val{ anim_var.var_value };
-                if (ImGui::DragFloat(anim_var.var_name.c_str(), &var_val, 0.1f))
-                {
-                    animator->set_float_variable(anim_var.var_name, var_val);
-                }
-                break;
-            }
+    //         case anim_tmpl_types::Animator_variable::TYPE_FLOAT:
+    //         {
+    //             float_t var_val{ anim_var.var_value };
+    //             if (ImGui::DragFloat(anim_var.var_name.c_str(), &var_val, 0.1f))
+    //             {
+    //                 animator->set_float_variable(anim_var.var_name, var_val);
+    //             }
+    //             break;
+    //         }
 
-            case anim_tmpl_types::Animator_variable::TYPE_TRIGGER:
-                if (ImGui::Button(("Trigger \"" + anim_var.var_name + "\"").c_str()))
-                {
-                    animator->set_trigger_variable(anim_var.var_name);
-                }
-                break;
+    //         case anim_tmpl_types::Animator_variable::TYPE_TRIGGER:
+    //             if (ImGui::Button(("Trigger \"" + anim_var.var_name + "\"").c_str()))
+    //             {
+    //                 animator->set_trigger_variable(anim_var.var_name);
+    //             }
+    //             break;
 
-            default: assert(false); break;
-            }
-        }
-    }
+    //         default: assert(false); break;
+    //         }
+    //     }
+    // }
 
-    rend_obj_pool.return_render_objs({ &rend_obj });
-    #endif // 0 // @TODO: remove these extras.
+    // rend_obj_pool.return_render_objs({ &rend_obj });
+    // #endif // 0 // @TODO: remove these extras.
 
-    ImGui::PopID();
+    // ImGui::PopID();
 }
 
 void BT::component::edit::imgui_edit__animator_root_motion(entt::registry& reg,

@@ -1,5 +1,6 @@
 #include "physics_object_impl_char_controller.h"
 
+#include "btdatecheck.h"
 #include "Jolt/Jolt.h"
 #include "Jolt/Core/TempAllocator.h"
 #include "Jolt/Physics/Character/Character.h"
@@ -120,17 +121,21 @@ BT::Phys_obj_impl_char_controller::Phys_obj_impl_char_controller(float_t radius,
     m_character->SetListener(this);
 
     // Create debug render job.
-    static auto s_debug_model{ Model_bank::get_model("unit_box") };
-    m_debug_mesh_id = get_main_debug_mesh_pool().emplace_debug_mesh(
-        { s_debug_model,
-          Debug_mesh_pool::k_mask_phys_obj,
-          Material_bank::get_material("debug_physics_wireframe_fore_material"),
-          Material_bank::get_material("debug_physics_wireframe_back_material") });
+    BT::date_deadline(2026, 4, 24);
+    // static auto s_debug_model{ Model_bank::get_model("unit_box") };
+
+    BT::date_deadline(2026, 4, 24);
+    // m_debug_mesh_id = get_main_debug_mesh_pool().emplace_debug_mesh(
+    //     { s_debug_model,
+    //       Debug_mesh_pool::k_mask_phys_obj,
+    //       Material_bank::get_material("debug_physics_wireframe_fore_material"),
+    //       Material_bank::get_material("debug_physics_wireframe_back_material") });
 }
 
 BT::Phys_obj_impl_char_controller::~Phys_obj_impl_char_controller()
 {
-    get_main_debug_mesh_pool().remove_debug_mesh(m_debug_mesh_id);
+    BT::date_deadline(2026, 4, 24);
+    // get_main_debug_mesh_pool().remove_debug_mesh(m_debug_mesh_id);
 }
 
 // Phys obj impl ifc.
@@ -301,9 +306,10 @@ void BT::Phys_obj_impl_char_controller::update_debug_mesh()
     glm_scale(graphic_trans, vec3{ m_radius,
                                    0.5f * height + m_radius,
                                    m_radius });
-    glm_mat4_copy(graphic_trans,
-                  get_main_debug_mesh_pool()
-                      .get_debug_mesh_volatile_handle(m_debug_mesh_id).transform);
+    BT::date_deadline(2026, 4, 24);
+    // glm_mat4_copy(graphic_trans,
+    //               get_main_debug_mesh_pool()
+    //                   .get_debug_mesh_volatile_handle(m_debug_mesh_id).transform);
 }
 
 // Character contact listener.

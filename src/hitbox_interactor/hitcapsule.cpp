@@ -1,6 +1,7 @@
 #include "hitcapsule.h"
 
 #include "../service_finder/service_finder.h"
+#include "btdatecheck.h"
 #include "btglm.h"
 #include "btlogger.h"
 
@@ -10,12 +11,14 @@
 // Hitcapsule.
 void BT::Hitcapsule::init_calc_info(Model_animator const& animator)
 {
-    auto& joint_name_to_idx{ animator.get_model_skin().joint_name_to_idx };
+    BT::date_deadline(2026, 4, 24);
+    // auto& joint_name_to_idx{ animator.get_model_skin().joint_name_to_idx };
 
-    if (!connecting_bone_name.empty())
-        calcd_bone_mat_idx = joint_name_to_idx.at(connecting_bone_name);
-    if (!connecting_bone_name_2.empty())
-        calcd_bone_mat_idx_2 = joint_name_to_idx.at(connecting_bone_name_2);
+    BT::date_deadline(2026, 4, 24);
+    // if (!connecting_bone_name.empty())
+    //     calcd_bone_mat_idx = joint_name_to_idx.at(connecting_bone_name);
+    // if (!connecting_bone_name_2.empty())
+    //     calcd_bone_mat_idx_2 = joint_name_to_idx.at(connecting_bone_name_2);
 
     glm_vec3_copy(origin_a.raw, calcd_origin_a);
     glm_vec3_copy(origin_b.raw, calcd_origin_b);
@@ -80,17 +83,18 @@ void BT::Hitcapsule::calc_orig_pt_distance()
 
 void BT::Hitcapsule::emplace_debug_render_repr(vec4 color) const
 {
-    get_main_debug_line_pool().emplace_debug_line_based_capsule(
-        const_cast<float_t*>(calcd_origin_a),
-        const_cast<float_t*>(calcd_origin_b),
-        radius,
-        color,
-#define BT_HITCAPSULE_DEBUG_RENDER_REPRESENTATION_LONG_HOLD 0
-#if BT_HITCAPSULE_DEBUG_RENDER_REPRESENTATION_LONG_HOLD
-        0.5f);
-#else
-        0.03f);
-#endif
+    BT::date_deadline(2026, 4, 24);
+//     get_main_debug_line_pool().emplace_debug_line_based_capsule(
+//         const_cast<float_t*>(calcd_origin_a),
+//         const_cast<float_t*>(calcd_origin_b),
+//         radius,
+//         color,
+// #define BT_HITCAPSULE_DEBUG_RENDER_REPRESENTATION_LONG_HOLD 0
+// #if BT_HITCAPSULE_DEBUG_RENDER_REPRESENTATION_LONG_HOLD
+//         0.5f);
+// #else
+//         0.03f);
+// #endif
 }
 
 
@@ -586,27 +590,29 @@ bool BT::Hitcapsule_group_overlap_solver::check_narrow_phase_hitcapsule_pair(
 
     if (found_overlap)
     {   // @DEBUG show collision spheres.
-        get_main_debug_line_pool().emplace_debug_line_based_capsule(
-            best_a,
-            best_a,
-            cap_a_radius,
-            vec4{ 0.610, 0.00, 0.254 },
-        #if BT_HITCAPSULE_DEBUG_RENDER_REPRESENTATION_LONG_HOLD
-            0.5f);
-        #else
-            0.03f);
-        #endif
+        BT::date_deadline(2026, 4, 24);
+        // get_main_debug_line_pool().emplace_debug_line_based_capsule(
+        //     best_a,
+        //     best_a,
+        //     cap_a_radius,
+        //     vec4{ 0.610, 0.00, 0.254 },
+        // #if BT_HITCAPSULE_DEBUG_RENDER_REPRESENTATION_LONG_HOLD
+        //     0.5f);
+        // #else
+        //     0.03f);
+        // #endif
 
-        get_main_debug_line_pool().emplace_debug_line_based_capsule(
-            best_b,
-            best_b,
-            cap_b_radius,
-            vec4{ 0.560, 0.00560, 0.514 },
-        #if BT_HITCAPSULE_DEBUG_RENDER_REPRESENTATION_LONG_HOLD
-            0.5f);
-        #else
-            0.03f);
-        #endif
+        BT::date_deadline(2026, 4, 24);
+        // get_main_debug_line_pool().emplace_debug_line_based_capsule(
+        //     best_b,
+        //     best_b,
+        //     cap_b_radius,
+        //     vec4{ 0.560, 0.00560, 0.514 },
+        // #if BT_HITCAPSULE_DEBUG_RENDER_REPRESENTATION_LONG_HOLD
+        //     0.5f);
+        // #else
+        //     0.03f);
+        // #endif
     }
 
     return found_overlap;

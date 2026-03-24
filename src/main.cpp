@@ -186,6 +186,7 @@ int32_t main()
     BT::Animator_template_bank main_anim_template_bank;
 #endif // CUTOUT_THIS
 
+#if CUTOUT_THIS
     // Animation frame action runtime data.
     // "anim_frame_action_runtime_datas": [
     //     "SlimeGirl",
@@ -202,6 +203,7 @@ int32_t main()
             BT::anim_frame_action::Runtime_data_controls(
                 BTZC_GAME_ENGINE_ASSET_ANIM_FRAME_ACTIONS_PATH + afa_name + ".btafa"));
     }
+#endif // CUTOUT_THIS
 
     // POPULATE TEST LEVEL (@TODO: Once level loading is implemented, replace this with it)
     // Physics objects.
@@ -247,11 +249,15 @@ int32_t main()
     // static_level_terrain_rend_obj.assign_generated_uuid();
     // render_object_pool.emplace(std::move(static_level_terrain_rend_obj));
 
+#if CUTOUT_THIS
     // Hitcapsule solver.
     BT::Hitcapsule_group_overlap_solver hitcapsule_solver;
+#endif // CUTOUT_THIS
 
     // Entity container.
+#if CUTOUT_THIS
     BT::component::register_all_components();
+#endif // CUTOUT_THIS
     BT::Entity_container entity_container;
 
     // Load default scene.
@@ -322,14 +328,18 @@ int32_t main()
 
 #if CUTOUT_THIS
             BT::Model_animator::advance_sim_timer(main_physics_engine.k_simulation_delta_time);
-#endif // CUTOUT_THIS
             BT::system::tick_sim_char_mvt_animator();
+#endif // CUTOUT_THIS
 
+#if CUTOUT_THIS
             BT::system::character_broadcast_attack_msg_to_enemies();
             BT::system::cpu_character_enemy_detection();
+#endif // CUTOUT_THIS
             BT::system::cpu_character_world_space_input();
+#if CUTOUT_THIS
             BT::system::player_character_world_space_input();
             BT::system::input_controlled_character_movement();
+#endif // CUTOUT_THIS
 
             // Physics calculations.
             main_physics_engine.update_physics();
@@ -338,10 +348,14 @@ int32_t main()
             BT::system::write_entity_transforms_from_physics();
             BT::system::propagate_changed_transforms();
 
+#if CUTOUT_THIS
             BT::system::player_character_lock_onto_target();
+#endif // CUTOUT_THIS
 
+#if CUTOUT_THIS
             BT::system::animator_driven_hitcapsule_sets_update();
             BT::system::hitcapsule_attack_processing(BT::Physics_engine::k_simulation_delta_time);
+#endif // CUTOUT_THIS
 
             // Audio tick.
             BT::audio::update();
@@ -370,9 +384,9 @@ int32_t main()
                 BT::system::_dev_animation_frame_action_editor();
 
             BT::system::process_render_object_lifetime(is_afa_editor_context);
-#endif // CUTOUT_THIS
             BT::system::write_render_transforms();
             BT::system::update_selected_entity_debug_render_transform();
+#endif // CUTOUT_THIS
 
             if (iter_type < Iteration_type::TEARDOWN_ITERATION)
             {
@@ -451,16 +465,19 @@ int32_t main()
               "  Num physics objects               : %i\n"
 #if CUTOUT_THIS
               "  Num render objects                : %i\n"
+              "  Num hitcapsule grp sets in solver : %i\n"
 #endif // CUTOUT_THIS
-              "  Num hitcapsule grp sets in solver : %i\n",
+              ,
               main_scene_loader.get_num_loaded_scenes(),
               entity_container.get_num_entities(),
               entity_container.get_ecs_registry().view<entt::entity>().size(),
-              main_physics_engine.get_num_physics_objects(),
+              main_physics_engine.get_num_physics_objects()
 #if CUTOUT_THIS
+              ,
               main_renderer.get_render_object_pool().get_num_render_objects(),
+              hitcapsule_solver.get_num_group_sets()
 #endif // CUTOUT_THIS
-              hitcapsule_solver.get_num_group_sets());
+    );
 
     return 0;
 }
