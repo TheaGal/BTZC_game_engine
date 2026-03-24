@@ -73,28 +73,69 @@ endif()
 set(DEPENDENCY_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/cpp_glm/include  # Header only.
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/entt/src  # Header only.
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/fastgltf/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/fmt/include
     $ENV{FMOD_STUDIO_API_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/glad/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/glfw/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui  # Header only.
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ImGuizmo
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/JoltPhysics
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/json/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/stb  # Header only (essentially).
     # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/stduuid/include  # @NOTE: Removing this so that it's not easy to mix up the uuid.h header files.
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/tinyobjloader
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/tomlplusplus/include  # Header only.
 )
 
-add_subdirectory(third_party/fastgltf)
 add_subdirectory(third_party/fmt)
-add_subdirectory(third_party/glfw)
 set(DOUBLE_PRECISION ON CACHE BOOL "Use double precision math" FORCE)  # Use double precision for large, open world physics.
 add_subdirectory(third_party/JoltPhysics/Build)
 add_subdirectory(third_party/json)
 add_subdirectory(third_party/stduuid)
+
+# Create symlink to assets folder.
+if(DEFINED ASSET_DIR)
+    set(dir_name ${ASSET_DIR})
+    set(target_dir_name ${CMAKE_BINARY_DIR}/assets)
+    if(WIN32)
+        string(REPLACE "/" "\\" win32_dir_name ${dir_name})
+        string(REPLACE "/" "\\" win32_target_dir_name ${target_dir_name})
+        if(EXISTS ${dir_name})
+            execute_process(
+                COMMAND cmd /C rmdir ${win32_target_dir_name}
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+        endif()
+        execute_process(
+            COMMAND cmd /C mklink /J ${win32_target_dir_name} ${win32_dir_name}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+    else()
+        # The way you create a symlink in every single OS except Windows.s
+        file(CREATE_LINK ${dir_name} ${target_dir_name} SYMBOLIC)
+    endif()
+endif()
+
+
+# Resource files inside ASSET_DIR.
+set(ASSET_DIR_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/Leever.glb
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/SlimeGirl.glb
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/box_0.5_2.mtl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/cylinder_0.5_2.mtl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/player_model_0.5_2.mtl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/probuilder_example.mtl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/simple_combat_char.glb
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/stupid_polygon_grid.mtl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/unit_box.mtl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/unnamed.mtl
+)
+
+# macOS: add all files in assets dir into app bundle package.
+if (TXP_RENDERER_STANDALONE)
+    foreach (FILE ${ASSET_DIR_FILES})
+        file(RELATIVE_PATH NEW_FILE "${ASSET_DIR}" ${FILE})
+        get_filename_component(NEW_FILE_PATH ${NEW_FILE} DIRECTORY)
+        set_source_files_properties(${FILE}
+            PROPERTIES
+                MACOSX_PACKAGE_LOCATION "Resources/assets/${NEW_FILE_PATH}"
+        )
+    endforeach()
+endif()
 
 # Main source files.
 set(MAIN_SOURCES
@@ -219,45 +260,6 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/physics_engine/physics_object_impl_tri_mesh.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/physics_engine/raycast_helper.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/physics_engine/raycast_helper.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/animator_template.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/animator_template.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/animator_template_types.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/camera.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/camera.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/camera_read_ifc.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/debug_render_job.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/debug_render_job.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/imgui_renderer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/imgui_renderer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/material.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/material.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/material_impl_debug_lines.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/material_impl_debug_lines.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/material_impl_debug_picking.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/material_impl_debug_picking.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/material_impl_opaque_color_unlit.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/material_impl_opaque_color_unlit.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/material_impl_opaque_shaded.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/material_impl_opaque_shaded.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/material_impl_opaque_texture_shaded.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/material_impl_opaque_texture_shaded.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/material_impl_post_process.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/material_impl_post_process.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/mesh.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/mesh.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/model_animator.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/model_animator.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/render_layer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/render_object.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/render_object.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/renderer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/renderer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/renderer_impl_win64.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/renderer_impl_win64.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/shader.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/shader.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/texture.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/renderer/texture.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/service_finder/service_finder.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/service_finder/service_finder.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/settings/settings.cpp
@@ -277,47 +279,15 @@ add_executable(${PROJECT_NAME}
     # Main source files.
     ${MAIN_SOURCES}
 
-    # OpenGL source files.
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/glad/src/glad.c
-
-    # Dear ImGui implementation source files.
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/backends/imgui_impl_glfw.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/backends/imgui_impl_glfw.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/backends/imgui_impl_opengl3_loader.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/backends/imgui_impl_opengl3.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/backends/imgui_impl_opengl3.h
-
-    # Dear ImGui base source files.
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/imconfig.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/imgui_demo.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/imgui_draw.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/imgui_internal.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/imgui_tables.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/imgui_widgets.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/imgui.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/imgui.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/imstb_rectpack.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/imstb_textedit.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/imstb_truetype.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/misc/cpp/imgui_stdlib.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui/misc/cpp/imgui_stdlib.h
-
-    # ImGuizmo source files.
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ImGuizmo/ImGuizmo.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ImGuizmo/ImGuizmo.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ImGuizmo/ImSequencer.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ImGuizmo/ImSequencer.h
-
     # stb header files.
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/stb/stb_image.h
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/stb/stb_image_resize2.h
 
-    # Tinyobjloader source files.
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/tinyobjloader/tiny_obj_loader.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/tinyobjloader/tiny_obj_loader.h
-
     # Native extras.
-    ${WIN64_RESOURCES})
+    ${WIN64_RESOURCES}
+
+    # Resource files.
+    ${ASSET_DIR_FILES})
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
@@ -351,11 +321,9 @@ endif()
 message("FMOD lib path: ${FMOD_STATIC_LIB_ABS_FNAME}")
 
 target_link_libraries(${PROJECT_NAME}
-    fastgltf
+    txp_renderer
     ${FMOD_STATIC_LIB_ABS_FNAME}
     fmt::fmt
-    glfw
-    ${GLFW_LIBRARIES}
     Jolt
     nlohmann_json::nlohmann_json
     stduuid)
@@ -367,7 +335,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
             ${FMOD_LIBRARY_PATH}${FMOD_LIB_FILE_PREFIX}.dll
             ${CMAKE_CURRENT_BINARY_DIR})
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    message(WARNING "MACOS APP DYNA-lib stuff (TODO: RESEARCH!!!)")
+    # message(WARNING "MACOS APP DYNA-lib stuff (TODO: RESEARCH!!!)")
 else()
     message(FATAL_ERROR "Copying dynamic libs missing!!")
 endif()
