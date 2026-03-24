@@ -2,10 +2,8 @@
 
 #include "btlogger.h"
 #include "entt/entity/registry.hpp"
-#include "game_system_logic/component/render_object_settings.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
-#include "renderer/renderer.h"
 #include "service_finder/service_finder.h"
 #include "uuid/uuid.h"
 

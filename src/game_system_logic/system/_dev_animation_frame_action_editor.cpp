@@ -4,12 +4,8 @@
 #include "animation_frame_action_tool/runtime_data.h"
 #include "game_system_logic/component/anim_frame_action_controller.h"
 #include "game_system_logic/component/animator_driven_hitcapsule_set.h"
-#include "game_system_logic/component/render_object_settings.h"
 #include "game_system_logic/entity_container.h"
 #include "game_system_logic/component/_dev_animation_frame_action_editor_agent.h"
-#include "renderer/mesh.h"
-#include "renderer/render_layer.h"
-#include "renderer/renderer.h"
 #include "service_finder/service_finder.h"
 
 #include <cassert>

@@ -1,8 +1,5 @@
 #include "physics_object_impl_char_controller.h"
 
-#include "../renderer/debug_render_job.h"
-#include "../renderer/material.h"
-#include "../renderer/mesh.h"
 #include "Jolt/Jolt.h"
 #include "Jolt/Core/TempAllocator.h"
 #include "Jolt/Physics/Character/Character.h"

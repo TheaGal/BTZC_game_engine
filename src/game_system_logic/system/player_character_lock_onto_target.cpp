@@ -7,8 +7,6 @@
 #include "game_system_logic/entity_container.h"
 #include "game_system_logic/world/world_properties.h"
 #include "input_handler/input_handler.h"
-#include "renderer/camera.h"
-#include "renderer/renderer.h"
 #include "service_finder/service_finder.h"
 #include "uuid/uuid.h"
 

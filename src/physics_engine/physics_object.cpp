@@ -1,6 +1,5 @@
 #include "physics_object.h"
 
-#include "../renderer/mesh.h"
 #include "Jolt/Jolt.h"
 #include "Jolt/Math/MathTypes.h"
 #include "Jolt/Math/Real.h"

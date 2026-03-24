@@ -17,7 +17,6 @@
 #include "game_system_logic/entity_container.h"
 #include "health_stats.h"
 #include "physics_object_settings.h"
-#include "render_object_settings.h"
 #include "service_finder/service_finder.h"
 #include "transform.h"
 

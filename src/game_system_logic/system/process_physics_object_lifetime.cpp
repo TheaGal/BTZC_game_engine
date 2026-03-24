@@ -9,7 +9,6 @@
 #include "game_system_logic/world/world_properties.h"
 #include "physics_engine/physics_engine.h"
 #include "physics_engine/physics_object.h"
-#include "renderer/mesh.h"
 #include "service_finder/service_finder.h"
 #include "uuid/uuid.h"
 

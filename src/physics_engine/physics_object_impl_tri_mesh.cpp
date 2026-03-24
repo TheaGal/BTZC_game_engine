@@ -1,9 +1,5 @@
 #include "physics_object_impl_tri_mesh.h"
 
-#include "../renderer/debug_render_job.h"
-#include "../renderer/material.h"
-#include "../renderer/mesh.h"
-#include "../renderer/render_object.h"
 #include "Jolt/Jolt.h"
 #include "Jolt/Geometry/IndexedTriangle.h"
 #include "Jolt/Geometry/Triangle.h"

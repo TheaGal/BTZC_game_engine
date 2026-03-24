@@ -6,13 +6,10 @@
 #include "entt/entity/entity.hpp"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/cpu_enemy_awareness.h"
-#include "game_system_logic/component/render_object_settings.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
 #include "game_system_logic/world/world_properties.h"
 #include "physics_engine/physics_engine.h"  // For `k_simulation_delta_time`.
-#include "renderer/debug_render_job.h"
-#include "renderer/renderer.h"
 #include "service_finder/service_finder.h"
 #include "uuid/uuid.h"
 

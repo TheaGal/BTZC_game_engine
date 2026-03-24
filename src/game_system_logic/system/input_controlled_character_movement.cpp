@@ -14,7 +14,6 @@
 #include "physics_engine/physics_engine.h"
 #include "physics_engine/physics_object.h"
 #include "physics_engine/raycast_helper.h"
-#include "renderer/model_animator.h"  // For `Model_joint_animation::k_frames_per_second`
 #include "service_finder/service_finder.h"
 
 #include <cassert>

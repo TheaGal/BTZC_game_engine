@@ -7,7 +7,6 @@
 #include "btglm.h"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/physics_object_settings.h"
-#include "game_system_logic/component/render_object_settings.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
 #include "game_system_logic/system/helper_funcs.h"
@@ -15,8 +14,6 @@
 #include "physics_engine/physics_engine.h"
 #include "physics_engine/physics_object.h"
 #include "physics_engine/raycast_helper.h"
-#include "renderer/camera.h"
-#include "renderer/renderer.h"
 #include "service_finder/service_finder.h"
 
 #include <cassert>

@@ -1,7 +1,5 @@
 #include "hitcapsule.h"
 
-#include "../renderer/debug_render_job.h"
-#include "../renderer/model_animator.h"
 #include "../service_finder/service_finder.h"
 #include "btglm.h"
 #include "btlogger.h"

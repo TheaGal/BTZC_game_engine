@@ -6,11 +6,8 @@
 #include "entt/entity/registry.hpp"
 #include "game_system_logic/component/animator_driven_hitcapsule_set.h"
 #include "game_system_logic/component/animator_root_motion.h"
-#include "game_system_logic/component/render_object_settings.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
-#include "renderer/model_animator.h"
-#include "renderer/renderer.h"
 #include "service_finder/service_finder.h"
 
 

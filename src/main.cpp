@@ -22,7 +22,6 @@
 #include "game_system_logic/system/write_render_transforms.h"
 #include "game_system_logic/world/scene_loader.h"
 #include "game_system_logic/world/world_properties.h"
-#include "renderer/camera.h"
 #include "hitbox_interactor/hitcapsule.h"
 #include "input_handler/input_handler.h"
 #include "Jolt/Jolt.h"  // @DEBUG
@@ -32,20 +31,6 @@
 #include "physics_engine/physics_engine.h"
 #include "physics_engine/physics_object.h"
 #include "physics_engine/raycast_helper.h"
-#include "renderer/animator_template.h"
-#include "renderer/imgui_renderer.h"  // @DEBUG
-#include "renderer/material.h"  // @DEBUG
-#include "renderer/material_impl_debug_lines.h"  // @DEBUG
-#include "renderer/material_impl_debug_picking.h"  // @DEBUG
-#include "renderer/material_impl_opaque_color_unlit.h"  // @DEBUG
-#include "renderer/material_impl_opaque_shaded.h"  // @DEBUG
-#include "renderer/material_impl_opaque_texture_shaded.h"  // @DEBUG
-#include "renderer/material_impl_post_process.h"  // @DEBUG
-#include "renderer/mesh.h"  // @DEBUG
-#include "renderer/render_object.h"  // @DEBUG
-#include "renderer/renderer.h"
-#include "renderer/shader.h"  // @DEBUG
-#include "renderer/texture.h"  // @DEBUG
 #include "service_finder/service_finder.h"
 #include "settings/settings.h"
 #include "timer/timer.h"

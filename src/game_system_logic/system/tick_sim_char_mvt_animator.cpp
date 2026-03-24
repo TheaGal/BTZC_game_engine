@@ -4,10 +4,7 @@
 #include "game_system_logic/component/animator_root_motion.h"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/combat_stats.h"
-#include "game_system_logic/component/render_object_settings.h"
 #include "game_system_logic/entity_container.h"
-#include "renderer/model_animator.h"
-#include "renderer/renderer.h"
 #include "service_finder/service_finder.h"
 
 #include <cassert>

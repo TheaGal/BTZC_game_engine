@@ -1,9 +1,6 @@
 #include "runtime_data.h"
 
 #include "../hitbox_interactor/hitcapsule.h"
-#include "../renderer/animator_template.h"
-#include "../renderer/mesh.h"
-#include "../renderer/model_animator.h"
 #include "btjson.h"
 #include "btlogger.h"
 
