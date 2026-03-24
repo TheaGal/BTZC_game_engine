@@ -42,6 +42,7 @@
 using std::make_unique;
 using std::unique_ptr;
 
+#define CUTOUT_THIS 0
 
 int32_t main()
 {
@@ -51,13 +52,16 @@ int32_t main()
     BT::Watchdog_timer main_watchdog;
 
     BT::Input_handler main_input_handler;
+#if CUTOUT_THIS
     BT::ImGui_renderer main_renderer_imgui_renderer;
     BT::Renderer main_renderer{ main_input_handler,
                                 main_renderer_imgui_renderer,
                                 "No Train No Game" };
+#endif // CUTOUT_THIS
     BT::Physics_engine main_physics_engine;
 
     BT::Raycast_helper::set_physics_engine(main_physics_engine);
+#if CUTOUT_THIS
     BT::Material_bank::set_camera_read_ifc(&main_renderer);
 
     // Shaders.
@@ -180,6 +184,7 @@ int32_t main()
 
     // Animator templates.
     BT::Animator_template_bank main_anim_template_bank;
+#endif // CUTOUT_THIS
 
     // Animation frame action runtime data.
     // "anim_frame_action_runtime_datas": [
@@ -222,8 +227,10 @@ int32_t main()
     // static_level_terrain_phys_obj->assign_generated_uuid();
     // main_physics_engine.emplace_physics_object(std::move(static_level_terrain_phys_obj));
 
+#if CUTOUT_THIS
     // Render objects.
     auto& render_object_pool{ main_renderer.get_render_object_pool() };
+#endif // CUTOUT_THIS
 
     // BT::Render_object player_char_rend_obj{
     //     BT::Model_bank::get_model("box_0.5_2"),
@@ -250,10 +257,12 @@ int32_t main()
     // Load default scene.
     BT::world::Scene_loader main_scene_loader;
 
+#if CUTOUT_THIS
     // Setup imgui renderer.
     main_renderer_imgui_renderer.set_camera_ref(main_renderer.get_camera_obj());
     main_renderer_imgui_renderer.set_renderer_ref(&main_renderer);
     main_renderer_imgui_renderer.set_input_handler_ref(&main_input_handler);
+#endif // CUTOUT_THIS
 
     // Setup audio engine.
     BT::audio::initialize();
@@ -285,7 +294,9 @@ int32_t main()
     {
         BT::logger::notify_start_new_mainloop_iteration();
         main_watchdog.pet();
+#if CUTOUT_THIS
         main_renderer.poll_events();
+#endif // CUTOUT_THIS
 
         float_t delta_time =
             main_physics_engine.limit_delta_time(
@@ -309,7 +320,9 @@ int32_t main()
             // Pre-physics.
             BT::system::process_physics_object_lifetime();
 
+#if CUTOUT_THIS
             BT::Model_animator::advance_sim_timer(main_physics_engine.k_simulation_delta_time);
+#endif // CUTOUT_THIS
             BT::system::tick_sim_char_mvt_animator();
 
             BT::system::character_broadcast_attack_msg_to_enemies();
@@ -333,8 +346,10 @@ int32_t main()
             // Audio tick.
             BT::audio::update();
 
+#if CUTOUT_THIS
             // Performance measure.
             main_renderer_imgui_renderer.set_sim_loop_perf_time(perf_timer.calc_delta_time());
+#endif // CUTOUT_THIS
 
             // Only run once if teardown iteration.
             if (iter_type == Iteration_type::TEARDOWN_ITERATION)
@@ -348,17 +363,20 @@ int32_t main()
             perf_timer.start_timer();
 
             // Run all pre-render systems.
+#if CUTOUT_THIS
             bool is_afa_editor_context{
                 main_renderer_imgui_renderer.is_anim_frame_data_editor_context() };
             if (is_afa_editor_context)
                 BT::system::_dev_animation_frame_action_editor();
 
             BT::system::process_render_object_lifetime(is_afa_editor_context);
+#endif // CUTOUT_THIS
             BT::system::write_render_transforms();
             BT::system::update_selected_entity_debug_render_transform();
 
             if (iter_type < Iteration_type::TEARDOWN_ITERATION)
             {
+#if CUTOUT_THIS
                 main_renderer.render(delta_time);
 
                 if (is_afa_editor_context)
@@ -368,10 +386,13 @@ int32_t main()
                     //        animator reconfiguration, and no processing of the animator, no
                     //        processing of AFA controller/data points.
                     BT::system::_dev_animation_frame_action_editor();
+#endif // CUTOUT_THIS
             }
 
+#if CUTOUT_THIS
             // Performance measure.
             main_renderer_imgui_renderer.set_rend_loop_perf_time(perf_timer.calc_delta_time());
+#endif // CUTOUT_THIS
         }
 
         // Switch iteration type.
@@ -388,6 +409,7 @@ int32_t main()
             break;
 
         case Iteration_type::RUNNING_ITERATION:
+#if CUTOUT_THIS
             if (main_renderer.get_requesting_close())
             {   // Enter teardown.
                 main_scene_loader.unload_all_scenes();
@@ -397,6 +419,7 @@ int32_t main()
                 BT_TRACE("==== ENTERING TEARDOWN =========================================");
                 iter_type = Iteration_type::TEARDOWN_ITERATION;
             }
+#endif // CUTOUT_THIS
             break;
 
         case Iteration_type::TEARDOWN_ITERATION:
@@ -415,7 +438,9 @@ int32_t main()
     }
 
     // Write final state of settings file.
+#if CUTOUT_THIS
     main_renderer.save_state_to_app_settings();
+#endif // CUTOUT_THIS
     BT::save_app_settings_to_disk();
 
     // Show stats prior to cleanup.
@@ -424,13 +449,17 @@ int32_t main()
               "  Num entities                      : %i\n"
               "  Num ECS entities                  : %i\n"
               "  Num physics objects               : %i\n"
+#if CUTOUT_THIS
               "  Num render objects                : %i\n"
+#endif // CUTOUT_THIS
               "  Num hitcapsule grp sets in solver : %i\n",
               main_scene_loader.get_num_loaded_scenes(),
               entity_container.get_num_entities(),
               entity_container.get_ecs_registry().view<entt::entity>().size(),
               main_physics_engine.get_num_physics_objects(),
+#if CUTOUT_THIS
               main_renderer.get_render_object_pool().get_num_render_objects(),
+#endif // CUTOUT_THIS
               hitcapsule_solver.get_num_group_sets());
 
     return 0;
