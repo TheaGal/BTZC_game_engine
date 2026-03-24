@@ -81,6 +81,7 @@ set(DEPENDENCY_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/stb  # Header only (essentially).
     # ${CMAKE_CURRENT_SOURCE_DIR}/third_party/stduuid/include  # @NOTE: Removing this so that it's not easy to mix up the uuid.h header files.
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/tomlplusplus/include  # Header only.
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/TXP_renderer/include
 )
 
 add_subdirectory(third_party/fmt)
@@ -88,6 +89,7 @@ set(DOUBLE_PRECISION ON CACHE BOOL "Use double precision math" FORCE)  # Use dou
 add_subdirectory(third_party/JoltPhysics/Build)
 add_subdirectory(third_party/json)
 add_subdirectory(third_party/stduuid)
+add_subdirectory(third_party/TXP_renderer)
 
 # Create symlink to assets folder.
 if(DEFINED ASSET_DIR)
@@ -290,19 +292,37 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
         set(FMOD_LIBRARY_PATH
             $ENV{FMOD_STUDIO_API_DIR}/api/core/lib/x64/)
     endif()
-    set(FMOD_STATIC_LIB_ABS_FNAME
+    set(FMOD_LIBRARIES
         ${FMOD_LIBRARY_PATH}${FMOD_LIB_FILE_PREFIX}_vc.lib)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    message(WARNING "Building FMOD link lib missing!")
+    if(ENABLE_FMOD_LOGGING)
+        set(FMOD_LIB_FILE_PREFIX libfmodL)
+    else()
+        set(FMOD_LIB_FILE_PREFIX libfmod)
+    endif()
+
+    file(REAL_PATH $ENV{FMOD_STUDIO_API_DIR} FMOD_STUDIO_API_DIR_ABS_PATH EXPAND_TILDE)
+
+    set(FMOD_LIBRARY_PATH
+        ${FMOD_STUDIO_API_DIR_ABS_PATH}/api/core/lib/)
+    set(FMOD_DYLIB_PATH
+        ${FMOD_LIBRARY_PATH}${FMOD_LIB_FILE_PREFIX}.dylib)
+
+    # Create an imported library target for FMOD.
+    set(FMOD_LIBRARIES btzc_fmod_dylib)
+    add_library(${FMOD_LIBRARIES} SHARED IMPORTED)
+    set_target_properties(${FMOD_LIBRARIES} PROPERTIES
+        IMPORTED_LOCATION ${FMOD_DYLIB_PATH}
+    )
 else()
     message(FATAL_ERROR "Building FMOD link lib path missing!")
 endif()
 
-message("FMOD lib path: ${FMOD_STATIC_LIB_ABS_FNAME}")
+message("FMOD lib path: ${FMOD_LIBRARIES}")
 
 target_link_libraries(${PROJECT_NAME}
     txp_renderer
-    ${FMOD_STATIC_LIB_ABS_FNAME}
+    ${FMOD_LIBRARIES}
     fmt::fmt
     Jolt
     nlohmann_json::nlohmann_json
