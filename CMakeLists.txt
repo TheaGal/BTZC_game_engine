@@ -141,7 +141,6 @@ endif()
 set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/animation_frame_action_tool/editor_state.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/animation_frame_action_tool/editor_state.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/animation_frame_action_tool/runtime_data.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/animation_frame_action_tool/runtime_data.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_engine/audio_engine.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_engine/audio_engine.h
@@ -162,9 +161,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/character_movement.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/combat_stats.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/combat_stats.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/component_imgui_edit_functions.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/component_imgui_edit_functions.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/component_registry.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/component_registry.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/cpu_enemy_awareness.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/entity_metadata.h
@@ -176,39 +173,26 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/transform.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/entity_container.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/entity_container.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/_dev_animation_frame_action_editor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/_dev_animation_frame_action_editor.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/animator_driven_hitcapsule_sets_update.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/animator_driven_hitcapsule_sets_update.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/character_broadcast_attack_msg_to_enemies.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/character_broadcast_attack_msg_to_enemies.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/cpu_character_enemy_detection.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/cpu_character_enemy_detection.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/cpu_character_world_space_input.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/cpu_character_world_space_input.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/helper_funcs.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/helper_funcs.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/hitcapsule_attack_processing.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/hitcapsule_attack_processing.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/imgui_render_transform_hierarchy_window.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/imgui_render_transform_hierarchy_window.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/input_controlled_character_movement.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/input_controlled_character_movement.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/player_character_lock_onto_target.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/player_character_lock_onto_target.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/player_character_world_space_input.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/player_character_world_space_input.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_physics_object_lifetime.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_physics_object_lifetime.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_render_object_lifetime.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_render_object_lifetime.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/propagate_changed_transforms.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/propagate_changed_transforms.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/tick_sim_char_mvt_animator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/tick_sim_char_mvt_animator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/write_entity_transforms_from_physics.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/write_entity_transforms_from_physics.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/write_render_transforms.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/write_render_transforms.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/world/scene_loader.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/world/scene_loader.h
@@ -216,7 +200,6 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/world/scene_serialization.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/world/world_properties.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/world/world_properties.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/hitbox_interactor/hitcapsule.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/hitbox_interactor/hitcapsule.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/input_handler/input_codes.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/input_handler/input_handler.cpp
@@ -253,9 +236,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/physics_engine/physics_engine_impl_obj_vs_broad_phase_filter.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/physics_engine/physics_object.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/physics_engine/physics_object.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/physics_engine/physics_object_impl_char_controller.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/physics_engine/physics_object_impl_char_controller.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/physics_engine/physics_object_impl_tri_mesh.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/physics_engine/physics_object_impl_tri_mesh.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/physics_engine/raycast_helper.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/physics_engine/raycast_helper.h

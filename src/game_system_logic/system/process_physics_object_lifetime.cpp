@@ -115,11 +115,12 @@ void create_staged_physics_objects(entt::registry& reg, Physics_engine& phys_eng
             auto const& tm_settings{
                 reg.get<component::Physics_obj_type_triangle_mesh_settings const>(entity)
             };
-            new_phys_obj = Physics_object::create_triangle_mesh(
-                false,
-                Model_bank::get_model(tm_settings.model_name),
-                JPH::EMotionType{ tm_settings.motion_type },
-                Physics_transform::make_phys_trans(transform.position, transform.rotation));
+            assert(false);  // @TODO: fix below!!!
+            // new_phys_obj = Physics_object::create_triangle_mesh(
+            //     false,
+            //     Model_bank::get_model(tm_settings.model_name),
+            //     JPH::EMotionType{ tm_settings.motion_type },
+            //     Physics_transform::make_phys_trans(transform.position, transform.rotation));
             break;
         }
 
