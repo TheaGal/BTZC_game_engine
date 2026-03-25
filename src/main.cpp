@@ -35,6 +35,7 @@
 #include "settings/settings.h"
 #include "timer/timer.h"
 #include "timer/watchdog_timer.h"
+#include "txp_renderer_public.h"
 #include "uuid/uuid.h"
 #include <cstdint>
 #include <memory>
@@ -51,7 +52,23 @@ int32_t main()
 
     BT::Watchdog_timer main_watchdog;
 
+    BT::component::register_all_components();
+    BT::Entity_container entity_container;
+
+#if CUTOUT_THIS
     BT::Input_handler main_input_handler;
+#endif // CUTOUT_THIS
+    TXP::Input::Input_handler input_handler;
+    TXP::Renderer main_renderer{ entity_container.get_ecs_registry(),
+                                 "No Train No Game",
+                                 1280,
+                                 720,
+                                 BTZC_GAME_ENGINE_ASSET_TEXTURE_PATH,
+                                 BTZC_GAME_ENGINE_ASSET_SHADER_PATH,
+                                 BTZC_GAME_ENGINE_ASSET_MODEL_PATH };
+
+    main_renderer.add_texture("test_ktx_tex", ".ktx2");
+
 #if CUTOUT_THIS
     BT::ImGui_renderer main_renderer_imgui_renderer;
     BT::Renderer main_renderer{ main_input_handler,
@@ -254,12 +271,6 @@ int32_t main()
     BT::Hitcapsule_group_overlap_solver hitcapsule_solver;
 #endif // CUTOUT_THIS
 
-    // Entity container.
-#if CUTOUT_THIS
-    BT::component::register_all_components();
-#endif // CUTOUT_THIS
-    BT::Entity_container entity_container;
-
     // Load default scene.
     BT::world::Scene_loader main_scene_loader;
 
@@ -294,6 +305,8 @@ int32_t main()
     };
     BT_TRACE("==== ENTERING MAIN LOOP (FIRST RUNNING ITERATION) ==============");
     Iteration_type iter_type{ Iteration_type::FIRST_RUNNING_ITERATION };
+
+    main_renderer.run();
 
     // Main loop.
     while (iter_type != Iteration_type::EXIT_LOOP)

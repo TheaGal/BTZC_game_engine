@@ -51,9 +51,9 @@ endif()
 
 # Multithreaded build.
 set(CMAKE_BUILD_PARALLEL_LEVEL 16)
-if(MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-endif()
+# if(MSVC)  # @NOTE: this can cause errors so don't do this lol.  -Thea 2026/02/14
+#     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
+# endif()
 
 # Profiling.
 if(ENABLE_PROFILING)
@@ -124,6 +124,11 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/simple_combat_char.glb
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/stupid_polygon_grid.mtl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/unit_box.mtl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/basic_diffuse.shader
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/basic_diffuse.shadrefl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/gradient.shader
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/gradient.shadrefl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/test_ktx_tex.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/unnamed.mtl
 )
 
@@ -138,6 +143,7 @@ if (TXP_RENDERER_STANDALONE)
         )
     endforeach()
 endif()
+
 
 # Main source files.
 set(MAIN_SOURCES
@@ -278,7 +284,8 @@ add_executable(${PROJECT_NAME}
     ${WIN64_RESOURCES}
 
     # Resource files.
-    ${ASSET_DIR_FILES})
+    ${ASSET_DIR_FILES}
+)
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
@@ -335,9 +342,11 @@ target_link_libraries(${PROJECT_NAME}
     fmt::fmt
     Jolt
     nlohmann_json::nlohmann_json
-    stduuid)
+    stduuid
+)
 
 # Copy dynamic libs.
+# @TODO: check to see if instead of copying the dlls, maybe you can use the same shared-imported trick as above???
 if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     execute_process(
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
@@ -371,6 +380,14 @@ if(DEFINED ASSET_DIR)
 else()
     message(FATAL_ERROR "Asset folder location must be defined in `ASSET_DIR`. Unable to create symlink.")
 endif()
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    MACOSX_BUNDLE_GUI_IDENTIFIER "com.hawsoo.btzc_game_engine"
+    MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
+    MACOSX_BUNDLE_BUNDLE_VERSION "0.1.0"
+    MACOSX_BUNDLE_SHORT_VERSION_STRING "0.1"
+    # RESOURCE "${ASSET_DIR_FILES}"  @CHECK: commented these out since it caused resource files to get placed at the root of the bundle. So it should be good enough if changes?  -Thea 2026/02/08
+)
 
 # Set this project as Visual Studio startup project.
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
