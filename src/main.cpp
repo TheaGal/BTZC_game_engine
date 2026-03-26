@@ -78,6 +78,7 @@ int32_t main()
     main_renderer.add_material_palette("default_material_palette", { "default_mat" });
     main_renderer.add_model("probuilder_example", ".wobj");
     main_renderer.add_model("simple_combat_char", ".glb");
+    main_renderer.build();
 
 #if CUTOUT_THIS
     BT::ImGui_renderer main_renderer_imgui_renderer;
@@ -316,16 +317,12 @@ int32_t main()
     BT_TRACE("==== ENTERING MAIN LOOP (FIRST RUNNING ITERATION) ==============");
     Iteration_type iter_type{ Iteration_type::FIRST_RUNNING_ITERATION };
 
-    main_renderer.run();
-
     // Main loop.
     while (iter_type != Iteration_type::EXIT_LOOP)
     {
         BT::logger::notify_start_new_mainloop_iteration();
         main_watchdog.pet();
-#if CUTOUT_THIS
-        main_renderer.poll_events();
-#endif // CUTOUT_THIS
+        main_renderer.poll_input_events();
 
         float_t delta_time =
             main_physics_engine.limit_delta_time(
@@ -413,9 +410,9 @@ int32_t main()
 
             if (iter_type < Iteration_type::TEARDOWN_ITERATION)
             {
-#if CUTOUT_THIS
-                main_renderer.render(delta_time);
+                main_renderer.render_one_frame(delta_time);
 
+#if CUTOUT_THIS
                 if (is_afa_editor_context)
                     // @HACK: @IMPROVE: Run AFA editor again in case if animator reconfiguration is
                     //   needed from ImGui actions of the render that just happened.
@@ -446,8 +443,7 @@ int32_t main()
             break;
 
         case Iteration_type::RUNNING_ITERATION:
-#if CUTOUT_THIS
-            if (main_renderer.get_requesting_close())
+            if (main_renderer.is_requesting_shutdown())
             {   // Enter teardown.
                 main_scene_loader.unload_all_scenes();
 
@@ -456,7 +452,6 @@ int32_t main()
                 BT_TRACE("==== ENTERING TEARDOWN =========================================");
                 iter_type = Iteration_type::TEARDOWN_ITERATION;
             }
-#endif // CUTOUT_THIS
             break;
 
         case Iteration_type::TEARDOWN_ITERATION:
