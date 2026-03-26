@@ -381,10 +381,9 @@ int32_t main()
             // Audio tick.
             BT::audio::update();
 
-#if CUTOUT_THIS
             // Performance measure.
-            main_renderer_imgui_renderer.set_sim_loop_perf_time(perf_timer.calc_delta_time());
-#endif // CUTOUT_THIS
+            main_renderer.report_performance_time(main_renderer.PERF_TIME_TYPE_SIMULATION_LOOP,
+                                                  perf_timer.calc_delta_time());
 
             // Only run once if teardown iteration.
             if (iter_type == Iteration_type::TEARDOWN_ITERATION)
@@ -426,10 +425,9 @@ int32_t main()
 #endif // CUTOUT_THIS
             }
 
-#if CUTOUT_THIS
             // Performance measure.
-            main_renderer_imgui_renderer.set_rend_loop_perf_time(perf_timer.calc_delta_time());
-#endif // CUTOUT_THIS
+            main_renderer.report_performance_time(main_renderer.PERF_TIME_TYPE_RENDERER_LOOP,
+                                                  perf_timer.calc_delta_time());
         }
 
         // Switch iteration type.
