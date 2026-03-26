@@ -15,7 +15,7 @@
 #include "physics_engine.h"
 #include "physics_engine_impl_layers.h"
 #include "service_finder/service_finder.h"
-#include "txp_renderer/renderer.h"
+#include "txp_renderer_public.h"
 
 #include <cassert>
 

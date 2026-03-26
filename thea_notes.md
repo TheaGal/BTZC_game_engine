@@ -8,4 +8,5 @@
 - [x] Fix asserts in creating physics objects.
     - It appears to be workign.
 
-- [ ] Fix input controlled character mvt (system).
+- [x] Fix input controlled character mvt (system).
+    - Ummm that was ez. Like super duper ez.

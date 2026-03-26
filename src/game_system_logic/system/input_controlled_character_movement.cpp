@@ -15,6 +15,7 @@
 #include "physics_engine/physics_object.h"
 #include "physics_engine/raycast_helper.h"
 #include "service_finder/service_finder.h"
+#include "txp_renderer_public.h"
 
 #include <cassert>
 
@@ -277,7 +278,7 @@ Char_mvt_logic_results character_controller_movement_logic(
         //        it is correct.
         //        Maybe make your anim travel further if it looks slow?  -Thea 2025/11/27
         desired_velocity *=
-            anim_root_motion->root_motion_multiplier * Model_joint_animation::k_frames_per_second;
+            anim_root_motion->root_motion_multiplier * TXP::k_skeletal_anim_frames_per_second;
     }
     else if (mvt_type == MVT_TYPE_INPUT_BASED)
     {

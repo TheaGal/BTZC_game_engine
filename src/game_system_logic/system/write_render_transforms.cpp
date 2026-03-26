@@ -4,7 +4,7 @@
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
 #include "service_finder/service_finder.h"
-#include "txp_renderer/types.h"
+#include "txp_renderer_public.h"
 
 
 void BT::system::write_render_transforms()

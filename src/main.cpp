@@ -352,8 +352,8 @@ int32_t main()
             BT::system::cpu_character_world_space_input();
 #if IMPLEMENT_THIS
             BT::system::player_character_world_space_input();
-            BT::system::input_controlled_character_movement();
 #endif // IMPLEMENT_THIS
+            BT::system::input_controlled_character_movement();
 
             // Physics calculations.
             main_physics_engine.update_physics();
