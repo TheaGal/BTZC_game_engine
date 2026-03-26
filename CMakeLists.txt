@@ -202,7 +202,6 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/player_character_world_space_input.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_physics_object_lifetime.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_physics_object_lifetime.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_render_object_lifetime.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/propagate_changed_transforms.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/propagate_changed_transforms.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/tick_sim_char_mvt_animator.h

@@ -15,7 +15,6 @@
 #include "game_system_logic/system/player_character_lock_onto_target.h"
 #include "game_system_logic/system/player_character_world_space_input.h"
 #include "game_system_logic/system/process_physics_object_lifetime.h"
-#include "game_system_logic/system/process_render_object_lifetime.h"
 #include "game_system_logic/system/propagate_changed_transforms.h"
 #include "game_system_logic/system/tick_sim_char_mvt_animator.h"
 #include "game_system_logic/system/write_entity_transforms_from_physics.h"
@@ -402,9 +401,8 @@ int32_t main()
                 main_renderer_imgui_renderer.is_anim_frame_data_editor_context() };
             if (is_afa_editor_context)
                 BT::system::_dev_animation_frame_action_editor();
-
-            BT::system::process_render_object_lifetime(is_afa_editor_context);
 #endif // CUTOUT_THIS
+
             BT::system::write_render_transforms();
 #if CUTOUT_THIS
             BT::system::update_selected_entity_debug_render_transform();
@@ -412,6 +410,9 @@ int32_t main()
 
             if (iter_type < Iteration_type::TEARDOWN_ITERATION)
             {
+                main_renderer.set_allow_deformed_render_models(
+                    world_properties.get_data_handle().is_simulation_running);
+
                 main_renderer.render_one_frame(delta_time);
 
 #if CUTOUT_THIS

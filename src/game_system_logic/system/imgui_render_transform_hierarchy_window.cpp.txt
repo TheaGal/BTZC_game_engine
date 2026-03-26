@@ -366,7 +366,7 @@ void BT::system::imgui_render_transform_hierarchy_window(bool clear_state)
     internal_imgui_render_item_properties_inspector();
 }
 
-void BT::system::set_selected_entity(entt::entity entity)
+void BT::system::set_selected_entity(entt::entity entity)  // @THEA: @UNUSED
 {
     if (!s_state.debug_mesh_key.is_nil())  // @COPYPASTA
     {   // Remove debug mesh from set of render jobs!
