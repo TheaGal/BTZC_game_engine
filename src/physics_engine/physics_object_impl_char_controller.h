@@ -16,8 +16,6 @@ using std::vector;
 namespace BT
 {
 
-class Model;
-
 class Phys_obj_impl_char_controller
     : public Physics_object_type_impl_ifc
     , public JPH::CharacterContactListener

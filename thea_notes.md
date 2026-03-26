@@ -4,3 +4,8 @@
 - [x] Integrate the TXP renderer.
 
 - [x] Add in deformed render models being disabled while `is_simulation_running` is false.
+
+- [x] Fix asserts in creating physics objects.
+    - It appears to be workign.
+
+- [ ] Fix input controlled character mvt (system).

@@ -72,13 +72,12 @@ public:
 };
 
 class Physics_engine;
-class Model;
 
 class Physics_object : public UUID_ifc
 {
 public:
     static unique_ptr<Physics_object> create_triangle_mesh(bool interpolate_transform,
-                                                           Model const* model,
+                                                           std::string const& model_name,
                                                            JPH::EMotionType motion_type,
                                                            Physics_transform&& init_transform);
     static unique_ptr<Physics_object> create_character_controller(bool interpolate_transform,

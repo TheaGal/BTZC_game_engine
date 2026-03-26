@@ -15,16 +15,19 @@
 #include "physics_engine.h"
 #include "physics_engine_impl_layers.h"
 #include "service_finder/service_finder.h"
+#include "txp_renderer/renderer.h"
+
 #include <cassert>
 
 
-BT::Phys_obj_impl_tri_mesh::Phys_obj_impl_tri_mesh(Model const* model,
+BT::Phys_obj_impl_tri_mesh::Phys_obj_impl_tri_mesh(std::string const& model_name,
                                                    JPH::EMotionType motion_type,
                                                    Physics_transform&& init_transform)
     : m_phys_body_ifc{ *reinterpret_cast<JPH::BodyInterface*>(service_finder::find_service<Physics_engine>().get_physics_body_ifc()) }
-    , m_model{ model }
+    // , m_model{ model }  @TODO: FIX SOMETIME!!
     , m_can_move{ motion_type == JPH::EMotionType::Kinematic }
 {
+    BT::date_deadline(2026, 4, 24);  // Fix the `// , m_model{ model }  @TODO: FIX SOMETIME!!` section.
     if (motion_type == JPH::EMotionType::Dynamic)
     {
         logger::printe(logger::ERROR, "Dynamic motion type not allowed.");
@@ -32,14 +35,8 @@ BT::Phys_obj_impl_tri_mesh::Phys_obj_impl_tri_mesh(Model const* model,
         return;
     }
 
-    BT::date_deadline(2026, 4, 24);
-    // auto verts_indices{ m_model->get_all_vertices_and_indices() };
-    struct TEMP_struct_for_verts
-    {
-        vec3 position;
-    };
-    std::pair<std::vector<TEMP_struct_for_verts>, std::vector<size_t>> verts_indices{};  // TEMP (for compiling)
-    // @END_DEADLINE
+    auto basic_model =
+        BT::service_finder::find_service<TXP::Renderer>().get_model_basic_data(model_name);
 
     // @NOTE: I think there might be some extra stuff Jolt is doing in the behind
     //   that makes the triangle list better than using the inefficient-for-physics
@@ -48,36 +45,36 @@ BT::Phys_obj_impl_tri_mesh::Phys_obj_impl_tri_mesh(Model const* model,
 #define INDEXED_TRIANGLE_LIST 0
 #if INDEXED_TRIANGLE_LIST
     JPH::VertexList vertex_list;
-    vertex_list.reserve(verts_indices.first.size());
-    for (auto& vertex : verts_indices.first)
+    vertex_list.reserve(basic_model.vertices.size());
+    for (auto& vertex : basic_model.vertices)
     {
         vertex_list.emplace_back(vertex.position[0], vertex.position[1], vertex.position[2]);
     }
 
-    assert(verts_indices.second.size() % 3 == 0);
+    assert(basic_model.indices.size() % 3 == 0);
     JPH::IndexedTriangleList indexed_tris_list;
-    indexed_tris_list.reserve(verts_indices.second.size() / 3);
-    for (size_t i = 0 ; i < verts_indices.second.size(); i += 3)
+    indexed_tris_list.reserve(basic_model.indices.size() / 3);
+    for (size_t i = 0 ; i < basic_model.indices.size(); i += 3)
     {
-        indexed_tris_list.emplace_back(verts_indices.second[i + 0],
-                                       verts_indices.second[i + 1],
-                                       verts_indices.second[i + 2],
+        indexed_tris_list.emplace_back(basic_model.indices[i + 0],
+                                       basic_model.indices[i + 1],
+                                       basic_model.indices[i + 2],
                                        0);
     }
     JPH::MeshShapeSettings mesh_settings(vertex_list, indexed_tris_list);
 #else
     JPH::TriangleList tri_list;
-    for (size_t i = 0; i < verts_indices.second.size(); i += 3)
+    for (size_t i = 0; i < basic_model.indices.size(); i += 3)
     {
-        JPH::Float3 p0{ verts_indices.first[verts_indices.second[i + 0]].position[0],
-                        verts_indices.first[verts_indices.second[i + 0]].position[1],
-                        verts_indices.first[verts_indices.second[i + 0]].position[2] };
-        JPH::Float3 p1{ verts_indices.first[verts_indices.second[i + 1]].position[0],
-                        verts_indices.first[verts_indices.second[i + 1]].position[1],
-                        verts_indices.first[verts_indices.second[i + 1]].position[2] };
-        JPH::Float3 p2{ verts_indices.first[verts_indices.second[i + 2]].position[0],
-                        verts_indices.first[verts_indices.second[i + 2]].position[1],
-                        verts_indices.first[verts_indices.second[i + 2]].position[2] };
+        JPH::Float3 p0{ basic_model.vertices[basic_model.indices[i + 0]].position[0],
+                        basic_model.vertices[basic_model.indices[i + 0]].position[1],
+                        basic_model.vertices[basic_model.indices[i + 0]].position[2] };
+        JPH::Float3 p1{ basic_model.vertices[basic_model.indices[i + 1]].position[0],
+                        basic_model.vertices[basic_model.indices[i + 1]].position[1],
+                        basic_model.vertices[basic_model.indices[i + 1]].position[2] };
+        JPH::Float3 p2{ basic_model.vertices[basic_model.indices[i + 2]].position[0],
+                        basic_model.vertices[basic_model.indices[i + 2]].position[1],
+                        basic_model.vertices[basic_model.indices[i + 2]].position[2] };
         tri_list.emplace_back(p0, p1, p2);
     }
     JPH::MeshShapeSettings mesh_settings(tri_list);

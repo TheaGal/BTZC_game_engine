@@ -14,8 +14,6 @@
 
 #include <memory>
 
-// @NOTE: See `process_render_object_lifetime.cpp` for a similar system.
-
 
 namespace
 {
@@ -115,12 +113,11 @@ void create_staged_physics_objects(entt::registry& reg, Physics_engine& phys_eng
             auto const& tm_settings{
                 reg.get<component::Physics_obj_type_triangle_mesh_settings const>(entity)
             };
-            assert(false);  // @TODO: fix below!!!
-            // new_phys_obj = Physics_object::create_triangle_mesh(
-            //     false,
-            //     Model_bank::get_model(tm_settings.model_name),
-            //     JPH::EMotionType{ tm_settings.motion_type },
-            //     Physics_transform::make_phys_trans(transform.position, transform.rotation));
+            new_phys_obj = Physics_object::create_triangle_mesh(
+                false,
+                tm_settings.model_name,
+                JPH::EMotionType{ tm_settings.motion_type },
+                Physics_transform::make_phys_trans(transform.position, transform.rotation));
             break;
         }
 
