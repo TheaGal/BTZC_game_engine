@@ -28,7 +28,7 @@ using namespace BT;
 
 /// Takes `input_vec` user input and transforms it into a world space input vector where forward is
 /// the direction the camera is facing.
-void transform_input_to_camera_pov_input(vec3 cam_view_direction,
+void transform_input_to_camera_pov_input(vec3 const cam_view_direction,
                                          vec2 const input_vec,
                                          vec3s& out_ws_input_vec)
 {
@@ -41,7 +41,7 @@ void transform_input_to_camera_pov_input(vec3 cam_view_direction,
 
     // Calc forward and right axis vectors.
     vec3 cam_forward;
-    glm_vec3_copy(cam_view_direction, cam_forward);
+    glm_vec3_copy(const_cast<float_t*>(cam_view_direction), cam_forward);
     cam_forward[1] = 0;
     glm_vec3_normalize(cam_forward);
 
