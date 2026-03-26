@@ -284,6 +284,7 @@ int32_t main()
 
     // Load default scene.
     BT::world::Scene_loader main_scene_loader;
+    main_scene_loader.load_scene("_dev_sample_scene.btscene");
 
 #if CUTOUT_THIS
     // Setup imgui renderer.
