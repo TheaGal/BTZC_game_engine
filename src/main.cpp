@@ -350,9 +350,7 @@ int32_t main()
             BT::system::cpu_character_enemy_detection();
 #endif // IMPLEMENT_THIS
             BT::system::cpu_character_world_space_input();
-#if IMPLEMENT_THIS
             BT::system::player_character_world_space_input();
-#endif // IMPLEMENT_THIS
             BT::system::input_controlled_character_movement();
 
             // Physics calculations.

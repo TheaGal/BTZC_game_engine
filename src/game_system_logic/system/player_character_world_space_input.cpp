@@ -4,6 +4,7 @@
 #include "Jolt/Math/Vec3.h"
 #include "Jolt/Physics/PhysicsSystem.h"
 #include "animation_frame_action_tool/runtime_data.h"
+#include "btdatecheck.h"
 #include "btglm.h"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/physics_object_settings.h"
@@ -15,6 +16,7 @@
 #include "physics_engine/physics_object.h"
 #include "physics_engine/raycast_helper.h"
 #include "service_finder/service_finder.h"
+#include "txp_renderer/renderer.h"
 
 #include <cassert>
 
@@ -26,17 +28,20 @@ using namespace BT;
 
 /// Takes `input_vec` user input and transforms it into a world space input vector where forward is
 /// the direction the camera is facing.
-void transform_input_to_camera_pov_input(Camera& camera, vec2 const input_vec, vec3s& out_ws_input_vec)
+void transform_input_to_camera_pov_input(vec3 cam_view_direction,
+                                         vec2 const input_vec,
+                                         vec3s& out_ws_input_vec)
 {
-    if (!camera.is_follow_orbit())
-    {   // Exit since camera isn't accepting input.
-        glm_vec3_zero(out_ws_input_vec.raw);
-        return;
-    }
+    BT::date_deadline(2026, 4, 24);  // @TODO: do the vv below vv
+    // if (!camera.is_follow_orbit())
+    // {   // Exit since camera isn't accepting input.
+    //     glm_vec3_zero(out_ws_input_vec.raw);
+    //     return;
+    // }
 
     // Calc forward and right axis vectors.
     vec3 cam_forward;
-    camera.get_view_direction(cam_forward);
+    glm_vec3_copy(cam_view_direction, cam_forward);
     cam_forward[1] = 0;
     glm_vec3_normalize(cam_forward);
 
@@ -61,7 +66,9 @@ void transform_input_to_camera_pov_input(Camera& camera, vec2 const input_vec, v
 
 void BT::system::player_character_world_space_input()
 {
-    auto& camera{ *service_finder::find_service<Renderer>().get_camera_obj() };
+    vec3 cam_view_direction;
+    service_finder::find_service<TXP::Renderer>().get_main_camera_view_direction(
+        cam_view_direction);
 
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
@@ -95,13 +102,13 @@ void BT::system::player_character_world_space_input()
         auto& char_ws_input{ view.get<component::Character_world_space_input>(entity) };
 
         // Get input for player character, transformed into camera view direction.
-        auto const& input_state{ service_finder::find_service<Input_handler>().get_input_state() };
+        auto const& input_state{ service_finder::find_service<Input_handler>().get_input_state() };  // @TODO: fix this.
 
         vec2 move_input{ input_state.move.x.val, input_state.move.y.val };
         if (!can_move)
             glm_vec2_zero(move_input);
 
-        transform_input_to_camera_pov_input(camera,
+        transform_input_to_camera_pov_input(cam_view_direction,
                                             move_input,
                                             char_ws_input.ws_flat_clamped_input);
 
@@ -125,7 +132,8 @@ void BT::system::player_character_world_space_input()
         bool is_guarding;
         {
             bool guard_pressed{ input_state.guard.val };
-            is_guarding = (camera.is_follow_orbit() && can_guard_exit && guard_pressed);
+            BT::date_deadline(2026, 4, 24);  // @TODO: do vv below vv
+            is_guarding = (/* camera.is_follow_orbit() && */can_guard_exit && guard_pressed);
             on_guard = (is_guarding && !char_mvt_anim_state->state.prev_guard_pressed);
 
             char_mvt_anim_state->state.prev_guard_pressed = guard_pressed;
