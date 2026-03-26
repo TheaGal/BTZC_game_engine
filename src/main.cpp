@@ -39,10 +39,10 @@
 #include <cstdint>
 #include <memory>
 
-using std::make_unique;
-using std::unique_ptr;
 
-#define CUTOUT_THIS 0
+
+#define IMPLEMENT_THIS 0
+
 
 int32_t main()
 {
@@ -54,9 +54,9 @@ int32_t main()
     BT::component::register_all_components();
     BT::Entity_container entity_container;
 
-#if CUTOUT_THIS
+#if IMPLEMENT_THIS
     BT::Input_handler main_input_handler;
-#endif // CUTOUT_THIS
+#endif // IMPLEMENT_THIS
     TXP::Input::Input_handler input_handler;
     TXP::Renderer main_renderer{ entity_container.get_ecs_registry(),
                                  "No Train No Game",
@@ -79,16 +79,10 @@ int32_t main()
     main_renderer.add_model("simple_combat_char", ".glb");
     main_renderer.build();
 
-#if CUTOUT_THIS
-    BT::ImGui_renderer main_renderer_imgui_renderer;
-    BT::Renderer main_renderer{ main_input_handler,
-                                main_renderer_imgui_renderer,
-                                "No Train No Game" };
-#endif // CUTOUT_THIS
     BT::Physics_engine main_physics_engine;
 
     BT::Raycast_helper::set_physics_engine(main_physics_engine);
-#if CUTOUT_THIS
+#if IMPLEMENT_THIS
     BT::Material_bank::set_camera_read_ifc(&main_renderer);
 
     // Shaders.
@@ -211,9 +205,9 @@ int32_t main()
 
     // Animator templates.
     BT::Animator_template_bank main_anim_template_bank;
-#endif // CUTOUT_THIS
+#endif // IMPLEMENT_THIS
 
-#if CUTOUT_THIS
+#if IMPLEMENT_THIS
     // Animation frame action runtime data.
     // "anim_frame_action_runtime_datas": [
     //     "SlimeGirl",
@@ -230,7 +224,7 @@ int32_t main()
             BT::anim_frame_action::Runtime_data_controls(
                 BTZC_GAME_ENGINE_ASSET_ANIM_FRAME_ACTIONS_PATH + afa_name + ".btafa"));
     }
-#endif // CUTOUT_THIS
+#endif // IMPLEMENT_THIS
 
     // POPULATE TEST LEVEL (@TODO: Once level loading is implemented, replace this with it)
     // Physics objects.
@@ -256,10 +250,10 @@ int32_t main()
     // static_level_terrain_phys_obj->assign_generated_uuid();
     // main_physics_engine.emplace_physics_object(std::move(static_level_terrain_phys_obj));
 
-#if CUTOUT_THIS
+#if IMPLEMENT_THIS
     // Render objects.
     auto& render_object_pool{ main_renderer.get_render_object_pool() };
-#endif // CUTOUT_THIS
+#endif // IMPLEMENT_THIS
 
     // BT::Render_object player_char_rend_obj{
     //     BT::Model_bank::get_model("box_0.5_2"),
@@ -276,21 +270,14 @@ int32_t main()
     // static_level_terrain_rend_obj.assign_generated_uuid();
     // render_object_pool.emplace(std::move(static_level_terrain_rend_obj));
 
-#if CUTOUT_THIS
+#if IMPLEMENT_THIS
     // Hitcapsule solver.
     BT::Hitcapsule_group_overlap_solver hitcapsule_solver;
-#endif // CUTOUT_THIS
+#endif // IMPLEMENT_THIS
 
     // Load default scene.
     BT::world::Scene_loader main_scene_loader;
     main_scene_loader.load_scene("_dev_sample_scene.btscene");
-
-#if CUTOUT_THIS
-    // Setup imgui renderer.
-    main_renderer_imgui_renderer.set_camera_ref(main_renderer.get_camera_obj());
-    main_renderer_imgui_renderer.set_renderer_ref(&main_renderer);
-    main_renderer_imgui_renderer.set_input_handler_ref(&main_input_handler);
-#endif // CUTOUT_THIS
 
     // Setup audio engine.
     BT::audio::initialize();
@@ -346,20 +333,20 @@ int32_t main()
             // Pre-physics.
             BT::system::process_physics_object_lifetime();
 
-#if CUTOUT_THIS
+#if IMPLEMENT_THIS
             BT::Model_animator::advance_sim_timer(main_physics_engine.k_simulation_delta_time);
             BT::system::tick_sim_char_mvt_animator();
-#endif // CUTOUT_THIS
+#endif // IMPLEMENT_THIS
 
-#if CUTOUT_THIS
+#if IMPLEMENT_THIS
             BT::system::character_broadcast_attack_msg_to_enemies();
             BT::system::cpu_character_enemy_detection();
-#endif // CUTOUT_THIS
+#endif // IMPLEMENT_THIS
             BT::system::cpu_character_world_space_input();
-#if CUTOUT_THIS
+#if IMPLEMENT_THIS
             BT::system::player_character_world_space_input();
             BT::system::input_controlled_character_movement();
-#endif // CUTOUT_THIS
+#endif // IMPLEMENT_THIS
 
             // Physics calculations.
             main_physics_engine.update_physics();
@@ -368,14 +355,14 @@ int32_t main()
             BT::system::write_entity_transforms_from_physics();
             BT::system::propagate_changed_transforms();
 
-#if CUTOUT_THIS
+#if IMPLEMENT_THIS
             BT::system::player_character_lock_onto_target();
-#endif // CUTOUT_THIS
+#endif // IMPLEMENT_THIS
 
-#if CUTOUT_THIS
+#if IMPLEMENT_THIS
             BT::system::animator_driven_hitcapsule_sets_update();
             BT::system::hitcapsule_attack_processing(BT::Physics_engine::k_simulation_delta_time);
-#endif // CUTOUT_THIS
+#endif // IMPLEMENT_THIS
 
             // Audio tick.
             BT::audio::update();
@@ -396,17 +383,17 @@ int32_t main()
             perf_timer.start_timer();
 
             // Run all pre-render systems.
-#if CUTOUT_THIS
+#if IMPLEMENT_THIS
             bool is_afa_editor_context{
                 main_renderer_imgui_renderer.is_anim_frame_data_editor_context() };
             if (is_afa_editor_context)
                 BT::system::_dev_animation_frame_action_editor();
-#endif // CUTOUT_THIS
+#endif // IMPLEMENT_THIS
 
             BT::system::write_render_transforms();
-#if CUTOUT_THIS
+#if IMPLEMENT_THIS
             BT::system::update_selected_entity_debug_render_transform();
-#endif // CUTOUT_THIS
+#endif // IMPLEMENT_THIS
 
             if (iter_type < Iteration_type::TEARDOWN_ITERATION)
             {
@@ -415,7 +402,7 @@ int32_t main()
 
                 main_renderer.render_one_frame(delta_time);
 
-#if CUTOUT_THIS
+#if IMPLEMENT_THIS
                 if (is_afa_editor_context)
                     // @HACK: @IMPROVE: Run AFA editor again in case if animator reconfiguration is
                     //   needed from ImGui actions of the render that just happened.
@@ -423,7 +410,7 @@ int32_t main()
                     //        animator reconfiguration, and no processing of the animator, no
                     //        processing of AFA controller/data points.
                     BT::system::_dev_animation_frame_action_editor();
-#endif // CUTOUT_THIS
+#endif // IMPLEMENT_THIS
             }
 
             // Performance measure.
@@ -472,9 +459,9 @@ int32_t main()
     }
 
     // Write final state of settings file.
-#if CUTOUT_THIS
+#if IMPLEMENT_THIS
     main_renderer.save_state_to_app_settings();
-#endif // CUTOUT_THIS
+#endif // IMPLEMENT_THIS
     BT::save_app_settings_to_disk();
 
     // Show stats prior to cleanup.
@@ -483,20 +470,20 @@ int32_t main()
               "  Num entities                      : %i\n"
               "  Num ECS entities                  : %i\n"
               "  Num physics objects               : %i\n"
-#if CUTOUT_THIS
+#if IMPLEMENT_THIS
               "  Num render objects                : %i\n"
               "  Num hitcapsule grp sets in solver : %i\n"
-#endif // CUTOUT_THIS
+#endif // IMPLEMENT_THIS
               ,
               main_scene_loader.get_num_loaded_scenes(),
               entity_container.get_num_entities(),
               entity_container.get_ecs_registry().view<entt::entity>().size(),
               main_physics_engine.get_num_physics_objects()
-#if CUTOUT_THIS
+#if IMPLEMENT_THIS
               ,
               main_renderer.get_render_object_pool().get_num_render_objects(),
               hitcapsule_solver.get_num_group_sets()
-#endif // CUTOUT_THIS
+#endif // IMPLEMENT_THIS
     );
 
     return 0;

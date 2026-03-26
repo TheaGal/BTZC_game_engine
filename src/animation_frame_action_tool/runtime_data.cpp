@@ -11,6 +11,9 @@
 #include <unordered_map>
 
 
+#define IMPLEMENT_THIS 0
+
+
 // Controllable data.
 void BT::anim_frame_action::Runtime_controllable_data::Rising_edge_event
     ::mark_rising_edge()
@@ -143,7 +146,7 @@ void BT::anim_frame_action::Runtime_controllable_data
     }
 }
 
-#if CUTOUT_THIS
+#if IMPLEMENT_THIS
 void BT::anim_frame_action::Runtime_controllable_data::map_animator_to_control_regions(
     Model_animator const& animator,
     Runtime_data_controls const& data_controls)
@@ -180,7 +183,7 @@ void BT::anim_frame_action::Runtime_controllable_data::map_animator_to_control_r
         abort();
     }
 }
-#endif // CUTOUT_THIS
+#endif // IMPLEMENT_THIS
 
 void BT::anim_frame_action::Runtime_controllable_data
     ::assign_hitcapsule_enabled_flags()
@@ -258,11 +261,11 @@ BT::anim_frame_action::Runtime_data_controls::Runtime_data_controls(std::string 
     }
 
     BT::date_deadline(2026, 4, 24);
-#if CUTOUT_THIS
+#if IMPLEMENT_THIS
     // Load model from bank.
     animated_model = Model_bank::get_model(data.animated_model_name);
     assert(animated_model != nullptr);
-#endif // CUTOUT_THIS
+#endif // IMPLEMENT_THIS
 
     // @TODO: @THEA: add some kind of string->bytecode "compilation" step right here (really only
     //               for optimization in the future of course).  -Thea 2025/01/10
