@@ -51,12 +51,18 @@ int32_t main()
 
     BT::Watchdog_timer main_watchdog;
 
+    // Setup ECS system.
     BT::component::register_all_components();
     BT::Entity_container entity_container;
 
-#if IMPLEMENT_THIS
-    BT::Input_handler main_input_handler;
-#endif // IMPLEMENT_THIS
+    // Setup world properties.
+    BT::world::World_properties_container world_properties;
+    {
+        auto& wprops{ world_properties.get_data_handle() };
+        wprops.is_simulation_running = false;
+    }
+
+    // Setup renderer.
     TXP::Input::Input_handler input_handler;
     TXP::Renderer main_renderer{ entity_container.get_ecs_registry(),
                                  "No Train No Game",
@@ -64,7 +70,14 @@ int32_t main()
                                  720,
                                  BTZC_GAME_ENGINE_ASSET_TEXTURE_PATH,
                                  BTZC_GAME_ENGINE_ASSET_SHADER_PATH,
-                                 BTZC_GAME_ENGINE_ASSET_MODEL_PATH };
+                                 BTZC_GAME_ENGINE_ASSET_MODEL_PATH,
+                                 [&world_properties](bool flag) {
+                                     world_properties.get_data_handle().is_simulation_running =
+                                         flag;
+                                 },
+                                 [&world_properties]() {
+                                    return world_properties.get_data_handle().is_simulation_running;
+                                 } };
 
     main_renderer.add_texture("test_ktx_tex", ".ktx2");
     main_renderer.add_material("default_mat", "basic_diffuse", { { "texture0", "test_ktx_tex" } });
@@ -79,6 +92,7 @@ int32_t main()
     main_renderer.add_model("simple_combat_char", ".glb");
     main_renderer.build();
 
+    // Setup physics engine.
     BT::Physics_engine main_physics_engine;
 
     BT::Raycast_helper::set_physics_engine(main_physics_engine);
@@ -282,13 +296,6 @@ int32_t main()
     // Setup audio engine.
     BT::audio::initialize();
 
-    // Setup world properties.
-    BT::world::World_properties_container world_properties;
-    {
-        auto& wprops{ world_properties.get_data_handle() };
-        wprops.is_simulation_running = false;
-    }
-
     // Timer.
     BT::Timer main_timer;
     main_timer.start_timer();
@@ -368,7 +375,7 @@ int32_t main()
             BT::audio::update();
 
             // Performance measure.
-            main_renderer.report_performance_time(main_renderer.PERF_TIME_TYPE_SIMULATION_LOOP,
+            main_renderer.report_performance_time(TXP::PERF_TIME_TYPE_SIMULATION_LOOP,
                                                   perf_timer.calc_delta_time());
 
             // Only run once if teardown iteration.
@@ -414,7 +421,7 @@ int32_t main()
             }
 
             // Performance measure.
-            main_renderer.report_performance_time(main_renderer.PERF_TIME_TYPE_RENDERER_LOOP,
+            main_renderer.report_performance_time(TXP::PERF_TIME_TYPE_RENDERER_LOOP,
                                                   perf_timer.calc_delta_time());
         }
 
