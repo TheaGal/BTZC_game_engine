@@ -68,6 +68,16 @@ int32_t main()
                                  BTZC_GAME_ENGINE_ASSET_MODEL_PATH };
 
     main_renderer.add_texture("test_ktx_tex", ".ktx2");
+    main_renderer.add_material("default_mat", "basic_diffuse", { { "texture0", "test_ktx_tex" } });
+    main_renderer.add_material("ProBuilderDefault",
+                               "basic_diffuse",
+                               { { "texture0", "test_ktx_tex" } });
+    main_renderer.add_material("__gradient_mat",
+                               "gradient",
+                               { { "image", "__hdr_draw_image_color" } });
+    main_renderer.add_material_palette("default_material_palette", { "default_mat" });
+    main_renderer.add_model("probuilder_example", ".wobj");
+    main_renderer.add_model("simple_combat_char", ".glb");
 
 #if CUTOUT_THIS
     BT::ImGui_renderer main_renderer_imgui_renderer;
@@ -91,7 +101,7 @@ int32_t main()
         make_unique<BT::Shader>(BTZC_GAME_ENGINE_ASSET_SHADER_PATH "color_unlit_lines.vert",
                                 BTZC_GAME_ENGINE_ASSET_SHADER_PATH "color_unlit_lines.frag"));
     BT::Shader_bank::emplace_shader(
-        "color_shaded",
+        "color_shaded",f
         make_unique<BT::Shader>(BTZC_GAME_ENGINE_ASSET_SHADER_PATH "color_shaded.vert",
                                 BTZC_GAME_ENGINE_ASSET_SHADER_PATH "color_shaded.frag"));
     BT::Shader_bank::emplace_shader(
