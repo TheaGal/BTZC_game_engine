@@ -405,7 +405,9 @@ int32_t main()
                 BT::system::_dev_animation_frame_action_editor();
 
             BT::system::process_render_object_lifetime(is_afa_editor_context);
+#endif // CUTOUT_THIS
             BT::system::write_render_transforms();
+#if CUTOUT_THIS
             BT::system::update_selected_entity_debug_render_transform();
 #endif // CUTOUT_THIS
 
