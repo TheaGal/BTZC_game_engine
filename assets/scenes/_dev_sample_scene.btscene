@@ -146,7 +146,7 @@
                     }
                 },
                 {
-                    "type_name": "component::Render_object_settings",
+                    "type_name": "TXP::component::Render_object_config",
                     "members_j": {
                         "render_layer": 1,
                         "model_name": "simple_combat_char",
@@ -222,7 +222,7 @@
                     }
                 },
                 {
-                    "type_name": "component::Render_object_settings",
+                    "type_name": "TXP::component::Render_object_config",
                     "members_j": {
                         "render_layer": 1,
                         "model_name": "probuilder_example",
@@ -381,7 +381,7 @@
                     }
                 },
                 {
-                    "type_name": "component::Render_object_settings",
+                    "type_name": "TXP::component::Render_object_config",
                     "members_j": {
                         "render_layer": 1,
                         "model_name": "simple_combat_char",

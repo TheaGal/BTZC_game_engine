@@ -369,6 +369,7 @@ void BT::component::edit::imgui_edit__render_object_settings(entt::registry& reg
     // ImGui::PopID();
 }
 
+// @THEA: this is not used anymore since there's no more "created render obj" component!  -Thea 2026/03/26
 void BT::component::edit::imgui_edit__created_render_object_reference(entt::registry& reg,
                                                                       entt::entity ecs_entity)
 {
