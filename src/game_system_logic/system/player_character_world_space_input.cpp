@@ -11,12 +11,11 @@
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
 #include "game_system_logic/system/helper_funcs.h"
-#include "input_handler/input_handler.h"
 #include "physics_engine/physics_engine.h"
 #include "physics_engine/physics_object.h"
 #include "physics_engine/raycast_helper.h"
 #include "service_finder/service_finder.h"
-#include "txp_renderer/renderer.h"
+#include "txp_renderer_public.h"
 
 #include <cassert>
 
@@ -102,9 +101,20 @@ void BT::system::player_character_world_space_input()
         auto& char_ws_input{ view.get<component::Character_world_space_input>(entity) };
 
         // Get input for player character, transformed into camera view direction.
-        auto const& input_state{ service_finder::find_service<Input_handler>().get_input_state() };  // @TODO: fix this.
+        auto const& input_handler{ service_finder::find_service<TXP::Input::Input_handler>() };
 
-        vec2 move_input{ input_state.move.x.val, input_state.move.y.val };
+        // @TODO: make better input vv below vv that can handle directional move.
+        BT::date_deadline(2026, 4, 24);
+        vec2 move_input{ 0, 0 };
+        if (input_handler.get_keyboard_key_state(BT_KEY_W).pressed)
+            move_input[1] += 1;
+        if (input_handler.get_keyboard_key_state(BT_KEY_A).pressed)
+            move_input[0] -= 1;
+        if (input_handler.get_keyboard_key_state(BT_KEY_S).pressed)
+            move_input[1] -= 1;
+        if (input_handler.get_keyboard_key_state(BT_KEY_D).pressed)
+            move_input[0] += 1;
+
         if (!can_move)
             glm_vec2_zero(move_input);
 
@@ -114,12 +124,12 @@ void BT::system::player_character_world_space_input()
 
         // Update input state.
         char_ws_input.prev_jump_pressed   = char_ws_input.jump_pressed;
-        char_ws_input.jump_pressed        = input_state.jump.val;
+        char_ws_input.jump_pressed        = input_handler.get_keyboard_key_state(BT_KEY_SPACE).pressed;
         char_ws_input.prev_crouch_pressed = char_ws_input.crouch_pressed;
-        char_ws_input.crouch_pressed      = input_state.crouch.val;
+        char_ws_input.crouch_pressed      = input_handler.get_keyboard_key_state(BT_KEY_LEFT_CONTROL).pressed;
 
         // On attack trigger.
-        bool attack_pressed{ input_state.attack.val };
+        bool attack_pressed{ input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_LEFT).pressed };
         // @ANIMATOR_REFACTOR if (camera.is_follow_orbit() &&
         // @ANIMATOR_REFACTOR     can_attack_exit &&
         // @ANIMATOR_REFACTOR     !char_mvt_anim_state->state.prev_attack_pressed &&
@@ -131,7 +141,8 @@ void BT::system::player_character_world_space_input()
         bool on_guard;
         bool is_guarding;
         {
-            bool guard_pressed{ input_state.guard.val };
+            bool guard_pressed =
+                input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_RIGHT).pressed;
             BT::date_deadline(2026, 4, 24);  // @TODO: do vv below vv
             is_guarding = (/* camera.is_follow_orbit() && */can_guard_exit && guard_pressed);
             on_guard = (is_guarding && !char_mvt_anim_state->state.prev_guard_pressed);

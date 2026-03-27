@@ -219,9 +219,6 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/world/world_properties.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/hitbox_interactor/hitcapsule.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/hitbox_interactor/hitcapsule.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/input_handler/input_codes.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/input_handler/input_handler.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/input_handler/input_handler.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/brush.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/map_importer/libmap_cpp/src/entity.h

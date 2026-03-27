@@ -22,7 +22,6 @@
 #include "game_system_logic/world/scene_loader.h"
 #include "game_system_logic/world/world_properties.h"
 #include "hitbox_interactor/hitcapsule.h"
-#include "input_handler/input_handler.h"
 #include "Jolt/Jolt.h"  // @DEBUG
 #include "Jolt/Math/Real.h"  // @DEBUG
 #include "Jolt/Math/Quat.h"  // @DEBUG
