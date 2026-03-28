@@ -6,8 +6,8 @@
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
 #include "game_system_logic/world/world_properties.h"
-#include "input_handler/input_handler.h"
 #include "service_finder/service_finder.h"
+#include "txp_renderer_public.h"
 #include "uuid/uuid.h"
 
 #include <cassert>
@@ -21,7 +21,7 @@ void BT::system::player_character_lock_onto_target()
         return;
     
     // Exit early if not in right camera view mode.
-    auto& camera{ *service_finder::find_service<Renderer>().get_camera_obj() };
+    auto& camera{ service_finder::find_service<TXP::Renderer>().get_main_camera() };
     if (!camera.is_follow_orbit())
         return;
     
@@ -52,9 +52,9 @@ void BT::system::player_character_lock_onto_target()
     bool on_lockon_press;
     {
         static bool s_prev_lockon_pressed{ false };
-        bool lockon_pressed{
-            service_finder::find_service<Input_handler>().get_input_state().cam_lock_on.val
-        };
+        bool lockon_pressed{ service_finder::find_service<TXP::Input::Input_handler>()
+                                 .get_mouse_button_state(BT_MOUSE_BUTTON_MIDDLE)
+                                 .pressed };
         on_lockon_press = (!s_prev_lockon_pressed && lockon_pressed);
 
         s_prev_lockon_pressed = lockon_pressed;
