@@ -140,7 +140,6 @@ void BT::system::player_character_world_space_input()
         {
             bool guard_pressed =
                 input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_RIGHT).pressed;
-            BT::date_deadline(2026, 4, 24);  // @TODO: do vv below vv
             is_guarding = (main_camera.is_follow_orbit() && can_guard_exit && guard_pressed);
             on_guard = (is_guarding && !char_mvt_anim_state->state.prev_guard_pressed);
 
