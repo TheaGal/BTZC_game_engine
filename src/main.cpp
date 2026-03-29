@@ -340,13 +340,13 @@ int32_t main()
             BT::system::process_physics_object_lifetime();
 
 #if IMPLEMENT_THIS
-            BT::Model_animator::advance_sim_timer(main_physics_engine.k_simulation_delta_time);
-            BT::system::tick_sim_char_mvt_animator();
+            BT::Model_animator::advance_sim_timer(main_physics_engine.k_simulation_delta_time);  // Requires animator.
+            BT::system::tick_sim_char_mvt_animator();  // Requires animator and AFA.
 #endif // IMPLEMENT_THIS
 
 #if IMPLEMENT_THIS
-            BT::system::character_broadcast_attack_msg_to_enemies();
-            BT::system::cpu_character_enemy_detection();
+            BT::system::character_broadcast_attack_msg_to_enemies();  // Requires AFA
+            BT::system::cpu_character_enemy_detection();  // Requires AFA
 #endif // IMPLEMENT_THIS
             BT::system::cpu_character_world_space_input();
             BT::system::player_character_world_space_input();
@@ -359,13 +359,11 @@ int32_t main()
             BT::system::write_entity_transforms_from_physics();
             BT::system::propagate_changed_transforms();
 
-#if IMPLEMENT_THIS
             BT::system::player_character_lock_onto_target();
-#endif // IMPLEMENT_THIS
 
 #if IMPLEMENT_THIS
-            BT::system::animator_driven_hitcapsule_sets_update();
-            BT::system::hitcapsule_attack_processing(BT::Physics_engine::k_simulation_delta_time);
+            BT::system::animator_driven_hitcapsule_sets_update();  // Requires AFA
+            BT::system::hitcapsule_attack_processing(BT::Physics_engine::k_simulation_delta_time);  // Requires AFA.
 #endif // IMPLEMENT_THIS
 
             // Audio tick.

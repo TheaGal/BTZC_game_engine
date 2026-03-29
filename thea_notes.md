@@ -11,7 +11,7 @@
 - [x] Fix input controlled character mvt (system).
     - Ummm that was ez. Like super duper ez.
 
-- [ ] do fixing up until afa required stuff.
+- [x] do fixing up until afa required stuff.
 
 - [ ] make orbiting cam mode for input stuff.
 
