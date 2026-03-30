@@ -13,7 +13,7 @@
 
 - [x] do fixing up until afa required stuff.
 
-- [ ] make orbiting cam mode for input stuff.
+- [x] make orbiting cam mode for input stuff.
 
 - [ ] do animated render models implementation in txp-renderer.
 - [ ] include afa implementation.
