@@ -19,3 +19,5 @@
 - [x] include afa implementation.
 
 - [x] Implement the new txp-renderer into here.
+
+- [ ] Reimplement btafa processing here.
