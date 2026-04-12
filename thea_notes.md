@@ -18,4 +18,4 @@
 - [x] do animated render models implementation in txp-renderer.
 - [x] include afa implementation.
 
-- [ ] Implement the new txp-renderer into here.
+- [x] Implement the new txp-renderer into here.
