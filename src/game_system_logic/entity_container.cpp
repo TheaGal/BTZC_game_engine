@@ -4,7 +4,7 @@
 #include "entt/entity/fwd.hpp"
 #include "entt/entity/registry.hpp"
 #include "service_finder/service_finder.h"
-#include "uuid/uuid.h"
+#include "btuuid.h"
 
 #include <cassert>
 

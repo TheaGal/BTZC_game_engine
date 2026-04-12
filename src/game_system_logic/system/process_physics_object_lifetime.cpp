@@ -10,7 +10,7 @@
 #include "physics_engine/physics_engine.h"
 #include "physics_engine/physics_object.h"
 #include "service_finder/service_finder.h"
-#include "uuid/uuid.h"
+#include "btuuid.h"
 
 #include <memory>
 

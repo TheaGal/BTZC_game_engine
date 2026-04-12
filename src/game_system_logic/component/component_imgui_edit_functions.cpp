@@ -15,7 +15,7 @@
 #include "physics_object_settings.h"
 #include "service_finder/service_finder.h"
 #include "transform.h"
-#include "uuid/uuid.h"
+#include "btuuid.h"
 
 
 bool BT::component::edit::internal::imgui_open_component_editing_header(std::string const& label)

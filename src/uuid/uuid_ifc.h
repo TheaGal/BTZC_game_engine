@@ -1,6 +1,6 @@
 #pragma once
 
-#include "uuid.h"
+#include "btuuid.h"
 #include <string>
 
 using std::string;

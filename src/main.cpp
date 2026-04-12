@@ -1,5 +1,6 @@
 #include "animation_frame_action_tool/runtime_data.h"
 #include "audio_engine/audio_engine.h"
+#include "btuuid.h"
 #include "btzc_game_engine.h"
 #include "btglm.h"
 #include "game_system_logic/component/component_registry.h"
@@ -34,7 +35,6 @@
 #include "timer/timer.h"
 #include "timer/watchdog_timer.h"
 #include "txp_renderer_public.h"
-#include "uuid/uuid.h"
 #include <cstdint>
 #include <memory>
 

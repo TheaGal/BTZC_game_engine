@@ -4,7 +4,7 @@
 #include "btjson.h"
 #include "entt/entity/entity.hpp"
 #include "entt/entity/fwd.hpp"
-#include "uuid/uuid.h"
+#include "btuuid.h"
 
 
 namespace BT

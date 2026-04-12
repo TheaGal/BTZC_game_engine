@@ -127,8 +127,12 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/unit_box.mtl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/basic_diffuse.shader
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/basic_diffuse.shadrefl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/default_shader.shader
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/default_shader.shadrefl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/gradient.shader
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/gradient.shadrefl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/skinned_model.shader
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/skinned_model.shadrefl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/test_ktx_tex.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/unnamed.mtl
 )
@@ -164,11 +168,11 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btjson.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btlogger.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btlogger.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btuuid.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btuuid.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/btzc_game_engine.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/_dev_animation_frame_action_editor_agent.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/anim_frame_action_controller.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/animator_driven_hitcapsule_set.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/animator_root_motion.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/character_movement.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/character_movement.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/combat_stats.cpp
@@ -178,7 +182,6 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/component_registry.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/component_registry.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/cpu_enemy_awareness.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/entity_metadata.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/follow_camera.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/health_stats.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/physics_object_settings.cpp
@@ -266,8 +269,6 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/timer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/watchdog_timer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/watchdog_timer.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/uuid/uuid.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/uuid/uuid.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/uuid/uuid_ifc.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/uuid/uuid_ifc.h
 )

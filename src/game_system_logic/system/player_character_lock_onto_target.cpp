@@ -8,7 +8,7 @@
 #include "game_system_logic/world/world_properties.h"
 #include "service_finder/service_finder.h"
 #include "txp_renderer_public.h"
-#include "uuid/uuid.h"
+#include "btuuid.h"
 
 #include <cassert>
 

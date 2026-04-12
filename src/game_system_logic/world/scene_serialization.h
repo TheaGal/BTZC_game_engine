@@ -1,7 +1,7 @@
 #pragma once
 
 #include "btjson.h"
-#include "uuid/uuid.h"
+#include "btuuid.h"
 
 #include <string>
 #include <vector>

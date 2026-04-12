@@ -11,7 +11,7 @@
 #include "game_system_logic/world/world_properties.h"
 #include "physics_engine/physics_engine.h"  // For `k_simulation_delta_time`.
 #include "service_finder/service_finder.h"
-#include "uuid/uuid.h"
+#include "btuuid.h"
 
 #include <cassert>
 #include <cmath>

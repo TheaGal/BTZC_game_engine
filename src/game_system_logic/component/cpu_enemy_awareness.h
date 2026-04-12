@@ -2,7 +2,7 @@
 
 #include "btglm.h"
 #include "btjson.h"
-#include "uuid/uuid.h"
+#include "btuuid.h"
 
 #include <cmath>
 #include <cstdint>

@@ -2,7 +2,7 @@
 
 #include "../../third_party/stduuid/include/uuid.h"
 #include "btlogger.h"
-#include "uuid.h"
+#include "btuuid.h"
 #include <cassert>
 
 void BT::UUID_ifc::assign_uuid(string const& pretty_uuid, bool generate_if_nil)
