@@ -1,4 +1,3 @@
-#include "animation_frame_action_tool/runtime_data.h"
 #include "audio_engine/audio_engine.h"
 #include "btuuid.h"
 #include "btzc_game_engine.h"
@@ -22,7 +21,6 @@
 #include "game_system_logic/system/write_render_transforms.h"
 #include "game_system_logic/world/scene_loader.h"
 #include "game_system_logic/world/world_properties.h"
-#include "hitbox_interactor/hitcapsule.h"
 #include "Jolt/Jolt.h"  // @DEBUG
 #include "Jolt/Math/Real.h"  // @DEBUG
 #include "Jolt/Math/Quat.h"  // @DEBUG
@@ -341,8 +339,8 @@ int32_t main()
             // Pre-physics.
             BT::system::process_physics_object_lifetime();
 
+            TXP::Renderer::advance_afa_sim_timer(main_physics_engine.k_simulation_delta_time);
 #if IMPLEMENT_THIS
-            BT::Model_animator::advance_sim_timer(main_physics_engine.k_simulation_delta_time);  // Requires animator.
             BT::system::tick_sim_char_mvt_animator();  // Requires animator and AFA.
 #endif // IMPLEMENT_THIS
 

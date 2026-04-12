@@ -154,8 +154,6 @@ endif()
 set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/animation_frame_action_tool/editor_state.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/animation_frame_action_tool/editor_state.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/animation_frame_action_tool/runtime_data.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/animation_frame_action_tool/runtime_data.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_engine/audio_engine.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_engine/audio_engine.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_engine/audio_impl_fmod.cpp
