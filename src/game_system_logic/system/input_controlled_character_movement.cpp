@@ -5,7 +5,6 @@
 #include "Jolt/Physics/PhysicsSystem.h"
 #include "Jolt/Math/Vec3.h"
 #include "btglm.h"
-#include "game_system_logic/component/animator_root_motion.h"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/follow_camera.h"
 #include "game_system_logic/component/physics_object_settings.h"
@@ -177,7 +176,7 @@ void process_midair_jump_interactions(
 void apply_grounded_facing_angle(component::Character_mvt_state::Grounded_state& grounded_state,
                                  component::Character_mvt_state::Settings const& mvt_settings,
                                  component::Character_mvt_animated_state* char_mvt_anim_state,
-                                 component::Animator_root_motion const* anim_root_motion,
+                                 TXP::component::Animator_root_motion const* anim_root_motion,
                                  float_t desired_facing_angle,
                                  float_t turn_speed)
 {
@@ -230,7 +229,7 @@ Char_mvt_logic_results character_controller_movement_logic(
     component::Character_world_space_input const& char_ws_input,
     component::Character_mvt_state& char_mvt_state,
     component::Character_mvt_animated_state* char_mvt_anim_state,
-    component::Animator_root_motion const* anim_root_motion,
+    TXP::component::Animator_root_motion const* anim_root_motion,
     component::Follow_camera_follow_ref::State const* follow_cam_state,
     Physics_object& phys_obj)
 {   // Get current character controller state.
@@ -517,7 +516,7 @@ void BT::system::input_controlled_character_movement()
         auto& phys_obj{ *phys_engine.checkout_physics_object(phys_obj_uuid) };
 
         auto anim_root_motion{ char_mvt_anim_state
-                                   ? reg.try_get<component::Animator_root_motion const>(
+                                   ? reg.try_get<TXP::component::Animator_root_motion const>(
                                          entity_container.find_entity(
                                              char_mvt_anim_state->affecting_animator_uuid))
                                    : nullptr };

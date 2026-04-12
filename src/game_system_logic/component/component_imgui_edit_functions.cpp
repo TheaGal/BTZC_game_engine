@@ -2,10 +2,9 @@
 
 #include "btdatecheck.h"
 #include "btglm.h"
+#include "btuuid.h"
 #include "character_movement.h"
 #include "combat_stats.h"
-#include "entity_metadata.h"
-#include "game_system_logic/component/animator_root_motion.h"
 #include "game_system_logic/entity_container.h"
 #include "health_stats.h"
 #include "imgui.h"
@@ -15,7 +14,7 @@
 #include "physics_object_settings.h"
 #include "service_finder/service_finder.h"
 #include "transform.h"
-#include "btuuid.h"
+#include "txp_renderer_public.h"
 
 
 bool BT::component::edit::internal::imgui_open_component_editing_header(std::string const& label)
@@ -83,7 +82,7 @@ std::string convert_number_to_binary_bit_string(uint32_t str_len, auto number)
 // ImGui edit functions.
 void BT::component::edit::imgui_edit__sample(entt::registry& reg, entt::entity ecs_entity)
 {
-    auto const& meta{ reg.get<component::Entity_metadata const>(ecs_entity) };
+    auto const& meta{ reg.get<TXP::component::Entity_metadata const>(ecs_entity) };
 
     ImGui::PushID(&meta);
     ImGui::PushItemWidth(ImGui::GetFontSize() * -10);
@@ -96,7 +95,7 @@ void BT::component::edit::imgui_edit__sample(entt::registry& reg, entt::entity e
 
 void BT::component::edit::imgui_edit__entity_metadata(entt::registry& reg, entt::entity ecs_entity)
 {
-    auto& meta{ reg.get<component::Entity_metadata>(ecs_entity) };
+    auto& meta{ reg.get<TXP::component::Entity_metadata>(ecs_entity) };
 
     ImGui::PushID(&meta);
 
@@ -453,7 +452,7 @@ void BT::component::edit::imgui_edit__created_render_object_reference(entt::regi
 void BT::component::edit::imgui_edit__animator_root_motion(entt::registry& reg,
                                                            entt::entity ecs_entity)
 {
-    auto& anim_root_motion{ reg.get<component::Animator_root_motion>(ecs_entity) };
+    auto& anim_root_motion{ reg.get<TXP::component::Animator_root_motion>(ecs_entity) };
 
     ImGui::PushID(&anim_root_motion);
     ImGui::PushItemWidth(ImGui::GetFontSize() * -10);

@@ -70,6 +70,8 @@ int32_t main()
                                  BTZC_GAME_ENGINE_ASSET_TEXTURE_PATH,
                                  BTZC_GAME_ENGINE_ASSET_SHADER_PATH,
                                  BTZC_GAME_ENGINE_ASSET_MODEL_PATH,
+                                 BTZC_GAME_ENGINE_ASSET_ANIM_FRAME_ACTIONS_PATH,
+                                 BTZC_GAME_ENGINE_ASSET_ANIMATOR_TEMPLATES_PATH,
                                  [&world_properties](bool flag) {
                                      world_properties.get_data_handle().is_simulation_running =
                                          flag;
@@ -87,8 +89,8 @@ int32_t main()
                                "gradient",
                                { { "image", "__hdr_draw_image_color" } });
     main_renderer.add_material_palette("default_material_palette", { "default_mat" });
-    main_renderer.add_model("probuilder_example", ".wobj");
-    main_renderer.add_model("simple_combat_char", ".glb");
+    main_renderer.add_model("probuilder_example", ".wobj", false, false);
+    main_renderer.add_model("simple_combat_char", ".glb", true, true);
     main_renderer.build();
 
     // Setup physics engine.

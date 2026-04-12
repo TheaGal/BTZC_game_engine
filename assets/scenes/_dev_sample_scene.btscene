@@ -4,7 +4,7 @@
             "entity_uuid": "019a2251-50bc-7074-8da2-ea4565067327",
             "components": [
                 {
-                    "type_name": "component::Entity_metadata",
+                    "type_name": "TXP::component::Entity_metadata",
                     "members_j": {
                         "name": "My random floating entity woohoo!!!",
                         "uuid": "019a2251-50bc-7074-8da2-ea4565067327"
@@ -16,7 +16,7 @@
             "entity_uuid": "aae5ebfb-7c2b-49a8-bcb9-658fdea987af",
             "components": [
                 {
-                    "type_name": "component::Entity_metadata",
+                    "type_name": "TXP::component::Entity_metadata",
                     "members_j": {
                         "name": "My Gay object",
                         "uuid": "aae5ebfb-7c2b-49a8-bcb9-658fdea987af"
@@ -105,7 +105,7 @@
             "entity_uuid": "d33f01dc-b0b5-4954-9771-71a1c42e5209",
             "components": [
                 {
-                    "type_name": "component::Entity_metadata",
+                    "type_name": "TXP::component::Entity_metadata",
                     "members_j": {
                         "name": "Character repr",
                         "uuid": "d33f01dc-b0b5-4954-9771-71a1c42e5209"
@@ -161,7 +161,7 @@
                     }
                 },
                 {
-                    "type_name": "component::Animator_root_motion",
+                    "type_name": "TXP::component::Animator_root_motion",
                     "members_j": {}
                 },
                 {
@@ -187,7 +187,7 @@
             "entity_uuid": "aae5ebfb-7c2b-49a8-bcb9-658fdea987ae",
             "components": [
                 {
-                    "type_name": "component::Entity_metadata",
+                    "type_name": "TXP::component::Entity_metadata",
                     "members_j": {
                         "name": "Static ground geometry",
                         "uuid": "aae5ebfb-7c2b-49a8-bcb9-658fdea987ae"
@@ -249,7 +249,7 @@
             "entity_uuid": "019a9611-b980-7378-aea7-17deb7f1b3db",
             "components": [
                 {
-                    "type_name": "component::Entity_metadata",
+                    "type_name": "TXP::component::Entity_metadata",
                     "members_j": {
                         "name": "My NPC object",
                         "uuid": "019a9611-b980-7378-aea7-17deb7f1b3db"
@@ -340,7 +340,7 @@
             "entity_uuid": "019a9613-1fee-731d-b9e4-1fcaad20f791",
             "components": [
                 {
-                    "type_name": "component::Entity_metadata",
+                    "type_name": "TXP::component::Entity_metadata",
                     "members_j": {
                         "name": "Character repr",
                         "uuid": "019a9613-1fee-731d-b9e4-1fcaad20f791"
@@ -396,7 +396,7 @@
                     }
                 },
                 {
-                    "type_name": "component::Animator_root_motion",
+                    "type_name": "TXP::component::Animator_root_motion",
                     "members_j": {}
                 },
                 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../uuid/uuid.h"
+#include "btuuid.h"
 #include "Jolt/Jolt.h"
 #include "Jolt/Math/Float3.h"
 #include "Jolt/Physics/Body/BodyID.h"

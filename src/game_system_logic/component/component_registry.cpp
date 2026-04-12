@@ -2,19 +2,16 @@
 
 #include "_dev_animation_frame_action_editor_agent.h"
 #include "anim_frame_action_controller.h"
-#include "animator_root_motion.h"
 #include "btdatecheck.h"
 #include "btjson.h"
 #include "character_movement.h"
 #include "combat_stats.h"
 #include "component_imgui_edit_functions.h"
 #include "cpu_enemy_awareness.h"
-#include "entity_metadata.h"
 #include "entt/core/fwd.hpp"
 #include "entt/core/type_info.hpp"
 #include "entt/entity/registry.hpp"
 #include "follow_camera.h"
-#include "game_system_logic/component/animator_driven_hitcapsule_set.h"
 #include "game_system_logic/entity_container.h"
 #include "health_stats.h"
 #include "physics_object_settings.h"
@@ -101,7 +98,7 @@ void BT::component::register_all_components()
     //---- All Components -- @NOTE: Order matters here! --------------------------------------------
     //----------------                Component typename                                      ImGui edit func
  // REGISTER_COMPONENT__YES_SERIALIZE(component::Some_sample_component,                       edit::imgui_edit__sample);
-    REGISTER_COMPONENT__YES_SERIALIZE(component::Entity_metadata,                             edit::imgui_edit__entity_metadata);
+    REGISTER_COMPONENT__YES_SERIALIZE(TXP::component::Entity_metadata,                        edit::imgui_edit__entity_metadata);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Transform,                                   edit::imgui_edit__transform);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Transform_hierarchy,                         edit::imgui_edit__transform_hierarchy);
     REGISTER_COMPONENT___NO_SERIALIZE(component::Transform_changed,                           edit::imgui_edit__transform_changed);
@@ -114,8 +111,8 @@ void BT::component::register_all_components()
     REGISTER_COMPONENT__YES_SERIALIZE(TXP::component::Render_object_config,                   edit::imgui_edit__render_object_settings);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Character_mvt_animated_state,                edit::imgui_edit__sample);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Anim_frame_action_controller,                edit::imgui_edit__sample);
-    REGISTER_COMPONENT___NO_SERIALIZE(component::Animator_driven_hitcapsule_set,              edit::imgui_edit__sample);
-    REGISTER_COMPONENT__YES_SERIALIZE(component::Animator_root_motion,                        edit::imgui_edit__animator_root_motion);
+    REGISTER_COMPONENT___NO_SERIALIZE(TXP::component::Animator_driven_hitcapsule_set,         edit::imgui_edit__sample);
+    REGISTER_COMPONENT__YES_SERIALIZE(TXP::component::Animator_root_motion,                   edit::imgui_edit__animator_root_motion);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Physics_object_settings,                     edit::imgui_edit__physics_object_settings);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Physics_obj_type_triangle_mesh_settings,     edit::imgui_edit__physics_obj_type_triangle_mesh_settings);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Physics_obj_type_char_con_settings,          edit::imgui_edit__physics_obj_type_char_con_settings);
