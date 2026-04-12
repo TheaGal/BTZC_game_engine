@@ -15,5 +15,7 @@
 
 - [x] make orbiting cam mode for input stuff.
 
-- [ ] do animated render models implementation in txp-renderer.
-- [ ] include afa implementation.
+- [x] do animated render models implementation in txp-renderer.
+- [x] include afa implementation.
+
+- [ ] Implement the new txp-renderer into here.
