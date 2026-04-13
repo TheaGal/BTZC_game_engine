@@ -1,7 +1,5 @@
 #include "tick_sim_char_mvt_animator.h"
 
-// #include "animation_frame_action_tool/runtime_data.h"
-// #include "game_system_logic/component/animator_root_motion.h"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/combat_stats.h"
 #include "game_system_logic/entity_container.h"
@@ -13,7 +11,6 @@
 
 void BT::system::tick_sim_char_mvt_animator()
 {
-    auto& rend_obj_pool{ service_finder::find_service<Renderer>().get_render_object_pool() };
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
 
@@ -25,19 +22,14 @@ void BT::system::tick_sim_char_mvt_animator()
 
             auto affecting_rend_obj_ecs_entity{ entity_container.find_entity(
                 char_mvt_anim_state.affecting_animator_uuid) };
-            auto const affecting_rend_obj_ref{
-                reg.try_get<component::Created_render_object_reference const>(
+            auto const* affecting_rend_obj{
+                reg.try_get<TXP::component::Render_object_config const>(
                     affecting_rend_obj_ecs_entity)
             };
-            if (!affecting_rend_obj_ref)
+            if (!affecting_rend_obj)
                 continue;  // Cancel bc no created render object.
 
-            auto& affecting_rend_obj{ *rend_obj_pool
-                                           .checkout_render_obj_by_key(
-                                               { affecting_rend_obj_ref->render_obj_uuid_ref })
-                                           .front() };
-
-            auto animator{ affecting_rend_obj.get_model_animator() };
+            auto animator{ affecting_rend_obj->get_model_animator() };
             if (!animator)
             {   // Cancel bc animator doesn't exist.
                 rend_obj_pool.return_render_objs({ &affecting_rend_obj });
