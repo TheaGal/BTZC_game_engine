@@ -1,11 +1,12 @@
 #include "tick_sim_char_mvt_animator.h"
 
-#include "animation_frame_action_tool/runtime_data.h"
-#include "game_system_logic/component/animator_root_motion.h"
+// #include "animation_frame_action_tool/runtime_data.h"
+// #include "game_system_logic/component/animator_root_motion.h"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/combat_stats.h"
 #include "game_system_logic/entity_container.h"
 #include "service_finder/service_finder.h"
+#include "txp_renderer_public.h"
 
 #include <cassert>
 
@@ -159,7 +160,7 @@ void BT::system::tick_sim_char_mvt_animator()
             // Read animator root motion AFA data.
             if (animator->get_is_using_root_motion())
             {
-                auto& anim_root_motion{ reg.get<component::Animator_root_motion>(
+                auto& anim_root_motion{ reg.get<TXP::component::Animator_root_motion>(
                     affecting_rend_obj_ecs_entity) };
                 auto& anim_afa_data_handle{ animator->get_anim_frame_action_data_handle() };
 

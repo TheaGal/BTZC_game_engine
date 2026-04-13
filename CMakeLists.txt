@@ -208,6 +208,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_physics_object_lifetime.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/propagate_changed_transforms.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/propagate_changed_transforms.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/tick_sim_char_mvt_animator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/tick_sim_char_mvt_animator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/write_entity_transforms_from_physics.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/write_entity_transforms_from_physics.h

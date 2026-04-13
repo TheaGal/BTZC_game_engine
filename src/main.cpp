@@ -340,9 +340,7 @@ int32_t main()
             BT::system::process_physics_object_lifetime();
 
             TXP::Renderer::advance_afa_sim_timer(main_physics_engine.k_simulation_delta_time);
-#if IMPLEMENT_THIS
             BT::system::tick_sim_char_mvt_animator();  // Requires animator and AFA.
-#endif // IMPLEMENT_THIS
 
 #if IMPLEMENT_THIS
             BT::system::character_broadcast_attack_msg_to_enemies();  // Requires AFA
