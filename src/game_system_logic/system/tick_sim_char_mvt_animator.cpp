@@ -23,19 +23,22 @@ void BT::system::tick_sim_char_mvt_animator()
 
             auto affecting_rend_obj_ecs_entity{ entity_container.find_entity(
                 char_mvt_anim_state.affecting_animator_uuid) };
-            auto animator{ renderer.try_get_skeletal_animator(affecting_rend_obj_ecs_entity) };
+            auto animator_optional{ renderer.try_get_skeletal_animator(
+                affecting_rend_obj_ecs_entity) };
 
-            if (!animator)
+            if (!animator_optional.has_value())
                 continue;  // Cancel bc animator doesn't exist.
+
+            auto& animator{ animator_optional.value() };
 
             // Write animator vars.
             #define SET_ANIMATOR_BOOL_VAR(_var)                                                     \
-                animator->set_bool_variable(#_var, char_mvt_anim_state.write_to_animator_data._var);
+                animator.set_bool_variable(#_var, char_mvt_anim_state.write_to_animator_data._var);
             #define SET_ANIMATOR_FLOAT_VAR(_var)                                                    \
-                animator->set_float_variable(#_var, char_mvt_anim_state.write_to_animator_data._var);
+                animator.set_float_variable(#_var, char_mvt_anim_state.write_to_animator_data._var);
             #define SET_ANIMATOR_TRIGGER(_var)                                                      \
                 if (char_mvt_anim_state.write_to_animator_data._var)                                \
-                    animator->set_trigger_variable(#_var);                                          \
+                    animator.set_trigger_variable(#_var);                                           \
                 char_mvt_anim_state.write_to_animator_data._var = false;
             // //--------------------------------------------------------------------------------------
             // @ANIMATOR_REFACTOR: the vv below vv is removed for this refactor.
@@ -85,12 +88,12 @@ void BT::system::tick_sim_char_mvt_animator()
                                                         : Anim_state_e::AS_GROUNDED_MOVE);
                     if (calc_anim_changed_fn())
                     {
-                        animator->emplace_jump_queue_state_set(
+                        animator.emplace_jump_queue_state_set(
                             "jq_grnd_mvt",
                             {
                                 .anim_state_indices = {
-                                    animator->get_animator_state_idx(!input.is_moving ? "st_idle"
-                                                                                      : "st_running")
+                                    animator.get_animator_state_idx(!input.is_moving ? "st_idle"
+                                                                                     : "st_running")
                                 },
                                 .loop_final_state = true
                             },
@@ -108,21 +111,21 @@ void BT::system::tick_sim_char_mvt_animator()
                         if (input.on_jump)
                         {
                             state_set.anim_state_indices = {
-                                animator->get_animator_state_idx(!input.is_moving ? "st_jump"  // @TODO: separate if move or idle -based jump.
-                                                                                  : "st_jump"),
-                                animator->get_animator_state_idx("st_fall")
+                                animator.get_animator_state_idx(!input.is_moving ? "st_jump"  // @TODO: separate if move or idle -based jump.
+                                                                                 : "st_jump"),
+                                animator.get_animator_state_idx("st_fall")
                             };
                             state_set.loop_final_state = false;
                         }
                         else
                         {
                             state_set.anim_state_indices = {
-                                animator->get_animator_state_idx("st_fall")
+                                animator.get_animator_state_idx("st_fall")
                             };
                             state_set.loop_final_state = false;
                         }
 
-                        animator->emplace_jump_queue_state_set(
+                        animator.emplace_jump_queue_state_set(
                             "jq_midair",
                             state_set,
                             1);
@@ -138,23 +141,23 @@ void BT::system::tick_sim_char_mvt_animator()
             }
 
             // Update animator.
-            animator->update(Model_animator::SIMULATION_PROFILE,
-                             Physics_engine::k_simulation_delta_time);
+            animator.update(TXP::SIMULATION_TIMER_PROFILE,
+                            Physics_engine::k_simulation_delta_time);
 
             // Read animator root motion AFA data.
-            if (animator->get_is_using_root_motion())
+            if (animator.get_is_using_root_motion())
             {
                 auto& anim_root_motion{ reg.get<TXP::component::Animator_root_motion>(
                     affecting_rend_obj_ecs_entity) };
-                auto& anim_afa_data_handle{ animator->get_anim_frame_action_data_handle() };
+                auto& anim_afa_data_handle{ animator.get_anim_frame_action_data_handle() };
 
                 anim_root_motion.root_motion_multiplier =
                     anim_afa_data_handle
                         .get_float_data_handle(anim_frame_action::CTRL_DATA_LABEL_root_motion_multi)
                         .get_val();
 
-                animator->get_anim_root_motion_delta_pos(Model_animator::SIMULATION_PROFILE,
-                                                         anim_root_motion.delta_pos);
+                animator.get_anim_root_motion_delta_pos(TXP::SIMULATION_TIMER_PROFILE,
+                                                        anim_root_motion.delta_pos);
 
                 anim_root_motion.turn_speed =
                     anim_afa_data_handle
@@ -171,7 +174,7 @@ void BT::system::tick_sim_char_mvt_animator()
                         .get_val();
                 anim_root_motion.mvt_input.max_speed =
                     anim_afa_data_handle
-                        .get_float_data_handle(anim_frame_action::CTRL_DATA_LABEL_mvt_input_max_speed)
+                        .get_float_data_handle(anim_frame_action::CTRL_DATA_LA`BEL_mvt_input_max_speed)
                         .get_val();
                 anim_root_motion.mvt_input.accel =
                     anim_afa_data_handle
