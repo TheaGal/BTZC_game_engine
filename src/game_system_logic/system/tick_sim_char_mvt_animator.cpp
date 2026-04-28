@@ -3,6 +3,7 @@
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/combat_stats.h"
 #include "game_system_logic/entity_container.h"
+#include "physics_engine/physics_engine.h"  // for `k_simulation_delta_time`
 #include "service_finder/service_finder.h"
 #include "txp_renderer_public.h"
 
@@ -107,7 +108,7 @@ void BT::system::tick_sim_char_mvt_animator()
 
                     if (calc_anim_changed_fn())
                     {
-                        Model_animator::Animator_state_set state_set;
+                        TXP::Animator_state_set state_set;
                         if (input.on_jump)
                         {
                             state_set.anim_state_indices = {
@@ -151,38 +152,40 @@ void BT::system::tick_sim_char_mvt_animator()
                     affecting_rend_obj_ecs_entity) };
                 auto& anim_afa_data_handle{ animator.get_anim_frame_action_data_handle() };
 
+                using AFA_ctrl = TXP::anim_frame_action::Controllable_data_label;
+
                 anim_root_motion.root_motion_multiplier =
                     anim_afa_data_handle
-                        .get_float_data_handle(anim_frame_action::CTRL_DATA_LABEL_root_motion_multi)
+                        .get_float_data_handle(AFA_ctrl::CTRL_DATA_LABEL_root_motion_multi)
                         .get_val();
 
                 animator.get_anim_root_motion_delta_pos(TXP::SIMULATION_TIMER_PROFILE,
                                                         anim_root_motion.delta_pos);
 
+
                 anim_root_motion.turn_speed =
                     anim_afa_data_handle
-                        .get_float_data_handle(anim_frame_action::CTRL_DATA_LABEL_turn_speed)
+                        .get_float_data_handle(AFA_ctrl::CTRL_DATA_LABEL_turn_speed)
                         .get_val();
                 anim_root_motion.can_do_turnaround_anim =
                     anim_afa_data_handle
-                        .get_bool_data_handle(
-                            anim_frame_action::CTRL_DATA_LABEL_can_do_turnaround_anim)
+                        .get_bool_data_handle(AFA_ctrl::CTRL_DATA_LABEL_can_do_turnaround_anim)
                         .get_val();
                 anim_root_motion.mvt_input.enabled =
                     anim_afa_data_handle
-                        .get_bool_data_handle(anim_frame_action::CTRL_DATA_LABEL_mvt_input_enabled)
+                        .get_bool_data_handle(AFA_ctrl::CTRL_DATA_LABEL_mvt_input_enabled)
                         .get_val();
                 anim_root_motion.mvt_input.max_speed =
                     anim_afa_data_handle
-                        .get_float_data_handle(anim_frame_action::CTRL_DATA_LA`BEL_mvt_input_max_speed)
+                        .get_float_data_handle(AFA_ctrl::CTRL_DATA_LABEL_mvt_input_max_speed)
                         .get_val();
                 anim_root_motion.mvt_input.accel =
                     anim_afa_data_handle
-                        .get_float_data_handle(anim_frame_action::CTRL_DATA_LABEL_mvt_input_accel)
+                        .get_float_data_handle(AFA_ctrl::CTRL_DATA_LABEL_mvt_input_accel)
                         .get_val();
                 anim_root_motion.mvt_input.decel =
                     anim_afa_data_handle
-                        .get_float_data_handle(anim_frame_action::CTRL_DATA_LABEL_mvt_input_decel)
+                        .get_float_data_handle(AFA_ctrl::CTRL_DATA_LABEL_mvt_input_decel)
                         .get_val();
             }
         }
