@@ -281,7 +281,7 @@ void BT::component::edit::imgui_edit__character_world_space_input(entt::registry
 void BT::component::edit::imgui_edit__render_object_settings(entt::registry& reg,
                                                              entt::entity ecs_entity)
 {
-    BT::date_deadline(2026, 4, 24);
+    BT::date_deadline(2026, 5, 10);
     // auto& rend_obj_settings{ reg.get<component::Render_object_settings>(ecs_entity) };
 
     // ImGui::PushID(&rend_obj_settings);

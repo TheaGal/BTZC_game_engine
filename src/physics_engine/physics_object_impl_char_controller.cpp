@@ -121,10 +121,10 @@ BT::Phys_obj_impl_char_controller::Phys_obj_impl_char_controller(float_t radius,
     m_character->SetListener(this);
 
     // Create debug render job.
-    BT::date_deadline(2026, 4, 24);
+    BT::date_deadline(2026, 5, 10);
     // static auto s_debug_model{ Model_bank::get_model("unit_box") };
 
-    BT::date_deadline(2026, 4, 24);
+    BT::date_deadline(2026, 5, 10);
     // m_debug_mesh_id = get_main_debug_mesh_pool().emplace_debug_mesh(
     //     { s_debug_model,
     //       Debug_mesh_pool::k_mask_phys_obj,
@@ -134,7 +134,7 @@ BT::Phys_obj_impl_char_controller::Phys_obj_impl_char_controller(float_t radius,
 
 BT::Phys_obj_impl_char_controller::~Phys_obj_impl_char_controller()
 {
-    BT::date_deadline(2026, 4, 24);
+    BT::date_deadline(2026, 5, 10);
     // get_main_debug_mesh_pool().remove_debug_mesh(m_debug_mesh_id);
 }
 
@@ -306,7 +306,7 @@ void BT::Phys_obj_impl_char_controller::update_debug_mesh()
     glm_scale(graphic_trans, vec3{ m_radius,
                                    0.5f * height + m_radius,
                                    m_radius });
-    BT::date_deadline(2026, 4, 24);
+    BT::date_deadline(2026, 5, 10);
     // glm_mat4_copy(graphic_trans,
     //               get_main_debug_mesh_pool()
     //                   .get_debug_mesh_volatile_handle(m_debug_mesh_id).transform);

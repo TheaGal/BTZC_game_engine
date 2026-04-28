@@ -100,7 +100,7 @@ void BT::system::player_character_world_space_input()
         auto const& input_handler{ service_finder::find_service<TXP::Input::Input_handler>() };
 
         // @TODO: make better input vv below vv that can handle directional move.
-        BT::date_deadline(2026, 4, 24);
+        BT::date_deadline(2026, 5, 10);
         vec2 move_input{ 0, 0 };
         if (input_handler.get_keyboard_key_state(BT_KEY_W).pressed)
             move_input[1] += 1;

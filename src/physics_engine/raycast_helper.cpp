@@ -110,7 +110,7 @@ BT::Raycast_helper::raycast(JPH::RVec3Arg origin, JPH::Vec3Arg direction_and_mag
     if (return_result.success)
         glm_vec4_copy(vec4{ 1.0f, 0.0f, 0.0f, 1.0f }, color_1);
     JPH::RVec3 pos_2{ origin + direction_and_magnitude };
-    BT::date_deadline(2026, 4, 24);  // @TODO: fix below!
+    BT::date_deadline(2026, 5, 10);  // @TODO: fix below!
     // get_main_debug_line_pool().emplace_debug_line(  // Ensure matching with `write_render_transforms.cpp`
     //     { { static_cast<float_t>(origin.GetX()),
     //         static_cast<float_t>(origin.GetY()),

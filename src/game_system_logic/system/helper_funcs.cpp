@@ -17,7 +17,7 @@ void BT::system::helper::fetch_wanted_afa_data(
 {   // @NOTE: BRUH I HATE HOW DIFFICULT IT IS TO ACCESS THE ANIMATOR DATA IT'S SO
     //        FREAKIN STUPID WHY DID I DESIGN THE SYSTEM LIKE THIS PLEEEEEAAAAASE CHANGE
     //        IT AT SOME POINT WTF!!!!!!  -Thea 2025/11/24
-    BT::date_deadline(2026, 4, 24);
+    BT::date_deadline(2026, 5, 10);
     // auto rend_obj_ref{ reg.try_get<component::Created_render_object_reference>(
     //     entity_container.find_entity(char_mvt_anim_state.affecting_animator_uuid)) };
 

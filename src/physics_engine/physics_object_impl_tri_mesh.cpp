@@ -27,7 +27,7 @@ BT::Phys_obj_impl_tri_mesh::Phys_obj_impl_tri_mesh(std::string const& model_name
     // , m_model{ model }  @TODO: FIX SOMETIME!!
     , m_can_move{ motion_type == JPH::EMotionType::Kinematic }
 {
-    BT::date_deadline(2026, 4, 24);  // Fix the `// , m_model{ model }  @TODO: FIX SOMETIME!!` section.
+    BT::date_deadline(2026, 5, 10);  // Fix the `// , m_model{ model }  @TODO: FIX SOMETIME!!` section.
     if (motion_type == JPH::EMotionType::Dynamic)
     {
         logger::printe(logger::ERROR, "Dynamic motion type not allowed.");
@@ -89,7 +89,7 @@ BT::Phys_obj_impl_tri_mesh::Phys_obj_impl_tri_mesh(std::string const& model_name
     m_body_id = m_phys_body_ifc.CreateAndAddBody(mesh_body_settings, JPH::EActivation::DontActivate);
 
     // Create debug render job.
-    BT::date_deadline(2026, 4, 24);
+    BT::date_deadline(2026, 5, 10);
     // m_debug_mesh_id = get_main_debug_mesh_pool().emplace_debug_mesh(
     //     { m_model,
     //       Debug_mesh_pool::k_mask_phys_obj,
@@ -100,7 +100,7 @@ BT::Phys_obj_impl_tri_mesh::Phys_obj_impl_tri_mesh(std::string const& model_name
 BT::Phys_obj_impl_tri_mesh::~Phys_obj_impl_tri_mesh()
 {
     m_phys_body_ifc.RemoveBody(m_body_id);
-    BT::date_deadline(2026, 4, 24);
+    BT::date_deadline(2026, 5, 10);
     // get_main_debug_mesh_pool().remove_debug_mesh(m_debug_mesh_id);
 }
 
@@ -144,7 +144,7 @@ void BT::Phys_obj_impl_tri_mesh::update_debug_mesh()
                                            current_trans.rotation.GetY(),
                                            current_trans.rotation.GetZ(),
                                            current_trans.rotation.GetW() }, graphic_trans);
-    BT::date_deadline(2026, 4, 24);
+    BT::date_deadline(2026, 5, 10);
     // glm_mat4_copy(graphic_trans,
     //               get_main_debug_mesh_pool()
     //                   .get_debug_mesh_volatile_handle(m_debug_mesh_id).transform);
