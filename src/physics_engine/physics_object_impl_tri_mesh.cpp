@@ -24,10 +24,8 @@ BT::Phys_obj_impl_tri_mesh::Phys_obj_impl_tri_mesh(std::string const& model_name
                                                    JPH::EMotionType motion_type,
                                                    Physics_transform&& init_transform)
     : m_phys_body_ifc{ *reinterpret_cast<JPH::BodyInterface*>(service_finder::find_service<Physics_engine>().get_physics_body_ifc()) }
-    // , m_model{ model }  @TODO: FIX SOMETIME!!
     , m_can_move{ motion_type == JPH::EMotionType::Kinematic }
 {
-    BT::date_deadline(2026, 5, 10);  // Fix the `// , m_model{ model }  @TODO: FIX SOMETIME!!` section.
     if (motion_type == JPH::EMotionType::Dynamic)
     {
         logger::printe(logger::ERROR, "Dynamic motion type not allowed.");

@@ -36,8 +36,6 @@ public:
 
 private:
     JPH::BodyInterface& m_phys_body_ifc;
-    // @TODO: fix vv below vv !!!
-    // Model const* m_model;  // Save for serialization purposes, and debug rendering purposes.
     JPH::BodyID m_body_id;
     bool m_can_move;
 
