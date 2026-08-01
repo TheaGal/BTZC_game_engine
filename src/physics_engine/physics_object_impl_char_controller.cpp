@@ -324,10 +324,7 @@ void BT::Phys_obj_impl_char_controller::OnAdjustBodyVelocity(JPH::CharacterVirtu
 }
 
 void BT::Phys_obj_impl_char_controller::OnContactAdded(JPH::CharacterVirtual const* in_character,
-                                                       JPH::BodyID const& in_body_id2,
-                                                       JPH::SubShapeID const& in_sub_shape_id2,
-                                                       JPH::RVec3Arg in_contact_position,
-                                                       JPH::Vec3Arg in_contact_normal,
+                                                       JPH::CharacterContact const& in_contact,
                                                        JPH::CharacterContactSettings& io_settings)
 {
     // // Draw a box around the character when it enters the sensor
@@ -353,12 +350,10 @@ void BT::Phys_obj_impl_char_controller::OnContactAdded(JPH::CharacterVirtual con
     //     mAllowSliding = true;
 }
 
-void BT::Phys_obj_impl_char_controller::OnCharacterContactAdded(JPH::CharacterVirtual const* in_character,
-                                                                JPH::CharacterVirtual const* in_other_character,
-                                                                JPH::SubShapeID const& in_sub_shape_id2,
-                                                                JPH::RVec3Arg in_contact_position,
-                                                                JPH::Vec3Arg in_contact_normal,
-                                                                JPH::CharacterContactSettings& io_settings)
+void BT::Phys_obj_impl_char_controller::OnCharacterContactAdded(
+    JPH::CharacterVirtual const* in_character,
+    JPH::CharacterContact const& in_contact,
+    JPH::CharacterContactSettings& io_settings)
 {
     // // Characters can only be pushed in their own update
     // if (sPlayerCanPushOtherCharacters)

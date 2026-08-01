@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.28 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.29 FATAL_ERROR)
 
 # Project.
 project(btzc_game_engine
@@ -31,6 +31,7 @@ else()
 endif()
 
 # C/C++ standard.
+# set(CMAKE_UNITY_BUILD ON)  # @TODO: get this working at some point!!
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED True)
 set(CMAKE_CXX_STANDARD 20)

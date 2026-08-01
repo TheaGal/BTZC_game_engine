@@ -56,16 +56,10 @@ public:
                               JPH::Vec3& io_linear_velocity,
                               JPH::Vec3& io_angular_velocity) override;
     void OnContactAdded(JPH::CharacterVirtual const* in_character,
-                        JPH::BodyID const& in_body_id2,
-                        JPH::SubShapeID const& in_sub_shape_id2,
-                        JPH::RVec3Arg in_contact_position,
-                        JPH::Vec3Arg in_contact_normal,
+                        JPH::CharacterContact const& in_contact,
                         JPH::CharacterContactSettings& io_settings) override;
     void OnCharacterContactAdded(JPH::CharacterVirtual const* in_character,
-                                 JPH::CharacterVirtual const* in_other_character,
-                                 JPH::SubShapeID const& in_sub_shape_id2,
-                                 JPH::RVec3Arg in_contact_position,
-                                 JPH::Vec3Arg in_contact_normal,
+                                 JPH::CharacterContact const& in_contact,
                                  JPH::CharacterContactSettings& io_settings) override;
     void OnContactSolve(JPH::CharacterVirtual const* in_character,
                         JPH::BodyID const& in_body_id2,
