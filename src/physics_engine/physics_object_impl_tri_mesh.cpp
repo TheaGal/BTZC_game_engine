@@ -15,6 +15,7 @@
 #include "physics_engine.h"
 #include "physics_engine_impl_layers.h"
 #include "service_finder/service_finder.h"
+#include "txp_renderer/debug/debug_render_job.h"
 #include "txp_renderer_public.h"
 
 #include <cassert>
@@ -87,19 +88,13 @@ BT::Phys_obj_impl_tri_mesh::Phys_obj_impl_tri_mesh(std::string const& model_name
     m_body_id = m_phys_body_ifc.CreateAndAddBody(mesh_body_settings, JPH::EActivation::DontActivate);
 
     // Create debug render job.
-    BT::date_deadline(2026, 5, 10);
-    // m_debug_mesh_id = get_main_debug_mesh_pool().emplace_debug_mesh(
-    //     { m_model,
-    //       Debug_mesh_pool::k_mask_phys_obj,
-    //       Material_bank::get_material("debug_physics_wireframe_fore_material"),
-    //       Material_bank::get_material("debug_physics_wireframe_back_material") });
+    m_debug_mesh_id = TXP::debug::emplace_debug_model(model_name, TXP::debug::PHYSICS_WIREFRAME);
 }
 
 BT::Phys_obj_impl_tri_mesh::~Phys_obj_impl_tri_mesh()
 {
     m_phys_body_ifc.RemoveBody(m_body_id);
-    BT::date_deadline(2026, 5, 10);
-    // get_main_debug_mesh_pool().remove_debug_mesh(m_debug_mesh_id);
+    TXP::debug::remove_debug_model(m_debug_mesh_id);
 }
 
 void BT::Phys_obj_impl_tri_mesh::move_kinematic(Physics_transform&& new_transform)
@@ -142,7 +137,7 @@ void BT::Phys_obj_impl_tri_mesh::update_debug_mesh()
                                            current_trans.rotation.GetY(),
                                            current_trans.rotation.GetZ(),
                                            current_trans.rotation.GetW() }, graphic_trans);
-    BT::date_deadline(2026, 5, 10);
+    BT::date_deadline(2026, 8, 10);
     // glm_mat4_copy(graphic_trans,
     //               get_main_debug_mesh_pool()
     //                   .get_debug_mesh_volatile_handle(m_debug_mesh_id).transform);

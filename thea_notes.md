@@ -21,3 +21,7 @@
 - [x] Implement the new txp-renderer into here.
 
 - [ ] Reimplement btafa processing here.
+
+- [ ] Add a component type that allows for string of chars to signify rail system.
+
+- [ ] Have component draw multiple models of the rails in their positions.

@@ -11,6 +11,8 @@
 #include "Jolt/Physics/PhysicsSystem.h"
 #include "physics_engine_impl_layers.h"
 #include "service_finder/service_finder.h"
+#include "txp_renderer/debug/debug_render_job.h"
+#include "txp_renderer_public.h"
 
 #include <cmath>
 
@@ -121,21 +123,12 @@ BT::Phys_obj_impl_char_controller::Phys_obj_impl_char_controller(float_t radius,
     m_character->SetListener(this);
 
     // Create debug render job.
-    BT::date_deadline(2026, 5, 10);
-    // static auto s_debug_model{ Model_bank::get_model("unit_box") };
-
-    BT::date_deadline(2026, 5, 10);
-    // m_debug_mesh_id = get_main_debug_mesh_pool().emplace_debug_mesh(
-    //     { s_debug_model,
-    //       Debug_mesh_pool::k_mask_phys_obj,
-    //       Material_bank::get_material("debug_physics_wireframe_fore_material"),
-    //       Material_bank::get_material("debug_physics_wireframe_back_material") });
+    m_debug_mesh_id = TXP::debug::emplace_debug_model("unit_box", TXP::debug::PHYSICS_WIREFRAME);
 }
 
 BT::Phys_obj_impl_char_controller::~Phys_obj_impl_char_controller()
 {
-    BT::date_deadline(2026, 5, 10);
-    // get_main_debug_mesh_pool().remove_debug_mesh(m_debug_mesh_id);
+    TXP::debug::remove_debug_model(m_debug_mesh_id);
 }
 
 // Phys obj impl ifc.
@@ -306,7 +299,7 @@ void BT::Phys_obj_impl_char_controller::update_debug_mesh()
     glm_scale(graphic_trans, vec3{ m_radius,
                                    0.5f * height + m_radius,
                                    m_radius });
-    BT::date_deadline(2026, 5, 10);
+    BT::date_deadline(2026, 8, 10);
     // glm_mat4_copy(graphic_trans,
     //               get_main_debug_mesh_pool()
     //                   .get_debug_mesh_volatile_handle(m_debug_mesh_id).transform);

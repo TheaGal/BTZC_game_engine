@@ -1,6 +1,5 @@
 #pragma once
 
-#include "btuuid.h"
 #include "Jolt/Jolt.h"
 #include "Jolt/Core/TempAllocator.h"
 #include "Jolt/Math/Real.h"
@@ -8,6 +7,8 @@
 #include "Jolt/Physics/PhysicsSystem.h"
 #include "physics_engine.h"
 #include "physics_object.h"
+#include "txp_renderer_public.h"
+
 #include <vector>
 
 using std::vector;
@@ -110,7 +111,7 @@ private:
     bool m_is_crouched;
     bool m_allow_sliding{ false };  // True when want to move.
 
-    UUID m_debug_mesh_id;
+    TXP::debug::debug_model_id_t m_debug_mesh_id;
 };
 
 }  // namespace BT

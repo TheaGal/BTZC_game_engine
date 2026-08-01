@@ -1,12 +1,12 @@
 #pragma once
 
-#include "btuuid.h"
 #include "Jolt/Jolt.h"
 #include "Jolt/Math/Float3.h"
 #include "Jolt/Physics/Body/BodyID.h"
 #include "Jolt/Physics/Body/BodyInterface.h"
 #include "Jolt/Physics/Body/MotionType.h"
 #include "physics_object.h"
+#include "txp_renderer_public.h"
 
 #include <string>
 #include <vector>
@@ -39,7 +39,7 @@ private:
     JPH::BodyID m_body_id;
     bool m_can_move;
 
-    UUID m_debug_mesh_id;
+    TXP::debug::debug_model_id_t m_debug_mesh_id;
 };
 
 }  // namespace BT
