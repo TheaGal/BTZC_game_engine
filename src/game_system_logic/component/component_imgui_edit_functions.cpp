@@ -5,6 +5,7 @@
 #include "btuuid.h"
 #include "character_movement.h"
 #include "combat_stats.h"
+#include "game_system_logic/component/rail_line.h"
 #include "game_system_logic/entity_container.h"
 #include "health_stats.h"
 #include "imgui.h"
@@ -543,6 +544,30 @@ void BT::component::edit::imgui_edit__base_combat_stats_data(entt::registry& reg
     ImGui::SeparatorText("Posture");
     ImGui::InputInt("posture_dmg_pts", &combat_stats_data.posture_dmg_pts);
     ImGui::InputInt("posture_dmg_def_pts", &combat_stats_data.posture_dmg_def_pts);
+
+    ImGui::PopItemWidth();
+    ImGui::PopID();
+}
+
+void BT::component::edit::imgui_edit__rail_line(entt::registry& reg, entt::entity ecs_entity)
+{
+    auto& rail_line_data{ reg.get<component::Rail_line>(ecs_entity) };
+
+    ImGui::PushID(&rail_line_data);
+    ImGui::PushItemWidth(ImGui::GetFontSize() * -20);
+
+    ImGui::SeparatorText("Rail Line");
+    ImGui::InputText("construction_code", &rail_line_data.construction_code);
+    ImGui::Text(
+        "Key:\n"
+        "  s    : straight (or straight incline/decline when in those modes)\n"
+        "  qwer : curve left (each char is a different curve radius (q is largest))\n"
+        "  uiop : curve right (each char is a different curve radius (p id largest))\n"
+        "  (    : start incline\n"
+        "  )    : end incline\n"
+        "  [    : start decline\n"
+        "  ]    : end decline\n"
+        "  f    : fork (not implemented yet\n");
 
     ImGui::PopItemWidth();
     ImGui::PopID();

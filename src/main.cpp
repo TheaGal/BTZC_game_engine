@@ -16,6 +16,7 @@
 #include "game_system_logic/system/player_character_world_space_input.h"
 #include "game_system_logic/system/process_physics_object_lifetime.h"
 #include "game_system_logic/system/propagate_changed_transforms.h"
+#include "game_system_logic/system/rail_line_editor_update.h"
 #include "game_system_logic/system/tick_sim_char_mvt_animator.h"
 #include "game_system_logic/system/write_entity_transforms_from_physics.h"
 #include "game_system_logic/system/write_render_transforms.h"
@@ -360,7 +361,7 @@ int32_t main()
             BT::system::player_character_lock_onto_target();
 
 #if IMPLEMENT_THIS
-            BT::system::animator_driven_hitcapsule_sets_update();  // Requires AFA
+            BT::system::animator_driven_hitcapsule_sets_update();  // Requires AFA.
             BT::system::hitcapsule_attack_processing(BT::Physics_engine::k_simulation_delta_time);  // Requires AFA.
 #endif // IMPLEMENT_THIS
 
@@ -389,6 +390,8 @@ int32_t main()
             if (is_afa_editor_context)
                 BT::system::_dev_animation_frame_action_editor();
 #endif // IMPLEMENT_THIS
+
+            BT::system::rail_line_editor_update();
 
             BT::system::write_render_transforms();
 #if IMPLEMENT_THIS

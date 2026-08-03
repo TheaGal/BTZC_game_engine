@@ -12,6 +12,7 @@
 #include "entt/core/type_info.hpp"
 #include "entt/entity/registry.hpp"
 #include "follow_camera.h"
+#include "game_system_logic/component/rail_line.h"
 #include "game_system_logic/entity_container.h"
 #include "health_stats.h"
 #include "physics_object_settings.h"
@@ -95,6 +96,8 @@ void BT::component::register_all_components()
                                     nullptr });                                                     \
         } while(0);
 
+    // clang-format off
+
     //---- All Components -- @NOTE: Order matters here! --------------------------------------------
     //----------------                Component typename                                      ImGui edit func
  // REGISTER_COMPONENT__YES_SERIALIZE(component::Some_sample_component,                       edit::imgui_edit__sample);
@@ -123,7 +126,10 @@ void BT::component::register_all_components()
     REGISTER_COMPONENT__YES_SERIALIZE(component::Attack_queue,                                edit::imgui_edit__sample);
     REGISTER_COMPONENT__YES_SERIALIZE(component::CPU_enemy_awareness,                         edit::imgui_edit__sample);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Detectable_character,                        edit::imgui_edit__sample);
+    REGISTER_COMPONENT__YES_SERIALIZE(component::Rail_line,                                   edit::imgui_edit__rail_line);
     //----------------------------------------------------------------------------------------------
+
+    // clang-format on
 
     #undef REGISTER_COMPONENT
 }
