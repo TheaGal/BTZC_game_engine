@@ -90,6 +90,8 @@ int32_t main()
     main_renderer.add_material_palette("default_material_palette", { "default_mat" });
     main_renderer.add_model("probuilder_example", ".wobj", false, false);
     main_renderer.add_model("simple_combat_char", ".glb", true, true);
+    main_renderer.add_model("rail_line_editor_gizmo", ".wobj", false, false);
+    main_renderer.add_model("rails", ".wobj", false, false);
     main_renderer.build();
 
     // Setup physics engine.

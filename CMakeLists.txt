@@ -123,6 +123,10 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/player_model_0.5_2.mtl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/probuilder_example.mtl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/probuilder_example.wobj
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/rail_line_editor_gizmo.mtl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/rail_line_editor_gizmo.wobj
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/rails.mtl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/rails.wobj
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/simple_combat_char.glb
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/stupid_polygon_grid.mtl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/unit_box.mtl
@@ -185,6 +189,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/health_stats.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/physics_object_settings.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/physics_object_settings.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/rail_line.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/transform.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/transform.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/entity_container.cpp
@@ -209,6 +214,8 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_physics_object_lifetime.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/propagate_changed_transforms.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/propagate_changed_transforms.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/rail_line_editor_update.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/rail_line_editor_update.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/tick_sim_char_mvt_animator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/tick_sim_char_mvt_animator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/write_entity_transforms_from_physics.cpp

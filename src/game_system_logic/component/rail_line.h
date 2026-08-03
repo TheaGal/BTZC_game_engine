@@ -3,8 +3,10 @@
 #pragma once
 
 #include "btjson.h"
+#include "entt/entity/fwd.hpp"
 
 #include <string>
+#include <vector>
 
 
 namespace BT
@@ -27,6 +29,9 @@ struct Rail_line
 
     /// Flag to automatically create the render object when component is added.
     bool created_render_object{ false };
+
+    /// List of entities created from the construction code.
+    std::vector<entt::entity> created_entities;
 };
 
 }  // namespace component
