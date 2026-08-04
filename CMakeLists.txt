@@ -125,6 +125,7 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/probuilder_example.wobj
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/rail_line_editor_gizmo.mtl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/rail_line_editor_gizmo.wobj
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/rails.glb
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/rails.mtl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/rails.wobj
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/simple_combat_char.glb

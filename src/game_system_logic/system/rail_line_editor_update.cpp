@@ -19,7 +19,6 @@ void BT::system::rail_line_editor_update()
         auto& rend_obj_cfg = reg.emplace_or_replace<TXP::component::Render_object_config>(new_ent);
         rend_obj_cfg.model_name = model_name;
         rend_obj_cfg.sub_mesh_name = sub_mesh_name;
-        rend_obj_cfg.sub_mesh_zero_origin_position = true;
     };
 
     // Write transforms.
