@@ -96,13 +96,46 @@ void BT::system::rail_line_editor_update()
                 {
                 case FLAT:
                 {
-                    create_rail_piece_fn("rails",
-                                         "StraightRail",
-                                         vec3{ -20, 0, 0 },
-                                         current_pos,
-                                         current_angle,
-                                         vec3{ 0, 0, -10 },
-                                         0);
+                    // Add connecting tilt pieces.
+                    switch (prev_ctor_tilt)  // @COPYPASTA kinda
+                    {
+                    case NO_TILT:
+                        // Do nothing.
+                        break;
+
+                    case LEFT_TILT:
+                        create_rail_piece_fn("rails",
+                                             "StraightRailRoll.LR",
+                                             vec3{ -14, 0, 0 },
+                                             current_pos,
+                                             current_angle,
+                                             vec3{ 0, 0, -10 },
+                                             0);
+                        break;
+
+                    case RIGHT_TILT:
+                        create_rail_piece_fn("rails",
+                                             "StraightRailRoll.RR",
+                                             vec3{ -16, 0, 0 },
+                                             current_pos,
+                                             current_angle,
+                                             vec3{ 0, 0, -10 },
+                                             0);
+                        break;
+
+                    default:
+                        throw std::runtime_error("huh?");
+                        break;
+                    }
+
+                    if (prev_ctor_tilt == NO_TILT)
+                        create_rail_piece_fn("rails",
+                                             "StraightRail",
+                                             vec3{ -22, 0, 0 },
+                                             current_pos,
+                                             current_angle,
+                                             vec3{ 0, 0, -10 },
+                                             0);
                     break;
                 }
                 case INCLINE:
@@ -132,7 +165,6 @@ void BT::system::rail_line_editor_update()
                     break;
                 }
 
-                ctor_mode = FLAT;
                 ctor_tilt = NO_TILT;
                 break;
 
@@ -240,18 +272,30 @@ void BT::system::rail_line_editor_update()
                 if (prev_ctor_tilt != ctor_tilt)
                 {
                     // Add connecting tilt pieces.
-                    switch (prev_ctor_tilt)
+                    switch (prev_ctor_tilt)  // @COPYPASTA kinda
                     {
                     case NO_TILT:
                         // Do nothing.
                         break;
 
                     case LEFT_TILT:
-                        // @TODO
+                        create_rail_piece_fn("rails",
+                                             "StraightRailRoll.LR",
+                                             vec3{ -14, 0, 0 },
+                                             current_pos,
+                                             current_angle,
+                                             vec3{ 0, 0, -10 },
+                                             0);
                         break;
 
                     case RIGHT_TILT:
-                        // @TODO
+                        create_rail_piece_fn("rails",
+                                             "StraightRailRoll.RR",
+                                             vec3{ -16, 0, 0 },
+                                             current_pos,
+                                             current_angle,
+                                             vec3{ 0, 0, -10 },
+                                             0);
                         break;
 
                     default:
@@ -263,22 +307,22 @@ void BT::system::rail_line_editor_update()
                     {
                     case LEFT_TILT:
                         create_rail_piece_fn("rails",
-                                            "StraightRailRoll.L",
-                                            vec3{ -16, 0, 0 },
-                                            current_pos,
-                                            current_angle,
-                                            vec3{ 0, 0, -10 },
-                                            0);
+                                             "StraightRailRoll.L",
+                                             vec3{ -18, 0, 0 },
+                                             current_pos,
+                                             current_angle,
+                                             vec3{ 0, 0, -10 },
+                                             0);
                         break;
 
                     case RIGHT_TILT:
                         create_rail_piece_fn("rails",
-                                            "StraightRailRoll.R",
-                                            vec3{ -18, 0, 0 },
-                                            current_pos,
-                                            current_angle,
-                                            vec3{ 0, 0, -10 },
-                                            0);
+                                             "StraightRailRoll.R",
+                                             vec3{ -20, 0, 0 },
+                                             current_pos,
+                                             current_angle,
+                                             vec3{ 0, 0, -10 },
+                                             0);
                         break;
 
                     default:
@@ -295,13 +339,43 @@ void BT::system::rail_line_editor_update()
                                      current_angle,
                                      curve_adv_delta.raw,
                                      glm_rad(curve_code[0] == 'L' ? 15 : -15));
-
-                ctor_mode = FLAT;
                 break;
 
             case '(':
                 if (ctor_mode != FLAT)
                     throw std::runtime_error("huh?");
+
+                // Add connecting tilt pieces.
+                switch (prev_ctor_tilt)  // @COPYPASTA kinda
+                {
+                case NO_TILT:
+                    // Do nothing.
+                    break;
+
+                case LEFT_TILT:
+                    create_rail_piece_fn("rails",
+                                         "StraightRailRoll.LR",
+                                         vec3{ -14, 0, 0 },
+                                         current_pos,
+                                         current_angle,
+                                         vec3{ 0, 0, -10 },
+                                         0);
+                    break;
+
+                case RIGHT_TILT:
+                    create_rail_piece_fn("rails",
+                                         "StraightRailRoll.RR",
+                                         vec3{ -16, 0, 0 },
+                                         current_pos,
+                                         current_angle,
+                                         vec3{ 0, 0, -10 },
+                                         0);
+                    break;
+
+                default:
+                    throw std::runtime_error("huh?");
+                    break;
+                }
 
                 // Add incline start.
                 create_rail_piece_fn("rails",
@@ -334,6 +408,38 @@ void BT::system::rail_line_editor_update()
             case '[':
                 if (ctor_mode != FLAT)
                     throw std::runtime_error("huh?");
+
+                // Add connecting tilt pieces.
+                switch (prev_ctor_tilt)  // @COPYPASTA kinda
+                {
+                case NO_TILT:
+                    // Do nothing.
+                    break;
+
+                case LEFT_TILT:
+                    create_rail_piece_fn("rails",
+                                         "StraightRailRoll.LR",
+                                         vec3{ -14, 0, 0 },
+                                         current_pos,
+                                         current_angle,
+                                         vec3{ 0, 0, -10 },
+                                         0);
+                    break;
+
+                case RIGHT_TILT:
+                    create_rail_piece_fn("rails",
+                                         "StraightRailRoll.RR",
+                                         vec3{ -16, 0, 0 },
+                                         current_pos,
+                                         current_angle,
+                                         vec3{ 0, 0, -10 },
+                                         0);
+                    break;
+
+                default:
+                    throw std::runtime_error("huh?");
+                    break;
+                }
 
                 // Add decline start.
                 create_rail_piece_fn("rails",

@@ -29,4 +29,4 @@
 
 - [x] Have component draw multiple models of the rails in their positions.
 
-- [ ] Implement tilt rails to go into and out of curves.
+- [x] Implement tilt rails to go into and out of curves.
