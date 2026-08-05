@@ -22,8 +22,10 @@
 
 - [ ] Reimplement btafa processing here.
 
-- [ ] Add a component type that allows for string of chars to signify rail system.
+- [x] Add a component type that allows for string of chars to signify rail system.
 
 - [ ] Create a simple imgui inspector for the component.
 
-- [ ] Have component draw multiple models of the rails in their positions.
+- [x] Have component draw multiple models of the rails in their positions.
+
+- [ ] Implement tilt rails to go into and out of curves.
