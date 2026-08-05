@@ -24,6 +24,7 @@
 
 - [x] Add a component type that allows for string of chars to signify rail system.
 
+- [ ] Create list of transforms imgui list/window.
 - [ ] Create a simple imgui inspector for the component.
 
 - [x] Have component draw multiple models of the rails in their positions.

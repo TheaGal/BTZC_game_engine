@@ -6,6 +6,8 @@
 #include "service_finder/service_finder.h"
 #include "txp_renderer_public.h"
 
+#include <cstddef>
+#include <cstdint>
 #include <stdexcept>
 
 
@@ -65,11 +67,23 @@ void BT::system::rail_line_editor_update()
             DECLINE,
         } ctor_mode{ 0 };
 
+        enum Tilt : int32_t
+        {
+            NO_TILT = 0,
+            LEFT_TILT,
+            RIGHT_TILT,
+        };
+        Tilt ctor_tilt{ 0 };
+        Tilt prev_ctor_tilt{ ctor_tilt };
+
         vec3 current_pos = GLM_VEC3_ZERO_INIT;
         float_t current_angle{ 0 };
 
-        for (auto code_char : rail_line.construction_code)
+        for (size_t code_char_i = 0; code_char_i < rail_line.construction_code.size();
+             code_char_i++)
         {
+            auto code_char{ rail_line.construction_code[code_char_i] };
+
             std::string curve_code;
             vec3s curve_origin = GLM_VEC3_ZERO_INIT;
             vec3s curve_adv_delta = GLM_VEC3_ZERO_INIT;
@@ -117,6 +131,9 @@ void BT::system::rail_line_editor_update()
                     throw std::runtime_error("huh?");
                     break;
                 }
+
+                ctor_mode = FLAT;
+                ctor_tilt = NO_TILT;
                 break;
 
             case 'q':
@@ -128,6 +145,8 @@ void BT::system::rail_line_editor_update()
 
                     curve_adv_delta.x = -1.3187;  // @HARDCODE: could prob use cos(15) and sin(15) mult by curve_origin.x for this (if you touch again).  -Thea 2026/08/05
                     curve_adv_delta.z = -10.035;
+
+                    ctor_tilt = LEFT_TILT;
                 }
             case 'w':
                 if (curve_code.empty())
@@ -138,6 +157,8 @@ void BT::system::rail_line_editor_update()
 
                     curve_adv_delta.x = -1.455;
                     curve_adv_delta.z = -11.069;
+
+                    ctor_tilt = LEFT_TILT;
                 }
             case 'e':
                 if (curve_code.empty())
@@ -148,6 +169,8 @@ void BT::system::rail_line_editor_update()
 
                     curve_adv_delta.x = -1.591;
                     curve_adv_delta.z = -12.103;
+
+                    ctor_tilt = LEFT_TILT;
                 }
             case 'r':
                 if (curve_code.empty())
@@ -158,6 +181,8 @@ void BT::system::rail_line_editor_update()
 
                     curve_adv_delta.x = -1.726;
                     curve_adv_delta.z = -13.137;
+
+                    ctor_tilt = LEFT_TILT;
                 }
             case 'p':
                 if (curve_code.empty())
@@ -168,6 +193,8 @@ void BT::system::rail_line_editor_update()
 
                     curve_adv_delta.x = 1.3187;
                     curve_adv_delta.z = -10.035;
+
+                    ctor_tilt = RIGHT_TILT;
                 }
             case 'o':
                 if (curve_code.empty())
@@ -178,6 +205,8 @@ void BT::system::rail_line_editor_update()
 
                     curve_adv_delta.x = 1.455;
                     curve_adv_delta.z = -11.069;
+
+                    ctor_tilt = RIGHT_TILT;
                 }
             case 'i':
                 if (curve_code.empty())
@@ -188,6 +217,8 @@ void BT::system::rail_line_editor_update()
 
                     curve_adv_delta.x = 1.591;
                     curve_adv_delta.z = -12.103;
+
+                    ctor_tilt = RIGHT_TILT;
                 }
             case 'u':
                 if (curve_code.empty())
@@ -198,11 +229,63 @@ void BT::system::rail_line_editor_update()
 
                     curve_adv_delta.x = 1.726;
                     curve_adv_delta.z = -13.137;
+
+                    ctor_tilt = RIGHT_TILT;
                 }
 
                 // Make sure that the curve is built in flat mode.
                 if (ctor_mode != FLAT)
                     throw std::runtime_error("huh?");
+                
+                if (prev_ctor_tilt != ctor_tilt)
+                {
+                    // Add connecting tilt pieces.
+                    switch (prev_ctor_tilt)
+                    {
+                    case NO_TILT:
+                        // Do nothing.
+                        break;
+
+                    case LEFT_TILT:
+                        // @TODO
+                        break;
+
+                    case RIGHT_TILT:
+                        // @TODO
+                        break;
+
+                    default:
+                        throw std::runtime_error("huh?");
+                        break;
+                    }
+
+                    switch (ctor_tilt)
+                    {
+                    case LEFT_TILT:
+                        create_rail_piece_fn("rails",
+                                            "StraightRailRoll.L",
+                                            vec3{ -16, 0, 0 },
+                                            current_pos,
+                                            current_angle,
+                                            vec3{ 0, 0, -10 },
+                                            0);
+                        break;
+
+                    case RIGHT_TILT:
+                        create_rail_piece_fn("rails",
+                                            "StraightRailRoll.R",
+                                            vec3{ -18, 0, 0 },
+                                            current_pos,
+                                            current_angle,
+                                            vec3{ 0, 0, -10 },
+                                            0);
+                        break;
+
+                    default:
+                        throw std::runtime_error("huh?");
+                        break;
+                    }
+                }
 
                 // Add curve.
                 create_rail_piece_fn("rails",
@@ -212,6 +295,8 @@ void BT::system::rail_line_editor_update()
                                      current_angle,
                                      curve_adv_delta.raw,
                                      glm_rad(curve_code[0] == 'L' ? 15 : -15));
+
+                ctor_mode = FLAT;
                 break;
 
             case '(':
@@ -227,6 +312,7 @@ void BT::system::rail_line_editor_update()
                                      vec3{ 0, 1, -20 },
                                      0);
                 ctor_mode = INCLINE;
+                ctor_tilt = NO_TILT;
                 break;
 
             case ')':
@@ -242,6 +328,7 @@ void BT::system::rail_line_editor_update()
                                      vec3{ 0, 1, -20 },
                                      0);
                 ctor_mode = FLAT;
+                ctor_tilt = NO_TILT;
                 break;
 
             case '[':
@@ -257,6 +344,7 @@ void BT::system::rail_line_editor_update()
                                      vec3{ 0, -1, -20 },
                                      0);
                 ctor_mode = DECLINE;
+                ctor_tilt = NO_TILT;
                 break;
 
             case ']':
@@ -272,12 +360,15 @@ void BT::system::rail_line_editor_update()
                                      vec3{ 0, -1, -20 },
                                      0);
                 ctor_mode = FLAT;
+                ctor_tilt = NO_TILT;
                 break;
 
             default:
                 throw std::runtime_error("This code char not implemented.");
                 break;
             }
+
+            prev_ctor_tilt = ctor_tilt;
         }
 
         // Enforce rail-line render obj.
