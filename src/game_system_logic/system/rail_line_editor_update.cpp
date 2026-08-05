@@ -126,7 +126,7 @@ void BT::system::rail_line_editor_update()
 
                     curve_origin.x = 38.8178;
 
-                    curve_adv_delta.x = 1.3187;
+                    curve_adv_delta.x = -1.3187;
                     curve_adv_delta.z = -10.035;
                 }
             case 'w':
@@ -136,7 +136,7 @@ void BT::system::rail_line_editor_update()
 
                     curve_origin.x = 42.8178;
 
-                    curve_adv_delta.x = 1.455;
+                    curve_adv_delta.x = -1.455;
                     curve_adv_delta.z = -11.069;
                 }
             case 'e':
@@ -146,7 +146,7 @@ void BT::system::rail_line_editor_update()
 
                     curve_origin.x = 46.8178;
 
-                    curve_adv_delta.x = 1.591;
+                    curve_adv_delta.x = -1.591;
                     curve_adv_delta.z = -12.103;
                 }
             case 'r':
@@ -156,7 +156,7 @@ void BT::system::rail_line_editor_update()
 
                     curve_origin.x = 50.8178;
 
-                    curve_adv_delta.x = 1.726;
+                    curve_adv_delta.x = -1.726;
                     curve_adv_delta.z = -13.137;
                 }
             case 'p':
@@ -166,7 +166,7 @@ void BT::system::rail_line_editor_update()
 
                     curve_origin.x = -38.8178;
 
-                    curve_adv_delta.x = -1.3187;
+                    curve_adv_delta.x = 1.3187;
                     curve_adv_delta.z = -10.035;
                 }
             case 'o':
@@ -176,7 +176,7 @@ void BT::system::rail_line_editor_update()
 
                     curve_origin.x = -42.8178;
 
-                    curve_adv_delta.x = -1.455;
+                    curve_adv_delta.x = 1.455;
                     curve_adv_delta.z = -11.069;
                 }
             case 'i':
@@ -186,7 +186,7 @@ void BT::system::rail_line_editor_update()
 
                     curve_origin.x = -46.8178;
 
-                    curve_adv_delta.x = -1.591;
+                    curve_adv_delta.x = 1.591;
                     curve_adv_delta.z = -12.103;
                 }
             case 'u':
@@ -196,7 +196,7 @@ void BT::system::rail_line_editor_update()
 
                     curve_origin.x = -50.8178;
 
-                    curve_adv_delta.x = -1.726;
+                    curve_adv_delta.x = 1.726;
                     curve_adv_delta.z = -13.137;
                 }
 
@@ -210,7 +210,7 @@ void BT::system::rail_line_editor_update()
                                      curve_origin.raw,
                                      current_pos,
                                      current_angle,
-                                     vec3{ 0, 0, -10 },
+                                     curve_adv_delta.raw,
                                      glm_rad(curve_code[0] == 'L' ? 15 : -15));
                 break;
 
