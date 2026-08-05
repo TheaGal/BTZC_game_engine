@@ -126,7 +126,7 @@ void BT::system::rail_line_editor_update()
 
                     curve_origin.x = 38.8178;
 
-                    curve_adv_delta.x = -1.3187;
+                    curve_adv_delta.x = -1.3187;  // @HARDCODE: could prob use cos(15) and sin(15) mult by curve_origin.x for this (if you touch again).  -Thea 2026/08/05
                     curve_adv_delta.z = -10.035;
                 }
             case 'w':
