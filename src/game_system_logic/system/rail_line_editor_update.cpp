@@ -14,11 +14,30 @@ void BT::system::rail_line_editor_update()
     auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
 
     auto create_rail_piece_fn = [&reg](std::string const& model_name,
-                                       std::string const& sub_mesh_name) {
+                                       std::string const& sub_mesh_name,
+                                       vec3 mesh_origin_pos,
+                                       vec3& place_pos,
+                                       float_t& place_angle,
+                                       vec3 place_advance_delta_pos,
+                                       float place_advance_delta_angle) {
         auto new_ent = reg.create();
         auto& rend_obj_cfg = reg.emplace_or_replace<TXP::component::Render_object_config>(new_ent);
         rend_obj_cfg.model_name = model_name;
         rend_obj_cfg.sub_mesh_name = sub_mesh_name;
+
+        glm_translate(rend_obj_cfg.transform.raw, place_pos);
+        glm_rotate_y(rend_obj_cfg.transform.raw, place_angle, rend_obj_cfg.transform.raw);
+
+        glm_vec3_negate(mesh_origin_pos);
+        glm_translate(rend_obj_cfg.transform.raw, mesh_origin_pos);
+
+        // Advance placement.
+        mat4 place_advance_rot = GLM_MAT4_IDENTITY_INIT;
+        glm_rotate_y(place_advance_rot, place_angle, place_advance_rot);
+        glm_mat4_mulv3(place_advance_rot, place_advance_delta_pos, 0, place_advance_delta_pos);
+
+        glm_vec3_add(place_pos, place_advance_delta_pos, place_pos);
+        place_angle += place_advance_delta_angle;
     };
 
     // Write transforms.
@@ -46,9 +65,14 @@ void BT::system::rail_line_editor_update()
             DECLINE,
         } ctor_mode{ 0 };
 
+        vec3 current_pos = GLM_VEC3_ZERO_INIT;
+        float_t current_angle{ 0 };
+
         for (auto code_char : rail_line.construction_code)
         {
             std::string curve_code;
+            vec3s curve_origin = GLM_VEC3_ZERO_INIT;
+            vec3s curve_adv_delta = GLM_VEC3_ZERO_INIT;
 
             switch (code_char)
             {
@@ -58,17 +82,35 @@ void BT::system::rail_line_editor_update()
                 {
                 case FLAT:
                 {
-                    create_rail_piece_fn("rails", "StraightRail");
+                    create_rail_piece_fn("rails",
+                                         "StraightRail",
+                                         vec3{ -20, 0, 0 },
+                                         current_pos,
+                                         current_angle,
+                                         vec3{ 0, 0, -10 },
+                                         0);
                     break;
                 }
                 case INCLINE:
                 {
-                    create_rail_piece_fn("rails", "SlopedRail.U");
+                    create_rail_piece_fn("rails",
+                                         "SlopedRail.U",
+                                         vec3{ 18, 0, 0 },
+                                         current_pos,
+                                         current_angle,
+                                         vec3{ 0, 1, -10 },
+                                         0);
                     break;
                 }
                 case DECLINE:
                 {
-                    create_rail_piece_fn("rails", "SlopedRail.D");
+                    create_rail_piece_fn("rails",
+                                         "SlopedRail.D",
+                                         vec3{ 12, 0, 0 },
+                                         current_pos,
+                                         current_angle,
+                                         vec3{ 0, -1, -10 },
+                                         0);
                     break;
                 }
                 default:
@@ -79,35 +121,97 @@ void BT::system::rail_line_editor_update()
 
             case 'q':
                 if (curve_code.empty())
+                {
                     curve_code = "L.001";
+
+                    curve_origin.x = 38.8178;
+
+                    curve_adv_delta.x = 1.3187;
+                    curve_adv_delta.z = -10.035;
+                }
             case 'w':
                 if (curve_code.empty())
+                {
                     curve_code = "L.002";
+
+                    curve_origin.x = 42.8178;
+
+                    curve_adv_delta.x = 1.455;
+                    curve_adv_delta.z = -11.069;
+                }
             case 'e':
                 if (curve_code.empty())
+                {
                     curve_code = "L.003";
+
+                    curve_origin.x = 46.8178;
+
+                    curve_adv_delta.x = 1.591;
+                    curve_adv_delta.z = -12.103;
+                }
             case 'r':
                 if (curve_code.empty())
+                {
                     curve_code = "L.004";
+
+                    curve_origin.x = 50.8178;
+
+                    curve_adv_delta.x = 1.726;
+                    curve_adv_delta.z = -13.137;
+                }
             case 'p':
                 if (curve_code.empty())
+                {
                     curve_code = "R.001";
+
+                    curve_origin.x = -38.8178;
+
+                    curve_adv_delta.x = -1.3187;
+                    curve_adv_delta.z = -10.035;
+                }
             case 'o':
                 if (curve_code.empty())
+                {
                     curve_code = "R.002";
+
+                    curve_origin.x = -42.8178;
+
+                    curve_adv_delta.x = -1.455;
+                    curve_adv_delta.z = -11.069;
+                }
             case 'i':
                 if (curve_code.empty())
+                {
                     curve_code = "R.003";
+
+                    curve_origin.x = -46.8178;
+
+                    curve_adv_delta.x = -1.591;
+                    curve_adv_delta.z = -12.103;
+                }
             case 'u':
                 if (curve_code.empty())
+                {
                     curve_code = "R.004";
+
+                    curve_origin.x = -50.8178;
+
+                    curve_adv_delta.x = -1.726;
+                    curve_adv_delta.z = -13.137;
+                }
 
                 // Make sure that the curve is built in flat mode.
                 if (ctor_mode != FLAT)
                     throw std::runtime_error("huh?");
 
                 // Add curve.
-                create_rail_piece_fn("rails", "CurveRail." + curve_code);
+                create_rail_piece_fn("rails",
+                                     "CurveRail." + curve_code,
+                                     curve_origin.raw,
+                                     current_pos,
+                                     current_angle,
+                                     vec3{ 0, 0, -10 },
+                                     glm_rad(curve_code[0] == 'L' ? 15 : -15));
                 break;
 
             case '(':
@@ -115,7 +219,13 @@ void BT::system::rail_line_editor_update()
                     throw std::runtime_error("huh?");
 
                 // Add incline start.
-                create_rail_piece_fn("rails", "SlopechangeRail.U");
+                create_rail_piece_fn("rails",
+                                     "SlopechangeRail.U",
+                                     vec3{ 16, 0, 0 },
+                                     current_pos,
+                                     current_angle,
+                                     vec3{ 0, 1, -20 },
+                                     0);
                 ctor_mode = INCLINE;
                 break;
 
@@ -124,7 +234,13 @@ void BT::system::rail_line_editor_update()
                     throw std::runtime_error("huh?");
 
                 // Add incline end.
-                create_rail_piece_fn("rails", "SlopechangeRail.UR");
+                create_rail_piece_fn("rails",
+                                     "SlopechangeRail.UR",
+                                     vec3{ 20, 0, 0 },
+                                     current_pos,
+                                     current_angle,
+                                     vec3{ 0, 1, -20 },
+                                     0);
                 ctor_mode = FLAT;
                 break;
 
@@ -133,7 +249,13 @@ void BT::system::rail_line_editor_update()
                     throw std::runtime_error("huh?");
 
                 // Add decline start.
-                create_rail_piece_fn("rails", "SlopechangeRail.D");
+                create_rail_piece_fn("rails",
+                                     "SlopechangeRail.D",
+                                     vec3{ 10, 0, 0 },
+                                     current_pos,
+                                     current_angle,
+                                     vec3{ 0, -1, -20 },
+                                     0);
                 ctor_mode = DECLINE;
                 break;
 
@@ -142,7 +264,13 @@ void BT::system::rail_line_editor_update()
                     throw std::runtime_error("huh?");
 
                 // Add decline end.
-                create_rail_piece_fn("rails", "SlopechangeRail.DR");
+                create_rail_piece_fn("rails",
+                                     "SlopechangeRail.DR",
+                                     vec3{ 14, 0, 0 },
+                                     current_pos,
+                                     current_angle,
+                                     vec3{ 0, -1, -20 },
+                                     0);
                 ctor_mode = FLAT;
                 break;
 
