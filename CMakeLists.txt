@@ -77,6 +77,7 @@ set(DEPENDENCY_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/fmt/include
     $ENV{FMOD_STUDIO_API_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/imgui  # Header only.
+    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ImGuizmo
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/JoltPhysics
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/json/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/stb  # Header only (essentially).
@@ -204,6 +205,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/helper_funcs.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/helper_funcs.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/hitcapsule_attack_processing.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/imgui_render_transform_hierarchy_window.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/imgui_render_transform_hierarchy_window.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/input_controlled_character_movement.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/input_controlled_character_movement.h

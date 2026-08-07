@@ -1,20 +1,20 @@
 #include "imgui_render_transform_hierarchy_window.h"
 
+#include "btuuid.h"
 #include "entt/entity/entity.hpp"
 #include "entt/entity/fwd.hpp"
 #include "game_system_logic/component/component_registry.h"
-#include "game_system_logic/component/entity_metadata.h"
 #include "game_system_logic/component/physics_object_settings.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "ImGuizmo.h"
 #include "misc/cpp/imgui_stdlib.h"
 #include "service_finder/service_finder.h"
-#include "btuuid.h"
+#include "txp_renderer_public.h"
 
 #include <cassert>
-
 
 
 namespace
@@ -53,7 +53,7 @@ bool internal_imgui_render_floating_entities()
 {
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
-    auto view{ reg.view<component::Entity_metadata const>(
+    auto view{ reg.view<TXP::component::Entity_metadata const>(
         entt::exclude<component::Transform, component::Transform_hierarchy>) };
 
     // Fill in data structure of nodes from view.
@@ -66,7 +66,7 @@ bool internal_imgui_render_floating_entities()
 
     for (auto entity : view)
     {
-        auto const& metadata{ view.get<component::Entity_metadata const>(entity) };
+        auto const& metadata{ view.get<TXP::component::Entity_metadata const>(entity) };
         entity_flat_nodes.emplace_back(metadata.name, metadata.uuid);
     }
 
@@ -111,7 +111,7 @@ void internal_recursive_iterate_transform_hierarchy(
     entt::registry const& view,
     std::vector<Hierarchy_node>& entity_hierarchy_nodes)
 {
-    auto const& metadata{ view.get<component::Entity_metadata const>(entity) };
+    auto const& metadata{ view.get<TXP::component::Entity_metadata const>(entity) };
     entity_hierarchy_nodes.emplace_back(indentation, metadata.name, metadata.uuid);
 
     // Process children.
@@ -132,7 +132,7 @@ bool internal_imgui_render_entity_transform_hierarchy()
 {
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
-    auto view{ reg.view<component::Entity_metadata const,
+    auto view{ reg.view<TXP::component::Entity_metadata const,
                         component::Transform const,
                         component::Transform_hierarchy const>() };
 

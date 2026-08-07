@@ -465,7 +465,7 @@
                         "uuid": "b60584a1-a213-425c-ba06-3ed55e073500"
                     }
                 },
-                {
+                {xp
                     "type_name": "component::Transform",
                     "members_j": {
                         "position": {
