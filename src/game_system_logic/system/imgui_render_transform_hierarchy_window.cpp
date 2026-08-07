@@ -12,6 +12,7 @@
 #include "ImGuizmo.h"
 #include "misc/cpp/imgui_stdlib.h"
 #include "service_finder/service_finder.h"
+#include "txp_renderer/debug/debug_render_job.h"
 #include "txp_renderer_public.h"
 
 #include <cassert>
@@ -25,7 +26,7 @@ using namespace BT;
 struct State
 {
     entt::entity selected_entity{ entt::null };
-    UUID debug_mesh_key;
+    TXP::debug::debug_model_id_t debug_mesh_key;
 };
 static State s_state;
 
@@ -353,10 +354,10 @@ void BT::system::imgui_render_transform_hierarchy_window(bool clear_state)
 {
     if (clear_state)
     {
-        if (!s_state.debug_mesh_key.is_nil())
+        if (s_state.debug_mesh_key == -1)
         {   // Remove debug mesh from set of render jobs!
-            get_main_debug_mesh_pool().remove_debug_mesh(s_state.debug_mesh_key);
-            s_state.debug_mesh_key = UUID();
+            TXP::debug::remove_debug_model(s_state.debug_mesh_key);
+            s_state.debug_mesh_key = -1;
         }
 
         s_state = {};
@@ -368,6 +369,7 @@ void BT::system::imgui_render_transform_hierarchy_window(bool clear_state)
 
 void BT::system::set_selected_entity(entt::entity entity)  // @THEA: @UNUSED
 {
+#if 0 // @TODO: implement the below!!!!
     if (!s_state.debug_mesh_key.is_nil())  // @COPYPASTA
     {   // Remove debug mesh from set of render jobs!
         get_main_debug_mesh_pool().remove_debug_mesh(s_state.debug_mesh_key);
@@ -376,13 +378,14 @@ void BT::system::set_selected_entity(entt::entity entity)  // @THEA: @UNUSED
 
     // Set selected entity.
     s_state.selected_entity = entity;
+#endif // 0
 }
 
 void BT::system::update_selected_entity_debug_render_transform()
 {   // Make sure that there is an entity selected.
     if (s_state.selected_entity == entt::null)
         return;
-
+#if 0 // @TODO: implement the below!!!!
     // Look for selected entity's render object.
     auto poss_rend_obj_ref{ service_finder::find_service<Entity_container>()
                                 .get_ecs_registry()
@@ -392,14 +395,14 @@ void BT::system::update_selected_entity_debug_render_transform()
         return;
 
     // Create new debug mesh if doesn't exist yet.
-    if (s_state.debug_mesh_key.is_nil())
+    if (s_state.debug_mesh_key == -1)
     {
         auto& rend_obj_pool{ service_finder::find_service<Renderer>().get_render_object_pool() };
         auto checked_out_rend_objs{ rend_obj_pool.checkout_render_obj_by_key(
             { poss_rend_obj_ref->render_obj_uuid_ref }) };
 
         // Create debug mesh.
-        s_state.debug_mesh_key = get_main_debug_mesh_pool().emplace_debug_mesh(
+        s_state.debug_mesh_key = get_main_debug_mesh_pool().emplace_debug_mesh( // @TODO
             { checked_out_rend_objs.front()->get_renderable(),
               Debug_mesh_pool::k_mask_selected_obj,
               Material_bank::get_material("debug_selected_wireframe_fore_material"),
@@ -424,5 +427,6 @@ void BT::system::update_selected_entity_debug_render_transform()
                   get_main_debug_mesh_pool()
                       .get_debug_mesh_volatile_handle(s_state.debug_mesh_key)
                       .transform);
+#endif // 0
 }
 
