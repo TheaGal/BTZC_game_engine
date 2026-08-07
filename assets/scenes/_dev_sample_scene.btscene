@@ -454,6 +454,46 @@
                     }
                 }
             ]
+        },
+        {
+            "entity_uuid": "b60584a1-a213-425c-ba06-3ed55e073500",
+            "components": [
+                {
+                    "type_name": "TXP::component::Entity_metadata",
+                    "members_j": {
+                        "name": "Simple train",
+                        "uuid": "b60584a1-a213-425c-ba06-3ed55e073500"
+                    }
+                },
+                {
+                    "type_name": "component::Transform",
+                    "members_j": {
+                        "position": {
+                            "x": 0.0,
+                            "y": 20.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                },
+                {
+                    "type_name": "component::Rail_line_rider",
+                    "members_j": {
+                        "riding_line_uuid": "600a1c2b-102b-468b-a988-6211fd72dbd1",
+                        "line_position": 0.0
+                    }
+                }
+            ]
         }
     ]
 }

@@ -572,3 +572,23 @@ void BT::component::edit::imgui_edit__rail_line(entt::registry& reg, entt::entit
     ImGui::PopItemWidth();
     ImGui::PopID();
 }
+
+void BT::component::edit::imgui_edit__rail_line_rider(entt::registry& reg, entt::entity ecs_entity)
+{
+    auto& rail_line_rider_data{ reg.get<component::Rail_line_rider>(ecs_entity) };
+
+    ImGui::PushID(&rail_line_rider_data);
+    ImGui::PushItemWidth(ImGui::GetFontSize() * -20);
+
+    ImGui::SeparatorText("Rail Line Rider");
+
+    ImGui::BeginDisabled();
+    std::string u = UUID_helper::to_pretty_repr(rail_line_rider_data.riding_line_uuid);
+    ImGui::InputText("riding_line_uuid", &u);
+    ImGui::EndDisabled();
+
+    ImGui::DragScalar("line_position", ImGuiDataType_Double, &rail_line_rider_data.line_position);
+
+    ImGui::PopItemWidth();
+    ImGui::PopID();
+}

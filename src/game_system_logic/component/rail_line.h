@@ -3,8 +3,10 @@
 #pragma once
 
 #include "btjson.h"
+#include "btuuid.h"
 #include "entt/entity/fwd.hpp"
 
+#include <cmath>
 #include <string>
 #include <vector>
 
@@ -32,6 +34,20 @@ struct Rail_line
 
     /// List of entities created from the construction code.
     std::vector<entt::entity> created_entities;
+};
+
+/// Rail line riding component.
+struct Rail_line_rider
+{
+    UUID riding_line_uuid;
+
+    double_t line_position;
+
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE(
+        Rail_line_rider,
+        riding_line_uuid,
+        line_position
+    );
 };
 
 }  // namespace component

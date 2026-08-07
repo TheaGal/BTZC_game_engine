@@ -30,3 +30,5 @@
 - [x] Have component draw multiple models of the rails in their positions.
 
 - [x] Implement tilt rails to go into and out of curves.
+
+- [ ] Make component for riding rail lines (essentially having a whole ass train car system)

@@ -127,6 +127,7 @@ void BT::component::register_all_components()
     REGISTER_COMPONENT__YES_SERIALIZE(component::CPU_enemy_awareness,                         edit::imgui_edit__sample);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Detectable_character,                        edit::imgui_edit__sample);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Rail_line,                                   edit::imgui_edit__rail_line);
+    REGISTER_COMPONENT__YES_SERIALIZE(component::Rail_line_rider,                             edit::imgui_edit__rail_line_rider);
     //----------------------------------------------------------------------------------------------
 
     // clang-format on
