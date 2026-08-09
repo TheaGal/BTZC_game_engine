@@ -300,7 +300,6 @@ bool internal_imguizmo_manipulate(entt::registry& reg,
                       win_rect.GetTL().y,
                       win_rect.GetWidth(),
                       win_rect.GetHeight());
-    // ImGuizmo::SetRect(0, 0, 100, 100);
 
     // Draw Imguizmo gizmo.
     mat4 transdebug = GLM_MAT4_IDENTITY_INIT;

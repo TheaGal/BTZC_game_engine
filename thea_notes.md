@@ -35,6 +35,9 @@
         - I needed to do setRect()
         - Also, to have the correct state i needed to actually use matching versions of imgui and imguizmo.
     - [ ] Insert imguizmo into the actual correct windows.
+        - probably as some kind of callback or a list of requests maybe??
+            - like giving a transform and then requesting the information back if it changed.
+            - this could allow for many different gizmos to be drawn per view for bezier curves or smth. plus, no need to include the imguizmo headers in the game engine ig??
 - [ ] Create a simple imgui inspector for the component.
 
 - [x] Have component draw multiple models of the rails in their positions.
