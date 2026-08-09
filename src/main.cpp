@@ -94,6 +94,10 @@ int32_t main()
     main_renderer.add_model("rails", ".wobj", false, false);
     main_renderer.build();
 
+    main_renderer.set_imgui_build_contents_callback([]() {
+        BT::system::imgui_render_transform_hierarchy_window(false);
+    });
+
     // Setup physics engine.
     BT::Physics_engine main_physics_engine;
 

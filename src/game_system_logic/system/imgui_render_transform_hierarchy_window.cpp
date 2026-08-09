@@ -1,6 +1,7 @@
 #include "imgui_render_transform_hierarchy_window.h"
 
 #include "btuuid.h"
+#include "btglm.h"
 #include "entt/entity/entity.hpp"
 #include "entt/entity/fwd.hpp"
 #include "game_system_logic/component/component_registry.h"
@@ -54,6 +55,7 @@ bool internal_imgui_render_floating_entities()
 {
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
+
     auto view{ reg.view<TXP::component::Entity_metadata const>(
         entt::exclude<component::Transform, component::Transform_hierarchy>) };
 
@@ -109,22 +111,23 @@ void internal_recursive_iterate_transform_hierarchy(
     uint32_t indentation,
     entt::entity entity,
     Entity_container const& entity_container,
-    entt::registry const& view,
+    entt::registry const& reg,
     std::vector<Hierarchy_node>& entity_hierarchy_nodes)
 {
-    auto const& metadata{ view.get<TXP::component::Entity_metadata const>(entity) };
+    auto const& metadata{ reg.get<TXP::component::Entity_metadata const>(entity) };
     entity_hierarchy_nodes.emplace_back(indentation, metadata.name, metadata.uuid);
 
     // Process children.
-    auto const& trans_hierarchy{ view.get<component::Transform_hierarchy const>(entity) };
-    for (auto uuid : trans_hierarchy.children_entities)
-    {
-        internal_recursive_iterate_transform_hierarchy(indentation + 1,
-                                                       entity_container.find_entity(uuid),
-                                                       entity_container,
-                                                       view,
-                                                       entity_hierarchy_nodes);
-    }
+    auto const* trans_hierarchy{ reg.try_get<component::Transform_hierarchy const>(entity) };
+    if (trans_hierarchy != nullptr)
+        for (auto uuid : trans_hierarchy->children_entities)
+        {
+            internal_recursive_iterate_transform_hierarchy(indentation + 1,
+                                                           entity_container.find_entity(uuid),
+                                                           entity_container,
+                                                           reg,
+                                                           entity_hierarchy_nodes);
+        }
 }
 
 /// Renders entities belonging to the transform hierarchy in a cascading node-like fashion.
@@ -134,16 +137,15 @@ bool internal_imgui_render_entity_transform_hierarchy()
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
     auto view{ reg.view<TXP::component::Entity_metadata const,
-                        component::Transform const,
-                        component::Transform_hierarchy const>() };
+                        component::Transform const>() };
 
     // Fill in data structure of nodes from view.
     std::vector<Hierarchy_node> entity_hierarchy_nodes;
 
     for (auto entity : view)
     {   // Ensure that this entity is at root level in the hierarchy.
-        auto const& trans_hierarchy{ view.get<component::Transform_hierarchy const>(entity) };
-        if (trans_hierarchy.parent_entity.is_nil())
+        auto const* trans_hierarchy{ reg.try_get<component::Transform_hierarchy const>(entity) };
+        if (trans_hierarchy == nullptr || trans_hierarchy->parent_entity.is_nil())
         {   // Process as root node.
             internal_recursive_iterate_transform_hierarchy(0,
                                                            entity,
@@ -251,7 +253,7 @@ void internal_imgui_render_entities()
 
 /// Draws ImGuizmo's mat4 manipulate gizmo.
 bool internal_imguizmo_manipulate(entt::registry& reg,
-                                  Camera& camera,
+                                  TXP::Camera& camera,
                                   rvec3s& out_pos,
                                   versors& out_rot,
                                   vec3s& out_sca)
@@ -282,8 +284,14 @@ bool internal_imguizmo_manipulate(entt::registry& reg,
     mat4 proj;
     mat4 view;
     mat4 proj_view;
-    camera.fetch_calculated_camera_matrices(proj, view, proj_view);
-    proj[1][1] *= -1.0f;  // Fix neg-Y issue.
+    {
+        auto& cam_matrix = const_cast<TXP::Cam_matrix&>(camera.get_calculated_camera_matrices()[0]);  // @TODO: @HARDCODE: @THEA
+        glm_mat4_copy(cam_matrix.projection, proj);
+        glm_mat4_copy(cam_matrix.view, view);
+        glm_mat4_mul(proj, view, proj_view);
+    }
+
+    ImGuizmo::SetDrawlist(ImGui::GetForegroundDrawList());  // @TEMPORARY: move imguizmo to draw for each window eventually.
 
     // Draw Imguizmo gizmo.
     bool manipulated{ false };
@@ -314,12 +322,10 @@ bool internal_imguizmo_manipulate(entt::registry& reg,
 /// Renders gizmo for transforms and updates entity transform if manipulated.
 void internal_imguizmo_transform_gizmo()
 {
-    auto& renderer{ service_finder::find_service<Renderer>() };
-    auto& camera{ *renderer.get_camera_obj() };
-
+    auto& camera{ service_finder::find_service<TXP::Renderer>().get_main_camera() };
     auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
 
-    ImGuizmo::Enable(!camera.is_mouse_captured());
+    ImGuizmo::Enable(camera.is_cursor_free());
 
     rvec3s  pos;
     versors rot;

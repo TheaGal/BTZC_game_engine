@@ -25,6 +25,12 @@
 - [x] Add a component type that allows for string of chars to signify rail system.
 
 - [ ] Create list of transforms imgui list/window.
+    - [x] For some reaosn it's crashing w imguizmo?
+        - possibly wrong version?
+        - after updating the imguizmo version, it's still crashing... hmmm.
+        - maybe setup is missing for imguizmo specifically???
+    - [x] also show root objects that have component::Transform but no component::Trasfnorm_hierarchy component.
+    - [ ] Now imguizmo is just plain not showing up????
 - [ ] Create a simple imgui inspector for the component.
 
 - [x] Have component draw multiple models of the rails in their positions.
@@ -32,3 +38,5 @@
 - [x] Implement tilt rails to go into and out of curves.
 
 - [ ] Make component for riding rail lines (essentially having a whole ass train car system)
+
+- [ ] Fix construction code change not causing the rail line to change. or is it just not deleting old entities?
