@@ -291,15 +291,26 @@ bool internal_imguizmo_manipulate(entt::registry& reg,
         glm_mat4_mul(proj, view, proj_view);
     }
 
-    ImGuizmo::SetDrawlist(ImGui::GetForegroundDrawList());  // @TEMPORARY: move imguizmo to draw for each window eventually.
+    ImGui::Begin("hheeeheehaha");
+    // ImGuizmo::SetDrawlist(ImGui::GetForegroundDrawList());  // @TEMPORARY: move imguizmo to draw for each window eventually.
+    ImGuizmo::SetDrawlist();
+
+    auto win_rect{ ImGui::GetCurrentWindowRead()->Rect() };
+    ImGuizmo::SetRect(win_rect.GetTL().x,
+                      win_rect.GetTL().y,
+                      win_rect.GetWidth(),
+                      win_rect.GetHeight());
+    // ImGuizmo::SetRect(0, 0, 100, 100);
 
     // Draw Imguizmo gizmo.
+    mat4 transdebug = GLM_MAT4_IDENTITY_INIT;
     bool manipulated{ false };
     if (ImGuizmo::Manipulate(&view[0][0],
                              &proj[0][0],
                              ImGuizmo::UNIVERSAL,
                              false ? ImGuizmo::WORLD : ImGuizmo::LOCAL,
-                             &transform[0][0]))
+                            //  &transform[0][0]))
+                             &transdebug[0][0]))
     {   // Copy result (@NOTE: This is reverse of the TRS->mat4 operation above).
         vec4 tra;
         mat4 rot;
@@ -315,6 +326,7 @@ bool internal_imguizmo_manipulate(entt::registry& reg,
         // Mark as manipulated.
         manipulated = true;
     }
+    ImGui::End();
 
     return manipulated;
 }

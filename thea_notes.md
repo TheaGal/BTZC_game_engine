@@ -30,7 +30,11 @@
         - after updating the imguizmo version, it's still crashing... hmmm.
         - maybe setup is missing for imguizmo specifically???
     - [x] also show root objects that have component::Transform but no component::Trasfnorm_hierarchy component.
-    - [ ] Now imguizmo is just plain not showing up????
+    - [x] Now imguizmo is just plain not showing up????
+        - The draw context is 0x0 size for some reason???
+        - I needed to do setRect()
+        - Also, to have the correct state i needed to actually use matching versions of imgui and imguizmo.
+    - [ ] Insert imguizmo into the actual correct windows.
 - [ ] Create a simple imgui inspector for the component.
 
 - [x] Have component draw multiple models of the rails in their positions.
