@@ -24,7 +24,7 @@
 
 - [x] Add a component type that allows for string of chars to signify rail system.
 
-- [ ] Create list of transforms imgui list/window.
+- [x] Create list of transforms imgui list/window.
     - [x] For some reaosn it's crashing w imguizmo?
         - possibly wrong version?
         - after updating the imguizmo version, it's still crashing... hmmm.
@@ -39,7 +39,7 @@
             - like giving a transform and then requesting the information back if it changed.
             - this could allow for many different gizmos to be drawn per view for bezier curves or smth. plus, no need to include the imguizmo headers in the game engine ig??
         - [x] remove imguizmo dependency.
-    - [ ] Fix stuff not moving for transforms without a transform hierarchy from imguizmo move!!
+    - [x] Fix stuff not moving for transforms without a transform hierarchy from imguizmo move!!
 - [ ] Create a simple imgui inspector for the component.
 - [ ] fix rename todo.
 

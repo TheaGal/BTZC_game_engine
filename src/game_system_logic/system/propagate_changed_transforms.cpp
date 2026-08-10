@@ -111,18 +111,18 @@ void apply_delta_transform_recursive(auto& view,
     }
 
     // Search thru transform hierarchy children.
-    auto const& transform_hierarchy{
-        view.template get<component::Transform_hierarchy const>(entity) };
-    for (auto child_entity : transform_hierarchy.children_entities)
-    {
-        apply_delta_transform_recursive(view,
-                                        reg,
-                                        entity_container,
-                                        entity_container.find_entity(child_entity),
-                                        prev_transform,
-                                        next_transform,
-                                        false);
-    }
+    auto const* transform_hierarchy{ reg.try_get<component::Transform_hierarchy const>(entity) };
+    if (transform_hierarchy != nullptr)
+        for (auto child_entity : transform_hierarchy->children_entities)
+        {
+            apply_delta_transform_recursive(view,
+                                            reg,
+                                            entity_container,
+                                            entity_container.find_entity(child_entity),
+                                            prev_transform,
+                                            next_transform,
+                                            false);
+        }
 }
 
 }  // namespace
@@ -134,10 +134,8 @@ void BT::system::propagate_changed_transforms()
 
     auto& reg{ entity_container.get_ecs_registry() };
     auto changed_trans_view = reg.view<component::Transform,
-                                       component::Transform_hierarchy,
                                        component::Transform_changed>();
-    auto trans_view = reg.view<component::Transform,
-                               component::Transform_hierarchy>();
+    auto trans_view = reg.view<component::Transform>();
 
     // Propagate transforms with delta transforms.
     for (auto entity : changed_trans_view)
@@ -145,9 +143,6 @@ void BT::system::propagate_changed_transforms()
         auto& transform{ changed_trans_view.get<component::Transform>(entity) };
         auto const& transform_changed{ changed_trans_view.get<component::Transform_changed>(
             entity) };
-        auto const& transform_hierarchy{
-            changed_trans_view.get<component::Transform_hierarchy const>(entity)
-        };
 
         // Make copies for propagation.
         auto prev_trans_copy{ transform };
