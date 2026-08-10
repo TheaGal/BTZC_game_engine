@@ -40,8 +40,8 @@
             - this could allow for many different gizmos to be drawn per view for bezier curves or smth. plus, no need to include the imguizmo headers in the game engine ig??
         - [x] remove imguizmo dependency.
     - [x] Fix stuff not moving for transforms without a transform hierarchy from imguizmo move!!
-- [ ] Create a simple imgui inspector for the component.
-- [ ] fix rename todo.
+- [x] Create a simple imgui inspector for the component.
+- [x] fix rename todo.
 
 - [x] Have component draw multiple models of the rails in their positions.
 
@@ -51,3 +51,6 @@
 
 - [ ] Fix construction code change not causing the rail line to change. or is it just not deleting old entities?
     - maybe need to use the create_entity() and destroy_entity() funcs in the entity container?????
+    - turns out the created entities were never listed. but... now there's hidden entities that wont show up in the object list. which for the rail line is probably fine but hey idk.
+        - [ ] make it explicit w comment or something that the creation method is meant to not show the rails on the object list.
+    - [ ] fix the renderer crashing code when the rails are rebuilt.

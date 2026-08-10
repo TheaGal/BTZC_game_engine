@@ -250,10 +250,10 @@ void internal_imgui_render_entities()
     ImGui::End();
 }
 
-/// Draws ImGuizmo's mat4 manipulate gizmo.
-void internal_imguizmo_manipulate(entt::registry& reg,  // @TODO: rename
-                                  TXP::Renderer& renderer,
-                                  TXP::Camera& camera)
+/// Adds transform to be manipulated and a callback if it happens.
+void internal_add_transform_to_manip_list(entt::registry& reg,
+                                          TXP::Renderer& renderer,
+                                          TXP::Camera& camera)
 {   // Get selected entity transform.
     auto const ent_transform{ reg.try_get<component::Transform const>(s_state.selected_entity) };
     if (ent_transform == nullptr)
@@ -276,17 +276,6 @@ void internal_imguizmo_manipulate(entt::registry& reg,  // @TODO: rename
     // Extract float translation.
     vec3s orig_flt_tra;
     glm_vec3(transform[3], orig_flt_tra.raw);
-
-    // // Get camera matrices.
-    // mat4 proj;
-    // mat4 view;
-    // mat4 proj_view;
-    // {
-    //     auto& cam_matrix = const_cast<TXP::Cam_matrix&>(camera.get_calculated_camera_matrices()[0]);  // @TODO: @HARDCODE: @THEA
-    //     glm_mat4_copy(cam_matrix.projection, proj);
-    //     glm_mat4_copy(cam_matrix.view, view);
-    //     glm_mat4_mul(proj, view, proj_view);
-    // }
 
     renderer.add_to_imguizmo_manipulate(
         transform,
@@ -321,57 +310,10 @@ void internal_imguizmo_manipulate(entt::registry& reg,  // @TODO: rename
                                                                pos,
                                                                rot);
         });
-
-
-
-
-
-
-
-
-
-
-    // ImGui::Begin("hheeeheehaha");
-    // // ImGuizmo::SetDrawlist(ImGui::GetForegroundDrawList());  // @TEMPORARY: move imguizmo to draw for each window eventually.
-    // ImGuizmo::SetDrawlist();
-
-    // auto win_rect{ ImGui::GetCurrentWindowRead()->Rect() };
-    // ImGuizmo::SetRect(win_rect.GetTL().x,
-    //                   win_rect.GetTL().y,
-    //                   win_rect.GetWidth(),
-    //                   win_rect.GetHeight());
-
-    // // Draw Imguizmo gizmo.
-    // mat4 transdebug = GLM_MAT4_IDENTITY_INIT;
-    // bool manipulated{ false };
-    // if (ImGuizmo::Manipulate(&view[0][0],
-    //                          &proj[0][0],
-    //                          ImGuizmo::UNIVERSAL,
-    //                          false ? ImGuizmo::WORLD : ImGuizmo::LOCAL,
-    //                         //  &transform[0][0]))
-    //                          &transdebug[0][0]))
-    // {   // Copy result (@NOTE: This is reverse of the TRS->mat4 operation above).
-    //     vec4 tra;
-    //     mat4 rot;
-    //     vec3 sca;
-    //     glm_decompose(transform, tra, rot, sca);
-
-    //     out_pos.x = ent_transform->position.x + (tra[0] - orig_flt_tra[0]);
-    //     out_pos.y = ent_transform->position.y + (tra[1] - orig_flt_tra[1]);
-    //     out_pos.z = ent_transform->position.z + (tra[2] - orig_flt_tra[2]);
-    //     glm_mat4_quat(rot, out_rot.raw);
-    //     glm_vec3_copy(sca, out_sca.raw);
-
-    //     // Mark as manipulated.
-    //     manipulated = true;
-    // }
-    // ImGui::End();
-
-    // return manipulated;
 }
 
-/// Renders gizmo for transforms and updates entity transform if manipulated.
-void internal_imguizmo_transform_gizmo()  // @TODO: rename
+/// Adds transform to transform manipulation list.
+void internal_manip_transform()
 {
     auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
     auto& renderer{ service_finder::find_service<TXP::Renderer>() };
@@ -379,7 +321,7 @@ void internal_imguizmo_transform_gizmo()  // @TODO: rename
 
     renderer.set_imguizmo_enabled(camera.is_cursor_free());
 
-    internal_imguizmo_manipulate(reg, renderer, camera);
+    internal_add_transform_to_manip_list(reg, renderer, camera);
 }
 
 /// "Properties inspector" window.
@@ -392,7 +334,7 @@ void internal_imgui_render_item_properties_inspector()
     }
     else
     {   // Inspect properties.
-        internal_imguizmo_transform_gizmo();
+        internal_manip_transform();
         component::imgui_render_components_edit_panes(s_state.selected_entity);
     }
     ImGui::End();

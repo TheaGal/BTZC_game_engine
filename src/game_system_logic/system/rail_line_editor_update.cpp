@@ -15,7 +15,8 @@ void BT::system::rail_line_editor_update()
 {
     auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
 
-    auto create_rail_piece_fn = [&reg](std::string const& model_name,
+    auto create_rail_piece_fn = [&reg](std::vector<entt::entity>& created_entities,
+                                       std::string const& model_name,
                                        std::string const& sub_mesh_name,
                                        vec3 mesh_origin_pos,
                                        vec3& place_pos,
@@ -23,6 +24,8 @@ void BT::system::rail_line_editor_update()
                                        vec3 place_advance_delta_pos,
                                        float place_advance_delta_angle) {
         auto new_ent = reg.create();
+        created_entities.emplace_back(new_ent);
+
         auto& rend_obj_cfg = reg.emplace_or_replace<TXP::component::Render_object_config>(new_ent);
         rend_obj_cfg.model_name = model_name;
         rend_obj_cfg.sub_mesh_name = sub_mesh_name;
@@ -80,7 +83,12 @@ void BT::system::rail_line_editor_update()
         float_t current_angle{ 0 };
 
         auto process_tilt_connection_fn =
-            [&create_rail_piece_fn, &prev_ctor_tilt, &ctor_tilt, &current_pos, &current_angle]() {
+            [&create_rail_piece_fn,
+             &rail_line,
+             &prev_ctor_tilt,
+             &ctor_tilt,
+             &current_pos,
+             &current_angle]() {
                 // Add connecting tilt pieces.
                 switch (prev_ctor_tilt)
                 {
@@ -89,7 +97,8 @@ void BT::system::rail_line_editor_update()
                     break;
 
                 case LEFT_TILT:
-                    create_rail_piece_fn("rails",
+                    create_rail_piece_fn(rail_line.created_entities,
+                                         "rails",
                                          "StraightRailRoll.LR",
                                          vec3{ -14, 0, 0 },
                                          current_pos,
@@ -99,7 +108,8 @@ void BT::system::rail_line_editor_update()
                     break;
 
                 case RIGHT_TILT:
-                    create_rail_piece_fn("rails",
+                    create_rail_piece_fn(rail_line.created_entities,
+                                         "rails",
                                          "StraightRailRoll.RR",
                                          vec3{ -16, 0, 0 },
                                          current_pos,
@@ -120,7 +130,8 @@ void BT::system::rail_line_editor_update()
                     break;
 
                 case LEFT_TILT:
-                    create_rail_piece_fn("rails",
+                    create_rail_piece_fn(rail_line.created_entities,
+                                         "rails",
                                          "StraightRailRoll.L",
                                          vec3{ -18, 0, 0 },
                                          current_pos,
@@ -130,7 +141,8 @@ void BT::system::rail_line_editor_update()
                     break;
 
                 case RIGHT_TILT:
-                    create_rail_piece_fn("rails",
+                    create_rail_piece_fn(rail_line.created_entities,
+                                         "rails",
                                          "StraightRailRoll.R",
                                          vec3{ -20, 0, 0 },
                                          current_pos,
@@ -167,7 +179,8 @@ void BT::system::rail_line_editor_update()
                     process_tilt_connection_fn();
 
                     if (prev_ctor_tilt == NO_TILT)
-                        create_rail_piece_fn("rails",
+                        create_rail_piece_fn(rail_line.created_entities,
+                                             "rails",
                                              "StraightRail",
                                              vec3{ -22, 0, 0 },
                                              current_pos,
@@ -178,7 +191,8 @@ void BT::system::rail_line_editor_update()
                 }
                 case INCLINE:
                 {
-                    create_rail_piece_fn("rails",
+                    create_rail_piece_fn(rail_line.created_entities,
+                                         "rails",
                                          "SlopedRail.U",
                                          vec3{ 18, 0, 0 },
                                          current_pos,
@@ -189,7 +203,8 @@ void BT::system::rail_line_editor_update()
                 }
                 case DECLINE:
                 {
-                    create_rail_piece_fn("rails",
+                    create_rail_piece_fn(rail_line.created_entities,
+                                         "rails",
                                          "SlopedRail.D",
                                          vec3{ 12, 0, 0 },
                                          current_pos,
@@ -314,7 +329,8 @@ void BT::system::rail_line_editor_update()
                 }
 
                 // Add curve.
-                create_rail_piece_fn("rails",
+                create_rail_piece_fn(rail_line.created_entities,
+                                     "rails",
                                      "CurveRail." + curve_code,
                                      curve_origin.raw,
                                      current_pos,
@@ -332,7 +348,8 @@ void BT::system::rail_line_editor_update()
                 process_tilt_connection_fn();
 
                 // Add incline start.
-                create_rail_piece_fn("rails",
+                create_rail_piece_fn(rail_line.created_entities,
+                                     "rails",
                                      "SlopechangeRail.U",
                                      vec3{ 16, 0, 0 },
                                      current_pos,
@@ -347,7 +364,8 @@ void BT::system::rail_line_editor_update()
                     throw std::runtime_error("huh?");
 
                 // Add incline end.
-                create_rail_piece_fn("rails",
+                create_rail_piece_fn(rail_line.created_entities,
+                                     "rails",
                                      "SlopechangeRail.UR",
                                      vec3{ 20, 0, 0 },
                                      current_pos,
@@ -367,7 +385,8 @@ void BT::system::rail_line_editor_update()
                 process_tilt_connection_fn();
 
                 // Add decline start.
-                create_rail_piece_fn("rails",
+                create_rail_piece_fn(rail_line.created_entities,
+                                     "rails",
                                      "SlopechangeRail.D",
                                      vec3{ 10, 0, 0 },
                                      current_pos,
@@ -382,7 +401,8 @@ void BT::system::rail_line_editor_update()
                     throw std::runtime_error("huh?");
 
                 // Add decline end.
-                create_rail_piece_fn("rails",
+                create_rail_piece_fn(rail_line.created_entities,
+                                     "rails",
                                      "SlopechangeRail.DR",
                                      vec3{ 14, 0, 0 },
                                      current_pos,
