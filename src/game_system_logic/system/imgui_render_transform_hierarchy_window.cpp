@@ -10,7 +10,6 @@
 #include "game_system_logic/entity_container.h"
 #include "imgui.h"
 #include "imgui_internal.h"
-#include "ImGuizmo.h"
 #include "misc/cpp/imgui_stdlib.h"
 #include "service_finder/service_finder.h"
 #include "txp_renderer/debug/debug_render_job.h"
@@ -252,16 +251,14 @@ void internal_imgui_render_entities()
 }
 
 /// Draws ImGuizmo's mat4 manipulate gizmo.
-bool internal_imguizmo_manipulate(entt::registry& reg,
-                                  TXP::Camera& camera,
-                                  rvec3s& out_pos,
-                                  versors& out_rot,
-                                  vec3s& out_sca)
+void internal_imguizmo_manipulate(entt::registry& reg,  // @TODO: rename
+                                  TXP::Renderer& renderer,
+                                  TXP::Camera& camera)
 {   // Get selected entity transform.
     auto const ent_transform{ reg.try_get<component::Transform const>(s_state.selected_entity) };
     if (ent_transform == nullptr)
     {   // Exit since entity does not have a transform.
-        return false;
+        return;
     }
 
     // Calculate TRS into mat4 transform.
@@ -277,75 +274,112 @@ bool internal_imguizmo_manipulate(entt::registry& reg,
     }
 
     // Extract float translation.
-    vec3 orig_flt_tra;
-    glm_vec3(transform[3], orig_flt_tra);
+    vec3s orig_flt_tra;
+    glm_vec3(transform[3], orig_flt_tra.raw);
 
-    // Get camera matrices.
-    mat4 proj;
-    mat4 view;
-    mat4 proj_view;
-    {
-        auto& cam_matrix = const_cast<TXP::Cam_matrix&>(camera.get_calculated_camera_matrices()[0]);  // @TODO: @HARDCODE: @THEA
-        glm_mat4_copy(cam_matrix.projection, proj);
-        glm_mat4_copy(cam_matrix.view, view);
-        glm_mat4_mul(proj, view, proj_view);
-    }
+    // // Get camera matrices.
+    // mat4 proj;
+    // mat4 view;
+    // mat4 proj_view;
+    // {
+    //     auto& cam_matrix = const_cast<TXP::Cam_matrix&>(camera.get_calculated_camera_matrices()[0]);  // @TODO: @HARDCODE: @THEA
+    //     glm_mat4_copy(cam_matrix.projection, proj);
+    //     glm_mat4_copy(cam_matrix.view, view);
+    //     glm_mat4_mul(proj, view, proj_view);
+    // }
 
-    ImGui::Begin("hheeeheehaha");
-    // ImGuizmo::SetDrawlist(ImGui::GetForegroundDrawList());  // @TEMPORARY: move imguizmo to draw for each window eventually.
-    ImGuizmo::SetDrawlist();
+    renderer.add_to_imguizmo_manipulate(
+        transform,
+        [&reg, orig_flt_tra](mat4 const new_transform) {
+            mat4 nt;
+            glm_mat4_copy(const_cast<vec4*>(new_transform), nt);
 
-    auto win_rect{ ImGui::GetCurrentWindowRead()->Rect() };
-    ImGuizmo::SetRect(win_rect.GetTL().x,
-                      win_rect.GetTL().y,
-                      win_rect.GetWidth(),
-                      win_rect.GetHeight());
+            vec4 dec_tra;
+            mat4 dec_rot;
+            vec3 dec_sca;
+            glm_decompose(nt, dec_tra, dec_rot, dec_sca);
 
-    // Draw Imguizmo gizmo.
-    mat4 transdebug = GLM_MAT4_IDENTITY_INIT;
-    bool manipulated{ false };
-    if (ImGuizmo::Manipulate(&view[0][0],
-                             &proj[0][0],
-                             ImGuizmo::UNIVERSAL,
-                             false ? ImGuizmo::WORLD : ImGuizmo::LOCAL,
-                            //  &transform[0][0]))
-                             &transdebug[0][0]))
-    {   // Copy result (@NOTE: This is reverse of the TRS->mat4 operation above).
-        vec4 tra;
-        mat4 rot;
-        vec3 sca;
-        glm_decompose(transform, tra, rot, sca);
+            auto const& ent_transform{ reg.get<component::Transform const>(
+                s_state.selected_entity) };
 
-        out_pos.x = ent_transform->position.x + (tra[0] - orig_flt_tra[0]);
-        out_pos.y = ent_transform->position.y + (tra[1] - orig_flt_tra[1]);
-        out_pos.z = ent_transform->position.z + (tra[2] - orig_flt_tra[2]);
-        glm_mat4_quat(rot, out_rot.raw);
-        glm_vec3_copy(sca, out_sca.raw);
+            rvec3s pos;
+            versors rot;
+            vec3s sca;
 
-        // Mark as manipulated.
-        manipulated = true;
-    }
-    ImGui::End();
+            pos = {
+                .x = ent_transform.position.x + (dec_tra[0] - orig_flt_tra.x),
+                .y = ent_transform.position.y + (dec_tra[1] - orig_flt_tra.y),
+                .z = ent_transform.position.z + (dec_tra[2] - orig_flt_tra.z),
+            };
+            glm_mat4_quat(dec_rot, rot.raw);
+            glm_vec3_copy(dec_sca, sca.raw);
 
-    return manipulated;
+            // Notify manipulation.
+            component::submit_transform_change_helper(reg, s_state.selected_entity, pos, rot, sca);
+            component::try_set_physics_object_transform_helper(reg,
+                                                               s_state.selected_entity,
+                                                               pos,
+                                                               rot);
+        });
+
+
+
+
+
+
+
+
+
+
+    // ImGui::Begin("hheeeheehaha");
+    // // ImGuizmo::SetDrawlist(ImGui::GetForegroundDrawList());  // @TEMPORARY: move imguizmo to draw for each window eventually.
+    // ImGuizmo::SetDrawlist();
+
+    // auto win_rect{ ImGui::GetCurrentWindowRead()->Rect() };
+    // ImGuizmo::SetRect(win_rect.GetTL().x,
+    //                   win_rect.GetTL().y,
+    //                   win_rect.GetWidth(),
+    //                   win_rect.GetHeight());
+
+    // // Draw Imguizmo gizmo.
+    // mat4 transdebug = GLM_MAT4_IDENTITY_INIT;
+    // bool manipulated{ false };
+    // if (ImGuizmo::Manipulate(&view[0][0],
+    //                          &proj[0][0],
+    //                          ImGuizmo::UNIVERSAL,
+    //                          false ? ImGuizmo::WORLD : ImGuizmo::LOCAL,
+    //                         //  &transform[0][0]))
+    //                          &transdebug[0][0]))
+    // {   // Copy result (@NOTE: This is reverse of the TRS->mat4 operation above).
+    //     vec4 tra;
+    //     mat4 rot;
+    //     vec3 sca;
+    //     glm_decompose(transform, tra, rot, sca);
+
+    //     out_pos.x = ent_transform->position.x + (tra[0] - orig_flt_tra[0]);
+    //     out_pos.y = ent_transform->position.y + (tra[1] - orig_flt_tra[1]);
+    //     out_pos.z = ent_transform->position.z + (tra[2] - orig_flt_tra[2]);
+    //     glm_mat4_quat(rot, out_rot.raw);
+    //     glm_vec3_copy(sca, out_sca.raw);
+
+    //     // Mark as manipulated.
+    //     manipulated = true;
+    // }
+    // ImGui::End();
+
+    // return manipulated;
 }
 
 /// Renders gizmo for transforms and updates entity transform if manipulated.
-void internal_imguizmo_transform_gizmo()
+void internal_imguizmo_transform_gizmo()  // @TODO: rename
 {
-    auto& camera{ service_finder::find_service<TXP::Renderer>().get_main_camera() };
     auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
+    auto& renderer{ service_finder::find_service<TXP::Renderer>() };
+    auto& camera{ renderer.get_main_camera() };
 
-    ImGuizmo::Enable(camera.is_cursor_free());
+    renderer.set_imguizmo_enabled(camera.is_cursor_free());
 
-    rvec3s  pos;
-    versors rot;
-    vec3s   sca;
-    if (internal_imguizmo_manipulate(reg, camera, pos, rot, sca))
-    {
-        component::submit_transform_change_helper(reg, s_state.selected_entity, pos, rot, sca);
-        component::try_set_physics_object_transform_helper(reg, s_state.selected_entity, pos, rot);
-    }
+    internal_imguizmo_manipulate(reg, renderer, camera);
 }
 
 /// "Properties inspector" window.

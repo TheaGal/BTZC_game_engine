@@ -34,11 +34,14 @@
         - The draw context is 0x0 size for some reason???
         - I needed to do setRect()
         - Also, to have the correct state i needed to actually use matching versions of imgui and imguizmo.
-    - [ ] Insert imguizmo into the actual correct windows.
+    - [x] Insert imguizmo into the actual correct windows.
         - probably as some kind of callback or a list of requests maybe??
             - like giving a transform and then requesting the information back if it changed.
             - this could allow for many different gizmos to be drawn per view for bezier curves or smth. plus, no need to include the imguizmo headers in the game engine ig??
+        - [x] remove imguizmo dependency.
+    - [ ] Fix stuff not moving for transforms without a transform hierarchy from imguizmo move!!
 - [ ] Create a simple imgui inspector for the component.
+- [ ] fix rename todo.
 
 - [x] Have component draw multiple models of the rails in their positions.
 
@@ -47,3 +50,4 @@
 - [ ] Make component for riding rail lines (essentially having a whole ass train car system)
 
 - [ ] Fix construction code change not causing the rail line to change. or is it just not deleting old entities?
+    - maybe need to use the create_entity() and destroy_entity() funcs in the entity container?????

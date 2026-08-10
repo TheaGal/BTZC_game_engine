@@ -77,7 +77,6 @@ set(DEPENDENCY_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/fmt/include
     $ENV{FMOD_STUDIO_API_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/thea_imgui  # Header only.
-    ${CMAKE_CURRENT_SOURCE_DIR}/third_party/ImGuizmo/src
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/JoltPhysics
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/json/include
     ${CMAKE_CURRENT_SOURCE_DIR}/third_party/stb  # Header only (essentially).
