@@ -55,3 +55,4 @@
         - [ ] make it explicit w comment or something that the creation method is meant to not show the rails on the object list.
     - [x] fix the renderer crashing code when the rails are rebuilt.
         - ig the old, stale rails shouldn't show up in `rend_obj_cfg_view`
+    - Turns out it was a bad reordering algorithm when deleting stale render objects in the renderer
