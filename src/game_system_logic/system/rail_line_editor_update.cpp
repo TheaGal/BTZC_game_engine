@@ -23,6 +23,10 @@ void BT::system::rail_line_editor_update()
                                        float_t& place_angle,
                                        vec3 place_advance_delta_pos,
                                        float place_advance_delta_angle) {
+        // @NOTE: using registry::create() directly here guarantees the created rail objects are not
+        //        seen by the object registry. Also, it bypasses having to create a UUID, though
+        //        that means that nothing can directly interact with the rail line pieces, which is
+        //        intended.  -Thea 2026/08/11
         auto new_ent = reg.create();
         created_entities.emplace_back(new_ent);
 
