@@ -218,6 +218,8 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/propagate_changed_transforms.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/rail_line_editor_update.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/rail_line_editor_update.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/rail_line_rider_update.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/rail_line_rider_update.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/tick_sim_char_mvt_animator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/tick_sim_char_mvt_animator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/write_entity_transforms_from_physics.cpp

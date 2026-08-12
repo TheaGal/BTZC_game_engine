@@ -17,6 +17,7 @@
 #include "game_system_logic/system/process_physics_object_lifetime.h"
 #include "game_system_logic/system/propagate_changed_transforms.h"
 #include "game_system_logic/system/rail_line_editor_update.h"
+#include "game_system_logic/system/rail_line_rider_update.h"
 #include "game_system_logic/system/tick_sim_char_mvt_animator.h"
 #include "game_system_logic/system/write_entity_transforms_from_physics.h"
 #include "game_system_logic/system/write_render_transforms.h"
@@ -348,6 +349,8 @@ int32_t main()
 
             TXP::Renderer::advance_afa_sim_timer(main_physics_engine.k_simulation_delta_time);
             BT::system::tick_sim_char_mvt_animator();
+
+            BT::system::rail_line_rider_update();
 
 #if IMPLEMENT_THIS
             BT::system::character_broadcast_attack_msg_to_enemies();  // Requires AFA
