@@ -30,7 +30,7 @@ struct Rail_line
     );
 
     /// This is used by the systems to make sure that the construction is up to date.
-    std::string built_ctor_code;
+    std::string prev_construction_code;
 
     /// Cached length from building the rail line parts.
     float_t built_length;
@@ -41,15 +41,58 @@ struct Rail_line
     /// List of entities created from the construction code.
     std::vector<entt::entity> created_entities;
 
-    /// Build codes and information.
+    /// Build codes.
+    enum Build_code : int32_t
+    {
+        BC_STRAIGHT = 0,
+        BC_STRAIGHT_UPHILL,
+        BC_STRAIGHT_DOWNHILL,
+        BC_STRAIGHT_ROLL_LEFT,
+        BC_STRAIGHT_ROLL_LEFT_RETURN,
+        BC_STRAIGHT_ROLL_RIGHT,
+        BC_STRAIGHT_ROLL_RIGHT_RETURN,
+        BC_CURVE_LEFT_1,
+        BC_CURVE_LEFT_2,
+        BC_CURVE_LEFT_3,
+        BC_CURVE_LEFT_4,
+        BC_CURVE_RIGHT_1,
+        BC_CURVE_RIGHT_2,
+        BC_CURVE_RIGHT_3,
+        BC_CURVE_RIGHT_4,
+        BC_SLOPECHANGE_UP,
+        BC_SLOPECHANGE_UP_RETURN,
+        BC_SLOPECHANGE_DOWN,
+        BC_SLOPECHANGE_DOWN_RETURN,
+
+        NUM_BUILD_CODES
+    };
+
+    /// All codes to construct the track.
+    std::vector<Build_code> built_ctor_code;
+
+    /// Build code information.
     struct Build_code_info
     {
         float_t length;
-        std::function<vec3s(float_t)> calc_position_fn;
 
-        // @TODO: add advance angle and advance position info to here too.
+        struct Rail_position_transform
+        {
+            vec3s position;
+            float_t angle_y;
+            float_t angle_x;
+        };
+        std::function<Rail_position_transform(float_t)> calc_transform_fn;
+
+        Rail_position_transform calculate_transform(vec3 place_pos,
+                                                    float_t place_angle,
+                                                    float_t length);
+
+        vec3s place_advance_delta_pos;
+        float_t place_advance_delta_angle;
+
+        void advance_place_transform(vec3& place_pos, float_t& place_angle, bool forward);
     };
-    static std::unordered_map<char, Build_code_info> build_code_to_info_map;
+    static std::unordered_map<Build_code, Build_code_info> s_build_code_to_info_map;
 };
 
 /// Rail line riding component.

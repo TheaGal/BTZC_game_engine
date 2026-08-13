@@ -54,10 +54,10 @@ void BT::system::rail_line_editor_update()
 
     for (auto&& [ent, rail_line] : view.each())
     {
-        if (rail_line.built_ctor_code == rail_line.construction_code)
+        if (rail_line.prev_construction_code == rail_line.construction_code)
             continue;
 
-        rail_line.built_ctor_code = rail_line.construction_code;
+        rail_line.prev_construction_code = rail_line.construction_code;
 
         // Clear all entities.
         for (auto ent : rail_line.created_entities)

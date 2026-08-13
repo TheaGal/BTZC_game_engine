@@ -1,5 +1,6 @@
 #include "rail_line_rider_update.h"
 
+#include "btglm.h"
 #include "game_system_logic/component/physics_object_settings.h"
 #include "game_system_logic/component/rail_line.h"
 #include "game_system_logic/component/transform.h"
@@ -26,16 +27,47 @@ void BT::system::rail_line_rider_update()
             pos_mod -= rail_line.built_length;
         }
 
-        // There needs to be some easy way to go thru the lookup. Like a linked list type of structure?? Idk. It doesn't have to be O(n) lookup but it has to be bidirectionally traversable.
+        // Find transform at position in build line.
+        uint32_t built_part_idx{ 0 };
+        float_t leftover_length = pos_mod;
 
-        if (false)
+        vec3 place_pos = GLM_VEC3_ZERO_INIT;
+        float_t place_angle = 0;
+
+        auto* build_code{ &component::Rail_line::s_build_code_to_info_map.at(
+            rail_line.built_ctor_code.at(built_part_idx)) };
+        while (leftover_length >= build_code->length)
         {
-            // Update transform.
-            component::submit_transform_change_helper(reg, s_state.selected_entity, pos, rot, sca);
-            component::try_set_physics_object_transform_helper(reg,
-                                                               s_state.selected_entity,
-                                                               pos,
-                                                               rot);
+            // Move to try next build code.
+            build_code->advance_place_transform(place_pos, place_angle, true);
+
+            leftover_length -= build_code->length;
+
+            built_part_idx++;
+            build_code = &component::Rail_line::s_build_code_to_info_map.at(
+                rail_line.built_ctor_code.at(built_part_idx));
         }
+
+        auto transform{ build_code->calculate_transform(place_pos, place_angle, leftover_length) };
+
+        // Build real transform.
+        rvec3s transform_rpos{
+            .x = transform.position.x,
+            .y = transform.position.y,
+            .z = transform.position.z,
+        };
+
+        versors transform_rot;
+        glm_euler_zyx_quat(vec3{ transform.angle_x, transform.angle_y, 0 }, transform_rot.raw);
+
+        // Update transform.
+        component::submit_transform_change_no_scale_helper(reg,
+                                                           ent,
+                                                           transform_rpos,
+                                                           transform_rot);
+        component::try_set_physics_object_transform_helper(reg,
+                                                           ent,
+                                                           transform_rpos,
+                                                           transform_rot);
     }
 }

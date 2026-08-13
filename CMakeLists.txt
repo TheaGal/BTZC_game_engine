@@ -190,6 +190,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/health_stats.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/physics_object_settings.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/physics_object_settings.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/rail_line.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/rail_line.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/transform.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/transform.h
