@@ -48,6 +48,10 @@
 - [x] Implement tilt rails to go into and out of curves.
 
 - [ ] Make component for riding rail lines (essentially having a whole ass train car system)
+    - [x] make the riding on curve part
+    - [ ] fill in info
+        - need constexpr construction funcs??
+    - [ ] make rail line editor ctor use this same info instead of the hardcoded vals
 
 - [x] Fix construction code change not causing the rail line to change. or is it just not deleting old entities?
     - maybe need to use the create_entity() and destroy_entity() funcs in the entity container?????
