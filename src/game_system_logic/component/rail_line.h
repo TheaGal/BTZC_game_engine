@@ -85,12 +85,12 @@ struct Rail_line
 
         Rail_position_transform calculate_transform(vec3 place_pos,
                                                     float_t place_angle,
-                                                    float_t length);
+                                                    float_t length) const;
 
         vec3s place_advance_delta_pos;
         float_t place_advance_delta_angle;
 
-        void advance_place_transform(vec3& place_pos, float_t& place_angle, bool forward);
+        void advance_place_transform(vec3& place_pos, float_t& place_angle, bool forward) const;
     };
     static std::unordered_map<Build_code, Build_code_info> s_build_code_to_info_map;
 };

@@ -1,18 +1,11 @@
 #include "rail_line.h"
 
 #include "btglm.h"
-#include "btjson.h"
-#include "btuuid.h"
-#include "cglm/vec3.h"
-#include "entt/entity/fwd.hpp"
 
 #include <cassert>
 #include <cmath>
-#include <functional>
 #include <numbers>
-#include <string>
 #include <unordered_map>
-#include <vector>
 
 
 namespace BT
@@ -22,16 +15,31 @@ namespace component
 
 auto Rail_line::Build_code_info::calculate_transform(vec3 place_pos,
                                                      float_t place_angle,
-                                                     float_t length) -> Rail_position_transform
+                                                     float_t length) const
+    -> Rail_position_transform
 {
     assert(false);
+    Rail_position_transform trans = calc_transform_fn(length);
+
+    glm_vec3_add(place_pos, trans.position.raw, trans.position.raw);
+
+    return trans;
 }
 
 void Rail_line::Build_code_info::advance_place_transform(vec3& place_pos,
                                                          float_t& place_angle,
-                                                         bool forward)
+                                                         bool forward) const
 {
-    assert(false);
+    mat4 place_advance_rot = GLM_MAT4_IDENTITY_INIT;
+    glm_rotate_y(place_advance_rot, place_angle, place_advance_rot);
+    vec3 place_advance_delta_pos_cooked;
+    glm_mat4_mulv3(place_advance_rot,
+                   const_cast<float_t*>(place_advance_delta_pos.raw),
+                   0,
+                   place_advance_delta_pos_cooked);
+
+    glm_vec3_add(place_pos, place_advance_delta_pos_cooked, place_pos);
+    place_angle += place_advance_delta_angle;
 }
 
 
