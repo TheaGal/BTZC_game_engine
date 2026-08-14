@@ -105,10 +105,9 @@ struct Bezier_curve
 
 } // namespace
 
-using Build_code_info_map = std::unordered_map<Rail_line::Build_code, Rail_line::Build_code_info>;
 
 constexpr float_t k_radius_to_circum{ 2.0 * std::numbers::pi };
-constexpr float_t k_15deg_of_circum{ 15.0f/ 360.0f };
+constexpr float_t k_15deg_of_circum{ 15.0f / 360.0f };
 
 constexpr Bezier_curve k_bz_slopechange_up{ .c0 = { 0, 0, 0 },
                                             .c1 = { 0, 0, 9.8995 },
@@ -127,26 +126,185 @@ constexpr Bezier_curve k_bz_slopechange_down_return{ .c0 = { 0, 0, 0 },
                                                      .c2 = { 0, -1, 10 },
                                                      .c3 = { 0, -1, 20 } };
 
+using Build_code_info_map = std::unordered_map<Rail_line::Build_code, Rail_line::Build_code_info>;
+using Rail_position_transform = Rail_line::Build_code_info::Rail_position_transform;
+
 Build_code_info_map Rail_line::s_build_code_to_info_map{
-    { BC_STRAIGHT, { .length = 10 } },
-    { BC_STRAIGHT_UPHILL, { .length = glm_vec3_norm(vec3{ 0, 1, 10 }) } },
-    { BC_STRAIGHT_DOWNHILL, { .length = glm_vec3_norm(vec3{ 0, -1, 10 }) } },
-    { BC_STRAIGHT_ROLL_LEFT, { .length = 10 } },
-    { BC_STRAIGHT_ROLL_LEFT_RETURN, { .length = 10 } },
-    { BC_STRAIGHT_ROLL_RIGHT, { .length = 10 } },
-    { BC_STRAIGHT_ROLL_RIGHT_RETURN, { .length = 10 } },
-    { BC_CURVE_LEFT_1, { .length = 38.8178 * k_radius_to_circum * k_15deg_of_circum } },
-    { BC_CURVE_LEFT_2, { .length = 42.8178 * k_radius_to_circum * k_15deg_of_circum } },
-    { BC_CURVE_LEFT_3, { .length = 46.8178 * k_radius_to_circum * k_15deg_of_circum } },
-    { BC_CURVE_LEFT_4, { .length = 50.8178 * k_radius_to_circum * k_15deg_of_circum } },
-    { BC_CURVE_RIGHT_1, { .length = 38.8178 * k_radius_to_circum * k_15deg_of_circum } },
-    { BC_CURVE_RIGHT_2, { .length = 42.8178 * k_radius_to_circum * k_15deg_of_circum } },
-    { BC_CURVE_RIGHT_3, { .length = 46.8178 * k_radius_to_circum * k_15deg_of_circum } },
-    { BC_CURVE_RIGHT_4, { .length = 50.8178 * k_radius_to_circum * k_15deg_of_circum } },
-    { BC_SLOPECHANGE_UP, { .length = k_bz_slopechange_up.calc_length() } },
-    { BC_SLOPECHANGE_UP_RETURN, { .length = k_bz_slopechange_up_return.calc_length() } },
-    { BC_SLOPECHANGE_DOWN, { .length = k_bz_slopechange_down.calc_length() } },
-    { BC_SLOPECHANGE_DOWN_RETURN, { .length = k_bz_slopechange_down_return.calc_length() } },
+    {
+        BC_STRAIGHT,
+        {
+            .length = 10,
+            .calc_transform_fn =
+                [](float_t length) {
+                    // @TODO
+                    return Rail_position_transform{};
+                },
+            .place_advance_delta_pos = { 0, 0, -10 },
+            .place_advance_delta_angle = glm_rad(0),
+        },
+    },
+    {
+        BC_STRAIGHT_UPHILL,
+        {
+            .length = glm_vec3_norm(vec3{ 0, 1, 10 }),
+            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .place_advance_delta_pos = { 0, 1, -10 },
+            .place_advance_delta_angle = glm_rad(0),
+        },
+    },
+    {
+        BC_STRAIGHT_DOWNHILL,
+        {
+            .length = glm_vec3_norm(vec3{ 0, -1, 10 }),
+            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .place_advance_delta_pos = { 0, -1, -10 },
+            .place_advance_delta_angle = glm_rad(0),
+        },
+    },
+    {
+        BC_STRAIGHT_ROLL_LEFT,
+        {
+            .length = 10,
+            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .place_advance_delta_pos = { 0, 0, -10 },
+            .place_advance_delta_angle = glm_rad(0),
+        },
+    },
+    {
+        BC_STRAIGHT_ROLL_LEFT_RETURN,
+        {
+            .length = 10,
+            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .place_advance_delta_pos = { 0, 0, -10 },
+            .place_advance_delta_angle = glm_rad(0),
+        },
+    },
+    {
+        BC_STRAIGHT_ROLL_RIGHT,
+        {
+            .length = 10,
+            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .place_advance_delta_pos = { 0, 0, -10 },
+            .place_advance_delta_angle = glm_rad(0),
+        },
+    },
+    {
+        BC_STRAIGHT_ROLL_RIGHT_RETURN,
+        {
+            .length = 10,
+            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .place_advance_delta_pos = { 0, 0, -10 },
+            .place_advance_delta_angle = glm_rad(0),
+        },
+    },
+    {
+        BC_CURVE_LEFT_1,
+        {
+            .length = 38.8178 * k_radius_to_circum * k_15deg_of_circum,
+            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .place_advance_delta_pos = {},  // @TODO
+            .place_advance_delta_angle = glm_rad(15),
+        },
+    },
+    {
+        BC_CURVE_LEFT_2,
+        {
+            .length = 42.8178 * k_radius_to_circum * k_15deg_of_circum,
+            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .place_advance_delta_pos = {},
+            .place_advance_delta_angle = glm_rad(15),
+        },
+    },
+    {
+        BC_CURVE_LEFT_3,
+        {
+            .length = 46.8178 * k_radius_to_circum * k_15deg_of_circum,
+            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .place_advance_delta_pos = {},
+            .place_advance_delta_angle = glm_rad(15),
+        },
+    },
+    {
+        BC_CURVE_LEFT_4,
+        {
+            .length = 50.8178 * k_radius_to_circum * k_15deg_of_circum,
+            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .place_advance_delta_pos = {},
+            .place_advance_delta_angle = glm_rad(15),
+        },
+    },
+    {
+        BC_CURVE_RIGHT_1,
+        {
+            .length = 38.8178 * k_radius_to_circum * k_15deg_of_circum,
+            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .place_advance_delta_pos = {},
+            .place_advance_delta_angle = glm_rad(-15),
+        },
+    },
+    {
+        BC_CURVE_RIGHT_2,
+        {
+            .length = 42.8178 * k_radius_to_circum * k_15deg_of_circum,
+            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .place_advance_delta_pos = {},
+            .place_advance_delta_angle = glm_rad(-15),
+        },
+    },
+    {
+        BC_CURVE_RIGHT_3,
+        {
+            .length = 46.8178 * k_radius_to_circum * k_15deg_of_circum,
+            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .place_advance_delta_pos = {},
+            .place_advance_delta_angle = glm_rad(-15),
+        },
+    },
+    {
+        BC_CURVE_RIGHT_4,
+        {
+            .length = 50.8178 * k_radius_to_circum * k_15deg_of_circum,
+            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .place_advance_delta_pos = {},
+            .place_advance_delta_angle = glm_rad(-15),
+        },
+    },
+    {
+        BC_SLOPECHANGE_UP,
+        {
+            .length = k_bz_slopechange_up.calc_length(),
+            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .place_advance_delta_pos = { 0, 1, -20 },
+            .place_advance_delta_angle = glm_rad(0),
+        },
+    },
+    {
+        BC_SLOPECHANGE_UP_RETURN,
+        {
+            .length = k_bz_slopechange_up_return.calc_length(),
+            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .place_advance_delta_pos = { 0, 1, -20 },
+            .place_advance_delta_angle = glm_rad(0),
+        },
+    },
+    {
+        BC_SLOPECHANGE_DOWN,
+        {
+            .length = k_bz_slopechange_down.calc_length(),
+            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .place_advance_delta_pos = { 0, -1, -20 },
+            .place_advance_delta_angle = glm_rad(0),
+        },
+    },
+    {
+        BC_SLOPECHANGE_DOWN_RETURN,
+        {
+            .length = k_bz_slopechange_down_return.calc_length(),
+            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .place_advance_delta_pos = { 0, -1, -20 },
+            .place_advance_delta_angle = glm_rad(0),
+        },
+    },
 };
 
 }  // namespace component
