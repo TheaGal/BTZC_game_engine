@@ -111,8 +111,21 @@ struct Bezier_curve
     }
 };
 
+vec3s calc_place_advance_delta_pos_of_curve(float_t radius, float_t curve_angle, bool flip_x)
+{
+    return vec3s{
+        .x = (cosf(curve_angle) - cosf(0)) * radius * (flip_x ? -1 : 1),
+        .y = 0,
+        .z = -(sinf(curve_angle) - sinf(0)) * radius,
+    };
+}
+
 } // namespace
 
+constexpr float_t curve_radius_1{ 38.8178 };
+constexpr float_t curve_radius_2{ 42.8178 };
+constexpr float_t curve_radius_3{ 46.8178 };
+constexpr float_t curve_radius_4{ 50.8178 };
 
 constexpr float_t k_radius_to_circum{ 2.0 * std::numbers::pi };
 constexpr float_t k_15deg_of_circum{ 15.0f / 360.0f };
@@ -208,72 +221,72 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{
     {
         BC_CURVE_LEFT_1,
         {
-            .length = 38.8178 * k_radius_to_circum * k_15deg_of_circum,
+            .length = curve_radius_1 * k_radius_to_circum * k_15deg_of_circum,
             .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
-            .place_advance_delta_pos = {},  // @TODO
+            .place_advance_delta_pos = calc_place_advance_delta_pos_of_curve(curve_radius_1, glm_rad(15), false),
             .place_advance_delta_angle = glm_rad(15),
         },
     },
     {
         BC_CURVE_LEFT_2,
         {
-            .length = 42.8178 * k_radius_to_circum * k_15deg_of_circum,
+            .length = curve_radius_2 * k_radius_to_circum * k_15deg_of_circum,
             .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
-            .place_advance_delta_pos = {},
+            .place_advance_delta_pos = calc_place_advance_delta_pos_of_curve(curve_radius_2, glm_rad(15), false),
             .place_advance_delta_angle = glm_rad(15),
         },
     },
     {
         BC_CURVE_LEFT_3,
         {
-            .length = 46.8178 * k_radius_to_circum * k_15deg_of_circum,
+            .length = curve_radius_3 * k_radius_to_circum * k_15deg_of_circum,
             .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
-            .place_advance_delta_pos = {},
+            .place_advance_delta_pos = calc_place_advance_delta_pos_of_curve(curve_radius_3, glm_rad(15), false),
             .place_advance_delta_angle = glm_rad(15),
         },
     },
     {
         BC_CURVE_LEFT_4,
         {
-            .length = 50.8178 * k_radius_to_circum * k_15deg_of_circum,
+            .length = curve_radius_4 * k_radius_to_circum * k_15deg_of_circum,
             .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
-            .place_advance_delta_pos = {},
+            .place_advance_delta_pos = calc_place_advance_delta_pos_of_curve(curve_radius_4, glm_rad(15), false),
             .place_advance_delta_angle = glm_rad(15),
         },
     },
     {
         BC_CURVE_RIGHT_1,
         {
-            .length = 38.8178 * k_radius_to_circum * k_15deg_of_circum,
+            .length = curve_radius_1 * k_radius_to_circum * k_15deg_of_circum,
             .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
-            .place_advance_delta_pos = {},
+            .place_advance_delta_pos = calc_place_advance_delta_pos_of_curve(curve_radius_1, glm_rad(15), true),
             .place_advance_delta_angle = glm_rad(-15),
         },
     },
     {
         BC_CURVE_RIGHT_2,
         {
-            .length = 42.8178 * k_radius_to_circum * k_15deg_of_circum,
+            .length = curve_radius_2 * k_radius_to_circum * k_15deg_of_circum,
             .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
-            .place_advance_delta_pos = {},
+            .place_advance_delta_pos = calc_place_advance_delta_pos_of_curve(curve_radius_2, glm_rad(15), true),
             .place_advance_delta_angle = glm_rad(-15),
         },
     },
     {
         BC_CURVE_RIGHT_3,
         {
-            .length = 46.8178 * k_radius_to_circum * k_15deg_of_circum,
+            .length = curve_radius_3 * k_radius_to_circum * k_15deg_of_circum,
             .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
-            .place_advance_delta_pos = {},
+            .place_advance_delta_pos = calc_place_advance_delta_pos_of_curve(curve_radius_3, glm_rad(15), true),
             .place_advance_delta_angle = glm_rad(-15),
         },
     },
     {
         BC_CURVE_RIGHT_4,
         {
-            .length = 50.8178 * k_radius_to_circum * k_15deg_of_circum,
+            .length = curve_radius_4 * k_radius_to_circum * k_15deg_of_circum,
             .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
-            .place_advance_delta_pos = {},
+            .place_advance_delta_pos = calc_place_advance_delta_pos_of_curve(curve_radius_4, glm_rad(15), true),
             .place_advance_delta_angle = glm_rad(-15),
         },
     },
