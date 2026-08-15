@@ -58,7 +58,8 @@ void BT::system::rail_line_rider_update()
         };
 
         versors transform_rot;
-        glm_euler_zyx_quat(vec3{ transform.angle_x, transform.angle_y, 0 }, transform_rot.raw);
+        glm_euler_zyx_quat(vec3{ transform.angle_x, transform.angle_y, transform.angle_z },
+                           transform_rot.raw);
 
         // Update transform.
         component::submit_transform_change_no_scale_helper(reg,

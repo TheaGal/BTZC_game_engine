@@ -78,8 +78,9 @@ struct Rail_line
         struct Rail_position_transform
         {
             vec3s position;
-            float_t angle_y;
             float_t angle_x;
+            float_t angle_y;
+            float_t angle_z;
         };
         std::function<Rail_position_transform(float_t)> calc_transform_fn;
 

@@ -157,8 +157,9 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{
             .length = 10,
             .calc_transform_fn =
                 [](float_t length) {
-                    // @TODO
-                    return Rail_position_transform{};
+                    vec3s pos{ 0, 0, -1 };
+                    glm_vec3_scale(pos.raw, length, pos.raw);
+                    return Rail_position_transform{ .position = pos };
                 },
             .place_advance_delta_pos = { 0, 0, -10 },
             .place_advance_delta_angle = glm_rad(0),
@@ -168,7 +169,17 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{
         BC_STRAIGHT_UPHILL,
         {
             .length = glm_vec3_norm(vec3{ 0, 1, 10 }),
-            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .calc_transform_fn =
+                [](float_t length) {
+                    static float_t const k_length_normalizer{ 1.0f /
+                                                              glm_vec3_norm(vec3{ 0, 1, 10 }) };
+
+                    vec3s pos;
+                    glm_vec3_lerp(vec3{}, vec3{ 0, 1, -10 }, length * k_length_normalizer, pos.raw);
+
+                    static float_t const k_uphill_angle{ atan2f(1, -10) };
+                    return Rail_position_transform{ .position = pos, .angle_x = k_uphill_angle };
+                },
             .place_advance_delta_pos = { 0, 1, -10 },
             .place_advance_delta_angle = glm_rad(0),
         },
@@ -177,7 +188,20 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{
         BC_STRAIGHT_DOWNHILL,
         {
             .length = glm_vec3_norm(vec3{ 0, -1, 10 }),
-            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .calc_transform_fn =
+                [](float_t length) {
+                    static float_t const k_length_normalizer{ 1.0f /
+                                                              glm_vec3_norm(vec3{ 0, -1, 10 }) };
+
+                    vec3s pos;
+                    glm_vec3_lerp(vec3{},
+                                  vec3{ 0, -1, -10 },
+                                  length * k_length_normalizer,
+                                  pos.raw);
+
+                    static float_t const k_downhill_angle{ atan2f(-1, -10) };
+                    return Rail_position_transform{ .position = pos, .angle_x = k_downhill_angle };
+                },
             .place_advance_delta_pos = { 0, -1, -10 },
             .place_advance_delta_angle = glm_rad(0),
         },
@@ -186,7 +210,15 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{
         BC_STRAIGHT_ROLL_LEFT,
         {
             .length = 10,
-            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .calc_transform_fn =
+                [](float_t length) {
+                    vec3s pos{ 0, 0, -1 };
+                    glm_vec3_scale(pos.raw, length, pos.raw);
+                    return Rail_position_transform{
+                        .position = pos,
+                        .angle_z = glm_lerp(glm_rad(0), glm_rad(-10), length / 10),
+                    };
+                },
             .place_advance_delta_pos = { 0, 0, -10 },
             .place_advance_delta_angle = glm_rad(0),
         },
@@ -195,7 +227,15 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{
         BC_STRAIGHT_ROLL_LEFT_RETURN,
         {
             .length = 10,
-            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .calc_transform_fn =
+                [](float_t length) {
+                    vec3s pos{ 0, 0, -1 };
+                    glm_vec3_scale(pos.raw, length, pos.raw);
+                    return Rail_position_transform{
+                        .position = pos,
+                        .angle_z = glm_lerp(glm_rad(-10), glm_rad(0), length / 10),
+                    };
+                },
             .place_advance_delta_pos = { 0, 0, -10 },
             .place_advance_delta_angle = glm_rad(0),
         },
@@ -204,7 +244,15 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{
         BC_STRAIGHT_ROLL_RIGHT,
         {
             .length = 10,
-            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .calc_transform_fn =
+                [](float_t length) {
+                    vec3s pos{ 0, 0, -1 };
+                    glm_vec3_scale(pos.raw, length, pos.raw);
+                    return Rail_position_transform{
+                        .position = pos,
+                        .angle_z = glm_lerp(glm_rad(0), glm_rad(10), length / 10),
+                    };
+                },
             .place_advance_delta_pos = { 0, 0, -10 },
             .place_advance_delta_angle = glm_rad(0),
         },
@@ -213,7 +261,15 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{
         BC_STRAIGHT_ROLL_RIGHT_RETURN,
         {
             .length = 10,
-            .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
+            .calc_transform_fn =
+                [](float_t length) {
+                    vec3s pos{ 0, 0, -1 };
+                    glm_vec3_scale(pos.raw, length, pos.raw);
+                    return Rail_position_transform{
+                        .position = pos,
+                        .angle_z = glm_lerp(glm_rad(10), glm_rad(0), length / 10),
+                    };
+                },
             .place_advance_delta_pos = { 0, 0, -10 },
             .place_advance_delta_angle = glm_rad(0),
         },
@@ -223,7 +279,8 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{
         {
             .length = curve_radius_1 * k_radius_to_circum * k_15deg_of_circum,
             .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
-            .place_advance_delta_pos = calc_place_advance_delta_pos_of_curve(curve_radius_1, glm_rad(15), false),
+            .place_advance_delta_pos =
+                calc_place_advance_delta_pos_of_curve(curve_radius_1, glm_rad(15), false),
             .place_advance_delta_angle = glm_rad(15),
         },
     },
@@ -232,7 +289,8 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{
         {
             .length = curve_radius_2 * k_radius_to_circum * k_15deg_of_circum,
             .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
-            .place_advance_delta_pos = calc_place_advance_delta_pos_of_curve(curve_radius_2, glm_rad(15), false),
+            .place_advance_delta_pos =
+                calc_place_advance_delta_pos_of_curve(curve_radius_2, glm_rad(15), false),
             .place_advance_delta_angle = glm_rad(15),
         },
     },
@@ -241,7 +299,8 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{
         {
             .length = curve_radius_3 * k_radius_to_circum * k_15deg_of_circum,
             .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
-            .place_advance_delta_pos = calc_place_advance_delta_pos_of_curve(curve_radius_3, glm_rad(15), false),
+            .place_advance_delta_pos =
+                calc_place_advance_delta_pos_of_curve(curve_radius_3, glm_rad(15), false),
             .place_advance_delta_angle = glm_rad(15),
         },
     },
@@ -250,7 +309,8 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{
         {
             .length = curve_radius_4 * k_radius_to_circum * k_15deg_of_circum,
             .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
-            .place_advance_delta_pos = calc_place_advance_delta_pos_of_curve(curve_radius_4, glm_rad(15), false),
+            .place_advance_delta_pos =
+                calc_place_advance_delta_pos_of_curve(curve_radius_4, glm_rad(15), false),
             .place_advance_delta_angle = glm_rad(15),
         },
     },
@@ -259,7 +319,8 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{
         {
             .length = curve_radius_1 * k_radius_to_circum * k_15deg_of_circum,
             .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
-            .place_advance_delta_pos = calc_place_advance_delta_pos_of_curve(curve_radius_1, glm_rad(15), true),
+            .place_advance_delta_pos =
+                calc_place_advance_delta_pos_of_curve(curve_radius_1, glm_rad(15), true),
             .place_advance_delta_angle = glm_rad(-15),
         },
     },
@@ -268,7 +329,8 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{
         {
             .length = curve_radius_2 * k_radius_to_circum * k_15deg_of_circum,
             .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
-            .place_advance_delta_pos = calc_place_advance_delta_pos_of_curve(curve_radius_2, glm_rad(15), true),
+            .place_advance_delta_pos =
+                calc_place_advance_delta_pos_of_curve(curve_radius_2, glm_rad(15), true),
             .place_advance_delta_angle = glm_rad(-15),
         },
     },
@@ -277,7 +339,8 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{
         {
             .length = curve_radius_3 * k_radius_to_circum * k_15deg_of_circum,
             .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
-            .place_advance_delta_pos = calc_place_advance_delta_pos_of_curve(curve_radius_3, glm_rad(15), true),
+            .place_advance_delta_pos =
+                calc_place_advance_delta_pos_of_curve(curve_radius_3, glm_rad(15), true),
             .place_advance_delta_angle = glm_rad(-15),
         },
     },
@@ -286,7 +349,8 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{
         {
             .length = curve_radius_4 * k_radius_to_circum * k_15deg_of_circum,
             .calc_transform_fn = [](float_t length) { return Rail_position_transform{}; },
-            .place_advance_delta_pos = calc_place_advance_delta_pos_of_curve(curve_radius_4, glm_rad(15), true),
+            .place_advance_delta_pos =
+                calc_place_advance_delta_pos_of_curve(curve_radius_4, glm_rad(15), true),
             .place_advance_delta_angle = glm_rad(-15),
         },
     },
