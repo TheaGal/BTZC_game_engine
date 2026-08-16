@@ -26,6 +26,8 @@ auto Rail_line::Build_code_info::calculate_transform(vec3 place_pos,
 
     glm_vec3_add(place_pos, trans.position.raw, trans.position.raw);
 
+    trans.angle_y += place_angle;
+
     date_deadline(2026, 8, 19);  // @CHECK: confirm working
 
     return trans;
@@ -218,7 +220,7 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{  // @COPYPASTA: there i
                     glm_vec3_scale(pos.raw, length, pos.raw);
                     return Rail_position_transform{
                         .position = pos,
-                        .angle_z = glm_lerp(glm_rad(0), glm_rad(-10), length / 10),
+                        .angle_z = glm_lerp(glm_rad(0), glm_rad(10), length / 10),
                     };
                 },
             .place_advance_delta_pos = { 0, 0, -10 },
@@ -235,7 +237,7 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{  // @COPYPASTA: there i
                     glm_vec3_scale(pos.raw, length, pos.raw);
                     return Rail_position_transform{
                         .position = pos,
-                        .angle_z = glm_lerp(glm_rad(-10), glm_rad(0), length / 10),
+                        .angle_z = glm_lerp(glm_rad(10), glm_rad(0), length / 10),
                     };
                 },
             .place_advance_delta_pos = { 0, 0, -10 },
@@ -252,7 +254,7 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{  // @COPYPASTA: there i
                     glm_vec3_scale(pos.raw, length, pos.raw);
                     return Rail_position_transform{
                         .position = pos,
-                        .angle_z = glm_lerp(glm_rad(0), glm_rad(10), length / 10),
+                        .angle_z = glm_lerp(glm_rad(0), glm_rad(-10), length / 10),
                     };
                 },
             .place_advance_delta_pos = { 0, 0, -10 },
@@ -269,7 +271,7 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{  // @COPYPASTA: there i
                     glm_vec3_scale(pos.raw, length, pos.raw);
                     return Rail_position_transform{
                         .position = pos,
-                        .angle_z = glm_lerp(glm_rad(10), glm_rad(0), length / 10),
+                        .angle_z = glm_lerp(glm_rad(-10), glm_rad(0), length / 10),
                     };
                 },
             .place_advance_delta_pos = { 0, 0, -10 },
