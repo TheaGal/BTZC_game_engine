@@ -20,8 +20,6 @@
 
 - [x] Implement the new txp-renderer into here.
 
-- [ ] Reimplement btafa processing here.
-
 - [x] Add a component type that allows for string of chars to signify rail system.
 
 - [x] Create list of transforms imgui list/window.
@@ -61,3 +59,5 @@
     - [x] fix the renderer crashing code when the rails are rebuilt.
         - ig the old, stale rails shouldn't show up in `rend_obj_cfg_view`
     - Turns out it was a bad reordering algorithm when deleting stale render objects in the renderer
+
+- [ ] Reimplement btafa processing here.

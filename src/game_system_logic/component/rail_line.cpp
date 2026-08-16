@@ -37,6 +37,8 @@ void Rail_line::Build_code_info::advance_place_transform(vec3& place_pos,
                                                          float_t& place_angle,
                                                          bool forward) const
 {
+    assert(forward);  // @TODO: @IMPLEMENT backwards
+
     mat4 place_advance_rot = GLM_MAT4_IDENTITY_INIT;
     glm_rotate_y(place_advance_rot, place_angle, place_advance_rot);
     vec3 place_advance_delta_pos_cooked;

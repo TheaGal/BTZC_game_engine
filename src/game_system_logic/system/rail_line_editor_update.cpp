@@ -22,11 +22,10 @@ void BT::system::rail_line_editor_update()
                                        std::string const& sub_mesh_name,
                                        vec3 mesh_origin_pos,
                                        vec3& place_pos,
-                                       float_t& place_angle,
-                                       vec3 place_advance_delta_pos,
-                                       float place_advance_delta_angle) {
-        rail_line.built_length +=
-            component::Rail_line::s_build_code_to_info_map.at(build_code).length;
+                                       float_t& place_angle) {
+        auto const& build_template{component::Rail_line::s_build_code_to_info_map.at(build_code)};
+
+        rail_line.built_length += build_template.length;
         rail_line.built_ctor_code.emplace_back(build_code);
 
         // @NOTE: using registry::create() directly here guarantees the created rail objects are not
@@ -46,13 +45,7 @@ void BT::system::rail_line_editor_update()
         glm_vec3_negate(mesh_origin_pos);
         glm_translate(rend_obj_cfg.transform.raw, mesh_origin_pos);
 
-        // Advance placement.
-        mat4 place_advance_rot = GLM_MAT4_IDENTITY_INIT;
-        glm_rotate_y(place_advance_rot, place_angle, place_advance_rot);
-        glm_mat4_mulv3(place_advance_rot, place_advance_delta_pos, 0, place_advance_delta_pos);
-
-        glm_vec3_add(place_pos, place_advance_delta_pos, place_pos);
-        place_angle += place_advance_delta_angle;
+        build_template.advance_place_transform(place_pos, place_angle, true);
     };
 
     // Write transforms.
@@ -119,9 +112,7 @@ void BT::system::rail_line_editor_update()
                                          "StraightRailRoll.LR",
                                          vec3{ -14, 0, 0 },
                                          current_pos,
-                                         current_angle,
-                                         vec3{ 0, 0, -10 },
-                                         0);
+                                         current_angle);
                     break;
 
                 case RIGHT_TILT:
@@ -132,9 +123,7 @@ void BT::system::rail_line_editor_update()
                                          "StraightRailRoll.RR",
                                          vec3{ -16, 0, 0 },
                                          current_pos,
-                                         current_angle,
-                                         vec3{ 0, 0, -10 },
-                                         0);
+                                         current_angle);
                     break;
 
                 default:
@@ -156,9 +145,7 @@ void BT::system::rail_line_editor_update()
                                          "StraightRailRoll.L",
                                          vec3{ -18, 0, 0 },
                                          current_pos,
-                                         current_angle,
-                                         vec3{ 0, 0, -10 },
-                                         0);
+                                         current_angle);
                     break;
 
                 case RIGHT_TILT:
@@ -169,9 +156,7 @@ void BT::system::rail_line_editor_update()
                                          "StraightRailRoll.R",
                                          vec3{ -20, 0, 0 },
                                          current_pos,
-                                         current_angle,
-                                         vec3{ 0, 0, -10 },
-                                         0);
+                                         current_angle);
                     break;
 
                 default:
@@ -187,7 +172,6 @@ void BT::system::rail_line_editor_update()
 
             std::string curve_code;
             vec3s curve_origin = GLM_VEC3_ZERO_INIT;
-            vec3s curve_adv_delta = GLM_VEC3_ZERO_INIT;
             Build_code curve_build_code;
 
             switch (code_char)
@@ -210,9 +194,7 @@ void BT::system::rail_line_editor_update()
                                              "StraightRail",
                                              vec3{ -22, 0, 0 },
                                              current_pos,
-                                             current_angle,
-                                             vec3{ 0, 0, -10 },
-                                             0);
+                                             current_angle);
                     break;
                 }
                 case INCLINE:
@@ -224,9 +206,7 @@ void BT::system::rail_line_editor_update()
                                          "SlopedRail.U",
                                          vec3{ 18, 0, 0 },
                                          current_pos,
-                                         current_angle,
-                                         vec3{ 0, 1, -10 },
-                                         0);
+                                         current_angle);
                     break;
                 }
                 case DECLINE:
@@ -238,9 +218,7 @@ void BT::system::rail_line_editor_update()
                                          "SlopedRail.D",
                                          vec3{ 12, 0, 0 },
                                          current_pos,
-                                         current_angle,
-                                         vec3{ 0, -1, -10 },
-                                         0);
+                                         current_angle);
                     break;
                 }
                 default:
@@ -256,9 +234,6 @@ void BT::system::rail_line_editor_update()
 
                     curve_origin.x = 38.8178;
 
-                    curve_adv_delta.x = -1.3187;  // @HARDCODE: could prob use cos(15) and sin(15) mult by curve_origin.x for this (if you touch again).  -Thea 2026/08/05
-                    curve_adv_delta.z = -10.035;
-
                     curve_build_code = Build_code::BC_CURVE_LEFT_1;
 
                     ctor_tilt = LEFT_TILT;
@@ -269,9 +244,6 @@ void BT::system::rail_line_editor_update()
                     curve_code = "L.002";
 
                     curve_origin.x = 42.8178;
-
-                    curve_adv_delta.x = -1.455;
-                    curve_adv_delta.z = -11.069;
 
                     curve_build_code = Build_code::BC_CURVE_LEFT_2;
 
@@ -284,9 +256,6 @@ void BT::system::rail_line_editor_update()
 
                     curve_origin.x = 46.8178;
 
-                    curve_adv_delta.x = -1.591;
-                    curve_adv_delta.z = -12.103;
-
                     curve_build_code = Build_code::BC_CURVE_LEFT_3;
 
                     ctor_tilt = LEFT_TILT;
@@ -297,9 +266,6 @@ void BT::system::rail_line_editor_update()
                     curve_code = "L.004";
 
                     curve_origin.x = 50.8178;
-
-                    curve_adv_delta.x = -1.726;
-                    curve_adv_delta.z = -13.137;
 
                     curve_build_code = Build_code::BC_CURVE_LEFT_4;
 
@@ -312,9 +278,6 @@ void BT::system::rail_line_editor_update()
 
                     curve_origin.x = -38.8178;
 
-                    curve_adv_delta.x = 1.3187;
-                    curve_adv_delta.z = -10.035;
-
                     curve_build_code = Build_code::BC_CURVE_RIGHT_1;
 
                     ctor_tilt = RIGHT_TILT;
@@ -325,9 +288,6 @@ void BT::system::rail_line_editor_update()
                     curve_code = "R.002";
 
                     curve_origin.x = -42.8178;
-
-                    curve_adv_delta.x = 1.455;
-                    curve_adv_delta.z = -11.069;
 
                     curve_build_code = Build_code::BC_CURVE_RIGHT_2;
 
@@ -340,9 +300,6 @@ void BT::system::rail_line_editor_update()
 
                     curve_origin.x = -46.8178;
 
-                    curve_adv_delta.x = 1.591;
-                    curve_adv_delta.z = -12.103;
-
                     curve_build_code = Build_code::BC_CURVE_RIGHT_3;
 
                     ctor_tilt = RIGHT_TILT;
@@ -353,9 +310,6 @@ void BT::system::rail_line_editor_update()
                     curve_code = "R.004";
 
                     curve_origin.x = -50.8178;
-
-                    curve_adv_delta.x = 1.726;
-                    curve_adv_delta.z = -13.137;
 
                     curve_build_code = Build_code::BC_CURVE_RIGHT_4;
 
@@ -382,9 +336,7 @@ void BT::system::rail_line_editor_update()
                                      "CurveRail." + curve_code,
                                      curve_origin.raw,
                                      current_pos,
-                                     current_angle,
-                                     curve_adv_delta.raw,
-                                     glm_rad(curve_code[0] == 'L' ? 15 : -15));
+                                     current_angle);
                 break;
 
             case '(':
@@ -403,9 +355,7 @@ void BT::system::rail_line_editor_update()
                                      "SlopechangeRail.U",
                                      vec3{ 16, 0, 0 },
                                      current_pos,
-                                     current_angle,
-                                     vec3{ 0, 1, -20 },
-                                     0);
+                                     current_angle);
                 ctor_mode = INCLINE;
                 break;
 
@@ -421,9 +371,7 @@ void BT::system::rail_line_editor_update()
                                      "SlopechangeRail.UR",
                                      vec3{ 20, 0, 0 },
                                      current_pos,
-                                     current_angle,
-                                     vec3{ 0, 1, -20 },
-                                     0);
+                                     current_angle);
                 ctor_mode = FLAT;
                 ctor_tilt = NO_TILT;
                 break;
@@ -444,9 +392,7 @@ void BT::system::rail_line_editor_update()
                                      "SlopechangeRail.D",
                                      vec3{ 10, 0, 0 },
                                      current_pos,
-                                     current_angle,
-                                     vec3{ 0, -1, -20 },
-                                     0);
+                                     current_angle);
                 ctor_mode = DECLINE;
                 break;
 
@@ -462,9 +408,7 @@ void BT::system::rail_line_editor_update()
                                      "SlopechangeRail.DR",
                                      vec3{ 14, 0, 0 },
                                      current_pos,
-                                     current_angle,
-                                     vec3{ 0, -1, -20 },
-                                     0);
+                                     current_angle);
                 ctor_mode = FLAT;
                 ctor_tilt = NO_TILT;
                 break;
