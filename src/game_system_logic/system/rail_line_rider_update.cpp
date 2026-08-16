@@ -7,8 +7,6 @@
 #include "game_system_logic/entity_container.h"
 #include "service_finder/service_finder.h"
 
-#include <stdexcept>
-
 
 void BT::system::rail_line_rider_update()
 {
