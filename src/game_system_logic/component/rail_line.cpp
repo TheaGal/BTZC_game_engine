@@ -62,7 +62,7 @@ struct Bezier_curve
         auto c3r{ const_cast<float_t*>(c3.raw) };
 
         float_t rough_length = 0;
-        rough_length += glm_vec3_distance(c0r, c1r);
+        rough_length += glm_vec3_distance(c0r, c1r);  // @TODO: make this constexpr so that this all is constexpr.
         rough_length += glm_vec3_distance(c1r, c2r);
         rough_length += glm_vec3_distance(c2r, c3r);
 
