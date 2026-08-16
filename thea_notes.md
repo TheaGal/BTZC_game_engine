@@ -49,7 +49,7 @@
 
 - [ ] Make component for riding rail lines (essentially having a whole ass train car system)
     - [x] make the riding on curve part
-    - [ ] fill in info
+    - [x] fill in info
         - need constexpr construction funcs??
     - [ ] make rail line editor ctor use this same info instead of the hardcoded vals
 

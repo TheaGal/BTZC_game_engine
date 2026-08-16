@@ -7,6 +7,8 @@
 #include "game_system_logic/entity_container.h"
 #include "service_finder/service_finder.h"
 
+#include <stdexcept>
+
 
 void BT::system::rail_line_rider_update()
 {
@@ -19,6 +21,9 @@ void BT::system::rail_line_rider_update()
     {
         auto const& rail_line{ reg.get<component::Rail_line>(
             entity_container.find_entity(line_rider.riding_line_uuid)) };
+
+        if (rail_line.built_length < 1e-6f)
+            throw std::runtime_error("Nothing is built wtf?!?!?");
 
         // Modulo the distance.
         double_t pos_mod{ line_rider.line_position };

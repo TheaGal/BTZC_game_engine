@@ -1,10 +1,10 @@
 #include "rail_line.h"
 
+#include "btdatecheck.h"
 #include "btglm.h"
 
 #include <cassert>
 #include <cmath>
-#include <numbers>
 #include <unordered_map>
 
 
@@ -18,10 +18,15 @@ auto Rail_line::Build_code_info::calculate_transform(vec3 place_pos,
                                                      float_t length) const
     -> Rail_position_transform
 {
-    assert(false);
     Rail_position_transform trans = calc_transform_fn(length);
 
+    mat4 rot;
+    glm_euler_zyx(vec3{ 0, place_angle, 0 }, rot);
+    glm_mat4_mulv3(rot, trans.position.raw, 0, trans.position.raw);
+
     glm_vec3_add(place_pos, trans.position.raw, trans.position.raw);
+
+    date_deadline(2026, 8, 19);  // @CHECK: confirm working
 
     return trans;
 }

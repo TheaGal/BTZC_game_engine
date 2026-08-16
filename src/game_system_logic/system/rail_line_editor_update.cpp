@@ -15,7 +15,9 @@ void BT::system::rail_line_editor_update()
 {
     auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
 
-    auto create_rail_piece_fn = [&reg](std::vector<entt::entity>& created_entities,
+    auto create_rail_piece_fn = [&reg](component::Rail_line& rail_line,
+                                       component::Rail_line::Build_code build_code,
+                                       std::vector<entt::entity>& created_entities,
                                        std::string const& model_name,
                                        std::string const& sub_mesh_name,
                                        vec3 mesh_origin_pos,
@@ -23,6 +25,10 @@ void BT::system::rail_line_editor_update()
                                        float_t& place_angle,
                                        vec3 place_advance_delta_pos,
                                        float place_advance_delta_angle) {
+        rail_line.built_length +=
+            component::Rail_line::s_build_code_to_info_map.at(build_code).length;
+        rail_line.built_ctor_code.emplace_back(build_code);
+
         // @NOTE: using registry::create() directly here guarantees the created rail objects are not
         //        seen by the object registry. Also, it bypasses having to create a UUID, though
         //        that means that nothing can directly interact with the rail line pieces, which is
@@ -59,6 +65,9 @@ void BT::system::rail_line_editor_update()
 
         rail_line.prev_construction_code = rail_line.construction_code;
 
+        rail_line.built_length = 0;
+        rail_line.built_ctor_code.clear();
+
         // Clear all entities.
         for (auto ent : rail_line.created_entities)
         {
@@ -86,6 +95,8 @@ void BT::system::rail_line_editor_update()
         vec3 current_pos = GLM_VEC3_ZERO_INIT;
         float_t current_angle{ 0 };
 
+        using Build_code = component::Rail_line::Build_code;
+
         auto process_tilt_connection_fn =
             [&create_rail_piece_fn,
              &rail_line,
@@ -101,7 +112,9 @@ void BT::system::rail_line_editor_update()
                     break;
 
                 case LEFT_TILT:
-                    create_rail_piece_fn(rail_line.created_entities,
+                    create_rail_piece_fn(rail_line,
+                                         Build_code::BC_STRAIGHT_ROLL_LEFT_RETURN,
+                                         rail_line.created_entities,
                                          "rails",
                                          "StraightRailRoll.LR",
                                          vec3{ -14, 0, 0 },
@@ -112,7 +125,9 @@ void BT::system::rail_line_editor_update()
                     break;
 
                 case RIGHT_TILT:
-                    create_rail_piece_fn(rail_line.created_entities,
+                    create_rail_piece_fn(rail_line,
+                                         Build_code::BC_STRAIGHT_ROLL_RIGHT_RETURN,
+                                         rail_line.created_entities,
                                          "rails",
                                          "StraightRailRoll.RR",
                                          vec3{ -16, 0, 0 },
@@ -134,7 +149,9 @@ void BT::system::rail_line_editor_update()
                     break;
 
                 case LEFT_TILT:
-                    create_rail_piece_fn(rail_line.created_entities,
+                    create_rail_piece_fn(rail_line,
+                                         Build_code::BC_STRAIGHT_ROLL_LEFT,
+                                         rail_line.created_entities,
                                          "rails",
                                          "StraightRailRoll.L",
                                          vec3{ -18, 0, 0 },
@@ -145,7 +162,9 @@ void BT::system::rail_line_editor_update()
                     break;
 
                 case RIGHT_TILT:
-                    create_rail_piece_fn(rail_line.created_entities,
+                    create_rail_piece_fn(rail_line,
+                                         Build_code::BC_STRAIGHT_ROLL_RIGHT,
+                                         rail_line.created_entities,
                                          "rails",
                                          "StraightRailRoll.R",
                                          vec3{ -20, 0, 0 },
@@ -169,6 +188,7 @@ void BT::system::rail_line_editor_update()
             std::string curve_code;
             vec3s curve_origin = GLM_VEC3_ZERO_INIT;
             vec3s curve_adv_delta = GLM_VEC3_ZERO_INIT;
+            Build_code curve_build_code;
 
             switch (code_char)
             {
@@ -183,7 +203,9 @@ void BT::system::rail_line_editor_update()
                     process_tilt_connection_fn();
 
                     if (prev_ctor_tilt == NO_TILT)
-                        create_rail_piece_fn(rail_line.created_entities,
+                        create_rail_piece_fn(rail_line,
+                                             Build_code::BC_STRAIGHT,
+                                             rail_line.created_entities,
                                              "rails",
                                              "StraightRail",
                                              vec3{ -22, 0, 0 },
@@ -195,7 +217,9 @@ void BT::system::rail_line_editor_update()
                 }
                 case INCLINE:
                 {
-                    create_rail_piece_fn(rail_line.created_entities,
+                    create_rail_piece_fn(rail_line,
+                                         Build_code::BC_STRAIGHT_UPHILL,
+                                         rail_line.created_entities,
                                          "rails",
                                          "SlopedRail.U",
                                          vec3{ 18, 0, 0 },
@@ -207,7 +231,9 @@ void BT::system::rail_line_editor_update()
                 }
                 case DECLINE:
                 {
-                    create_rail_piece_fn(rail_line.created_entities,
+                    create_rail_piece_fn(rail_line,
+                                         Build_code::BC_STRAIGHT_DOWNHILL,
+                                         rail_line.created_entities,
                                          "rails",
                                          "SlopedRail.D",
                                          vec3{ 12, 0, 0 },
@@ -233,6 +259,8 @@ void BT::system::rail_line_editor_update()
                     curve_adv_delta.x = -1.3187;  // @HARDCODE: could prob use cos(15) and sin(15) mult by curve_origin.x for this (if you touch again).  -Thea 2026/08/05
                     curve_adv_delta.z = -10.035;
 
+                    curve_build_code = Build_code::BC_CURVE_LEFT_1;
+
                     ctor_tilt = LEFT_TILT;
                 }
             case 'w':
@@ -244,6 +272,8 @@ void BT::system::rail_line_editor_update()
 
                     curve_adv_delta.x = -1.455;
                     curve_adv_delta.z = -11.069;
+
+                    curve_build_code = Build_code::BC_CURVE_LEFT_2;
 
                     ctor_tilt = LEFT_TILT;
                 }
@@ -257,6 +287,8 @@ void BT::system::rail_line_editor_update()
                     curve_adv_delta.x = -1.591;
                     curve_adv_delta.z = -12.103;
 
+                    curve_build_code = Build_code::BC_CURVE_LEFT_3;
+
                     ctor_tilt = LEFT_TILT;
                 }
             case 'r':
@@ -268,6 +300,8 @@ void BT::system::rail_line_editor_update()
 
                     curve_adv_delta.x = -1.726;
                     curve_adv_delta.z = -13.137;
+
+                    curve_build_code = Build_code::BC_CURVE_LEFT_4;
 
                     ctor_tilt = LEFT_TILT;
                 }
@@ -281,6 +315,8 @@ void BT::system::rail_line_editor_update()
                     curve_adv_delta.x = 1.3187;
                     curve_adv_delta.z = -10.035;
 
+                    curve_build_code = Build_code::BC_CURVE_RIGHT_1;
+
                     ctor_tilt = RIGHT_TILT;
                 }
             case 'o':
@@ -292,6 +328,8 @@ void BT::system::rail_line_editor_update()
 
                     curve_adv_delta.x = 1.455;
                     curve_adv_delta.z = -11.069;
+
+                    curve_build_code = Build_code::BC_CURVE_RIGHT_2;
 
                     ctor_tilt = RIGHT_TILT;
                 }
@@ -305,6 +343,8 @@ void BT::system::rail_line_editor_update()
                     curve_adv_delta.x = 1.591;
                     curve_adv_delta.z = -12.103;
 
+                    curve_build_code = Build_code::BC_CURVE_RIGHT_3;
+
                     ctor_tilt = RIGHT_TILT;
                 }
             case 'u':
@@ -316,6 +356,8 @@ void BT::system::rail_line_editor_update()
 
                     curve_adv_delta.x = 1.726;
                     curve_adv_delta.z = -13.137;
+
+                    curve_build_code = Build_code::BC_CURVE_RIGHT_4;
 
                     ctor_tilt = RIGHT_TILT;
                 }
@@ -333,7 +375,9 @@ void BT::system::rail_line_editor_update()
                 }
 
                 // Add curve.
-                create_rail_piece_fn(rail_line.created_entities,
+                create_rail_piece_fn(rail_line,
+                                     curve_build_code,
+                                     rail_line.created_entities,
                                      "rails",
                                      "CurveRail." + curve_code,
                                      curve_origin.raw,
@@ -352,7 +396,9 @@ void BT::system::rail_line_editor_update()
                 process_tilt_connection_fn();
 
                 // Add incline start.
-                create_rail_piece_fn(rail_line.created_entities,
+                create_rail_piece_fn(rail_line,
+                                     Build_code::BC_SLOPECHANGE_UP,
+                                     rail_line.created_entities,
                                      "rails",
                                      "SlopechangeRail.U",
                                      vec3{ 16, 0, 0 },
@@ -368,7 +414,9 @@ void BT::system::rail_line_editor_update()
                     throw std::runtime_error("huh?");
 
                 // Add incline end.
-                create_rail_piece_fn(rail_line.created_entities,
+                create_rail_piece_fn(rail_line,
+                                     Build_code::BC_SLOPECHANGE_UP_RETURN,
+                                     rail_line.created_entities,
                                      "rails",
                                      "SlopechangeRail.UR",
                                      vec3{ 20, 0, 0 },
@@ -389,7 +437,9 @@ void BT::system::rail_line_editor_update()
                 process_tilt_connection_fn();
 
                 // Add decline start.
-                create_rail_piece_fn(rail_line.created_entities,
+                create_rail_piece_fn(rail_line,
+                                     Build_code::BC_SLOPECHANGE_DOWN,
+                                     rail_line.created_entities,
                                      "rails",
                                      "SlopechangeRail.D",
                                      vec3{ 10, 0, 0 },
@@ -405,7 +455,9 @@ void BT::system::rail_line_editor_update()
                     throw std::runtime_error("huh?");
 
                 // Add decline end.
-                create_rail_piece_fn(rail_line.created_entities,
+                create_rail_piece_fn(rail_line,
+                                     Build_code::BC_SLOPECHANGE_DOWN_RETURN,
+                                     rail_line.created_entities,
                                      "rails",
                                      "SlopechangeRail.DR",
                                      vec3{ 14, 0, 0 },
