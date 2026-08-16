@@ -51,6 +51,7 @@
     - [x] make the riding on curve part
     - [x] fill in info
         - need constexpr construction funcs??
+    - [ ] fix issues with rider transform on the line.
     - [ ] make rail line editor ctor use this same info instead of the hardcoded vals
 
 - [x] Fix construction code change not causing the rail line to change. or is it just not deleting old entities?

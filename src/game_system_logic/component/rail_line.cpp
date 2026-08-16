@@ -379,12 +379,12 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{  // @COPYPASTA: there i
                     constexpr float_t k_len{ curve_radius_1 * glm_rad(15) };
 
                     float_t t = length / k_len;
-                    float_t const advance_angle{ glm_lerp(glm_rad(0), glm_rad(-15), t) };
+                    float_t const advance_angle{ glm_lerp(glm_rad(0), glm_rad(15), t) };
                     return Rail_position_transform{
                         .position = calc_place_advance_delta_pos_of_curve(curve_radius_1,
                                                                           advance_angle,
                                                                           true),
-                        .angle_y = advance_angle,
+                        .angle_y = -advance_angle,
                         .angle_z = glm_rad(-10),
                     };
                 },
@@ -402,12 +402,12 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{  // @COPYPASTA: there i
                     constexpr float_t k_len{ curve_radius_2 * glm_rad(15) };
 
                     float_t t = length / k_len;
-                    float_t const advance_angle{ glm_lerp(glm_rad(0), glm_rad(-15), t) };
+                    float_t const advance_angle{ glm_lerp(glm_rad(0), glm_rad(15), t) };
                     return Rail_position_transform{
                         .position = calc_place_advance_delta_pos_of_curve(curve_radius_2,
                                                                           advance_angle,
                                                                           true),
-                        .angle_y = advance_angle,
+                        .angle_y = -advance_angle,
                         .angle_z = glm_rad(-10),
                     };
                 },
@@ -425,12 +425,12 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{  // @COPYPASTA: there i
                     constexpr float_t k_len{ curve_radius_3 * glm_rad(15) };
 
                     float_t t = length / k_len;
-                    float_t const advance_angle{ glm_lerp(glm_rad(0), glm_rad(-15), t) };
+                    float_t const advance_angle{ glm_lerp(glm_rad(0), glm_rad(15), t) };
                     return Rail_position_transform{
                         .position = calc_place_advance_delta_pos_of_curve(curve_radius_3,
                                                                           advance_angle,
                                                                           true),
-                        .angle_y = advance_angle,
+                        .angle_y = -advance_angle,
                         .angle_z = glm_rad(-10),
                     };
                 },
@@ -448,12 +448,12 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{  // @COPYPASTA: there i
                     constexpr float_t k_len{ curve_radius_4 * glm_rad(15) };
 
                     float_t t = length / k_len;
-                    float_t const advance_angle{ glm_lerp(glm_rad(0), glm_rad(-15), t) };
+                    float_t const advance_angle{ glm_lerp(glm_rad(0), glm_rad(15), t) };
                     return Rail_position_transform{
                         .position = calc_place_advance_delta_pos_of_curve(curve_radius_4,
                                                                           advance_angle,
                                                                           true),
-                        .angle_y = advance_angle,
+                        .angle_y = -advance_angle,
                         .angle_z = glm_rad(-10),
                     };
                 },
