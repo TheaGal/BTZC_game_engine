@@ -17,8 +17,6 @@ void BT::system::rail_line_editor_update()
 
     auto create_rail_piece_fn = [&reg](component::Rail_line& rail_line,
                                        component::Rail_line::Build_code build_code,
-                                       std::vector<entt::entity>& created_entities,
-                                       std::string const& model_name,
                                        std::string const& sub_mesh_name,
                                        vec3 mesh_origin_pos,
                                        vec3& place_pos,
@@ -33,10 +31,10 @@ void BT::system::rail_line_editor_update()
         //        that means that nothing can directly interact with the rail line pieces, which is
         //        intended.  -Thea 2026/08/11
         auto new_ent = reg.create();
-        created_entities.emplace_back(new_ent);
+        rail_line.created_entities.emplace_back(new_ent);
 
         auto& rend_obj_cfg = reg.emplace_or_replace<TXP::component::Render_object_config>(new_ent);
-        rend_obj_cfg.model_name = model_name;
+        rend_obj_cfg.model_name = "rails";
         rend_obj_cfg.sub_mesh_name = sub_mesh_name;
 
         glm_translate(rend_obj_cfg.transform.raw, place_pos);
@@ -107,8 +105,6 @@ void BT::system::rail_line_editor_update()
                 case LEFT_TILT:
                     create_rail_piece_fn(rail_line,
                                          Build_code::BC_STRAIGHT_ROLL_LEFT_RETURN,
-                                         rail_line.created_entities,
-                                         "rails",
                                          "StraightRailRoll.LR",
                                          vec3{ -14, 0, 0 },
                                          current_pos,
@@ -118,8 +114,6 @@ void BT::system::rail_line_editor_update()
                 case RIGHT_TILT:
                     create_rail_piece_fn(rail_line,
                                          Build_code::BC_STRAIGHT_ROLL_RIGHT_RETURN,
-                                         rail_line.created_entities,
-                                         "rails",
                                          "StraightRailRoll.RR",
                                          vec3{ -16, 0, 0 },
                                          current_pos,
@@ -140,8 +134,6 @@ void BT::system::rail_line_editor_update()
                 case LEFT_TILT:
                     create_rail_piece_fn(rail_line,
                                          Build_code::BC_STRAIGHT_ROLL_LEFT,
-                                         rail_line.created_entities,
-                                         "rails",
                                          "StraightRailRoll.L",
                                          vec3{ -18, 0, 0 },
                                          current_pos,
@@ -151,8 +143,6 @@ void BT::system::rail_line_editor_update()
                 case RIGHT_TILT:
                     create_rail_piece_fn(rail_line,
                                          Build_code::BC_STRAIGHT_ROLL_RIGHT,
-                                         rail_line.created_entities,
-                                         "rails",
                                          "StraightRailRoll.R",
                                          vec3{ -20, 0, 0 },
                                          current_pos,
@@ -189,8 +179,6 @@ void BT::system::rail_line_editor_update()
                     if (prev_ctor_tilt == NO_TILT)
                         create_rail_piece_fn(rail_line,
                                              Build_code::BC_STRAIGHT,
-                                             rail_line.created_entities,
-                                             "rails",
                                              "StraightRail",
                                              vec3{ -22, 0, 0 },
                                              current_pos,
@@ -201,8 +189,6 @@ void BT::system::rail_line_editor_update()
                 {
                     create_rail_piece_fn(rail_line,
                                          Build_code::BC_STRAIGHT_UPHILL,
-                                         rail_line.created_entities,
-                                         "rails",
                                          "SlopedRail.U",
                                          vec3{ 18, 0, 0 },
                                          current_pos,
@@ -213,8 +199,6 @@ void BT::system::rail_line_editor_update()
                 {
                     create_rail_piece_fn(rail_line,
                                          Build_code::BC_STRAIGHT_DOWNHILL,
-                                         rail_line.created_entities,
-                                         "rails",
                                          "SlopedRail.D",
                                          vec3{ 12, 0, 0 },
                                          current_pos,
@@ -331,8 +315,6 @@ void BT::system::rail_line_editor_update()
                 // Add curve.
                 create_rail_piece_fn(rail_line,
                                      curve_build_code,
-                                     rail_line.created_entities,
-                                     "rails",
                                      "CurveRail." + curve_code,
                                      curve_origin.raw,
                                      current_pos,
@@ -350,8 +332,6 @@ void BT::system::rail_line_editor_update()
                 // Add incline start.
                 create_rail_piece_fn(rail_line,
                                      Build_code::BC_SLOPECHANGE_UP,
-                                     rail_line.created_entities,
-                                     "rails",
                                      "SlopechangeRail.U",
                                      vec3{ 16, 0, 0 },
                                      current_pos,
@@ -366,8 +346,6 @@ void BT::system::rail_line_editor_update()
                 // Add incline end.
                 create_rail_piece_fn(rail_line,
                                      Build_code::BC_SLOPECHANGE_UP_RETURN,
-                                     rail_line.created_entities,
-                                     "rails",
                                      "SlopechangeRail.UR",
                                      vec3{ 20, 0, 0 },
                                      current_pos,
@@ -387,8 +365,6 @@ void BT::system::rail_line_editor_update()
                 // Add decline start.
                 create_rail_piece_fn(rail_line,
                                      Build_code::BC_SLOPECHANGE_DOWN,
-                                     rail_line.created_entities,
-                                     "rails",
                                      "SlopechangeRail.D",
                                      vec3{ 10, 0, 0 },
                                      current_pos,
@@ -403,8 +379,6 @@ void BT::system::rail_line_editor_update()
                 // Add decline end.
                 create_rail_piece_fn(rail_line,
                                      Build_code::BC_SLOPECHANGE_DOWN_RETURN,
-                                     rail_line.created_entities,
-                                     "rails",
                                      "SlopechangeRail.DR",
                                      vec3{ 14, 0, 0 },
                                      current_pos,
