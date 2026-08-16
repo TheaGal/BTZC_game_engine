@@ -135,21 +135,21 @@ constexpr float_t curve_radius_3{ 46.8178 };
 constexpr float_t curve_radius_4{ 50.8178 };
 
 constexpr Bezier_curve k_bz_slopechange_up{ .c0 = { 0, 0, 0 },
-                                            .c1 = { 0, 0, 9.8995 },
-                                            .c2 = { 0, 0.004963, 10.0496 },
-                                            .c3 = { 0, 1, 20 } };
+                                            .c1 = { 0, 0, -9.8995 },
+                                            .c2 = { 0, 0.004963, -10.0496 },
+                                            .c3 = { 0, 1, -20 } };
 constexpr Bezier_curve k_bz_slopechange_up_return{ .c0 = { 0, 0, 0 },
-                                                   .c1 = { 0, 0.985037, 9.85037 },
-                                                   .c2 = { 0, 1, 10 },
-                                                   .c3 = { 0, 1, 20 } };
+                                                   .c1 = { 0, 0.985037, -9.85037 },
+                                                   .c2 = { 0, 1, -10 },
+                                                   .c3 = { 0, 1, -20 } };
 constexpr Bezier_curve k_bz_slopechange_down{ .c0 = { 0, 0, 0 },
-                                              .c1 = { 0, 0, 9.8995 },
-                                              .c2 = { 0, -0.004963, 10.0496 },
-                                              .c3 = { 0, -1, 20 } };
+                                              .c1 = { 0, 0, -9.8995 },
+                                              .c2 = { 0, -0.004963, -10.0496 },
+                                              .c3 = { 0, -1, -20 } };
 constexpr Bezier_curve k_bz_slopechange_down_return{ .c0 = { 0, 0, 0 },
-                                                     .c1 = { 0, -0.985037, 9.85037 },
-                                                     .c2 = { 0, -1, 10 },
-                                                     .c3 = { 0, -1, 20 } };
+                                                     .c1 = { 0, -0.985037, -9.85037 },
+                                                     .c2 = { 0, -1, -10 },
+                                                     .c3 = { 0, -1, -20 } };
 
 using Build_code_info_map = std::unordered_map<Rail_line::Build_code, Rail_line::Build_code_info>;
 using Rail_position_transform = Rail_line::Build_code_info::Rail_position_transform;
@@ -181,7 +181,7 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{  // @COPYPASTA: there i
                     vec3s pos;
                     glm_vec3_lerp(vec3{}, vec3{ 0, 1, -10 }, length * k_length_normalizer, pos.raw);
 
-                    static float_t const k_uphill_angle{ atan2f(1, -10) };
+                    static float_t const k_uphill_angle{ -atan2f(1, -10) };
                     return Rail_position_transform{ .position = pos, .angle_x = k_uphill_angle };
                 },
             .place_advance_delta_pos = { 0, 1, -10 },
@@ -203,7 +203,7 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{  // @COPYPASTA: there i
                                   length * k_length_normalizer,
                                   pos.raw);
 
-                    static float_t const k_downhill_angle{ atan2f(-1, -10) };
+                    static float_t const k_downhill_angle{ -atan2f(-1, -10) };
                     return Rail_position_transform{ .position = pos, .angle_x = k_downhill_angle };
                 },
             .place_advance_delta_pos = { 0, -1, -10 },
@@ -474,8 +474,8 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{  // @COPYPASTA: there i
 
                     vec3s pos0 = k_bz_slopechange_up.calc_position_on_curve(t);
                     vec3s pos1 = k_bz_slopechange_up.calc_position_on_curve(t + 0.001f);
-                    
-                    float_t ang = atan2f(pos1.z - pos0.z, pos1.y - pos0.y);
+
+                    float_t ang = -atan2f(pos1.y - pos0.y, pos1.z - pos0.z);
 
                     return Rail_position_transform{
                         .position = pos0,
@@ -498,8 +498,8 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{  // @COPYPASTA: there i
 
                     vec3s pos0 = k_bz_slopechange_up_return.calc_position_on_curve(t);
                     vec3s pos1 = k_bz_slopechange_up_return.calc_position_on_curve(t + 0.001f);
-                    
-                    float_t ang = atan2f(pos1.z - pos0.z, pos1.y - pos0.y);
+
+                    float_t ang = -atan2f(pos1.y - pos0.y, pos1.z - pos0.z);
 
                     return Rail_position_transform{
                         .position = pos0,
@@ -523,7 +523,7 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{  // @COPYPASTA: there i
                     vec3s pos0 = k_bz_slopechange_down.calc_position_on_curve(t);
                     vec3s pos1 = k_bz_slopechange_down.calc_position_on_curve(t + 0.001f);
 
-                    float_t ang = atan2f(pos1.z - pos0.z, pos1.y - pos0.y);
+                    float_t ang = -atan2f(pos1.y - pos0.y, pos1.z - pos0.z);
 
                     return Rail_position_transform{
                         .position = pos0,
@@ -547,7 +547,7 @@ Build_code_info_map Rail_line::s_build_code_to_info_map{  // @COPYPASTA: there i
                     vec3s pos0 = k_bz_slopechange_down_return.calc_position_on_curve(t);
                     vec3s pos1 = k_bz_slopechange_down_return.calc_position_on_curve(t + 0.001f);
 
-                    float_t ang = atan2f(pos1.z - pos0.z, pos1.y - pos0.y);
+                    float_t ang = -atan2f(pos1.y - pos0.y, pos1.z - pos0.z);
 
                     return Rail_position_transform{
                         .position = pos0,
