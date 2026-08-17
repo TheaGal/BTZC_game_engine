@@ -45,12 +45,13 @@
 
 - [x] Implement tilt rails to go into and out of curves.
 
-- [ ] Make component for riding rail lines (essentially having a whole ass train car system)
+- [x] Make component for riding rail lines (essentially having a whole ass train car system)
     - [x] make the riding on curve part
     - [x] fill in info
         - need constexpr construction funcs??
     - [x] fix issues with rider transform on the line.
-    - [ ] make rail line editor ctor use this same info instead of the hardcoded vals
+    - [x] make rail line editor ctor use this same info instead of the hardcoded vals
+    - Incomplete, but call it for now!!
 
 - [x] Fix construction code change not causing the rail line to change. or is it just not deleting old entities?
     - maybe need to use the create_entity() and destroy_entity() funcs in the entity container?????
@@ -59,5 +60,14 @@
     - [x] fix the renderer crashing code when the rails are rebuilt.
         - ig the old, stale rails shouldn't show up in `rend_obj_cfg_view`
     - Turns out it was a bad reordering algorithm when deleting stale render objects in the renderer
+
+- [x] deadline: performance timer in txp-renderer
+
+- [ ] deadline: input direction with keyboard
+
+- [ ] make more train cars connecting for the riding rails
+    - [ ] have 1 master bogie per car, then 1 trailing bogie
+    - [ ] master bogie either follows desired position or master bogie one car ahead
+    - [ ] have car be stationed between master and trailing bogies
 
 - [ ] Reimplement btafa processing here.
