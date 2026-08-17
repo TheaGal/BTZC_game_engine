@@ -9,6 +9,7 @@
 #include "service_finder/service_finder.h"
 #include "txp_renderer_public.h"
 
+#include <cmath>
 #include <cstdlib>
 
 
@@ -97,16 +98,6 @@ std::pair<Rail_position_transform, float_t> find_transform_approx(
     float_t signed_distance,
     float_t prev_line_pos)
 {
-    assert(signed_distance <= 0);
-    float_t distance{ abs(signed_distance) };
-
-    // Bounce against signed distance bound.
-    if (bogie_spring.line_position - prev_line_pos > 0)
-    {
-        bogie_spring.line_position = prev_line_pos;
-        bogie_spring.velocity *= -0.5f;
-    }
-
     // Adjust spring velocity based off distance error.
     bogie_spring.line_position += bogie_spring.velocity;
 
@@ -116,7 +107,9 @@ std::pair<Rail_position_transform, float_t> find_transform_approx(
     auto found_distance = glm_vec3_distance(found_trans.position.raw,
                                             const_cast<float_t*>(prev_transform.position.raw));
 
-    bogie_spring.velocity = found_distance - distance;
+    float_t distance_sign{ glm_signf(bogie_spring.line_position - prev_line_pos) };
+
+    bogie_spring.velocity = signed_distance - (found_distance * distance_sign);
 
     return { found_trans, bogie_spring.line_position };
 }

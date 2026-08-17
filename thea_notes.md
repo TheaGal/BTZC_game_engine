@@ -72,7 +72,8 @@
         - no this wouldn't work bc the position could be very different from one master to another.
         - it'll just have to be a bunch of masters (or rather just regular bogies) trailing behind the first.
     - [x] have bogies trail one after the other
-    - [ ] fix bogie snapping to wrong side.
+    - [x] fix bogie snapping to wrong side.
+        - there is flickering when some weirdness happens w curves and bezier curves.
     - [ ] have car be stationed between ~~master and trailing bogies~~ pairs of bogies
 
 - [ ] deadline: render object settings imgui (`imgui_edit__render_object_settings()`)
