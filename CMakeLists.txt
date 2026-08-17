@@ -131,6 +131,7 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/simple_combat_char.glb
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/stupid_polygon_grid.mtl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/unit_box.mtl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/unit_box.wobj
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/basic_diffuse.shader
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/basic_diffuse.shadrefl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/default_shader.shader

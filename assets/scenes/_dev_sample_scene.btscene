@@ -490,7 +490,8 @@
                     "type_name": "component::Rail_line_rider",
                     "members_j": {
                         "riding_line_uuid": "600a1c2b-102b-468b-a988-6211fd72dbd1",
-                        "line_position": 0.0
+                        "line_position": 0.0,
+                        "bogie_positions": [0.0, -10.0, -12.0, -22.0, -24.0, -44.0]
                     }
                 }
             ]

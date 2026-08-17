@@ -67,8 +67,12 @@
     - Postponed until controller support and other stuff is going to get added.
 
 - [ ] make more train cars connecting for the riding rails
-    - [ ] have 1 master bogie per car, then 1 trailing bogie
-    - [ ] master bogie either follows desired position or master bogie one car ahead
-    - [ ] have car be stationed between master and trailing bogies
+    - [ ] ~~have 1 master bogie per car, then 1 trailing bogie~~ have list of bogies and offsets.
+    - [ ] ~~master bogie either follows desired position or master bogie one car ahead~~
+        - no this wouldn't work bc the position could be very different from one master to another.
+        - it'll just have to be a bunch of masters (or rather just regular bogies) trailing behind the first.
+    - [ ] have car be stationed between ~~master and trailing bogies~~ pairs of bogies
+
+- [ ] deadline: render object settings imgui (`imgui_edit__render_object_settings()`)
 
 - [ ] Reimplement btafa processing here.

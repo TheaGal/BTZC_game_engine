@@ -89,6 +89,7 @@ int32_t main()
                                "gradient",
                                { { "image", "__hdr_draw_image_color" } });
     main_renderer.add_material_palette("default_material_palette", { "default_mat" });
+    main_renderer.add_model("unit_box", ".wobj", false, false);
     main_renderer.add_model("probuilder_example", ".wobj", false, false);
     main_renderer.add_model("simple_combat_char", ".glb", true, true);
     main_renderer.add_model("rail_line_editor_gizmo", ".wobj", false, false);
