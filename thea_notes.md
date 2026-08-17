@@ -63,7 +63,8 @@
 
 - [x] deadline: performance timer in txp-renderer
 
-- [ ] deadline: input direction with keyboard
+- [ ] ~~deadline: input direction with keyboard~~
+    - Postponed until controller support and other stuff is going to get added.
 
 - [ ] make more train cars connecting for the riding rails
     - [ ] have 1 master bogie per car, then 1 trailing bogie
