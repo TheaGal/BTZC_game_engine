@@ -97,10 +97,11 @@ std::pair<Rail_position_transform, float_t> find_transform_approx(
     float_t signed_distance,
     float_t prev_line_pos)
 {
+    assert(signed_distance <= 0);
     float_t distance{ abs(signed_distance) };
 
     // Bounce against signed distance bound.
-    if (prev_line_pos - bogie_spring.line_position > 0)
+    if (bogie_spring.line_position - prev_line_pos > 0)
     {
         bogie_spring.line_position = prev_line_pos;
         bogie_spring.velocity *= -0.5f;
@@ -115,7 +116,7 @@ std::pair<Rail_position_transform, float_t> find_transform_approx(
     auto found_distance = glm_vec3_distance(found_trans.position.raw,
                                             const_cast<float_t*>(prev_transform.position.raw));
 
-    bogie_spring.velocity = -(found_distance - distance); // @TODO: not working???
+    bogie_spring.velocity = found_distance - distance;
 
     return { found_trans, bogie_spring.line_position };
 }
@@ -203,7 +204,25 @@ void BT::system::rail_line_rider_update()
                                       bogie_offset - prev_bogie_offset,
                                       prev_line_position);
 
-            k_apply_transform_to_entity(reg, ent, prev_transform);
+            // Apply transform to render object.
+            static auto const k_apply_transform_to_render_obj = [](entt::registry& reg,
+                                                                   entt::entity ent,
+                                                                   Rail_position_transform const&
+                                                                       transform) {
+                auto& rend_obj_cfg = reg.get<TXP::component::Render_object_config>(ent);
+
+                glm_translate_make(rend_obj_cfg.transform.raw,
+                                   const_cast<float_t*>(transform.position.raw));
+
+                versor transform_rot;
+                glm_euler_zyx_quat(vec3{ transform.angle_x, transform.angle_y, transform.angle_z },
+                                   transform_rot);
+                glm_quat_rotate(rend_obj_cfg.transform.raw,
+                                transform_rot,
+                                rend_obj_cfg.transform.raw);
+            };
+
+            k_apply_transform_to_render_obj(reg, line_rider.created_entities[i], prev_transform);
         }
     }
 }

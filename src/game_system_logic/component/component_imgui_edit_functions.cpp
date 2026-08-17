@@ -17,6 +17,8 @@
 #include "transform.h"
 #include "txp_renderer_public.h"
 
+#include <string>
+
 
 bool BT::component::edit::internal::imgui_open_component_editing_header(std::string const& label)
 {
@@ -588,6 +590,25 @@ void BT::component::edit::imgui_edit__rail_line_rider(entt::registry& reg, entt:
     ImGui::EndDisabled();
 
     ImGui::DragScalar("line_position", ImGuiDataType_Double, &rail_line_rider_data.line_position);
+
+    ImGui::SeparatorText("Bogie positions");
+    size_t i = 0;
+    for (auto& bogie_pos : rail_line_rider_data.bogie_positions)
+    {
+        ImGui::DragFloat(("bogie_pos[" + std::to_string(i) + "]").c_str(), &bogie_pos);
+        i++;
+    }
+
+    ImGui::SeparatorText("Bogie springs");
+    i = 0;
+    for (auto& bogie_spring : rail_line_rider_data.bogie_springs)
+    {
+        ImGui::DragFloat(("bogie_spring[" + std::to_string(i) + "].line_position").c_str(),
+                         &bogie_spring.line_position);
+        ImGui::DragFloat(("bogie_spring[" + std::to_string(i) + "].velocity").c_str(),
+                         &bogie_spring.velocity);
+        i++;
+    }
 
     ImGui::PopItemWidth();
     ImGui::PopID();
