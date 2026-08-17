@@ -66,7 +66,7 @@
 - [ ] ~~deadline: input direction with keyboard~~
     - Postponed until controller support and other stuff is going to get added.
 
-- [ ] make more train cars connecting for the riding rails
+- [x] make more train cars connecting for the riding rails
     - [x] ~~have 1 master bogie per car, then 1 trailing bogie~~ have list of bogies and offsets.
     - [ ] ~~master bogie either follows desired position or master bogie one car ahead~~
         - no this wouldn't work bc the position could be very different from one master to another.
@@ -74,7 +74,7 @@
     - [x] have bogies trail one after the other
     - [x] fix bogie snapping to wrong side.
         - there is flickering when some weirdness happens w curves and bezier curves.
-    - [ ] have car be stationed between ~~master and trailing bogies~~ pairs of bogies
+    - [x] have car be stationed between ~~master and trailing bogies~~ pairs of bogies
 
 - [ ] deadline: render object settings imgui (`imgui_edit__render_object_settings()`)
 

@@ -105,15 +105,18 @@ struct Rail_line_rider
 
     std::vector<float_t> bogie_positions;
 
+    std::vector<std::pair<uint32_t, uint32_t>> car_bogies;
+
     NLOHMANN_DEFINE_TYPE_INTRUSIVE(
         Rail_line_rider,
         riding_line_uuid,
         line_position,
-        bogie_positions
+        bogie_positions,
+        car_bogies
     );
 
     /// List of entities created for each bogie.
-    std::vector<entt::entity> created_entities;
+    std::vector<entt::entity> created_bogie_entities;
 
     /// Signed speeds of bogie movement, to amortize position.
     struct Bogie_spring_memory
@@ -122,6 +125,9 @@ struct Rail_line_rider
         float_t velocity;
     };
     std::vector<Bogie_spring_memory> bogie_springs;
+
+    /// List of entities created for each car.
+    std::vector<entt::entity> created_car_entities;
 };
 
 }  // namespace component
