@@ -281,94 +281,88 @@ void BT::component::edit::imgui_edit__character_world_space_input(entt::registry
     ImGui::PopID();
 }
 
-void BT::component::edit::imgui_edit__render_object_settings(entt::registry& reg,
+void BT::component::edit::imgui_edit__render_object_config(entt::registry& reg,
                                                              entt::entity ecs_entity)
 {
-    BT::date_deadline(2026, 8, 10);
-    // auto& rend_obj_settings{ reg.get<component::Render_object_settings>(ecs_entity) };
+    auto& rend_obj_settings{ reg.get<TXP::component::Render_object_config>(ecs_entity) };
 
-    // ImGui::PushID(&rend_obj_settings);
-    // ImGui::PushItemWidth(ImGui::GetFontSize() * -10);
+    ImGui::PushID(&rend_obj_settings);
+    ImGui::PushItemWidth(ImGui::GetFontSize() * -10);
 
-    // bool is_disabled{ reg.any_of<component::Created_render_object_reference>(ecs_entity) };
-    // if (is_disabled)
-    //     ImGui::TextColored(k_color_warning,
-    //                        "Settings are disabled while a render object is created.");
+    ImGui::TextWrapped(
+        "NOTE: if data is changed in this component, renderer will need to have its owned data "
+        "invalidated (see button at bottom) to force recreating the render object.");
 
-    // // Settings.
-    // ImGui::BeginDisabled(is_disabled);
+    // Settings.
+    ImGui::SeparatorText("Required");
 
-    // static std::vector<std::pair<std::string, Render_layer>> const s_layers{
-    //     { "Default",      RENDER_LAYER_DEFAULT      },
-    //     { "Invisible",    RENDER_LAYER_INVISIBLE    },
-    //     { "Level editor", RENDER_LAYER_LEVEL_EDITOR },
-    // };
+    static std::vector<std::pair<std::string, TXP::Render_layer>> const k_layers{
+        { "Default",      TXP::RENDER_LAYER_DEFAULT      },
+        { "Invisible",    TXP::RENDER_LAYER_INVISIBLE    },
+        { "Level editor", TXP::RENDER_LAYER_LEVEL_EDITOR },
+    };
 
-    // // @NOTE: I just realized that this isn't applicable for the application (since I only want
-    // //        one render layer for the one render object).
-    // #if 0
-    // ImGui::Text("Render layer mask: %s",
-    //             convert_number_to_binary_bit_string(8, rend_obj_settings.render_layer).c_str());
-    // ImGui::SameLine();
-    // if (ImGui::Button("Change.."))
-    //     ImGui::OpenPopup("change_layer_mask");
-    // if (ImGui::BeginPopup("change_layer_mask"))
-    // {
+    int32_t render_layer_cur_item = [&rend_obj_settings]() {
+        int32_t layer_idx = 0;
+        for (auto const& [str, layer] : k_layers)
+        {
+            if (rend_obj_settings.render_layer == layer)
+                break;
+            layer_idx++;
+        }
+        return layer_idx;
+    }();
 
-    //     for (auto& [layer_str, layer_mask] : s_layers)
-    //     {   // Checkbox for layer.
-    //         bool layer_enabled{ (rend_obj_settings.render_layer & layer_mask) != 0 };
-    //         if (ImGui::Checkbox(layer_str.c_str(), &layer_enabled))
-    //         {
-    //             if (layer_enabled)
-    //             {
-    //                 rend_obj_settings.render_layer =
-    //                     Render_layer(rend_obj_settings.render_layer | layer_mask);
-    //             }
-    //             else
-    //             {
-    //                 rend_obj_settings.render_layer =
-    //                     Render_layer(rend_obj_settings.render_layer & ~layer_mask);
-    //             }
-    //         }
-    //     }
+    static std::vector<char const*> k_render_layer_str_list = []() {
+        std::vector<char const*> str_list;
+        str_list.reserve(k_layers.size());
 
-    //     ImGui::EndPopup();
-    // }
-    // #endif  // 0
+        for (auto const& [str, _] : k_layers)
+        {
+            str_list.emplace_back(str.data());
+        }
+        return str_list;
+    }();
 
-    // std::string current_layer_str{ "INVALID LAYER" };
+    if (ImGui::Combo("render_layer",
+                     &render_layer_cur_item,
+                     k_render_layer_str_list.data(),
+                     k_render_layer_str_list.size()))
+    {
+        rend_obj_settings.render_layer = k_layers[render_layer_cur_item].second;
+    }
 
-    // for (auto const& [layer_str, layer_mask] : s_layers)
-    //     if (rend_obj_settings.render_layer == layer_mask)
-    //         current_layer_str = layer_str;
+    ImGui::InputText("model_name", &rend_obj_settings.model_name);
 
-    // if (ImGui::BeginCombo("Render layer", current_layer_str.c_str()))
-    // {
-    //     for (auto const& [layer_str, layer_mask] : s_layers)
-    //     {   // Combo selectable item.
-    //         bool const is_selected{ rend_obj_settings.render_layer == layer_mask };
-    //         if (ImGui::Selectable(layer_str.c_str(), is_selected))
-    //             rend_obj_settings.render_layer = layer_mask;
+    ImGui::DragFloat4("transform[0]", rend_obj_settings.transform.raw[0]);
+    ImGui::DragFloat4("transform[1]", rend_obj_settings.transform.raw[1]);
+    ImGui::DragFloat4("transform[2]", rend_obj_settings.transform.raw[2]);
+    ImGui::DragFloat4("transform[3]", rend_obj_settings.transform.raw[3]);
 
-    //         if (is_selected)
-    //             ImGui::SetItemDefaultFocus();
-    //     }
+    ImGui::SeparatorText("Optional");
 
-    //     ImGui::EndCombo();
-    // }
+    ImGui::InputText("sub_mesh_name", &rend_obj_settings.sub_mesh_name);
+    ImGui::Checkbox("sub_mesh_zero_origin_position",
+                    &rend_obj_settings.sub_mesh_zero_origin_position);
 
-    // ImGui::InputText("Model name", &rend_obj_settings.model_name);
-    // ImGui::Checkbox("Is deformed", &rend_obj_settings.is_deformed);
+    ImGui::InputText("material_palette", &rend_obj_settings.material_palette);
+    ImGui::Checkbox("is_deformed", &rend_obj_settings.is_deformed);
 
-    // ImGui::BeginDisabled(!rend_obj_settings.is_deformed);
-    // ImGui::InputText("Animator template name", &rend_obj_settings.animator_template_name);
-    // ImGui::EndDisabled();
+    ImGui::SeparatorText("Renderer-owned data");
 
-    // ImGui::EndDisabled();
+    ImGui::BeginDisabled();
+    ImGui::InputScalar("renderer_owned_data.pool_key",
+                       ImGuiDataType_U32,
+                       &rend_obj_settings.renderer_owned_data.pool_key);
+    ImGui::EndDisabled();
 
-    // ImGui::PopItemWidth();
-    // ImGui::PopID();
+    if (ImGui::Button("Invalidate renderer owned data\n(forces rebuild render object)"))
+    {
+        rend_obj_settings.renderer_owned_data = {};
+    }
+
+    ImGui::PopItemWidth();
+    ImGui::PopID();
 }
 
 void BT::component::edit::imgui_edit__animator_root_motion(entt::registry& reg,

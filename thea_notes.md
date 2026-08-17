@@ -76,6 +76,6 @@
         - there is flickering when some weirdness happens w curves and bezier curves.
     - [x] have car be stationed between ~~master and trailing bogies~~ pairs of bogies
 
-- [ ] deadline: render object settings imgui (`imgui_edit__render_object_settings()`)
+- [x] deadline: render object settings imgui (`imgui_edit__render_object_settings()`)
 
 - [ ] Reimplement btafa processing here.
