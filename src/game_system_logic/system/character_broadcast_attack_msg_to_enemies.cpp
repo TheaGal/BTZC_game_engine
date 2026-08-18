@@ -1,8 +1,7 @@
 #include "character_broadcast_attack_msg_to_enemies.h"
 
-#include "animation_frame_action_tool/runtime_data.h"
+#include "btdatecheck.h"
 #include "btglm.h"
-#include "game_system_logic/component/animator_root_motion.h"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/combat_stats.h"
 #include "game_system_logic/component/cpu_enemy_awareness.h"
@@ -10,6 +9,7 @@
 #include "game_system_logic/entity_container.h"
 #include "physics_engine/physics_engine.h"
 #include "service_finder/service_finder.h"
+#include "txp_renderer_public.h"
 
 #include <cassert>
 
@@ -29,7 +29,9 @@ void iter_and_asdfasdfasdf()
 
 void BT::system::character_broadcast_attack_msg_to_enemies()
 {
-    auto& rend_obj_pool{ service_finder::find_service<Renderer>().get_render_object_pool() };
+    date_deadline(2026, 9, 3);  // @TODO: confirm that this system works!
+
+    auto& renderer{ service_finder::find_service<TXP::Renderer>() };
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
 
@@ -38,48 +40,32 @@ void BT::system::character_broadcast_attack_msg_to_enemies()
                         component::Character_mvt_state const,
                         component::Detectable_character const>() };
 
-    auto view_sub{ reg.view<component::Created_render_object_reference>() };
-
     auto view2{ reg.view<component::Transform const,
                          component::CPU_enemy_awareness const,  // These 2 are on the same layer (NTD).
                          component::Detectable_character>() };  // These 2 are on the same layer (NTD).
 
     for (auto&& [ecs_entity, transform, disp_repr_ref, char_mvt_st, detect_char] : view.each())
     {   // Check if event to do broadcasts exists.
-        bool do_atk_broadcast{ false };
-        bool do_heal_broadcast{ false };
+        auto animator{ renderer.try_get_skeletal_animator(
+            entity_container.find_entity(disp_repr_ref.display_repr_uuid)) };
 
-        if (view_sub.contains(entity_container.find_entity(disp_repr_ref.display_repr_uuid)))
-        {
-            auto& rend_obj_ref{ view_sub.get<component::Created_render_object_reference>(
-                entity_container.find_entity(disp_repr_ref.display_repr_uuid)) };
-
-            auto& rend_obj{ *rend_obj_pool
-                                 .checkout_render_obj_by_key({ rend_obj_ref.render_obj_uuid_ref })
-                                 .front() };
-
-            auto animator{ rend_obj.get_model_animator() };
-            if (!animator)
-            {   // Cancel bc animator doesn't exist.
-                rend_obj_pool.return_render_objs({ &rend_obj });
-                continue;
-            }
-
-            // Get AFA broadcast message.
-            do_atk_broadcast =
-                animator->get_anim_frame_action_data_handle()
-                    .get_reeve_data_handle(
-                        anim_frame_action::CTRL_DATA_LABEL_broadcast_attack_to_enemies)
-                    .check_if_rising_edge_occurred();
-
-            do_heal_broadcast =
-                animator->get_anim_frame_action_data_handle()
-                    .get_reeve_data_handle(
-                        anim_frame_action::CTRL_DATA_LABEL_broadcast_healing_to_enemies)
-                    .check_if_rising_edge_occurred();
-
-            rend_obj_pool.return_render_objs({ &rend_obj });
+        if (!animator)
+        {  // Cancel bc animator doesn't exist.
+            continue;
         }
+
+        // Get AFA broadcast message.
+        bool do_atk_broadcast =
+            animator->get_anim_frame_action_data_handle()
+                .get_reeve_data_handle(
+                    TXP::anim_frame_action::CTRL_DATA_LABEL_broadcast_attack_to_enemies)
+                .check_if_rising_edge_occurred();
+
+        bool do_heal_broadcast =
+            animator->get_anim_frame_action_data_handle()
+                .get_reeve_data_handle(
+                    TXP::anim_frame_action::CTRL_DATA_LABEL_broadcast_healing_to_enemies)
+                .check_if_rising_edge_occurred();
 
         // Exit early if no broadcast event.
         if (!do_atk_broadcast && !do_heal_broadcast)

@@ -82,4 +82,4 @@
     - Doing a kinda temporary fix (with stubbed out func in txp-renderer)
 
 - [ ] Reimplement btafa processing here.
-    - [ ] character broadcast attack msg
+    - [x] character broadcast attack msg
