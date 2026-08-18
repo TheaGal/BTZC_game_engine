@@ -137,8 +137,5 @@ void BT::Phys_obj_impl_tri_mesh::update_debug_mesh()
                                            current_trans.rotation.GetY(),
                                            current_trans.rotation.GetZ(),
                                            current_trans.rotation.GetW() }, graphic_trans);
-    BT::date_deadline(2026, 8, 10);
-    // glm_mat4_copy(graphic_trans,
-    //               get_main_debug_mesh_pool()
-    //                   .get_debug_mesh_volatile_handle(m_debug_mesh_id).transform);
+    TXP::debug::update_debug_model_transform(m_debug_mesh_id, graphic_trans);
 }

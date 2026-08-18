@@ -299,10 +299,7 @@ void BT::Phys_obj_impl_char_controller::update_debug_mesh()
     glm_scale(graphic_trans, vec3{ m_radius,
                                    0.5f * height + m_radius,
                                    m_radius });
-    BT::date_deadline(2026, 8, 10);
-    // glm_mat4_copy(graphic_trans,
-    //               get_main_debug_mesh_pool()
-    //                   .get_debug_mesh_volatile_handle(m_debug_mesh_id).transform);
+    TXP::debug::update_debug_model_transform(m_debug_mesh_id, graphic_trans);
 }
 
 // Character contact listener.

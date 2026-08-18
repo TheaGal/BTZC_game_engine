@@ -78,4 +78,7 @@
 
 - [x] deadline: render object settings imgui (`imgui_edit__render_object_settings()`)
 
+- [x] deadline: add in debug mesh update transform.
+    - Doing a kinda temporary fix (with stubbed out func in txp-renderer)
+
 - [ ] Reimplement btafa processing here.
