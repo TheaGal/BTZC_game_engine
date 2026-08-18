@@ -35,6 +35,7 @@
 #include "timer/timer.h"
 #include "timer/watchdog_timer.h"
 #include "txp_renderer_public.h"
+
 #include <cstdint>
 #include <memory>
 
@@ -353,8 +354,8 @@ int32_t main()
 
             BT::system::rail_line_rider_update();
 
+            BT::system::character_broadcast_attack_msg_to_enemies();
 #if IMPLEMENT_THIS
-            BT::system::character_broadcast_attack_msg_to_enemies();  // Requires AFA
             BT::system::cpu_character_enemy_detection();  // Requires AFA
 #endif // IMPLEMENT_THIS
             BT::system::cpu_character_world_space_input();
