@@ -81,5 +81,17 @@
 - [x] deadline: add in debug mesh update transform.
     - Doing a kinda temporary fix (with stubbed out func in txp-renderer)
 
+- [x] Hook in the app settings into renderer.
+    - now fullscreen is kinda (incomplete) implemented.
+
+- [ ] get app to not crash on quit anymore (so that settings can get saved).
+
+- [ ] record the number and ids of the open scene views into renderer settings
+    - a simple number system could also be used, instead of uuids.
+    - in order to do that tho, when creating a new scene view the imgui data on it would have to be deleted tho.
+- [ ] open the number and ids of saved scene views on startup (or just 1 rando id by default)
+
+- [ ] automatically delete stale scene view ids from imgui.ini
+
 - [ ] Reimplement btafa processing here.
     - [x] character broadcast attack msg

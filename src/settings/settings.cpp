@@ -6,6 +6,7 @@
 
 #include "btlogger.h"
 #include "toml++/toml.hpp"
+#include "txp_renderer_public.h"
 
 #include <cassert>
 #include <filesystem>
@@ -24,27 +25,25 @@ static App_settings* s_app_settings{ nullptr };
 /// Converts TOML file contents to app settings, only changing values that exist in the file.
 void toml_to_app_settings(toml::table const& toml_tbl, App_settings& app_settings)
 {
-    app_settings.window_settings.monitor_idx     = toml_tbl["window_settings"]["monitor_idx"].value_or(app_settings.window_settings.monitor_idx);
-    app_settings.window_settings.windowed_width  = toml_tbl["window_settings"]["windowed_width"].value_or(app_settings.window_settings.windowed_width);
-    app_settings.window_settings.windowed_height = toml_tbl["window_settings"]["windowed_height"].value_or(app_settings.window_settings.windowed_height);
-    app_settings.window_settings.is_resizable    = toml_tbl["window_settings"]["is_resizable"].value_or(app_settings.window_settings.is_resizable);
-    app_settings.window_settings.has_border      = toml_tbl["window_settings"]["has_border"].value_or(app_settings.window_settings.has_border);
-    app_settings.window_settings.is_maximized    = toml_tbl["window_settings"]["is_maximized"].value_or(app_settings.window_settings.is_maximized);
-    app_settings.window_settings.is_fullscreen   = toml_tbl["window_settings"]["is_fullscreen"].value_or(app_settings.window_settings.is_fullscreen);
+    app_settings.renderer_settings.monitor_idx     = toml_tbl["renderer_settings"]["monitor_idx"].value_or(app_settings.renderer_settings.monitor_idx);
+    app_settings.renderer_settings.windowed_width  = toml_tbl["renderer_settings"]["windowed_width"].value_or(app_settings.renderer_settings.windowed_width);
+    app_settings.renderer_settings.windowed_height = toml_tbl["renderer_settings"]["windowed_height"].value_or(app_settings.renderer_settings.windowed_height);
+    app_settings.renderer_settings.is_resizable    = toml_tbl["renderer_settings"]["is_resizable"].value_or(app_settings.renderer_settings.is_resizable);
+    app_settings.renderer_settings.has_border      = toml_tbl["renderer_settings"]["has_border"].value_or(app_settings.renderer_settings.has_border);
+    app_settings.renderer_settings.is_fullscreen   = toml_tbl["renderer_settings"]["is_fullscreen"].value_or(app_settings.renderer_settings.is_fullscreen);
 }
 
 /// Converts app settings into TOML file, including all fields. Returns the TOML file.
 toml::table app_settings_to_toml(App_settings& app_settings)
 {
     return toml::table{
-        { "window_settings", toml::table{
-                { "monitor_idx",     app_settings.window_settings.monitor_idx  },
-                { "windowed_width",  app_settings.window_settings.windowed_width  },
-                { "windowed_height", app_settings.window_settings.windowed_height },
-                { "is_resizable",    app_settings.window_settings.is_resizable    },
-                { "has_border",      app_settings.window_settings.has_border      },
-                { "is_maximized",    app_settings.window_settings.is_maximized    },
-                { "is_fullscreen",   app_settings.window_settings.is_fullscreen   },
+        { "renderer_settings", toml::table{
+                { "monitor_idx",     app_settings.renderer_settings.monitor_idx  },
+                { "windowed_width",  app_settings.renderer_settings.windowed_width  },
+                { "windowed_height", app_settings.renderer_settings.windowed_height },
+                { "is_resizable",    app_settings.renderer_settings.is_resizable    },
+                { "has_border",      app_settings.renderer_settings.has_border      },
+                { "is_fullscreen",   app_settings.renderer_settings.is_fullscreen   },
             }
         },
     };
@@ -52,6 +51,16 @@ toml::table app_settings_to_toml(App_settings& app_settings)
 
 }  // namespace
 
+
+void BT::App_settings::send_settings_to_renderer(TXP::Renderer& renderer) const
+{
+    renderer.send_new_settings(renderer_settings);
+}
+
+void BT::App_settings::load_settings_from_renderer(TXP::Renderer& renderer)
+{
+    renderer_settings = renderer.get_current_settings();
+}
 
 void BT::initialize_app_settings_from_file_or_fallback_to_defaults()
 {   // Ensure doesn't run multiple times.

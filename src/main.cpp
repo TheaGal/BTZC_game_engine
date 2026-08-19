@@ -66,8 +66,6 @@ int32_t main()
     TXP::Input::Input_handler input_handler;
     TXP::Renderer main_renderer{ entity_container.get_ecs_registry(),
                                  "No Train No Game",
-                                 1280,
-                                 720,
                                  BTZC_GAME_ENGINE_ASSET_TEXTURE_PATH,
                                  BTZC_GAME_ENGINE_ASSET_SHADER_PATH,
                                  BTZC_GAME_ENGINE_ASSET_MODEL_PATH,
@@ -95,7 +93,10 @@ int32_t main()
     main_renderer.add_model("simple_combat_char", ".glb", true, true);
     main_renderer.add_model("rail_line_editor_gizmo", ".wobj", false, false);
     main_renderer.add_model("rails", ".wobj", false, false);
+
     main_renderer.build();
+
+    BT::get_app_settings_read_handle().send_settings_to_renderer(main_renderer);
 
     main_renderer.set_imgui_build_contents_callback([]() {
         BT::system::imgui_render_transform_hierarchy_window(false);
@@ -473,9 +474,7 @@ int32_t main()
     }
 
     // Write final state of settings file.
-#if IMPLEMENT_THIS
-    main_renderer.save_state_to_app_settings();
-#endif // IMPLEMENT_THIS
+    BT::get_app_settings_write_handle().load_settings_from_renderer(main_renderer);
     BT::save_app_settings_to_disk();
 
     // Show stats prior to cleanup.
