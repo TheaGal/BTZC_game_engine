@@ -25,27 +25,36 @@ static App_settings* s_app_settings{ nullptr };
 /// Converts TOML file contents to app settings, only changing values that exist in the file.
 void toml_to_app_settings(toml::table const& toml_tbl, App_settings& app_settings)
 {
-    app_settings.renderer_settings.monitor_idx            = toml_tbl["renderer_settings"]["monitor_idx"].value_or(app_settings.renderer_settings.monitor_idx);
-    app_settings.renderer_settings.windowed_width         = toml_tbl["renderer_settings"]["windowed_width"].value_or(app_settings.renderer_settings.windowed_width);
-    app_settings.renderer_settings.windowed_height        = toml_tbl["renderer_settings"]["windowed_height"].value_or(app_settings.renderer_settings.windowed_height);
-    app_settings.renderer_settings.is_resizable           = toml_tbl["renderer_settings"]["is_resizable"].value_or(app_settings.renderer_settings.is_resizable);
-    app_settings.renderer_settings.has_border             = toml_tbl["renderer_settings"]["has_border"].value_or(app_settings.renderer_settings.has_border);
-    app_settings.renderer_settings.is_fullscreen          = toml_tbl["renderer_settings"]["is_fullscreen"].value_or(app_settings.renderer_settings.is_fullscreen);
-    app_settings.renderer_settings.num_scene_view_windows = toml_tbl["renderer_settings"]["num_scene_view_windows"].value_or(app_settings.renderer_settings.num_scene_view_windows);
+    app_settings.renderer_settings.monitor_idx     = toml_tbl["renderer_settings"]["monitor_idx"].value_or(app_settings.renderer_settings.monitor_idx);
+    app_settings.renderer_settings.windowed_width  = toml_tbl["renderer_settings"]["windowed_width"].value_or(app_settings.renderer_settings.windowed_width);
+    app_settings.renderer_settings.windowed_height = toml_tbl["renderer_settings"]["windowed_height"].value_or(app_settings.renderer_settings.windowed_height);
+    app_settings.renderer_settings.is_resizable    = toml_tbl["renderer_settings"]["is_resizable"].value_or(app_settings.renderer_settings.is_resizable);
+    app_settings.renderer_settings.has_border      = toml_tbl["renderer_settings"]["has_border"].value_or(app_settings.renderer_settings.has_border);
+    app_settings.renderer_settings.is_fullscreen   = toml_tbl["renderer_settings"]["is_fullscreen"].value_or(app_settings.renderer_settings.is_fullscreen);
+
+    app_settings.renderer_settings.open_scene_view_ids.clear();
+    for (auto const& elem : *toml_tbl["renderer_settings"]["open_scene_view_ids"].as_array())
+    {
+        app_settings.renderer_settings.open_scene_view_ids.emplace_back(elem.value_or("unknown"));
+    }
 }
 
 /// Converts app settings into TOML file, including all fields. Returns the TOML file.
 toml::table app_settings_to_toml(App_settings& app_settings)
 {
+    toml::array open_scene_view_ids_arr;
+    for (auto const& elem : app_settings.renderer_settings.open_scene_view_ids)
+        open_scene_view_ids_arr.emplace_back(elem);
+
     return toml::table{
         { "renderer_settings", toml::table{
-                { "monitor_idx",            app_settings.renderer_settings.monitor_idx            },
-                { "windowed_width",         app_settings.renderer_settings.windowed_width         },
-                { "windowed_height",        app_settings.renderer_settings.windowed_height        },
-                { "is_resizable",           app_settings.renderer_settings.is_resizable           },
-                { "has_border",             app_settings.renderer_settings.has_border             },
-                { "is_fullscreen",          app_settings.renderer_settings.is_fullscreen          },
-                { "num_scene_view_windows", app_settings.renderer_settings.num_scene_view_windows },
+                { "monitor_idx",         app_settings.renderer_settings.monitor_idx     },
+                { "windowed_width",      app_settings.renderer_settings.windowed_width  },
+                { "windowed_height",     app_settings.renderer_settings.windowed_height },
+                { "is_resizable",        app_settings.renderer_settings.is_resizable    },
+                { "has_border",          app_settings.renderer_settings.has_border      },
+                { "is_fullscreen",       app_settings.renderer_settings.is_fullscreen   },
+                { "open_scene_view_ids", open_scene_view_ids_arr                        },
             }
         },
     };

@@ -87,12 +87,16 @@
 - [x] get app to not crash on quit anymore (so that settings can get saved).
 - [x] make sure attributes update for renderer settings
 
-- [ ] record the number and ids of the open scene views into renderer settings
+- [x] record the number and ids of the open scene views into renderer settings
     - a simple number system could also be used, instead of uuids.
     - in order to do that tho, when creating a new scene view the imgui data on it would have to be deleted tho.
-- [ ] open the number and ids of saved scene views on startup (or just 1 rando id by default)
+    - the above ^^ did not work 😭
+    - OKAY: so what i'll do is just keep a list in toml of the UUID strings for the views. use `toml::array()`. use the vector length as a way to keep the strings sorted. make sure to delete the old window entries. don't try to do any reordering/sorting like currently.
+- [x] open the number and ids of saved scene views on startup (or just 1 rando id by default)
 
-- [ ] automatically delete stale scene view ids from imgui.ini
+- [x] automatically delete stale scene view ids from imgui.ini
+- [ ] double-check: do the dockspace stuff also delete?
+- [ ] check: what happened with the 0 size render views crash?
 
 - [ ] Reimplement btafa processing here.
     - [x] character broadcast attack msg
