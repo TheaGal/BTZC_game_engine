@@ -1,5 +1,6 @@
 #include "rail_line_editor_update.h"
 
+#include "btuuid.h"
 #include "entt/entity/registry.hpp"
 #include "game_system_logic/component/rail_line.h"
 #include "game_system_logic/entity_container.h"
@@ -13,9 +14,11 @@
 
 void BT::system::rail_line_editor_update()
 {
-    auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
+    auto& entity_container{ service_finder::find_service<Entity_container>() };
+    auto& reg{ entity_container.get_ecs_registry() };
 
-    auto create_rail_piece_fn = [&reg](component::Rail_line& rail_line,
+    auto create_rail_piece_fn = [&entity_container,
+                                 &reg](component::Rail_line& rail_line,
                                        component::Rail_line::Build_code build_code,
                                        std::string const& sub_mesh_name,
                                        vec3 mesh_origin_pos,
@@ -30,7 +33,7 @@ void BT::system::rail_line_editor_update()
         //        seen by the object registry. Also, it bypasses having to create a UUID, though
         //        that means that nothing can directly interact with the rail line pieces, which is
         //        intended.  -Thea 2026/08/11
-        auto new_ent = reg.create();
+        auto new_ent = entity_container.create_entity(UUID_helper::generate_uuid());
         rail_line.created_entities.emplace_back(new_ent);
 
         auto& rend_obj_cfg = reg.emplace_or_replace<TXP::component::Render_object_config>(new_ent);
@@ -62,7 +65,7 @@ void BT::system::rail_line_editor_update()
         // Clear all entities.
         for (auto ent : rail_line.created_entities)
         {
-            reg.destroy(ent);
+            entity_container.destroy_entity(entity_container.find_entity_uuid(ent));
         }
         rail_line.created_entities.clear();
 

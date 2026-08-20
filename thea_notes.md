@@ -84,7 +84,8 @@
 - [x] Hook in the app settings into renderer.
     - now fullscreen is kinda (incomplete) implemented.
 
-- [ ] get app to not crash on quit anymore (so that settings can get saved).
+- [x] get app to not crash on quit anymore (so that settings can get saved).
+- [ ] make sure attributes update for renderer settings
 
 - [ ] record the number and ids of the open scene views into renderer settings
     - a simple number system could also be used, instead of uuids.

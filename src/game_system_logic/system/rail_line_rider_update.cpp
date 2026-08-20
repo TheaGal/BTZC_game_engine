@@ -20,7 +20,8 @@ using namespace BT;
 
 using Rail_position_transform = component::Rail_line::Build_code_info::Rail_position_transform;
 
-void build_bogie_entities(entt::registry& reg,
+void build_bogie_entities(Entity_container& entity_container,
+                          entt::registry& reg,
                           entt::entity ent,
                           component::Rail_line_rider& line_rider)
 {
@@ -30,7 +31,7 @@ void build_bogie_entities(entt::registry& reg,
         if (sub_ent == ent)
             continue;
 
-        reg.destroy(sub_ent);
+        entity_container.destroy_entity(entity_container.find_entity_uuid(sub_ent));
     }
     line_rider.created_bogie_entities.clear();
 
@@ -41,8 +42,10 @@ void build_bogie_entities(entt::registry& reg,
 
         // Use current entity as first entity if first bogie and 0 relative position.
         // If not, create a new entity.
-        line_rider.created_bogie_entities.emplace_back(i == 0 && bogie_pos == 0 ? ent
-                                                                                : reg.create());
+        line_rider.created_bogie_entities.emplace_back(
+            i == 0 && bogie_pos == 0
+                ? ent
+                : entity_container.create_entity(UUID_helper::generate_uuid()));
 
         // Add model.
         auto& rend_obj_cfg = reg.emplace_or_replace<TXP::component::Render_object_config>(
@@ -60,14 +63,15 @@ void build_bogie_entities(entt::registry& reg,
     }
 }
 
-void build_car_entities(entt::registry& reg,
+void build_car_entities(Entity_container& entity_container,
+                        entt::registry& reg,
                         entt::entity ent,
                         component::Rail_line_rider& line_rider)
 {
     // Destroy prev created entities.
     for (auto sub_ent : line_rider.created_car_entities)
     {
-        reg.destroy(sub_ent);
+        entity_container.destroy_entity(entity_container.find_entity_uuid(sub_ent));
     }
     line_rider.created_car_entities.clear();
 
@@ -75,7 +79,8 @@ void build_car_entities(entt::registry& reg,
     for (uint32_t i = 0; i < line_rider.bogie_positions.size(); i++)
     {
         // Create a new entity.
-        line_rider.created_car_entities.emplace_back(reg.create());
+        line_rider.created_car_entities.emplace_back(
+            entity_container.create_entity(UUID_helper::generate_uuid()));
 
         // Add model.
         auto& rend_obj_cfg = reg.emplace_or_replace<TXP::component::Render_object_config>(
@@ -154,13 +159,13 @@ void BT::system::rail_line_rider_update()
         // Ensure there are objects for each bogie to update.
         if (line_rider.bogie_positions.size() != line_rider.created_bogie_entities.size())
         {
-            build_bogie_entities(reg, ent, line_rider);
+            build_bogie_entities(entity_container, reg, ent, line_rider);
         }
 
         // Ensure there are objects for each car to update.
         if (line_rider.car_bogies.size() != line_rider.created_car_entities.size())
         {
-            build_car_entities(reg, ent, line_rider);
+            build_car_entities(entity_container, reg, ent, line_rider);
         }
 
         // Ensure rail line is built before attempting to ride it.

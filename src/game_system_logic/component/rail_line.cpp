@@ -28,8 +28,6 @@ auto Rail_line::Build_code_info::calculate_transform(vec3 place_pos,
 
     trans.angle_y += place_angle;
 
-    date_deadline(2026, 8, 19);  // @CHECK: confirm working
-
     return trans;
 }
 
