@@ -356,9 +356,7 @@ int32_t main()
             BT::system::rail_line_rider_update();
 
             BT::system::character_broadcast_attack_msg_to_enemies();
-#if IMPLEMENT_THIS
-            BT::system::cpu_character_enemy_detection();  // Requires AFA
-#endif // IMPLEMENT_THIS
+            BT::system::cpu_character_enemy_detection();
             BT::system::cpu_character_world_space_input();
             BT::system::player_character_world_space_input();
             BT::system::input_controlled_character_movement();
