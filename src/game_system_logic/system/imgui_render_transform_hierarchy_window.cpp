@@ -12,7 +12,6 @@
 #include "imgui_internal.h"
 #include "misc/cpp/imgui_stdlib.h"
 #include "service_finder/service_finder.h"
-#include "txp_renderer/debug/debug_render_job.h"
 #include "txp_renderer_public.h"
 
 #include <cassert>

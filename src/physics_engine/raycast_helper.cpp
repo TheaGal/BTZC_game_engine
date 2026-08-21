@@ -7,6 +7,7 @@
 #include "Jolt/Physics/PhysicsSystem.h"
 #include "btdatecheck.h"
 #include "physics_engine_impl_layers.h"
+#include "txp_renderer_public.h"
 
 
 namespace
@@ -110,16 +111,17 @@ BT::Raycast_helper::raycast(JPH::RVec3Arg origin, JPH::Vec3Arg direction_and_mag
     if (return_result.success)
         glm_vec4_copy(vec4{ 1.0f, 0.0f, 0.0f, 1.0f }, color_1);
     JPH::RVec3 pos_2{ origin + direction_and_magnitude };
-    BT::date_deadline(2026, 8, 10);  // @TODO: fix below!
-    // get_main_debug_line_pool().emplace_debug_line(  // Ensure matching with `write_render_transforms.cpp`
-    //     { { static_cast<float_t>(origin.GetX()),
-    //         static_cast<float_t>(origin.GetY()),
-    //         static_cast<float_t>(origin.GetZ()) },
-    //       { static_cast<float_t>(pos_2.GetX()),
-    //         static_cast<float_t>(pos_2.GetY()),
-    //         static_cast<float_t>(pos_2.GetZ()) },
-    //       { color_1[0], color_1[1], color_1[2], color_1[3] },
-    //       { 0.85f, 0.85f, 0.85f, 1.0f } });
+
+    TXP::debug::emplace_debug_line(  // Ensure matching with `write_render_transforms.cpp`
+        { { static_cast<float_t>(origin.GetX()),
+            static_cast<float_t>(origin.GetY()),
+            static_cast<float_t>(origin.GetZ()) },
+          { static_cast<float_t>(pos_2.GetX()),
+            static_cast<float_t>(pos_2.GetY()),
+            static_cast<float_t>(pos_2.GetZ()) },
+          { color_1[0], color_1[1], color_1[2], color_1[3] },
+          { 0.85f, 0.85f, 0.85f, 1.0f } },
+        1.0f);
 
     return return_result;
 }
