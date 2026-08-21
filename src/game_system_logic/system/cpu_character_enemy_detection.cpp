@@ -22,9 +22,9 @@ namespace
 
 using namespace BT;
 
-void fetch_eyesight_data_and_AFA_data(Render_object_pool& rend_obj_pool,
-                                      UUID rend_obj_uuid,
-                                      component::CPU_enemy_awareness& in_out_awareness,
+void fetch_eyesight_data_and_AFA_data(component::CPU_enemy_awareness& in_out_awareness,
+                                      TXP::Skeletal_animator& animator,
+                                      mat4 render_transform, 
                                       vec3 eyes_origin,
                                       rvec3& out_eyesight_pos,
                                       vec3& out_eyesight_forward,
@@ -32,31 +32,18 @@ void fetch_eyesight_data_and_AFA_data(Render_object_pool& rend_obj_pool,
 {
     out_chg_suspicious_to_unaware_request = false;
 
-    auto& rend_obj{ *rend_obj_pool.checkout_render_obj_by_key({ rend_obj_uuid }).front() };
-
-    if (rend_obj.get_model_animator() == nullptr)
-    {   // Exit since no model animator attached.
-        rend_obj_pool.return_render_objs({ &rend_obj });
-        return;
-    }
-
-    // Update joint matrix of eyes bone.
-    auto& animator{ *rend_obj.get_model_animator() };
-
     std::vector<mat4s> joint_matrices;
-    animator.get_anim_floored_frame_pose(Model_animator::SIMULATION_PROFILE,
-                                         animator.get_is_using_root_motion(),
-                                         joint_matrices);
+    animator.get_simulation_profile_frame_pose(animator.get_is_using_root_motion(), joint_matrices);
 
     if (in_out_awareness.runtime_state.eyes_bone_idx == (uint32_t)-1)
     {   // Get the bone idx for eyes-bone.
         in_out_awareness.runtime_state.eyes_bone_idx =
-            animator.get_model_skin().joint_name_to_idx.at(in_out_awareness.eyes_bone);
+            animator.get_joint_idx(in_out_awareness.eyes_bone);
     }
     assert(in_out_awareness.runtime_state.eyes_bone_idx != (uint32_t)-1);
 
     mat4 eyes_bone_trans;
-    glm_mat4_mul(rend_obj.render_transform(),
+    glm_mat4_mul(render_transform,
                  joint_matrices[in_out_awareness.runtime_state.eyes_bone_idx].raw,
                  eyes_bone_trans);
 
@@ -66,8 +53,6 @@ void fetch_eyesight_data_and_AFA_data(Render_object_pool& rend_obj_pool,
             .get_reeve_data_handle(
                 TXP::anim_frame_action::CTRL_DATA_LABEL_cpu_aware_chg_suspicious_to_unaware)
             .check_if_rising_edge_occurred();
-
-    rend_obj_pool.return_render_objs({ &rend_obj });
 
     // Write eyesight data.
     vec3 eyesight_pos;
@@ -146,7 +131,7 @@ void BT::system::cpu_character_enemy_detection()
     auto& reg{ entity_container.get_ecs_registry() };
     auto view_cpus{ reg.view<component::Transform const, component::CPU_enemy_awareness>() };
     auto view_det_chars{ reg.view<component::Transform const, component::Detectable_character>() };
-    auto& rend_obj_pool{ service_finder::find_service<Renderer>().get_render_object_pool() };
+    auto& renderer{ service_finder::find_service<TXP::Renderer>() };
 
     // Process all CPU characters.
     for (auto&& [entity, transform, cpu_enemy_awareness] : view_cpus.each())
@@ -162,17 +147,19 @@ void BT::system::cpu_character_enemy_detection()
         {
             if (auto disp_repr{ reg.try_get<component::Display_repr_transform_ref const>(entity) };
                 disp_repr != nullptr)
-                if (auto rend_obj_ref{ reg.try_get<component::Created_render_object_reference>(
-                        entity_container.find_entity(disp_repr->display_repr_uuid)) };
-                    rend_obj_ref != nullptr)
-                    if (!rend_obj_ref->render_obj_uuid_ref.is_nil())
-                        fetch_eyesight_data_and_AFA_data(rend_obj_pool,
-                                                         rend_obj_ref->render_obj_uuid_ref,
-                                                         cpu_enemy_awareness,
-                                                         cpu_enemy_awareness.eyes_origin.raw,
-                                                         eyesight_pos,
-                                                         eyesight_forward,
-                                                         req_to_chg_state_sus_to_unaware);
+            {
+                auto rend_obj_ent = entity_container.find_entity(disp_repr->display_repr_uuid);
+                if (auto animator{ renderer.try_get_skeletal_animator(rend_obj_ent) };
+                    animator.has_value())
+                    fetch_eyesight_data_and_AFA_data(
+                        cpu_enemy_awareness,
+                        animator.value(),
+                        reg.get<TXP::component::Render_object_config>(rend_obj_ent).transform.raw,
+                        cpu_enemy_awareness.eyes_origin.raw,
+                        eyesight_pos,
+                        eyesight_forward,
+                        req_to_chg_state_sus_to_unaware);
+            }
         }
 
         // Awareness detection (prev state).
