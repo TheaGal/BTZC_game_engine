@@ -98,8 +98,8 @@
 - [x] double-check: do the dockspace stuff also delete?
 - [x] check: what happened with the 0 size render views crash?
 
-- [ ] Reimplement btafa processing here.
+- [x] Reimplement btafa processing here.
     - [x] character broadcast attack msg
     - [x] cpu char enemy detection
     - [x] animator_driven_hitcapsule_sets_update
-    - [ ] hitcapsule_attack_processing
+    - [x] hitcapsule_attack_processing
