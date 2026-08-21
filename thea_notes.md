@@ -95,8 +95,9 @@
 - [x] open the number and ids of saved scene views on startup (or just 1 rando id by default)
 
 - [x] automatically delete stale scene view ids from imgui.ini
-- [ ] double-check: do the dockspace stuff also delete?
-- [ ] check: what happened with the 0 size render views crash?
+- [x] double-check: do the dockspace stuff also delete?
+- [x] check: what happened with the 0 size render views crash?
 
 - [ ] Reimplement btafa processing here.
     - [x] character broadcast attack msg
+    - [ ] cpu char enemy detection

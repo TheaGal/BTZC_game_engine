@@ -1,8 +1,8 @@
 #include "cpu_character_enemy_detection.h"
 
-#include "animation_frame_action_tool/runtime_data.h"
 #include "btglm.h"
 #include "btlogger.h"
+#include "btuuid.h"
 #include "entt/entity/entity.hpp"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/cpu_enemy_awareness.h"
@@ -11,7 +11,7 @@
 #include "game_system_logic/world/world_properties.h"
 #include "physics_engine/physics_engine.h"  // For `k_simulation_delta_time`.
 #include "service_finder/service_finder.h"
-#include "btuuid.h"
+#include "txp_renderer_public.h"
 
 #include <cassert>
 #include <cmath>
@@ -64,7 +64,7 @@ void fetch_eyesight_data_and_AFA_data(Render_object_pool& rend_obj_pool,
     out_chg_suspicious_to_unaware_request =
         animator.get_anim_frame_action_data_handle()
             .get_reeve_data_handle(
-                anim_frame_action::CTRL_DATA_LABEL_cpu_aware_chg_suspicious_to_unaware)
+                TXP::anim_frame_action::CTRL_DATA_LABEL_cpu_aware_chg_suspicious_to_unaware)
             .check_if_rising_edge_occurred();
 
     rend_obj_pool.return_render_objs({ &rend_obj });
@@ -121,13 +121,13 @@ void draw_detection_cone(component::CPU_enemy_awareness::Sight_detection_zone co
 
         for (size_t l = 0; l < 2; l++)
         {   // Draw debug line.
-            Debug_line dbg_line;
+            TXP::debug::Debug_line dbg_line;
             glm_vec3_copy(pts[l + 0].raw, dbg_line.pos1);
             glm_vec3_copy(pts[l + 1].raw, dbg_line.pos2);
             glm_vec4_copy(l == 0 ? line_color_immediate : line_color_buildup, dbg_line.color1);
             glm_vec4_copy(l == 0 ? line_color_immediate : line_color_buildup, dbg_line.color2);
 
-            get_main_debug_line_pool().emplace_debug_line(std::move(dbg_line), 0.03f);
+            TXP::debug::emplace_debug_line(std::move(dbg_line), 0.03f);
         }
     }
 }
@@ -199,12 +199,11 @@ void BT::system::cpu_character_enemy_detection()
                             vec4{ 0.555, 0.790, 0.0474 });
 
         // Draw debug suspicion sound zone.
-        get_main_debug_line_pool().emplace_debug_line_based_capsule(
-            eyesight_pos_f,
-            eyesight_pos_f,
-            cpu_enemy_awareness.suspicion_sound_distance,
-            vec4{ 0.297, 0.0275, 0.550 },
-            0.03f);
+        TXP::debug::emplace_debug_line_based_capsule(eyesight_pos_f,
+                                                     eyesight_pos_f,
+                                                     cpu_enemy_awareness.suspicion_sound_distance,
+                                                     vec4{ 0.297, 0.0275, 0.550 },
+                                                     0.03f);
 
         // Detection zone stats.
         bool inside_aware_sdz_buildup_zone{ false };
@@ -243,7 +242,7 @@ void BT::system::cpu_character_enemy_detection()
                 constexpr bool k_draw_line_of_sight_line{ false };
                 if constexpr(k_draw_line_of_sight_line)
                 {
-                    Debug_line dbg_line{
+                    TXP::debug::Debug_line dbg_line{
                         { eyesight_pos_f[0], eyesight_pos_f[1], eyesight_pos_f[2] },
                         { eyesight_pos_f[0] + delta_pos[0],
                           eyesight_pos_f[1] + delta_pos[1],
@@ -251,7 +250,7 @@ void BT::system::cpu_character_enemy_detection()
                         { 1, 1, 1 },
                         { 1, 1, 1 }
                     };
-                    get_main_debug_line_pool().emplace_debug_line(std::move(dbg_line), 0.03f);
+                    TXP::debug::emplace_debug_line(std::move(dbg_line), 0.03f);
                 }
             }
 
@@ -333,7 +332,7 @@ void BT::system::cpu_character_enemy_detection()
             if (draw_detection_zone_debug_line)
             {
                 // @TODO: Conform to `write_render_transforms.cpp`
-                Debug_line dbg_line{
+                TXP::debug::Debug_line dbg_line{
                     { eyesight_pos_f[0],
                       eyesight_pos_f[1],
                       eyesight_pos_f[2] },
@@ -344,7 +343,7 @@ void BT::system::cpu_character_enemy_detection()
                 glm_vec4_copy(detection_zone_debug_line_color, dbg_line.color1);
                 glm_vec4_copy(detection_zone_debug_line_color, dbg_line.color2);
 
-                get_main_debug_line_pool().emplace_debug_line(std::move(dbg_line), 0.03f);
+                TXP::debug::emplace_debug_line(std::move(dbg_line), 0.03f);
             }
         }
 
