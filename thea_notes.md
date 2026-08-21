@@ -103,3 +103,7 @@
     - [x] cpu char enemy detection
     - [x] animator_driven_hitcapsule_sets_update
     - [x] hitcapsule_attack_processing
+
+- [x] figure out the weird renderer.cpp:353 issue. ("@THEA: this is failing for smoe reason when doing "play simulation"")
+
+- [ ] implement debug drawing.
