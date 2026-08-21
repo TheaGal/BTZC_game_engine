@@ -1,6 +1,6 @@
 #include "hitcapsule_attack_processing.h"
 
-#include "animation_frame_action_tool/runtime_data.h"
+#include "btdatecheck.h"
 #include "btglm.h"
 #include "btlogger.h"
 #include "entt/entity/fwd.hpp"
@@ -10,8 +10,8 @@
 #include "game_system_logic/component/health_stats.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
-#include "hitbox_interactor/hitcapsule.h"
 #include "service_finder/service_finder.h"
+#include "txp_renderer_public.h"
 
 
 namespace
@@ -21,7 +21,7 @@ using namespace BT;
 
 void process_attack_interaction(Entity_container& entity_container,
                                 entt::registry& reg,
-                                Render_object_pool& rend_obj_pool,
+                                TXP::Renderer& renderer,
                                 entt::entity offender_ecs_entity,
                                 component::Base_combat_stats_data const& offe_combat_stats,
                                 component::Health_stats_data& offe_health_stats,
@@ -69,34 +69,27 @@ void process_attack_interaction(Entity_container& entity_container,
         atk_res.defender.delta_posture_pts -= defe_combat_stats.posture_dmg_def_pts;
     }
 
-    auto defender_rend_obj_ref{ reg.try_get<component::Created_render_object_reference const>(
-        defender_ecs_entity) };
-    auto offender_rend_obj_ref{ reg.try_get<component::Created_render_object_reference const>(
-        offender_ecs_entity) };
-    if (defender_rend_obj_ref != nullptr && offender_rend_obj_ref != nullptr)
+    auto defender_animator{ renderer.try_get_skeletal_animator(defender_ecs_entity) };
+    auto offender_animator{ renderer.try_get_skeletal_animator(offender_ecs_entity) };
+
+    if (defender_animator.has_value() && offender_animator.has_value())
     {   // Get sending root motion multiplier from offender.
         float_t root_motion_multiplier;
         bool can_cancel_attack_w_parry;
         {
-            auto& rend_obj{ *rend_obj_pool
-                                 .checkout_render_obj_by_key(
-                                     { offender_rend_obj_ref->render_obj_uuid_ref })
-                                 .front() };
-            auto& animator{ *rend_obj.get_model_animator() };
+            auto& animator{ offender_animator.value() };
 
             auto& afa_data_handle{ animator.get_anim_frame_action_data_handle() };
             root_motion_multiplier =
                 afa_data_handle
                     .get_float_data_handle(
-                        anim_frame_action::CTRL_DATA_LABEL_attack_send_root_motion_multi)
+                        TXP::anim_frame_action::CTRL_DATA_LABEL_attack_send_root_motion_multi)
                     .get_val();
             can_cancel_attack_w_parry =
                 afa_data_handle
                     .get_bool_data_handle(
-                        anim_frame_action::CTRL_DATA_LABEL_can_cancel_attack_w_parry)
+                        TXP::anim_frame_action::CTRL_DATA_LABEL_can_cancel_attack_w_parry)
                     .get_val();
-
-            rend_obj_pool.return_render_objs({ &rend_obj });
         }
 
         // Check for parry or guard in defender.
@@ -104,28 +97,22 @@ void process_attack_interaction(Entity_container& entity_container,
         bool is_parry_active;
         bool is_guard_active;
         {
-            auto& rend_obj{ *rend_obj_pool
-                                 .checkout_render_obj_by_key(
-                                     { defender_rend_obj_ref->render_obj_uuid_ref })
-                                 .front() };
-            auto& animator{ *rend_obj.get_model_animator() };
+            auto& animator{ defender_animator.value() };
 
             auto& afa_data_handle{ animator.get_anim_frame_action_data_handle() };
             is_parry_active =
                 afa_data_handle
-                    .get_bool_data_handle(anim_frame_action::CTRL_DATA_LABEL_is_parry_active)
+                    .get_bool_data_handle(TXP::anim_frame_action::CTRL_DATA_LABEL_is_parry_active)
                     .get_val();
             is_guard_active =
                 afa_data_handle
-                    .get_bool_data_handle(anim_frame_action::CTRL_DATA_LABEL_is_guard_active)
+                    .get_bool_data_handle(TXP::anim_frame_action::CTRL_DATA_LABEL_is_guard_active)
                     .get_val();
 
             // Write root motion multiplier from offender to AFA data.
             afa_data_handle
-                .get_float_data_handle(anim_frame_action::CTRL_DATA_LABEL_root_motion_multi)
+                .get_float_data_handle(TXP::anim_frame_action::CTRL_DATA_LABEL_root_motion_multi)
                 .write_val(root_motion_multiplier);
-
-            rend_obj_pool.return_render_objs({ &rend_obj });
         }
 
         // Parry attack.
@@ -252,17 +239,19 @@ void process_attack_interaction(Entity_container& entity_container,
 
 void BT::system::hitcapsule_attack_processing(float_t delta_time)
 {
+    date_deadline(2026, 8, 30);  // @CHECK: does this work?? needs the debug drawing.
+
     static double_t s_global_attack_timer{ 0 };
 
     // Overlap pairs buffer for lagging the attacks by `k_lagging_ticks` ticks.
     constexpr size_t k_lagging_ticks{ 2 };
     constexpr size_t k_ovrl_pir_buf_size{ k_lagging_ticks + 1 };
-    static std::array<Overlap_result_set, k_ovrl_pir_buf_size> s_overlap_pairs_buffer;
+    static std::array<TXP::Overlap_result_set, k_ovrl_pir_buf_size> s_overlap_pairs_buffer;
     static size_t s_cur_ovrl_pir_buf{ 0 };
 
     // Update hitcapsule overlaps and write result to writing buffer position.
     s_overlap_pairs_buffer[s_cur_ovrl_pir_buf % k_ovrl_pir_buf_size] =
-        service_finder::find_service<Hitcapsule_group_overlap_solver>().update_overlaps();
+        service_finder::find_service<TXP::Hitcapsule_group_overlap_solver>().update_overlaps();
 
     // Tick to processing buffer position (`k_lagging_ticks` behind, but using wraparound).
     s_cur_ovrl_pir_buf++;
@@ -270,7 +259,7 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
     // Process all attacks.
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
-    auto& rend_obj_pool{ service_finder::find_service<Renderer>().get_render_object_pool() };
+    auto& renderer{ service_finder::find_service<TXP::Renderer>() };
 
     auto offender_view{
         reg.view<component::Base_combat_stats_data const, component::Health_stats_data>()
@@ -301,7 +290,7 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
         // Process.
         process_attack_interaction(entity_container,
                                    reg,
-                                   rend_obj_pool,
+                                   renderer,
                                    offender_ecs_entity,
                                    offe_combat_stats,
                                    offe_health_stats,
