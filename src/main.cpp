@@ -327,8 +327,8 @@ int32_t main()
 
             BT::system::player_character_lock_onto_target();
 
+            BT::system::animator_driven_hitcapsule_sets_update();
 #if IMPLEMENT_THIS
-            BT::system::animator_driven_hitcapsule_sets_update();  // Requires AFA.
             BT::system::hitcapsule_attack_processing(BT::Physics_engine::k_simulation_delta_time);  // Requires AFA.
 #endif // IMPLEMENT_THIS
 

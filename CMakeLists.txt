@@ -198,6 +198,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/entity_container.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/entity_container.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/_dev_animation_frame_action_editor.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/animator_driven_hitcapsule_sets_update.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/animator_driven_hitcapsule_sets_update.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/character_broadcast_attack_msg_to_enemies.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/character_broadcast_attack_msg_to_enemies.h
