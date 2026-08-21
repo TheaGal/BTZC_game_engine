@@ -100,4 +100,6 @@
 
 - [ ] Reimplement btafa processing here.
     - [x] character broadcast attack msg
-    - [ ] cpu char enemy detection
+    - [x] cpu char enemy detection
+    - [ ] animator_driven_hitcapsule_sets_update
+    - [ ] hitcapsule_attack_processing

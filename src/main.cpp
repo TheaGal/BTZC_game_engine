@@ -232,49 +232,6 @@ int32_t main()
 #endif // IMPLEMENT_THIS
 
 #if IMPLEMENT_THIS
-    // Animation frame action runtime data.
-    // "anim_frame_action_runtime_datas": [
-    //     "SlimeGirl",
-    //     ...
-    // ]
-    std::vector<std::string> const afa_names{
-        "simple_combat_char",
-        // "SlimeGirl",
-    };
-    for (auto const& afa_name : afa_names)
-    {
-        BT::anim_frame_action::Bank::emplace(
-            afa_name + ".btafa",  // @NOTE: Key must match the file name!!!!! This is very very important.  -Thea 2025/08/30
-            BT::anim_frame_action::Runtime_data_controls(
-                BTZC_GAME_ENGINE_ASSET_ANIM_FRAME_ACTIONS_PATH + afa_name + ".btafa"));
-    }
-#endif // IMPLEMENT_THIS
-
-    // POPULATE TEST LEVEL (@TODO: Once level loading is implemented, replace this with it)
-    // Physics objects.
-    // auto player_char_phys_obj{
-    //     BT::Physics_object::create_character_controller(main_physics_engine,
-    //                                                     true,
-    //                                                     0.5f,
-    //                                                     2.0f,
-    //                                                     1.0f,
-    //                                                     { JPH::RVec3(0.0f, 5.1f, 0.0f),
-    //                                                       JPH::Quat::sIdentity() }) };
-    // player_char_phys_obj->assign_generated_uuid();
-    // auto player_char_phys_obj_key =
-    //     main_physics_engine.emplace_physics_object(std::move(player_char_phys_obj));
-
-    // auto static_level_terrain_phys_obj{
-    //     BT::Physics_object::create_triangle_mesh(main_physics_engine,
-    //                                              false,
-    //                                              BT::Model_bank::get_model("probuilder_example"),
-    //                                              JPH::EMotionType::Static,
-    //                                              { JPH::RVec3(0.0f, 1.0f, 0.0f),
-    //                                                JPH::Quat::sIdentity() }) };
-    // static_level_terrain_phys_obj->assign_generated_uuid();
-    // main_physics_engine.emplace_physics_object(std::move(static_level_terrain_phys_obj));
-
-#if IMPLEMENT_THIS
     // Render objects.
     auto& render_object_pool{ main_renderer.get_render_object_pool() };
 #endif // IMPLEMENT_THIS
