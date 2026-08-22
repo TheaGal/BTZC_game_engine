@@ -107,3 +107,7 @@
 - [x] figure out the weird renderer.cpp:353 issue. ("@THEA: this is failing for smoe reason when doing "play simulation"")
 
 - [ ] implement debug drawing.
+    - [x] Debug meshes
+    - [ ] BUG: it's black. why?
+    - [ ] BUG: it crashes when exiting simulation mode (or is that an intermittent thing??)
+    - [ ] Debug lines.

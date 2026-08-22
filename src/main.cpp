@@ -55,6 +55,15 @@ int32_t main()
     BT::component::register_all_components();
     BT::Entity_container entity_container;
 
+    TXP::debug::set_callbacks_and_references(
+        entity_container.get_ecs_registry(),
+        [&entity_container]() {
+            return entity_container.create_entity(BT::UUID_helper::generate_uuid());
+        },
+        [&entity_container](entt::entity ent) {
+            entity_container.destroy_entity(entity_container.find_entity_uuid(ent));
+        });
+
     // Setup world properties.
     BT::world::World_properties_container world_properties;
     {
