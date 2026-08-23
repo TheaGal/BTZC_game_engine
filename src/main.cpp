@@ -23,21 +23,16 @@
 #include "game_system_logic/system/write_render_transforms.h"
 #include "game_system_logic/world/scene_loader.h"
 #include "game_system_logic/world/world_properties.h"
-#include "Jolt/Jolt.h"  // @DEBUG
-#include "Jolt/Math/Real.h"  // @DEBUG
-#include "Jolt/Math/Quat.h"  // @DEBUG
 #include "btlogger.h"
 #include "physics_engine/physics_engine.h"
 #include "physics_engine/physics_object.h"
 #include "physics_engine/raycast_helper.h"
-#include "service_finder/service_finder.h"
 #include "settings/settings.h"
 #include "timer/timer.h"
 #include "timer/watchdog_timer.h"
 #include "txp_renderer_public.h"
 
 #include <cstdint>
-#include <memory>
 
 
 
@@ -47,7 +42,7 @@
 int32_t main()
 {
     BT::initialize_app_settings_from_file_or_fallback_to_defaults();
-    auto const& app_settings{ BT::get_app_settings_read_handle() };
+    BT::App_settings const& app_settings{ BT::get_app_settings_read_handle() };
 
     BT::Watchdog_timer main_watchdog;
 
@@ -125,135 +120,6 @@ int32_t main()
     BT::Physics_engine main_physics_engine;
 
     BT::Raycast_helper::set_physics_engine(main_physics_engine);
-#if IMPLEMENT_THIS
-    BT::Material_bank::set_camera_read_ifc(&main_renderer);
-
-    // Shaders.
-    BT::Shader_bank::emplace_shader(
-        "color_unlit",
-        make_unique<BT::Shader>(BTZC_GAME_ENGINE_ASSET_SHADER_PATH "color_unlit.vert",
-                                BTZC_GAME_ENGINE_ASSET_SHADER_PATH "color_unlit.frag"));
-    BT::Shader_bank::emplace_shader(
-        "color_unlit_lines",
-        make_unique<BT::Shader>(BTZC_GAME_ENGINE_ASSET_SHADER_PATH "color_unlit_lines.vert",
-                                BTZC_GAME_ENGINE_ASSET_SHADER_PATH "color_unlit_lines.frag"));
-    BT::Shader_bank::emplace_shader(
-        "color_shaded",f
-        make_unique<BT::Shader>(BTZC_GAME_ENGINE_ASSET_SHADER_PATH "color_shaded.vert",
-                                BTZC_GAME_ENGINE_ASSET_SHADER_PATH "color_shaded.frag"));
-    BT::Shader_bank::emplace_shader(
-        "textured_shaded",
-        make_unique<BT::Shader>(BTZC_GAME_ENGINE_ASSET_SHADER_PATH "textured_shaded.vert",
-                                BTZC_GAME_ENGINE_ASSET_SHADER_PATH "textured_shaded.frag"));
-    BT::Shader_bank::emplace_shader(
-        "post_process",
-        make_unique<BT::Shader>(BTZC_GAME_ENGINE_ASSET_SHADER_PATH "post_process.vert",
-                                BTZC_GAME_ENGINE_ASSET_SHADER_PATH "post_process.frag"));
-    BT::Shader_bank::emplace_shader(
-        "skinned_mesh_compute",
-        make_unique<BT::Shader>(BTZC_GAME_ENGINE_ASSET_SHADER_PATH "skinned_mesh.comp"));
-
-    // Textures.
-    BT::Texture_bank::emplace_texture_2d(
-        "default_texture",
-        BT::Texture_bank::load_texture_2d_from_file(BTZC_GAME_ENGINE_ASSET_TEXTURE_PATH "grids_1m.jpg",
-                                                    3));
-
-    // Materials.
-    BT::Material_bank::emplace_material(
-        "color_material",
-        unique_ptr<BT::Material_ifc>(
-            new BT::Material_opaque_shaded(vec3{ 0.5f, 0.225f, 0.3f })));
-    BT::Material_bank::emplace_material(
-        "textured_material",
-        unique_ptr<BT::Material_ifc>(
-            new BT::Material_opaque_texture_shaded(BT::Texture_bank::get_texture_2d("default_texture"),
-                                                   vec3{ 0.0f, 0.2f, 0.5f },
-                                                   vec3{ 0.5f, 0.2f, 0.1f },
-                                                   45.0f)));
-    BT::Material_bank::emplace_material(
-        "debug_physics_wireframe_fore_material",
-        unique_ptr<BT::Material_ifc>(
-            new BT::Material_opaque_color_unlit(vec3{ 0.2f, 0.95f, 0.3f },
-                                                BT::k_depth_test_mode_front)));
-    BT::Material_bank::emplace_material(
-        "debug_physics_wireframe_back_material",
-        unique_ptr<BT::Material_ifc>(
-            new BT::Material_opaque_color_unlit(vec3{ 0.1f, 0.475f, 0.15f },
-                                                BT::k_depth_test_mode_back)));
-    BT::Material_bank::emplace_material(
-        "debug_selected_wireframe_fore_material",
-        unique_ptr<BT::Material_ifc>(
-            new BT::Material_opaque_color_unlit(vec3{ 0.95f, 0.3f, 0.95f },
-                                                BT::k_depth_test_mode_front)));
-    BT::Material_bank::emplace_material(
-        "debug_selected_wireframe_back_material",
-        unique_ptr<BT::Material_ifc>(
-            new BT::Material_opaque_color_unlit(vec3{ 0.475f, 0.15f, 0.475f },
-                                                BT::k_depth_test_mode_back)));
-    BT::Material_bank::emplace_material(  // @INCOMPLETE @TODO
-        "debug_lines_fore_material",
-        unique_ptr<BT::Material_ifc>(new BT::Material_debug_lines(true)));
-    BT::Material_bank::emplace_material(
-        "debug_lines_back_material",
-        unique_ptr<BT::Material_ifc>(new BT::Material_debug_lines(false)));
-    BT::Material_bank::emplace_material(
-        "debug_picking_material",
-        unique_ptr<BT::Material_ifc>(new BT::Material_debug_picking()));
-    BT::Material_bank::emplace_material(
-        "post_process",
-        unique_ptr<BT::Material_ifc>(
-            new BT::Material_impl_post_process(1.0f)));
-
-    // Models.
-    // "models": [
-    //     "SlimeGirl": {
-    //         "type": "obj",
-    //         "material": "color_material"
-    //     },
-    //     ...
-    // ]
-    BT::Model_bank::emplace_model(
-        "unit_box",
-        make_unique<BT::Model>(BTZC_GAME_ENGINE_ASSET_MODEL_PATH "unit_box.obj",
-                               "color_material"));
-    BT::Model_bank::emplace_model(
-        "box_0.5_2",
-        make_unique<BT::Model>(BTZC_GAME_ENGINE_ASSET_MODEL_PATH "box_0.5_2.obj",
-                               "color_material"));
-    BT::Model_bank::emplace_model(
-        "xz_grid",
-        make_unique<BT::Model>(BTZC_GAME_ENGINE_ASSET_MODEL_PATH "stupid_polygon_grid.obj",
-                               "color_material"));
-    BT::Model_bank::emplace_model(
-        "player_model_0.5_2",
-        make_unique<BT::Model>(BTZC_GAME_ENGINE_ASSET_MODEL_PATH "player_model_0.5_2.obj",
-                               "color_material"));
-    BT::Model_bank::emplace_model(
-        "probuilder_example",
-        make_unique<BT::Model>(BTZC_GAME_ENGINE_ASSET_MODEL_PATH "probuilder_example.obj",
-                               "textured_material"));
-    BT::Model_bank::emplace_model(
-        "simple_combat_char",
-        make_unique<BT::Model>(BTZC_GAME_ENGINE_ASSET_MODEL_PATH "simple_combat_char.glb",
-                               "textured_material"));
-    // BT::Model_bank::emplace_model(  // @NOCHECKIN: REMOVE THIS MODEL ONCE DONE TESTING SKINNING (and remove from `s_scene_as_json`).
-    //     "SlimeGirl",
-    //     make_unique<BT::Model>(BTZC_GAME_ENGINE_ASSET_MODEL_PATH "SlimeGirl.glb",
-    //                            "textured_material"));
-    // BT::Model_bank::emplace_model(  // @NOCHECKIN: REMOVE THIS MODEL ONCE DONE TESTING SKINNING (and remove from `s_scene_as_json`).
-    //     "test_gltf",
-    //     make_unique<BT::Model>(BTZC_GAME_ENGINE_ASSET_MODEL_PATH "Leever.glb",
-    //                            "textured_material"));
-
-    // Animator templates.
-    BT::Animator_template_bank main_anim_template_bank;
-#endif // IMPLEMENT_THIS
-
-#if IMPLEMENT_THIS
-    // Render objects.
-    auto& render_object_pool{ main_renderer.get_render_object_pool() };
-#endif // IMPLEMENT_THIS
 
     // Setup audio engine.
     BT::audio::initialize();
