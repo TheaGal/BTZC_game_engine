@@ -18,7 +18,7 @@ public:
     Scene_loader();
 
     /// Loads a new scene additively.
-    void load_scene(std::string const& scene_name);
+    void load_scene_additive(std::string const& scene_name);
 
     /// Unloads all scenes that are loaded using this scene loader.
     void unload_all_scenes();

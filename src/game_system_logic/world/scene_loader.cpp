@@ -15,7 +15,7 @@ BT::world::Scene_loader::Scene_loader()
     BT_SERVICE_FINDER_ADD_SERVICE(Scene_loader, this);
 }
 
-void BT::world::Scene_loader::load_scene(std::string const& scene_name)
+void BT::world::Scene_loader::load_scene_additive(std::string const& scene_name)
 {
     m_load_scene_requests.emplace_back(scene_name);
 }

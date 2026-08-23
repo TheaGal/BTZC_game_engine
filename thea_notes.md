@@ -110,7 +110,7 @@
     - [x] Debug meshes
     - [x] BUG: it's black. why?
         - cross-compilation unit linking (same namespace and class name, but needed to be in its own anonymous namespace... does that prevent unity builds in the future??)
-    - [ ] BUG: it crashes when exiting simulation mode (or is that an intermittent thing??)
+    - [x] BUG: it crashes when exiting simulation mode (or is that an intermittent thing??)
         - It's intermittent T-T
         - See animator_driven_hitcapsule_sets_update.cpp:28
     - [x] Debug lines.

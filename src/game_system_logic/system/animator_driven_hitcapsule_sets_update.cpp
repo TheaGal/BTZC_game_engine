@@ -1,7 +1,6 @@
 #include "animator_driven_hitcapsule_sets_update.h"
 
 #include "btdatecheck.h"
-#include "btlogger.h"
 #include "entt/entity/fwd.hpp"
 #include "entt/entity/registry.hpp"
 #include "game_system_logic/component/transform.h"
@@ -25,7 +24,7 @@ void BT::system::animator_driven_hitcapsule_sets_update()
     {
         // Update whether capsules are enabled and keep capsules attached to connecting bone in
         // animator.
-        auto animator{ renderer.try_get_skeletal_animator(ent).value() };  // @TODO: fix when turning off simulation mode (probably need to remove tags and stuff that get created when creating a deformed render object).  -Thea 2026/08/22
+        auto animator{ renderer.try_get_skeletal_animator(ent).value() };
 
         animator.get_anim_frame_action_data_handle().assign_hitcapsule_enabled_flags();
 

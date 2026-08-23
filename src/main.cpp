@@ -55,6 +55,40 @@ int32_t main()
     BT::component::register_all_components();
     BT::Entity_container entity_container;
 
+    // Setup world properties.
+    BT::world::World_properties_container world_properties;
+    {
+        auto& wprops{ world_properties.get_data_handle() };
+        wprops.is_simulation_running = false;
+    }
+
+    // Load default scene.
+    std::string current_scene{ "_dev_sample_scene.btscene" };
+    BT::world::Scene_loader main_scene_loader;
+    main_scene_loader.load_scene_additive(current_scene);
+
+    // Setup renderer.
+    TXP::Input::Input_handler input_handler;
+    TXP::Renderer main_renderer{
+        entity_container.get_ecs_registry(),
+        "No Train No Game",
+        BTZC_GAME_ENGINE_ASSET_TEXTURE_PATH,
+        BTZC_GAME_ENGINE_ASSET_SHADER_PATH,
+        BTZC_GAME_ENGINE_ASSET_MODEL_PATH,
+        BTZC_GAME_ENGINE_ASSET_ANIM_FRAME_ACTIONS_PATH,
+        BTZC_GAME_ENGINE_ASSET_ANIMATOR_TEMPLATES_PATH,
+        [&world_properties, &main_scene_loader, &current_scene](bool flag) {
+            world_properties.get_data_handle().is_simulation_running = flag;
+
+            if (!flag)
+            {
+                main_scene_loader.unload_all_scenes();
+                main_scene_loader.load_scene_additive(current_scene);
+            }
+        },
+        [&world_properties]() { return world_properties.get_data_handle().is_simulation_running; }
+    };
+
     TXP::debug::set_callbacks_and_references(
         entity_container.get_ecs_registry(),
         [&entity_container]() {
@@ -63,30 +97,6 @@ int32_t main()
         [&entity_container](entt::entity ent) {
             entity_container.destroy_entity(entity_container.find_entity_uuid(ent));
         });
-
-    // Setup world properties.
-    BT::world::World_properties_container world_properties;
-    {
-        auto& wprops{ world_properties.get_data_handle() };
-        wprops.is_simulation_running = false;
-    }
-
-    // Setup renderer.
-    TXP::Input::Input_handler input_handler;
-    TXP::Renderer main_renderer{ entity_container.get_ecs_registry(),
-                                 "No Train No Game",
-                                 BTZC_GAME_ENGINE_ASSET_TEXTURE_PATH,
-                                 BTZC_GAME_ENGINE_ASSET_SHADER_PATH,
-                                 BTZC_GAME_ENGINE_ASSET_MODEL_PATH,
-                                 BTZC_GAME_ENGINE_ASSET_ANIM_FRAME_ACTIONS_PATH,
-                                 BTZC_GAME_ENGINE_ASSET_ANIMATOR_TEMPLATES_PATH,
-                                 [&world_properties](bool flag) {
-                                     world_properties.get_data_handle().is_simulation_running =
-                                         flag;
-                                 },
-                                 [&world_properties]() {
-                                    return world_properties.get_data_handle().is_simulation_running;
-                                 } };
 
     main_renderer.add_texture("test_ktx_tex", ".ktx2");
     main_renderer.add_material("default_mat", "basic_diffuse", { { "texture0", "test_ktx_tex" } });
@@ -244,30 +254,6 @@ int32_t main()
     // Render objects.
     auto& render_object_pool{ main_renderer.get_render_object_pool() };
 #endif // IMPLEMENT_THIS
-
-    // BT::Render_object player_char_rend_obj{
-    //     BT::Model_bank::get_model("box_0.5_2"),
-    //     BT::Render_layer::RENDER_LAYER_DEFAULT,
-    //     GLM_MAT4_IDENTITY,
-    //     player_char_phys_obj_key };
-    // player_char_rend_obj.assign_generated_uuid();
-    // auto player_char_rend_obj_key = render_object_pool.emplace(std::move(player_char_rend_obj));
-
-    // BT::Render_object static_level_terrain_rend_obj{
-    //     BT::Model_bank::get_model("probuilder_example"),
-    //     BT::Render_layer::RENDER_LAYER_DEFAULT,
-    //     GLM_MAT4_IDENTITY };
-    // static_level_terrain_rend_obj.assign_generated_uuid();
-    // render_object_pool.emplace(std::move(static_level_terrain_rend_obj));
-
-#if IMPLEMENT_THIS
-    // Hitcapsule solver.
-    BT::Hitcapsule_group_overlap_solver hitcapsule_solver;
-#endif // IMPLEMENT_THIS
-
-    // Load default scene.
-    BT::world::Scene_loader main_scene_loader;
-    main_scene_loader.load_scene("_dev_sample_scene.btscene");
 
     // Setup audio engine.
     BT::audio::initialize();
