@@ -115,7 +115,9 @@
         - See animator_driven_hitcapsule_sets_update.cpp:28
     - [ ] Debug lines.
         - [x] debug line collection data structure.
-        - [ ] gpu buffer for holding debug lines.
-        - [ ] resizing gpu buffer for debug lines.
-        - [ ] shader pipeline for lines
-        - [ ] render pass for lines
+        - [x] gpu buffer for holding debug lines.
+        - [x] resizing gpu buffer for debug lines.
+        - [x] shader pipeline for lines
+            - [x] created shader
+        - [x] render pass for lines
+        - [ ] fixies
