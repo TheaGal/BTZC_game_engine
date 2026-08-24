@@ -120,4 +120,11 @@
         - [x] shader pipeline for lines
             - [x] created shader
         - [x] render pass for lines
-        - [ ] fixies
+        - [x] fixies
+
+- [ ] why cant player attack and move in the air?
+    - that might've been an artifact from moving to the new editor, so we may have to reimplement the editor into txp-renderer.
+    - right. now i remember. there's a bunch of "nop"s in the .btafa file. these still need to be reimplemented.
+    - getting the editor up and running would be great too. that way i could compare how the old version differed from the current one.
+    - [ ] get btafa editor up and running.
+        - [ ] make sure that it's not _nearly_ as janky as a state sitting in static memory again haha.
