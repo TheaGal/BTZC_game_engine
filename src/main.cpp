@@ -1,10 +1,10 @@
 #include "audio_engine/audio_engine.h"
+#include "btdatecheck.h"
 #include "btuuid.h"
 #include "btzc_game_engine.h"
 #include "btglm.h"
 #include "game_system_logic/component/component_registry.h"
 #include "game_system_logic/entity_container.h"
-#include "game_system_logic/system/_dev_animation_frame_action_editor.h"
 #include "game_system_logic/system/animator_driven_hitcapsule_sets_update.h"
 #include "game_system_logic/system/character_broadcast_attack_msg_to_enemies.h"
 #include "game_system_logic/system/cpu_character_enemy_detection.h"
@@ -81,7 +81,17 @@ int32_t main()
                 main_scene_loader.load_scene_additive(current_scene);
             }
         },
-        [&world_properties]() { return world_properties.get_data_handle().is_simulation_running; }
+        [&world_properties]() {
+            auto& wph{ world_properties.get_data_handle() };
+            return wph.is_simulation_running;
+        },
+        [&world_properties, &main_scene_loader, &current_scene](bool flag) {
+            assert(!world_properties.get_data_handle().is_simulation_running);
+
+            main_scene_loader.unload_all_scenes();
+            main_scene_loader.load_scene_additive(flag ? "_dev_animation_editor_view.btscene"
+                                                       : current_scene);
+        }
     };
 
     TXP::debug::set_callbacks_and_references(
@@ -171,7 +181,8 @@ int32_t main()
             TXP::Renderer::advance_afa_sim_timer(main_physics_engine.k_simulation_delta_time);
             BT::system::tick_sim_char_mvt_animator();
 
-            BT::system::rail_line_rider_update();
+            // BT::system::rail_line_rider_update();
+            BT::date_deadline(2026, 8, 30);  // Reenable above.
 
             BT::system::character_broadcast_attack_msg_to_enemies();
             BT::system::cpu_character_enemy_detection();
@@ -210,14 +221,8 @@ int32_t main()
             perf_timer.start_timer();
 
             // Run all pre-render systems.
-#if IMPLEMENT_THIS
-            bool is_afa_editor_context{
-                main_renderer_imgui_renderer.is_anim_frame_data_editor_context() };
-            if (is_afa_editor_context)
-                BT::system::_dev_animation_frame_action_editor();
-#endif // IMPLEMENT_THIS
-
-            BT::system::rail_line_editor_update();
+            // BT::system::rail_line_editor_update();
+            BT::date_deadline(2026, 8, 30);  // Reenable above.
 
             BT::system::write_render_transforms();
 #if IMPLEMENT_THIS
@@ -230,16 +235,6 @@ int32_t main()
                     world_properties.get_data_handle().is_simulation_running);
 
                 main_renderer.render_one_frame(delta_time);
-
-#if IMPLEMENT_THIS
-                if (is_afa_editor_context)
-                    // @HACK: @IMPROVE: Run AFA editor again in case if animator reconfiguration is
-                    //   needed from ImGui actions of the render that just happened.
-                    // @TODO: Make the func call below a stripped down version that only deals with
-                    //        animator reconfiguration, and no processing of the animator, no
-                    //        processing of AFA controller/data points.
-                    BT::system::_dev_animation_frame_action_editor();
-#endif // IMPLEMENT_THIS
             }
 
             // Performance measure.

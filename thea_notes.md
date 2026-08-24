@@ -128,3 +128,8 @@
     - getting the editor up and running would be great too. that way i could compare how the old version differed from the current one.
     - [ ] get btafa editor up and running.
         - [ ] make sure that it's not _nearly_ as janky as a state sitting in static memory again haha.
+
+- [ ] bugfix: get train rails and rail line rider parts to get deleted.
+    - probably entity-container can hold onto a list of entities to destroy if one entity gets destroyed?
+    - or! transform-hierarchy component can do that automatically!! if it detects the parent entity is gone, then destroy the thing.
+    - hmmm ig since the check would have to be for all transforms instead of the ones that changed, it might have to be something that's just done inside the entity-container, but it can still use the transform-hierarchy component to access the children.
