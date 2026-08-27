@@ -127,7 +127,8 @@
     - right. now i remember. there's a bunch of "nop"s in the .btafa file. these still need to be reimplemented.
     - getting the editor up and running would be great too. that way i could compare how the old version differed from the current one.
     - [ ] get btafa editor up and running.
-        - [ ] make sure that it's not _nearly_ as janky as a state sitting in static memory again haha.
+        - [x] make sure that it's not _nearly_ as janky as a state sitting in static memory again haha.
+            - still static memory but at least not that janky haha
         - [x] it clears its state when exiting the mode so???
 
 - [ ] bugfix: get train rails and rail line rider parts to get deleted.

@@ -32,7 +32,7 @@
                     }
                 },
                 {
-                    "type_name": "component::_Dev_animation_frame_action_editor_agent",
+                    "type_name": "TXP::component::_Dev_animation_frame_action_editor_agent",
                     "members_j": {}
                 }
             ]

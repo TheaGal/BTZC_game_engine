@@ -56,6 +56,7 @@ int32_t main()
         auto& wprops{ world_properties.get_data_handle() };
         wprops.is_simulation_running = false;
     }
+    bool dev_is_afa_editor_open{ false };
 
     // Load default scene.
     std::string current_scene{ "_dev_sample_scene.btscene" };
@@ -85,12 +86,15 @@ int32_t main()
             auto& wph{ world_properties.get_data_handle() };
             return wph.is_simulation_running;
         },
-        [&world_properties, &main_scene_loader, &current_scene](bool flag) {
+        [&world_properties, &main_scene_loader, &current_scene, &dev_is_afa_editor_open](
+            bool flag) {
             assert(!world_properties.get_data_handle().is_simulation_running);
 
             main_scene_loader.unload_all_scenes();
             main_scene_loader.load_scene_additive(flag ? "_dev_animation_editor_view.btscene"
                                                        : current_scene);
+
+            dev_is_afa_editor_open = flag;
         }
     };
 
@@ -232,7 +236,8 @@ int32_t main()
             if (iter_type < Iteration_type::TEARDOWN_ITERATION)
             {
                 main_renderer.set_allow_deformed_render_models(
-                    world_properties.get_data_handle().is_simulation_running);
+                    world_properties.get_data_handle().is_simulation_running ||
+                    dev_is_afa_editor_open);
 
                 main_renderer.render_one_frame(delta_time);
             }
