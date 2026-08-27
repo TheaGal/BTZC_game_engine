@@ -130,6 +130,7 @@
         - [x] make sure that it's not _nearly_ as janky as a state sitting in static memory again haha.
             - still static memory but at least not that janky haha
         - [x] it clears its state when exiting the mode so???
+        - [x] fix the scrolling issues
 
 - [ ] bugfix: get train rails and rail line rider parts to get deleted.
     - probably entity-container can hold onto a list of entities to destroy if one entity gets destroyed?
