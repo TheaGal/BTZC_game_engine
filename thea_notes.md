@@ -126,15 +126,20 @@
     - that might've been an artifact from moving to the new editor, so we may have to reimplement the editor into txp-renderer.
     - right. now i remember. there's a bunch of "nop"s in the .btafa file. these still need to be reimplemented.
     - getting the editor up and running would be great too. that way i could compare how the old version differed from the current one.
-    - [ ] get btafa editor up and running.
+    - [x] get btafa editor up and running.
         - [x] make sure that it's not _nearly_ as janky as a state sitting in static memory again haha.
             - still static memory but at least not that janky haha
         - [x] it clears its state when exiting the mode so???
         - [x] fix the scrolling issues
+    - [ ] compare to old version
+        - 
+    - [x] get data preview window working again
+    - [ ] fix saving (it's saving without the extension on accident)
 
 - [ ] bugfix: get train rails and rail line rider parts to get deleted.
     - probably entity-container can hold onto a list of entities to destroy if one entity gets destroyed?
     - or! transform-hierarchy component can do that automatically!! if it detects the parent entity is gone, then destroy the thing.
     - hmmm ig since the check would have to be for all transforms instead of the ones that changed, it might have to be something that's just done inside the entity-container, but it can still use the transform-hierarchy component to access the children.
+    - [ ] add a system between destroying and creating entities that only runs if entities are destroyed which checks the transform hierarchy component
 
 - [ ] fix spelling of the "editor_conent" dir
