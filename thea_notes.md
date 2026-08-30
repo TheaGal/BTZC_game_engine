@@ -134,7 +134,7 @@
     - [ ] compare to old version
         - 
     - [x] get data preview window working again
-    - [ ] fix saving (it's saving without the extension on accident)
+    - [x] fix saving (it's saving without the extension on accident)
 
 - [ ] bugfix: get train rails and rail line rider parts to get deleted.
     - probably entity-container can hold onto a list of entities to destroy if one entity gets destroyed?
