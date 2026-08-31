@@ -122,7 +122,7 @@
         - [x] render pass for lines
         - [x] fixies
 
-- [ ] why cant player attack and move in the air?
+- [x] why cant player attack and move in the air?
     - that might've been an artifact from moving to the new editor, so we may have to reimplement the editor into txp-renderer.
     - right. now i remember. there's a bunch of "nop"s in the .btafa file. these still need to be reimplemented.
     - getting the editor up and running would be great too. that way i could compare how the old version differed from the current one.
@@ -131,10 +131,18 @@
             - still static memory but at least not that janky haha
         - [x] it clears its state when exiting the mode so???
         - [x] fix the scrolling issues
-    - [ ] compare to old version
-        - 
+    - [x] compare to old version
+        - compared, and got jump moving again. it's a little jank w the velo not getting inherited.
+        - for now, just put the immediate accel to "inherit" the prev frame's velocity on the first tick of st_jump state.
+        - hmm there should be an "inherit prev frame's XZ velocity" trigger huh.
     - [x] get data preview window working again
     - [x] fix saving (it's saving without the extension on accident)
+
+- [ ] make "inherit prev frame's XZ velocity" trigger so that first tick of st_jump and st_fall can use it.
+    - it'll inherit the XZ velocity from the running anim or whatever was the prev tick's velocity.
+
+- [ ] there needs to be a way to lock onto enemies that's not just middle click
+    - Alt? in sekiro the alt key was to walk, so maybe it's not that important except for whenever ongbal does the aura walk. ok maybe just right alt?
 
 - [ ] bugfix: get train rails and rail line rider parts to get deleted.
     - probably entity-container can hold onto a list of entities to destroy if one entity gets destroyed?
@@ -143,3 +151,6 @@
     - [ ] add a system between destroying and creating entities that only runs if entities are destroyed which checks the transform hierarchy component
 
 - [ ] fix spelling of the "editor_conent" dir
+
+- [ ] SOMEDAY: fix the "first-and-last frame average root motion" hack.
+    - this will definitely come up when doing start and stop root motion animations.

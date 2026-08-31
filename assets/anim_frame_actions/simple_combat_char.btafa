@@ -139,47 +139,74 @@
             "regions": [
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "turn_speed",
+                            "1000000"
+                        ],
+                        "cmd_name": "var_ov"
                     },
                     "end_frame": 11,
-                    "row_idx": 7,
+                    "row_idx": 0,
                     "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "mvt_input_max_speed",
+                            "10"
+                        ],
+                        "cmd_name": "var_ov"
                     },
                     "end_frame": 11,
-                    "row_idx": 11,
+                    "row_idx": 2,
                     "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "mvt_input_accel",
+                            "1000000"
+                        ],
+                        "cmd_name": "var_ov"
                     },
-                    "end_frame": 11,
-                    "row_idx": 12,
+                    "end_frame": 1,
+                    "row_idx": 3,
                     "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "mvt_input_accel",
+                            "60"
+                        ],
+                        "cmd_name": "var_ov"
                     },
                     "end_frame": 11,
-                    "row_idx": 13,
+                    "row_idx": 4,
+                    "start_frame": 1
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "mvt_input_decel",
+                            "30"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 11,
+                    "row_idx": 5,
                     "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "mvt_input_enabled",
+                            "true"
+                        ],
+                        "cmd_name": "var_ov"
                     },
                     "end_frame": 11,
-                    "row_idx": 14,
+                    "row_idx": 6,
                     "start_frame": 0
                 }
             ],
@@ -189,47 +216,62 @@
             "regions": [
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "turn_speed",
+                            "7.5"
+                        ],
+                        "cmd_name": "var_ov"
                     },
                     "end_frame": 15,
-                    "row_idx": 10,
+                    "row_idx": 0,
                     "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "mvt_input_max_speed",
+                            "10"
+                        ],
+                        "cmd_name": "var_ov"
                     },
                     "end_frame": 15,
-                    "row_idx": 11,
+                    "row_idx": 2,
                     "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "mvt_input_accel",
+                            "60"
+                        ],
+                        "cmd_name": "var_ov"
                     },
                     "end_frame": 15,
-                    "row_idx": 12,
+                    "row_idx": 3,
                     "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "mvt_input_decel",
+                            "30"
+                        ],
+                        "cmd_name": "var_ov"
                     },
                     "end_frame": 15,
-                    "row_idx": 13,
+                    "row_idx": 4,
                     "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "mvt_input_enabled",
+                            "true"
+                        ],
+                        "cmd_name": "var_ov"
                     },
                     "end_frame": 15,
-                    "row_idx": 14,
+                    "row_idx": 5,
                     "start_frame": 0
                 }
             ],

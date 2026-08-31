@@ -11,7 +11,7 @@
 
 void BT::system::animator_driven_hitcapsule_sets_update()
 {
-    date_deadline(2026, 8, 30);  // @CHECK: does this work?? needs the debug drawing.
+    date_deadline(2026, 9, 2);  // @CHECK: does this work?? needs the debug drawing.
 
     auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
     auto view{ reg.view<TXP::component::Animator_driven_hitcapsule_set const,

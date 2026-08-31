@@ -186,7 +186,7 @@ int32_t main()
             BT::system::tick_sim_char_mvt_animator();
 
             // BT::system::rail_line_rider_update();
-            BT::date_deadline(2026, 8, 30);  // Reenable above.
+            BT::date_deadline(2026, 9, 2);  // Reenable above.
 
             BT::system::character_broadcast_attack_msg_to_enemies();
             BT::system::cpu_character_enemy_detection();
@@ -226,7 +226,7 @@ int32_t main()
 
             // Run all pre-render systems.
             // BT::system::rail_line_editor_update();
-            BT::date_deadline(2026, 8, 30);  // Reenable above.
+            BT::date_deadline(2026, 9, 2);  // Reenable above.
 
             BT::system::write_render_transforms();
 #if IMPLEMENT_THIS

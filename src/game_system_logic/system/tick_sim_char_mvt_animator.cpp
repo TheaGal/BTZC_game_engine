@@ -121,6 +121,9 @@ void BT::system::tick_sim_char_mvt_animator()
                         else
                         {
                             state_set.anim_state_indices = {
+                                // @TODO: replace with a "st_fall_from_run" state so it can include
+                                //        the immediate accel on the first tick to kinda inherit the
+                                //        velocity of the running.  -Thea 2026/08/30
                                 animator.get_animator_state_idx("st_fall")
                             };
                             state_set.loop_final_state = false;
