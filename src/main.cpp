@@ -141,6 +141,7 @@ int32_t main()
     // Timer.
     BT::Timer main_timer;
     main_timer.start_timer();
+    float_t time_scale{ 1 };
 
     // Iteration types for main loop.
     enum class Iteration_type
@@ -160,9 +161,38 @@ int32_t main()
         main_watchdog.pet();
         main_renderer.poll_input_events();
 
+        {   // Change time scale.
+            static bool s_prev_ts_decr_pressed{ false };
+            static bool s_prev_ts_incr_pressed{ false };
+
+            bool ts_decr_pressed{
+                input_handler.get_keyboard_key_state(BT_KEY_LEFT_BRACKET).pressed
+            };
+            bool ts_incr_pressed{
+                input_handler.get_keyboard_key_state(BT_KEY_RIGHT_BRACKET).pressed
+            };
+
+            bool changed{ false };
+            if (s_prev_ts_decr_pressed != ts_decr_pressed)
+            {
+                time_scale *= 0.5f;
+                changed = true;
+            }
+            if (s_prev_ts_incr_pressed != ts_incr_pressed)
+            {
+                time_scale *= 2;
+                changed = true;
+            }
+
+            if (changed)
+                BT_TRACEF("Timescale changed to: %.3f", time_scale);
+
+            s_prev_ts_decr_pressed = ts_decr_pressed;
+            s_prev_ts_incr_pressed = ts_incr_pressed;
+        }
+
         float_t delta_time =
-            main_physics_engine.limit_delta_time(
-                main_timer.calc_delta_time());
+            main_physics_engine.limit_delta_time(main_timer.calc_delta_time() * time_scale);
 
         // @NOCHECKIN: @DEBUG: Fun little sfx for audio engine.
         if (iter_type == Iteration_type::FIRST_RUNNING_ITERATION)

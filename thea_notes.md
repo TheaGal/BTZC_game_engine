@@ -138,8 +138,12 @@
     - [x] get data preview window working again
     - [x] fix saving (it's saving without the extension on accident)
 
-- [ ] make "inherit prev frame's XZ velocity" trigger so that first tick of st_jump and st_fall can use it.
+- [x] make "inherit prev frame's XZ velocity" trigger so that first tick of st_jump and st_fall can use it.
     - it'll inherit the XZ velocity from the running anim or whatever was the prev tick's velocity.
+    - ok so it has to use the prev prev velocity. but bc of that, it's weird and messed up. figure out why things are moving to be like that
+    - it seems like things are in order so that it should be fine. are state set changes happening early? maybe they should be staged whenever they happen, then committed when `update()` happens??
+    - ok, so it turns out that when doing an immediate state-set transition, the `update()` should have processed that frame first, so rerunning `update()` with the new state is great.
+        - And!!! the `update()` step _does_ need to run twice since the AFA regions need to be processed before searching the jump queues to change the state-set bc which jump queues are being watched and not is computed inside those region markers.
 
 - [ ] there needs to be a way to lock onto enemies that's not just middle click
     - Alt? in sekiro the alt key was to walk, so maybe it's not that important except for whenever ongbal does the aura walk. ok maybe just right alt?

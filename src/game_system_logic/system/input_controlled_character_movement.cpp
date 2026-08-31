@@ -464,6 +464,18 @@ Char_mvt_logic_results character_controller_movement_logic(
     }
     else assert(false);  // Unsupported movement type.
 
+    if (anim_root_motion && anim_root_motion->inherit_prev_velocity)
+    {
+        new_velocity.Set(char_mvt_state.prev_velocity[0],
+                         new_velocity.GetY(),
+                         char_mvt_state.prev_velocity[2]);
+    }
+
+    // Log previous velocity.
+    char_mvt_state.prev_velocity[0] = new_velocity.GetX();
+    char_mvt_state.prev_velocity[1] = new_velocity.GetY();
+    char_mvt_state.prev_velocity[2] = new_velocity.GetZ();
+
     // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
     // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.is_grounded = is_grounded;
     if (char_mvt_anim_state)

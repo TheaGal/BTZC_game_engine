@@ -63,6 +63,8 @@ struct Character_mvt_state
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Character_mvt_state, settings);
 
+    vec3 prev_velocity = GLM_VEC3_ZERO_INIT;
+
     /// Helper func that sets facing angle of this component.
     void set_facing_angle(float_t angle_radians);
 

@@ -164,10 +164,9 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "mvt_input_accel",
-                            "1000000"
+                            "inherit_prev_velocity"
                         ],
-                        "cmd_name": "var_ov"
+                        "cmd_name": "var_mark_reeve"
                     },
                     "end_frame": 1,
                     "row_idx": 3,
@@ -183,7 +182,7 @@
                     },
                     "end_frame": 11,
                     "row_idx": 4,
-                    "start_frame": 1
+                    "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
@@ -241,13 +240,24 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "inherit_prev_velocity"
+                        ],
+                        "cmd_name": "var_mark_reeve"
+                    },
+                    "end_frame": 1,
+                    "row_idx": 3,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "mvt_input_accel",
                             "60"
                         ],
                         "cmd_name": "var_ov"
                     },
                     "end_frame": 15,
-                    "row_idx": 3,
+                    "row_idx": 4,
                     "start_frame": 0
                 },
                 {
@@ -259,7 +269,7 @@
                         "cmd_name": "var_ov"
                     },
                     "end_frame": 15,
-                    "row_idx": 4,
+                    "row_idx": 5,
                     "start_frame": 0
                 },
                 {
@@ -271,7 +281,7 @@
                         "cmd_name": "var_ov"
                     },
                     "end_frame": 15,
-                    "row_idx": 5,
+                    "row_idx": 6,
                     "start_frame": 0
                 }
             ],
