@@ -147,6 +147,9 @@
 
 - [ ] there needs to be a way to lock onto enemies that's not just middle click
     - Alt? in sekiro the alt key was to walk, so maybe it's not that important except for whenever ongbal does the aura walk. ok maybe just right alt?
+    - [ ] first, the camera needs to follow the player haha
+        - maybe just a simple priority camera follow me thingy????? idk
+        - eh just a tag component at first then
 
 - [ ] bugfix: get train rails and rail line rider parts to get deleted.
     - probably entity-container can hold onto a list of entities to destroy if one entity gets destroyed?
@@ -154,7 +157,7 @@
     - hmmm ig since the check would have to be for all transforms instead of the ones that changed, it might have to be something that's just done inside the entity-container, but it can still use the transform-hierarchy component to access the children.
     - [ ] add a system between destroying and creating entities that only runs if entities are destroyed which checks the transform hierarchy component
 
-- [ ] fix spelling of the "editor_conent" dir
+- [x] fix spelling of the "editor_conent" dir
 
 - [ ] SOMEDAY: fix the "first-and-last frame average root motion" hack.
     - this will definitely come up when doing start and stop root motion animations.
