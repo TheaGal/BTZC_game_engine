@@ -206,6 +206,8 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/cpu_character_enemy_detection.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/cpu_character_world_space_input.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/cpu_character_world_space_input.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/follow_camera_position_update.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/follow_camera_position_update.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/helper_funcs.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/helper_funcs.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/hitcapsule_attack_processing.cpp

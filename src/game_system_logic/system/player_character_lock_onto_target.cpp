@@ -52,9 +52,9 @@ void BT::system::player_character_lock_onto_target()
     bool on_lockon_press;
     {
         static bool s_prev_lockon_pressed{ false };
-        bool lockon_pressed{ service_finder::find_service<TXP::Input::Input_handler>()
-                                 .get_mouse_button_state(BT_MOUSE_BUTTON_MIDDLE)
-                                 .pressed };
+        auto& input_handler{ service_finder::find_service<TXP::Input::Input_handler>() };
+        bool lockon_pressed{ input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_MIDDLE).pressed ||
+                             input_handler.get_keyboard_key_state(BT_KEY_RIGHT_ALT).pressed };
         on_lockon_press = (!s_prev_lockon_pressed && lockon_pressed);
 
         s_prev_lockon_pressed = lockon_pressed;

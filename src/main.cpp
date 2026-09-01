@@ -9,6 +9,7 @@
 #include "game_system_logic/system/character_broadcast_attack_msg_to_enemies.h"
 #include "game_system_logic/system/cpu_character_enemy_detection.h"
 #include "game_system_logic/system/cpu_character_world_space_input.h"
+#include "game_system_logic/system/follow_camera_position_update.h"
 #include "game_system_logic/system/hitcapsule_attack_processing.h"
 #include "game_system_logic/system/imgui_render_transform_hierarchy_window.h"
 #include "game_system_logic/system/input_controlled_character_movement.h"
@@ -259,6 +260,7 @@ int32_t main()
             BT::date_deadline(2026, 9, 2);  // Reenable above.
 
             BT::system::write_render_transforms();
+            BT::system::follow_camera_position_update();
 #if IMPLEMENT_THIS
             BT::system::update_selected_entity_debug_render_transform();
 #endif // IMPLEMENT_THIS
