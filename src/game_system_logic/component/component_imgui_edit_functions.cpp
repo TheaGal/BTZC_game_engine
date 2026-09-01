@@ -5,6 +5,7 @@
 #include "btuuid.h"
 #include "character_movement.h"
 #include "combat_stats.h"
+#include "game_system_logic/component/follow_camera.h"
 #include "game_system_logic/component/rail_line.h"
 #include "game_system_logic/entity_container.h"
 #include "health_stats.h"
@@ -99,7 +100,7 @@ void BT::component::edit::imgui_edit__sample(entt::registry& reg, entt::entity e
     ImGui::PushID(&meta);
     ImGui::PushItemWidth(ImGui::GetFontSize() * -10);
 
-    ImGui::Text("Sample edit view! For entity %u", ecs_entity);
+    ImGui::TextColored(ImVec4(1, 1, 0, 1), "Sample edit view! For entity %u", ecs_entity);
 
     ImGui::PopItemWidth();
     ImGui::PopID();
@@ -286,6 +287,40 @@ void BT::component::edit::imgui_edit__character_world_space_input(entt::registry
     ImGui::Checkbox("prev_jump_pressed",   &char_ws_input.prev_jump_pressed);
     ImGui::Checkbox("crouch_pressed",      &char_ws_input.crouch_pressed);
     ImGui::Checkbox("prev_crouch_pressed", &char_ws_input.prev_crouch_pressed);
+
+    ImGui::PopID();
+}
+
+void BT::component::edit::imgui_edit__follow_camera_follow_ref(entt::registry& reg,
+                                                               entt::entity ecs_entity)
+{
+    auto& fcfr{ reg.get<component::Follow_camera_follow_ref>(ecs_entity) };
+
+    ImGui::PushID(&fcfr);
+
+    ImGui::DragFloat("follow_offset_y", &fcfr.follow_offset_y);
+
+    ImGui::SeparatorText("State");
+
+    ImGui::BeginDisabled();
+
+    std::string locked_on_entity_pretty{ UUID_helper::to_pretty_repr(fcfr.state.locked_on_entity) };
+    ImGui::InputText("state.locked_on_entity",       &locked_on_entity_pretty);
+    ImGui::DragFloat("state.locked_on_facing_angle", &fcfr.state.locked_on_facing_angle);
+
+    ImGui::EndDisabled();
+
+    ImGui::PopID();
+}
+
+void BT::component::edit::imgui_edit__follow_camera_lockon_target(entt::registry& reg,
+                                                                  entt::entity ecs_entity)
+{
+    auto& fclt{ reg.get<component::Follow_camera_lockon_target>(ecs_entity) };
+
+    ImGui::PushID(&fclt);
+
+    ImGui::DragFloat("follow_offset_y", &fclt.follow_offset_y);
 
     ImGui::PopID();
 }

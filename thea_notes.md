@@ -150,7 +150,8 @@
     - [x] first, the camera needs to follow the player haha
         - maybe just a simple priority camera follow me thingy????? idk
         - eh just a tag component at first then
-    - [ ] make component editor window for focus offset.
+    - [x] make component editor window for focus offset.
+    - [ ] there needs to be a focus position distance that's also mutated as a part of the camera system
 
 - [ ] bugfix: get train rails and rail line rider parts to get deleted.
     - probably entity-container can hold onto a list of entities to destroy if one entity gets destroyed?

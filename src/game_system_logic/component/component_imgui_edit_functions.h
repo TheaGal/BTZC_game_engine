@@ -39,6 +39,8 @@ void imgui_edit__transform(entt::registry& reg, entt::entity ecs_entity);
 void imgui_edit__transform_hierarchy(entt::registry& reg, entt::entity ecs_entity);
 void imgui_edit__transform_changed(entt::registry& reg, entt::entity ecs_entity);
 void imgui_edit__character_world_space_input(entt::registry& reg, entt::entity ecs_entity);
+void imgui_edit__follow_camera_follow_ref(entt::registry& reg, entt::entity ecs_entity);
+void imgui_edit__follow_camera_lockon_target(entt::registry& reg, entt::entity ecs_entity);
 void imgui_edit__render_object_config(entt::registry& reg, entt::entity ecs_entity);
 void imgui_edit__animator_root_motion(entt::registry& reg, entt::entity ecs_entity);
 void imgui_edit__physics_object_settings(entt::registry& reg, entt::entity ecs_entity);
