@@ -20,6 +20,15 @@
 #include <string>
 
 
+void BT::component::edit::internal::imgui_display_unimplemented_types(
+    std::vector<std::string> const& typenames)
+{
+    ImGui::Text("Unimplemented types:");
+
+    for (auto const& str : typenames)
+        ImGui::BulletText("%s", str.c_str());
+}
+
 bool BT::component::edit::internal::imgui_open_component_editing_header(std::string const& label)
 {
     return ImGui::TreeNodeEx(label.c_str(),

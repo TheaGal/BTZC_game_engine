@@ -3,6 +3,7 @@
 #include "entt/entity/fwd.hpp"
 
 #include <string>
+#include <vector>
 
 
 namespace BT
@@ -13,6 +14,9 @@ namespace edit
 {
 namespace internal
 {
+
+/// Display list of unimplemented types.
+void imgui_display_unimplemented_types(std::vector<std::string> const& typenames);
 
 /// Creates a simple header for the start of the component editing view.
 bool imgui_open_component_editing_header(std::string const& label);

@@ -3,6 +3,7 @@
 #include "anim_frame_action_controller.h"
 #include "btdatecheck.h"
 #include "btjson.h"
+#include "btlogger.h"
 #include "character_movement.h"
 #include "combat_stats.h"
 #include "component_imgui_edit_functions.h"
@@ -26,6 +27,7 @@
 #include <string>
 #include <typeindex>
 #include <unordered_map>
+#include <vector>
 
 
 namespace
@@ -172,14 +174,31 @@ void BT::component::imgui_render_components_edit_panes(entt::entity ecs_entity)
 
     // Reference: https://github.com/skypjack/entt/issues/88#issuecomment-1276858022
 
+    std::vector<std::string> unimplemented_types;
+
     for (auto&& curr : reg.storage())
         if (curr.second.contains(ecs_entity))
         {   // Found a component.
             entt::id_type comp_id{ curr.first };
 
-            auto comp_meta_copy{ s_entt_type_id_to_comp_meta_map.at(comp_id) };
-            found_comps_ordered.emplace(comp_meta_copy.display_order, std::move(comp_meta_copy));
+            if (s_entt_type_id_to_comp_meta_map.find(comp_id) !=
+                s_entt_type_id_to_comp_meta_map.end())
+            {
+                auto comp_meta_copy{ s_entt_type_id_to_comp_meta_map.at(comp_id) };
+                found_comps_ordered.emplace(comp_meta_copy.display_order, std::move(comp_meta_copy));
+            }
+            else
+            {
+                unimplemented_types.emplace_back(curr.second.type().name());
+            }
         }
+
+    // Print unimplemented types.
+    if (!unimplemented_types.empty())
+    {
+        edit::internal::imgui_display_unimplemented_types(unimplemented_types);
+        edit::internal::imgui_blank_space(16);
+    }
 
     // Run ImGui edit funcs in desired order (i.e. the order listed in the .h file).
     for (auto&& it : found_comps_ordered)
