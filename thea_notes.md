@@ -151,7 +151,8 @@
         - maybe just a simple priority camera follow me thingy????? idk
         - eh just a tag component at first then
     - [x] make component editor window for focus offset.
-    - [ ] there needs to be a focus position distance that's also mutated as a part of the camera system
+    - [x] there needs to be a focus position distance that's also mutated as a part of the camera system
+        - kinda poopy but it's there
 
 - [ ] bugfix: get train rails and rail line rider parts to get deleted.
     - probably entity-container can hold onto a list of entities to destroy if one entity gets destroyed?
@@ -160,6 +161,16 @@
     - [ ] add a system between destroying and creating entities that only runs if entities are destroyed which checks the transform hierarchy component
 
 - [x] fix spelling of the "editor_conent" dir
+
+- [ ] ui pass so lines and stuff can be easily drawn onto the screen.
+    - this could be used for debug stuff like for camera framing, or in the future will be used for actual, real UI (like focus positioning for locked on enemy which is needed)
+    - [ ] create ui helpers like `draw_line(vec2 pt1, vec2 pt2)` that just create a rectangle transformed into a certain way, and `draw_point(vec2 pt, float_t radius)` which creates a dot.
+
+- [ ] camera system for locking onto enemy.
+    - [ ] create camera framing debug images depending on player char mode.
+        - for regular platforming, have player midsection be on bottom 1/3rd line with top of head around the 1/2 mark.
+        - for lock-onto-enemy, have player midsection be on bottom 1/3rd line and enemy be on top 1/3rd line.
+    - [ ] use more sophisticated positioning (see above).
 
 - [ ] SOMEDAY: fix the "first-and-last frame average root motion" hack.
     - this will definitely come up when doing start and stop root motion animations.

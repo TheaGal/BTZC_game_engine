@@ -19,7 +19,7 @@ void BT::system::player_character_lock_onto_target()
              .get_data_handle()
              .is_simulation_running)
         return;
-    
+
     // Exit early if not in right camera view mode.
     auto& camera{ service_finder::find_service<TXP::Renderer>().get_main_camera() };
     if (!camera.is_follow_orbit())
@@ -31,6 +31,7 @@ void BT::system::player_character_lock_onto_target()
 
     // Get locked on entity.
     bool found_player_character{ false };
+    float_t lockon_pitch_offset{ 0 };
     component::Follow_camera_follow_ref::State* follow_state{ nullptr };
     {
         size_t count{ 0 };
@@ -38,6 +39,7 @@ void BT::system::player_character_lock_onto_target()
             reg.view<component::Follow_camera_follow_ref, component::Transform const>().each())
         {
             found_player_character = true;
+            lockon_pitch_offset = follow_cam_follow_ref.lockon_pitch_offset;
             follow_state = &follow_cam_follow_ref.state;
             count++;
         }
@@ -90,8 +92,10 @@ void BT::system::player_character_lock_onto_target()
                     entt::exclude<component::Follow_camera_follow_ref>)
                  .each())
         {   // Loop thru to find best entity to focus on.
-            vec3 trans_pos{ static_cast<float_t>(transform.position.x),  // @TODO: Conform to `write_render_transforms.cpp`
-                            static_cast<float_t>(transform.position.y) + cam_lockon_target.follow_offset_y,
+            // @TODO: Conform to `write_render_transforms.cpp`
+            vec3 trans_pos{ static_cast<float_t>(transform.position.x),
+                            static_cast<float_t>(transform.position.y) +
+                                cam_lockon_target.follow_offset_y,
                             static_cast<float_t>(transform.position.z) };
 
             vec3 facing_to_trans;
@@ -124,25 +128,26 @@ void BT::system::player_character_lock_onto_target()
 
     vec3 locked_on_pos;
     {
-        auto& transform{ reg.get<component::Transform const>(
-            entity_container.find_entity(follow_state->locked_on_entity)) };
+        auto locked_on_ecs_entity{ entity_container.find_entity(follow_state->locked_on_entity) };
+        auto& transform{ reg.get<component::Transform const>(locked_on_ecs_entity) };
+        auto& cam_lockon_target{ reg.get<component::Follow_camera_lockon_target const>(
+            locked_on_ecs_entity) };
 
         // @TODO: Conform to `write_render_transforms.cpp`
         locked_on_pos[0] = static_cast<float_t>(transform.position.x);
-        locked_on_pos[1] = static_cast<float_t>(transform.position.y);
+        locked_on_pos[1] =
+            static_cast<float_t>(transform.position.y) + cam_lockon_target.follow_offset_y;
         locked_on_pos[2] = static_cast<float_t>(transform.position.z);
     }
 
     vec3 delta_pos;
     glm_vec3_sub(locked_on_pos, follow_pos, delta_pos);
 
-    static float_t const k_x_angle_offset{ glm_rad(30.0f) };  // @HARDCODE: Also this is not a good solution.
-                                                              //   Ref: https://assetsio.gnwcdn.com/sekiro-owl-father.jpg?width=1600&height=900&fit=crop&quality=100&format=png&enable=upscale&auto=webp
-
+    // Ref: https://assetsio.gnwcdn.com/sekiro-owl-father.jpg?width=1600&height=900&fit=crop&quality=100&format=png&enable=upscale&auto=webp
     vec2 new_orbits;
     new_orbits[0] = std::atan2f(delta_pos[0], delta_pos[2]);
     new_orbits[1] = -std::atan2f(delta_pos[1], glm_vec2_norm(vec2{ delta_pos[0], delta_pos[2] })) +
-                    k_x_angle_offset;
+                    lockon_pitch_offset;
     camera.set_follow_orbit_orbits(new_orbits);
 
     // Save locked on facing angle.

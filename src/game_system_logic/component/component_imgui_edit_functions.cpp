@@ -300,6 +300,7 @@ void BT::component::edit::imgui_edit__follow_camera_follow_ref(entt::registry& r
 
     ImGui::DragFloat("follow_offset_y", &fcfr.follow_offset_y);
     ImGui::DragFloat3("orbit_cam_offset_pos", fcfr.orbit_cam_offset_pos.raw);
+    ImGui::DragFloat("lockon_pitch_offset", &fcfr.lockon_pitch_offset);
 
     ImGui::SeparatorText("State");
 

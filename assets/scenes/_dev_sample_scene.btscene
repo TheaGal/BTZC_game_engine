@@ -142,12 +142,13 @@
                 {
                     "type_name": "component::Follow_camera_follow_ref",
                     "members_j": {
-                        "follow_offset_y": 0.4,
+                        "follow_offset_y": 0.875,
                         "orbit_cam_offset_pos": {
                             "x": 0.0,
                             "y": 0.0,
                             "z": -2.75
-                        }
+                        },
+                        "lockon_pitch_offset": 0.523599
                     }
                 },
                 {
@@ -382,7 +383,7 @@
                 {
                     "type_name": "component::Follow_camera_lockon_target",
                     "members_j": {
-                        "follow_offset_y": 1.1
+                        "follow_offset_y": 0.875
                     }
                 },
                 {

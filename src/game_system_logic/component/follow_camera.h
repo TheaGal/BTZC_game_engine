@@ -16,11 +16,13 @@ struct Follow_camera_follow_ref
 {
     float_t follow_offset_y{ 1.0f };
     vec3s orbit_cam_offset_pos{ 0, 0, -2 };
+    float_t lockon_pitch_offset{ glm_rad(30.0f) };
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
         Follow_camera_follow_ref,
         follow_offset_y,
-        orbit_cam_offset_pos
+        orbit_cam_offset_pos,
+        lockon_pitch_offset
     );
 
     struct State
