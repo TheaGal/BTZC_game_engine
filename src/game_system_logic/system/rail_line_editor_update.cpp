@@ -1,8 +1,10 @@
 #include "rail_line_editor_update.h"
 
+#include "btglm.h"
 #include "btuuid.h"
 #include "entt/entity/registry.hpp"
 #include "game_system_logic/component/rail_line.h"
+#include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
 #include "service_finder/service_finder.h"
 #include "txp_renderer_public.h"
@@ -18,7 +20,8 @@ void BT::system::rail_line_editor_update()
     auto& reg{ entity_container.get_ecs_registry() };
 
     auto create_rail_piece_fn = [&entity_container,
-                                 &reg](component::Rail_line& rail_line,
+                                 &reg](UUID parent_entity_uuid,
+                                       component::Rail_line& rail_line,
                                        component::Rail_line::Build_code build_code,
                                        std::string const& sub_mesh_name,
                                        vec3 mesh_origin_pos,
@@ -29,14 +32,17 @@ void BT::system::rail_line_editor_update()
         rail_line.built_length += build_template.length;
         rail_line.built_ctor_code.emplace_back(build_code);
 
-        // @NOTE: using registry::create() directly here guarantees the created rail objects are not
-        //        seen by the object registry. Also, it bypasses having to create a UUID, though
-        //        that means that nothing can directly interact with the rail line pieces, which is
-        //        intended.  -Thea 2026/08/11
-        auto new_ent = entity_container.create_entity(UUID_helper::generate_uuid());
+        UUID new_ent_uuid = UUID_helper::generate_uuid();
+        auto new_ent = entity_container.create_entity(new_ent_uuid);
         rail_line.created_entities.emplace_back(new_ent);
 
-        auto& rend_obj_cfg = reg.emplace_or_replace<TXP::component::Render_object_config>(new_ent);
+        // Add metadata.
+        auto& meta = reg.emplace<TXP::component::Entity_metadata>(new_ent);
+        meta.name = "Rail Line Piece " + sub_mesh_name;
+        meta.uuid = new_ent_uuid;
+
+        // Add render object.
+        auto& rend_obj_cfg = reg.emplace<TXP::component::Render_object_config>(new_ent);
         rend_obj_cfg.model_name = "rails";
         rend_obj_cfg.sub_mesh_name = sub_mesh_name;
 
@@ -47,6 +53,30 @@ void BT::system::rail_line_editor_update()
         glm_translate(rend_obj_cfg.transform.raw, mesh_origin_pos);
 
         build_template.advance_place_transform(place_pos, place_angle, true);
+
+        // Add transform.
+        auto& transform = reg.emplace<component::Transform>(new_ent);
+        {
+            vec4 pos;
+            mat4 rot;
+            vec3s sca;
+            glm_decompose(rend_obj_cfg.transform.raw, pos, rot, sca.raw);
+
+            versors rot_q;
+            glm_mat4_quat(rot, rot_q.raw);
+
+            transform.position = rvec3s{ pos[0], pos[1], pos[2] };
+            transform.rotation = rot_q;
+            transform.scale = sca;
+        }
+
+        // Add transform hierarchy.
+        auto& trans_hier = reg.emplace<component::Transform_hierarchy>(new_ent);
+        trans_hier.parent_entity = parent_entity_uuid;
+
+        auto& parent_trans_hier = reg.get_or_emplace<component::Transform_hierarchy>(
+            entity_container.find_entity(parent_entity_uuid));
+        parent_trans_hier.children_entities.emplace_back(new_ent_uuid);
     };
 
     // Write transforms.
@@ -63,9 +93,15 @@ void BT::system::rail_line_editor_update()
         rail_line.built_ctor_code.clear();
 
         // Clear all entities.
-        for (auto ent : rail_line.created_entities)
+        for (auto child_ent : rail_line.created_entities)
         {
-            entity_container.destroy_entity(entity_container.find_entity_uuid(ent));
+            UUID ent_uuid = entity_container.find_entity_uuid(child_ent);
+            entity_container.destroy_entity(ent_uuid);
+
+            auto& trans_hier = reg.get_or_emplace<component::Transform_hierarchy>(ent);
+            trans_hier.children_entities.erase(std::find(trans_hier.children_entities.begin(),
+                                                         trans_hier.children_entities.end(),
+                                                         ent_uuid));
         }
         rail_line.created_entities.clear();
 
@@ -91,8 +127,11 @@ void BT::system::rail_line_editor_update()
 
         using Build_code = component::Rail_line::Build_code;
 
-        auto process_tilt_connection_fn =
+        UUID const ent_uuid = entity_container.find_entity_uuid(ent);
+
+        auto const process_tilt_connection_fn =
             [&create_rail_piece_fn,
+             ent_uuid,
              &rail_line,
              &prev_ctor_tilt,
              &ctor_tilt,
@@ -106,7 +145,8 @@ void BT::system::rail_line_editor_update()
                     break;
 
                 case LEFT_TILT:
-                    create_rail_piece_fn(rail_line,
+                    create_rail_piece_fn(ent_uuid,
+                                         rail_line,
                                          Build_code::BC_STRAIGHT_ROLL_LEFT_RETURN,
                                          "StraightRailRoll.LR",
                                          vec3{ -14, 0, 0 },
@@ -115,7 +155,8 @@ void BT::system::rail_line_editor_update()
                     break;
 
                 case RIGHT_TILT:
-                    create_rail_piece_fn(rail_line,
+                    create_rail_piece_fn(ent_uuid,
+                                         rail_line,
                                          Build_code::BC_STRAIGHT_ROLL_RIGHT_RETURN,
                                          "StraightRailRoll.RR",
                                          vec3{ -16, 0, 0 },
@@ -135,7 +176,8 @@ void BT::system::rail_line_editor_update()
                     break;
 
                 case LEFT_TILT:
-                    create_rail_piece_fn(rail_line,
+                    create_rail_piece_fn(ent_uuid,
+                                         rail_line,
                                          Build_code::BC_STRAIGHT_ROLL_LEFT,
                                          "StraightRailRoll.L",
                                          vec3{ -18, 0, 0 },
@@ -144,7 +186,8 @@ void BT::system::rail_line_editor_update()
                     break;
 
                 case RIGHT_TILT:
-                    create_rail_piece_fn(rail_line,
+                    create_rail_piece_fn(ent_uuid,
+                                         rail_line,
                                          Build_code::BC_STRAIGHT_ROLL_RIGHT,
                                          "StraightRailRoll.R",
                                          vec3{ -20, 0, 0 },
@@ -180,7 +223,8 @@ void BT::system::rail_line_editor_update()
                     process_tilt_connection_fn();
 
                     if (prev_ctor_tilt == NO_TILT)
-                        create_rail_piece_fn(rail_line,
+                        create_rail_piece_fn(ent_uuid,
+                                             rail_line,
                                              Build_code::BC_STRAIGHT,
                                              "StraightRail",
                                              vec3{ -22, 0, 0 },
@@ -190,7 +234,8 @@ void BT::system::rail_line_editor_update()
                 }
                 case INCLINE:
                 {
-                    create_rail_piece_fn(rail_line,
+                    create_rail_piece_fn(ent_uuid,
+                                         rail_line,
                                          Build_code::BC_STRAIGHT_UPHILL,
                                          "SlopedRail.U",
                                          vec3{ 18, 0, 0 },
@@ -200,7 +245,8 @@ void BT::system::rail_line_editor_update()
                 }
                 case DECLINE:
                 {
-                    create_rail_piece_fn(rail_line,
+                    create_rail_piece_fn(ent_uuid,
+                                         rail_line,
                                          Build_code::BC_STRAIGHT_DOWNHILL,
                                          "SlopedRail.D",
                                          vec3{ 12, 0, 0 },
@@ -316,7 +362,8 @@ void BT::system::rail_line_editor_update()
                 }
 
                 // Add curve.
-                create_rail_piece_fn(rail_line,
+                create_rail_piece_fn(ent_uuid,
+                                     rail_line,
                                      curve_build_code,
                                      "CurveRail." + curve_code,
                                      curve_origin.raw,
@@ -333,7 +380,8 @@ void BT::system::rail_line_editor_update()
                 process_tilt_connection_fn();
 
                 // Add incline start.
-                create_rail_piece_fn(rail_line,
+                create_rail_piece_fn(ent_uuid,
+                                     rail_line,
                                      Build_code::BC_SLOPECHANGE_UP,
                                      "SlopechangeRail.U",
                                      vec3{ 16, 0, 0 },
@@ -347,7 +395,8 @@ void BT::system::rail_line_editor_update()
                     throw std::runtime_error("huh?");
 
                 // Add incline end.
-                create_rail_piece_fn(rail_line,
+                create_rail_piece_fn(ent_uuid,
+                                     rail_line,
                                      Build_code::BC_SLOPECHANGE_UP_RETURN,
                                      "SlopechangeRail.UR",
                                      vec3{ 20, 0, 0 },
@@ -366,7 +415,8 @@ void BT::system::rail_line_editor_update()
                 process_tilt_connection_fn();
 
                 // Add decline start.
-                create_rail_piece_fn(rail_line,
+                create_rail_piece_fn(ent_uuid,
+                                     rail_line,
                                      Build_code::BC_SLOPECHANGE_DOWN,
                                      "SlopechangeRail.D",
                                      vec3{ 10, 0, 0 },
@@ -380,7 +430,8 @@ void BT::system::rail_line_editor_update()
                     throw std::runtime_error("huh?");
 
                 // Add decline end.
-                create_rail_piece_fn(rail_line,
+                create_rail_piece_fn(ent_uuid,
+                                     rail_line,
                                      Build_code::BC_SLOPECHANGE_DOWN_RETURN,
                                      "SlopechangeRail.DR",
                                      vec3{ 14, 0, 0 },

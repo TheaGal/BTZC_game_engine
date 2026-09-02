@@ -216,8 +216,7 @@ int32_t main()
             TXP::Renderer::advance_afa_sim_timer(main_physics_engine.k_simulation_delta_time);
             BT::system::tick_sim_char_mvt_animator();
 
-            // BT::system::rail_line_rider_update();
-            BT::date_deadline(2026, 9, 2);  // Reenable above.
+            BT::system::rail_line_rider_update();
 
             BT::system::character_broadcast_attack_msg_to_enemies();
             BT::system::cpu_character_enemy_detection();
@@ -256,8 +255,7 @@ int32_t main()
             perf_timer.start_timer();
 
             // Run all pre-render systems.
-            // BT::system::rail_line_editor_update();
-            BT::date_deadline(2026, 9, 2);  // Reenable above.
+            BT::system::rail_line_editor_update();
 
             BT::system::write_render_transforms();
             BT::system::follow_camera_position_update();
