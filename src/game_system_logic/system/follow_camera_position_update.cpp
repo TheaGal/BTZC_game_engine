@@ -27,8 +27,10 @@ void BT::system::follow_camera_position_update()
         auto follow_pos = transform.position;
         follow_pos.y += follow_ref.follow_offset_y;
 
+        auto& cam{ renderer.get_main_camera() };
+        cam.set_follow_orbit_cam_offset_pos(follow_ref.orbit_cam_offset_pos.raw);
         date_deadline(2026, 10, 24);  // @TODO: in case if there's a world-streaming or chunking system, figure out more better way of going from real to float.
-        renderer.get_main_camera().set_follow_orbit_follow_pos(
+        cam.set_follow_orbit_follow_pos(
             vec3{ static_cast<float_t>(follow_pos.x),
                   static_cast<float_t>(follow_pos.y),
                   static_cast<float_t>(follow_pos.z) });
