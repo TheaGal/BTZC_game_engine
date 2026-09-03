@@ -22,34 +22,42 @@ using Rail_position_transform = component::Rail_line::Build_code_info::Rail_posi
 
 void build_bogie_entities(Entity_container& entity_container,
                           entt::registry& reg,
-                          entt::entity ent,
+                          UUID parent_uuid,
                           component::Rail_line_rider& line_rider)
 {
     // Destroy prev created entities.
     for (auto sub_ent : line_rider.created_bogie_entities)
     {
-        if (sub_ent == ent)
-            continue;
-
-        entity_container.destroy_entity(entity_container.find_entity_uuid(sub_ent));
+        UUID sub_ent_uuid{ entity_container.find_entity_uuid(sub_ent) };
+        component::sever_parent_child_relationship_helper(entity_container,
+                                                          parent_uuid,
+                                                          sub_ent_uuid);
+        entity_container.destroy_entity(sub_ent_uuid);
     }
     line_rider.created_bogie_entities.clear();
 
     // Create new entities.
     for (uint32_t i = 0; i < line_rider.bogie_positions.size(); i++)
     {
-        auto& bogie_pos{ line_rider.bogie_positions[i] };
+        // Create a new entity.
+        UUID new_ent_uuid{ UUID_helper::generate_uuid() };
+        auto new_ent{ entity_container.create_entity(new_ent_uuid) };
 
-        // Use current entity as first entity if first bogie and 0 relative position.
-        // If not, create a new entity.
-        line_rider.created_bogie_entities.emplace_back(
-            i == 0 && bogie_pos == 0
-                ? ent
-                : entity_container.create_entity(UUID_helper::generate_uuid()));
+        line_rider.created_bogie_entities.emplace_back(new_ent);
+
+        // Add metadata.
+        auto& meta = reg.emplace<TXP::component::Entity_metadata>(new_ent);
+        meta.name = "Sub bogie " + std::to_string(i);
+        meta.uuid = new_ent_uuid;
+
+        // Add transform.
+        reg.emplace<component::Transform>(new_ent);
+        component::form_parent_child_relationship_helper(entity_container,
+                                                         parent_uuid,
+                                                         new_ent_uuid);
 
         // Add model.
-        auto& rend_obj_cfg = reg.emplace_or_replace<TXP::component::Render_object_config>(
-            line_rider.created_bogie_entities.back());
+        auto& rend_obj_cfg = reg.emplace_or_replace<TXP::component::Render_object_config>(new_ent);
         rend_obj_cfg.model_name = "unit_box";
     }
 
@@ -65,26 +73,42 @@ void build_bogie_entities(Entity_container& entity_container,
 
 void build_car_entities(Entity_container& entity_container,
                         entt::registry& reg,
-                        entt::entity ent,
+                        UUID parent_uuid,
                         component::Rail_line_rider& line_rider)
 {
     // Destroy prev created entities.
     for (auto sub_ent : line_rider.created_car_entities)
     {
-        entity_container.destroy_entity(entity_container.find_entity_uuid(sub_ent));
+        UUID sub_ent_uuid{ entity_container.find_entity_uuid(sub_ent) };
+        component::sever_parent_child_relationship_helper(entity_container,
+                                                          parent_uuid,
+                                                          sub_ent_uuid);
+        entity_container.destroy_entity(sub_ent_uuid);
     }
     line_rider.created_car_entities.clear();
 
     // Create new entities.
-    for (uint32_t i = 0; i < line_rider.bogie_positions.size(); i++)
+    for (uint32_t i = 0; i < line_rider.car_bogies.size(); i++)
     {
         // Create a new entity.
-        line_rider.created_car_entities.emplace_back(
-            entity_container.create_entity(UUID_helper::generate_uuid()));
+        UUID new_ent_uuid{ UUID_helper::generate_uuid() };
+        auto new_ent{ entity_container.create_entity(new_ent_uuid) };
+
+        line_rider.created_car_entities.emplace_back(new_ent);
+
+        // Add metadata.
+        auto& meta = reg.emplace<TXP::component::Entity_metadata>(new_ent);
+        meta.name = "Sub car " + std::to_string(i);
+        meta.uuid = new_ent_uuid;
+
+        // Add transform.
+        reg.emplace<component::Transform>(new_ent);
+        component::form_parent_child_relationship_helper(entity_container,
+                                                         parent_uuid,
+                                                         new_ent_uuid);
 
         // Add model.
-        auto& rend_obj_cfg = reg.emplace_or_replace<TXP::component::Render_object_config>(
-            line_rider.created_car_entities.back());
+        auto& rend_obj_cfg = reg.emplace_or_replace<TXP::component::Render_object_config>(new_ent);
         rend_obj_cfg.model_name = "unit_box";
     }
 }
@@ -156,16 +180,18 @@ void BT::system::rail_line_rider_update()
 
     for (auto&& [ent, line_rider] : view->each())
     {
+        UUID ent_uuid{ entity_container.find_entity_uuid(ent) };
+
         // Ensure there are objects for each bogie to update.
         if (line_rider.bogie_positions.size() != line_rider.created_bogie_entities.size())
         {
-            build_bogie_entities(entity_container, reg, ent, line_rider);
+            build_bogie_entities(entity_container, reg, ent_uuid, line_rider);
         }
 
         // Ensure there are objects for each car to update.
         if (line_rider.car_bogies.size() != line_rider.created_car_entities.size())
         {
-            build_car_entities(entity_container, reg, ent, line_rider);
+            build_car_entities(entity_container, reg, ent_uuid, line_rider);
         }
 
         // Ensure rail line is built before attempting to ride it.
@@ -189,30 +215,37 @@ void BT::system::rail_line_rider_update()
         auto transform{ calc_transform_on_rail_line(rail_line, pos_mod) };
 
         // Build real transform.
+        static auto const k_apply_transform_to_entity_vec3_quat = [](entt::registry& reg,
+                                                                     entt::entity ent,
+                                                                     vec3s const& pos,
+                                                                     versors const& transform_rot) {
+            rvec3s transform_rpos{
+                .x = pos.x,
+                .y = pos.y,
+                .z = pos.z,
+            };
+
+            // Update transform.
+            component::submit_transform_change_no_scale_helper(reg,
+                                                               ent,
+                                                               transform_rpos,
+                                                               transform_rot);
+            component::try_set_physics_object_transform_helper(reg,
+                                                               ent,
+                                                               transform_rpos,
+                                                               transform_rot);
+        };
         static auto const k_apply_transform_to_entity =
             [](entt::registry& reg, entt::entity ent, Rail_position_transform const& transform) {
-                rvec3s transform_rpos{
-                    .x = transform.position.x,
-                    .y = transform.position.y,
-                    .z = transform.position.z,
-                };
-
                 versors transform_rot;
                 glm_euler_zyx_quat(vec3{ transform.angle_x, transform.angle_y, transform.angle_z },
                                    transform_rot.raw);
 
-                // Update transform.
-                component::submit_transform_change_no_scale_helper(reg,
-                                                                   ent,
-                                                                   transform_rpos,
-                                                                   transform_rot);
-                component::try_set_physics_object_transform_helper(reg,
-                                                                   ent,
-                                                                   transform_rpos,
-                                                                   transform_rot);
+                k_apply_transform_to_entity_vec3_quat(reg, ent, transform.position, transform_rot);
             };
 
-        k_apply_transform_to_entity(reg, ent, transform);
+        // Apply initial transform to 0th bogie.
+        k_apply_transform_to_entity(reg, line_rider.created_bogie_entities[0], transform);
 
         // Update transforms of bogies.
         std::vector<Rail_position_transform> bogie_transforms;
@@ -226,8 +259,9 @@ void BT::system::rail_line_rider_update()
             auto bogie_offset{ line_rider.bogie_positions[i] };
             auto prev_bogie_offset{ i == 0 ? 0.0f : line_rider.bogie_positions[i - 1] };
 
-            if (i == 0 && bogie_offset == 0)
+            if (i == 0)
             {
+                assert(bogie_offset == 0);
                 bogie_transforms.emplace_back(prev_transform);
                 continue;
             }
@@ -240,27 +274,8 @@ void BT::system::rail_line_rider_update()
                                       bogie_offset - prev_bogie_offset,
                                       prev_line_position);
 
-            // Apply transform to render object.
-            static auto const k_apply_transform_to_render_obj =
-                [](entt::registry& reg,
-                   entt::entity ent,
-                   Rail_position_transform const& transform) {
-                    auto& rend_obj_cfg = reg.get<TXP::component::Render_object_config>(ent);
-
-                    glm_translate_make(rend_obj_cfg.transform.raw,
-                                       const_cast<float_t*>(transform.position.raw));
-
-                    versor transform_rot;
-                    glm_euler_zyx_quat(
-                        vec3{ transform.angle_x, transform.angle_y, transform.angle_z },
-                        transform_rot);
-                    glm_quat_rotate(rend_obj_cfg.transform.raw,
-                                    transform_rot,
-                                    rend_obj_cfg.transform.raw);
-                };
-            k_apply_transform_to_render_obj(reg,
-                                            line_rider.created_bogie_entities[i],
-                                            new_transform);
+            // Apply transform to bogie.
+            k_apply_transform_to_entity(reg, line_rider.created_bogie_entities[i], new_transform);
 
             bogie_transforms.emplace_back(new_transform);
             prev_transform = new_transform;
@@ -275,9 +290,9 @@ void BT::system::rail_line_rider_update()
             auto const& bogie_trans1 = bogie_transforms[bogie_i1];
 
             // Find midpoints.
-            vec3 mid_pos = GLM_VEC3_ZERO_INIT;
-            glm_vec3_muladds(const_cast<float_t*>(bogie_trans0.position.raw), 0.5f, mid_pos);
-            glm_vec3_muladds(const_cast<float_t*>(bogie_trans1.position.raw), 0.5f, mid_pos);
+            vec3s mid_pos = GLM_VEC3_ZERO_INIT;
+            glm_vec3_muladds(const_cast<float_t*>(bogie_trans0.position.raw), 0.5f, mid_pos.raw);
+            glm_vec3_muladds(const_cast<float_t*>(bogie_trans1.position.raw), 0.5f, mid_pos.raw);
 
             versor transform_rot0;
             glm_euler_zyx_quat(
@@ -289,26 +304,14 @@ void BT::system::rail_line_rider_update()
                 vec3{ bogie_trans1.angle_x, bogie_trans1.angle_y, bogie_trans1.angle_z },
                 transform_rot1);
             
-            versor mid_quat;
-            glm_quat_nlerp(transform_rot0, transform_rot1, 0.5f, mid_quat);
+            versors mid_quat;
+            glm_quat_nlerp(transform_rot0, transform_rot1, 0.5f, mid_quat.raw);
 
-            // Apply transform to render object.
-            static auto const k_apply_transform_to_render_obj =
-                [](entt::registry& reg,
-                   entt::entity ent,
-                   vec3 transform_position,
-                   versor transform_rotation) {
-                    auto& rend_obj_cfg = reg.get<TXP::component::Render_object_config>(ent);
-
-                    glm_translate_make(rend_obj_cfg.transform.raw, transform_position);
-                    glm_quat_rotate(rend_obj_cfg.transform.raw,
-                                    transform_rotation,
-                                    rend_obj_cfg.transform.raw);
-                };
-            k_apply_transform_to_render_obj(reg,
-                                            line_rider.created_car_entities[i],
-                                            mid_pos,
-                                            mid_quat);
+            // Apply transform to car.
+            k_apply_transform_to_entity_vec3_quat(reg,
+                                                  line_rider.created_car_entities[i],
+                                                  mid_pos,
+                                                  mid_quat);
         }
     }
 }

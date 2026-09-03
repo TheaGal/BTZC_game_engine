@@ -160,7 +160,7 @@
     - hmmm ig since the check would have to be for all transforms instead of the ones that changed, it might have to be something that's just done inside the entity-container, but it can still use the transform-hierarchy component to access the children.
     - [ ] add a system between destroying and creating entities that only runs if entities are destroyed which checks the transform hierarchy component
     - [x] adds rail lines into a transform hierarchy
-    - [ ] adds rail bogies into a transform hierarchy
+    - [x] adds rail bogies/cars into a transform hierarchy
 
 - [x] fix spelling of the "editor_conent" dir
 
