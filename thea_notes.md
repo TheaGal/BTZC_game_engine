@@ -154,11 +154,11 @@
     - [x] there needs to be a focus position distance that's also mutated as a part of the camera system
         - kinda poopy but it's there
 
-- [ ] bugfix: get train rails and rail line rider parts to get deleted.
+- [x] bugfix: get train rails and rail line rider parts to get deleted.
     - probably entity-container can hold onto a list of entities to destroy if one entity gets destroyed?
     - or! transform-hierarchy component can do that automatically!! if it detects the parent entity is gone, then destroy the thing.
     - hmmm ig since the check would have to be for all transforms instead of the ones that changed, it might have to be something that's just done inside the entity-container, but it can still use the transform-hierarchy component to access the children.
-    - [ ] add a system between destroying and creating entities that only runs if entities are destroyed which checks the transform hierarchy component
+    - [x] add a system between destroying and creating entities that only runs if entities are destroyed which checks the transform hierarchy component
     - [x] adds rail lines into a transform hierarchy
     - [x] adds rail bogies/cars into a transform hierarchy
 
