@@ -71,12 +71,9 @@ void BT::system::rail_line_editor_update()
         }
 
         // Add transform hierarchy.
-        auto& trans_hier = reg.emplace<component::Transform_hierarchy>(new_ent);
-        trans_hier.parent_entity = parent_entity_uuid;
-
-        auto& parent_trans_hier = reg.get_or_emplace<component::Transform_hierarchy>(
-            entity_container.find_entity(parent_entity_uuid));
-        parent_trans_hier.children_entities.emplace_back(new_ent_uuid);
+        component::form_parent_child_relationship_helper(entity_container,
+                                                         parent_entity_uuid,
+                                                         new_ent_uuid);
     };
 
     // Write transforms.
@@ -95,13 +92,14 @@ void BT::system::rail_line_editor_update()
         // Clear all entities.
         for (auto child_ent : rail_line.created_entities)
         {
-            UUID ent_uuid = entity_container.find_entity_uuid(child_ent);
-            entity_container.destroy_entity(ent_uuid);
+            UUID child_ent_uuid = entity_container.find_entity_uuid(child_ent);
 
-            auto& trans_hier = reg.get_or_emplace<component::Transform_hierarchy>(ent);
-            trans_hier.children_entities.erase(std::find(trans_hier.children_entities.begin(),
-                                                         trans_hier.children_entities.end(),
-                                                         ent_uuid));
+            component::sever_parent_child_relationship_helper(
+                entity_container,
+                entity_container.find_entity_uuid(ent),
+                child_ent_uuid);
+
+            entity_container.destroy_entity(child_ent_uuid);
         }
         rail_line.created_entities.clear();
 

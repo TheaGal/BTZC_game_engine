@@ -9,6 +9,9 @@
 
 namespace BT
 {
+
+class Entity_container;  // Forward decl.
+
 namespace component
 {
 
@@ -39,6 +42,16 @@ struct Transform_hierarchy
         children_entities
     );
 };
+
+/// Helper to join parent-child relationship transform hierarchy.
+void form_parent_child_relationship_helper(Entity_container& entity_container,
+                                           UUID parent,
+                                           UUID child);
+
+/// Helper to sever parent-child relationship transform hierarchy.
+void sever_parent_child_relationship_helper(Entity_container& entity_container,
+                                            UUID parent,
+                                            UUID child);
 
 /// Tag that transform was changed (this is used for transform propagation thru the hierarchy, also
 /// to avoid directly mutating `Transform` component).
