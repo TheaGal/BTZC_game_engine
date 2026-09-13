@@ -166,7 +166,7 @@
 
 - [ ] ui pass so lines and stuff can be easily drawn onto the screen.
     - this could be used for debug stuff like for camera framing, or in the future will be used for actual, real UI (like focus positioning for locked on enemy which is needed)
-    - [ ] create ui helpers like `draw_line(vec2 pt1, vec2 pt2)` that just create a rectangle transformed into a certain way, and `draw_point(vec2 pt, float_t radius)` which creates a dot.
+    - [ ] ~~create ui helpers like `draw_line(vec2 pt1, vec2 pt2)` that just create a rectangle transformed into a certain way, and `draw_point(vec2 pt, float_t radius)` which creates a dot.~~
     - ahhhh, but im not confident that it's the best idea to have those ui drawing functions.
         - unreal has canvases you make and then they just appear. i kinda like that. it's different from unity bc it doesn't rly exist in the real world but hey it's nice.
     - okay, so having a level loading json scheme kinda like for .btscene files would be good! just have names be keys i think (bc i wanna be able to search via keys). So access it like:
@@ -222,6 +222,8 @@
     ```
     - THOUGHT: yknow, it feels like there are shaders and then there are materials. i rly need to figure out how to organize the two. or maybe the render-object getting organized into the render lists is something that needs to happen in its own step instead of being inside the shader code (like the allocate function).
         - idk, it just feels like it needs some kind of reorg eventually.
+    - [x] get the thingies drawing.
+    - [ ] create compute shader to write 
 
 - [ ] camera system for locking onto enemy.
     - [ ] create camera framing debug images depending on player char mode.
