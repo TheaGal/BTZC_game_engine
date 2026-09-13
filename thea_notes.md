@@ -220,6 +220,8 @@
     // right before ui_state draws).
     ui_state.tick();
     ```
+    - THOUGHT: yknow, it feels like there are shaders and then there are materials. i rly need to figure out how to organize the two. or maybe the render-object getting organized into the render lists is something that needs to happen in its own step instead of being inside the shader code (like the allocate function).
+        - idk, it just feels like it needs some kind of reorg eventually.
 
 - [ ] camera system for locking onto enemy.
     - [ ] create camera framing debug images depending on player char mode.

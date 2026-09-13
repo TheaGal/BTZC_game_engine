@@ -134,6 +134,9 @@ int32_t main()
         BT::system::imgui_render_transform_hierarchy_window(false);
     });
 
+    ui_state.canvas("jojo.btui");
+    ui_state.load_persistent_canvas("jojo.btui");
+
     // Setup physics engine.
     BT::Physics_engine main_physics_engine;
 

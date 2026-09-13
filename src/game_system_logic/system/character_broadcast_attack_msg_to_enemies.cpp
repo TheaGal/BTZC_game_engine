@@ -29,8 +29,6 @@ void iter_and_asdfasdfasdf()
 
 void BT::system::character_broadcast_attack_msg_to_enemies()
 {
-    date_deadline(2026, 9, 10);  // @TODO: confirm that this system works!
-
     auto& renderer{ service_finder::find_service<TXP::Renderer>() };
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
@@ -72,6 +70,10 @@ void BT::system::character_broadcast_attack_msg_to_enemies()
         {
             continue;
         }
+
+        // @TODO: make sure that the broadcast code works here!!
+        // @TODO: confirm that this system works!
+        assert(false);
 
         // Broadcast event.
         for (auto&& [ecs_entity2, transform2, cpu_enemy_awareness2, detect_char2] : view2.each())
