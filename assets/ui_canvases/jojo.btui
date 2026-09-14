@@ -7,10 +7,52 @@
                 "x": 0.0,
                 "y": 0.0,
                 "w": 100.0,
-                "h": 100.0
+                "h": 300.0,
+                "rot": 0.3926990817,
+                "anchor": {
+                    "x": 1.0,
+                    "y": 0.5
+                }
             },
             "opacity": 1.0,
-            "image": "test_ktx_tex"
+            "image": "test_ktx_tex",
+            "is_nine_slice": false
+        },
+        {
+            "name": "btn_play_game2",
+            "parent": "btn_play_game",
+            "transform": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 2.0,
+                "h": 0.666667,
+                "rot": 0.3926990817,
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.0
+                }
+            },
+            "opacity": 0.5,
+            "image": "test_ktx_tex",
+            "is_nine_slice": false
+        },
+        {
+            "name": "btn_play_game3",
+            "parent": "btn_play_game2",
+            "transform": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 2.0,
+                "h": 2.0,
+                "rot": 0.3926990817,
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                }
+            },
+            "opacity": 0.5,
+            "image": "test_ktx_tex",
+            "is_nine_slice": false
         }
     ]
 }
