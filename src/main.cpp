@@ -134,8 +134,8 @@ int32_t main()
         BT::system::imgui_render_transform_hierarchy_window(false);
     });
 
-    ui_state.canvas("debug_camera_guide_enemy_lockon.btui");
-    ui_state.load_persistent_canvas("debug_camera_guide_enemy_lockon.btui");
+    ui_state.canvas("debug_player_camera_guide.btui");
+    ui_state.load_persistent_canvas("debug_player_camera_guide.btui");
 
     // Setup physics engine.
     BT::Physics_engine main_physics_engine;
