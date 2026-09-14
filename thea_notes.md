@@ -231,5 +231,7 @@
         - [x] for lock-onto-enemy, have player midsection be on bottom 1/3rd line and enemy be on top 1/3rd line.
     - [ ] use more sophisticated positioning (see above).
 
+- [ ] SOMEDAY: figure out abstractions for shader and material creation
+
 - [ ] SOMEDAY: fix the "first-and-last frame average root motion" hack.
     - this will definitely come up when doing start and stop root motion animations.
