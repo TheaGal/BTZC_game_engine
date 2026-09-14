@@ -228,7 +228,7 @@
 - [ ] camera system for locking onto enemy.
     - [ ] create camera framing debug images depending on player char mode.
         - for regular platforming, have player midsection be on bottom 1/3rd line with top of head around the 1/2 mark.
-        - for lock-onto-enemy, have player midsection be on bottom 1/3rd line and enemy be on top 1/3rd line.
+        - [x] for lock-onto-enemy, have player midsection be on bottom 1/3rd line and enemy be on top 1/3rd line.
     - [ ] use more sophisticated positioning (see above).
 
 - [ ] SOMEDAY: fix the "first-and-last frame average root motion" hack.
