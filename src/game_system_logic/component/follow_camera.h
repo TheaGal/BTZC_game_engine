@@ -15,16 +15,12 @@ namespace component
 struct Follow_camera_follow_ref
 {
     float_t follow_offset_y{ 1.0f };
-    vec3s orbit_cam_offset_pos{ 0, 0, -2 };
-    float_t lockon_target_offset_y_base{ -2.0f };  // @TODO: DELETE!!
-    float_t lockon_target_offset_y_multi{ -2.0f };  // @TODO: DELETE!!
+    float_t orbit_cam_offset_distance{ 2 };
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
         Follow_camera_follow_ref,
         follow_offset_y,
-        orbit_cam_offset_pos,
-        lockon_target_offset_y_base,
-        lockon_target_offset_y_multi
+        orbit_cam_offset_distance
     );
 
     struct State
