@@ -230,6 +230,15 @@
         - [x] for regular platforming, have player midsection be on bottom 1/3rd line with top of head around the 1/2 mark.
         - [x] for lock-onto-enemy, have player midsection be on bottom 1/3rd line and enemy be on top 1/3rd line.
     - [ ] use more sophisticated positioning (see above).
+        - ![try this](./targeting_cam_idea.png)
+            - this did not work. didnt scale
+        - tried this: https://www.desmos.com/calculator/zoqeoflnbx
+            - w/ ![this image](./targeting_cam_framing_angle_idea.png)
+            - i couldnt find the inverse!!
+        - this one worked: ![this worked](./targeting_cam_angle_idea2.png)
+            - basically used circle inscribing theorem to ensure that angle was correct.
+            - [x] implemented, and it works, except for some distortion from the perspective matrix
+        - [x] fix the backwards angle from getting too close
 
 - [ ] SOMEDAY: figure out abstractions for shader and material creation
 

@@ -17,6 +17,7 @@
 #include "txp_renderer_public.h"
 
 #include <cassert>
+#include <cmath>
 
 
 namespace
@@ -180,6 +181,8 @@ void apply_grounded_facing_angle(component::Character_mvt_state::Grounded_state&
                                  float_t desired_facing_angle,
                                  float_t turn_speed)
 {
+    assert(!std::isnan(desired_facing_angle));
+
     float_t delta_direction{ desired_facing_angle - grounded_state.facing_angle };
     while (delta_direction > glm_rad(180.0f)) delta_direction -= glm_rad(360.0f);
     while (delta_direction <= glm_rad(-180.0f)) delta_direction += glm_rad(360.0f);
