@@ -225,7 +225,7 @@
     - [x] get the thingies drawing.
     - [x] create compute shader to write 
 
-- [ ] camera system for locking onto enemy.
+- [x] camera system for locking onto enemy.
     - [x] create camera framing debug images depending on player char mode.
         - [x] for regular platforming, have player midsection be on bottom 1/3rd line with top of head around the 1/2 mark.
         - [x] for lock-onto-enemy, have player midsection be on bottom 1/3rd line and enemy be on top 1/3rd line.
@@ -239,7 +239,8 @@
             - basically used circle inscribing theorem to ensure that angle was correct.
             - [x] implemented, and it works, except for some distortion from the perspective matrix
         - [x] fix the backwards angle from getting too close
-    - [ ] there probably should be an orbit angle limit while grounded.
+    - [x] there probably should be an orbit angle limit while grounded.
+        - just made the angle be limited if y values of the target and the player are similar.
 
 - [ ] SOMEDAY: figure out abstractions for shader and material creation
 

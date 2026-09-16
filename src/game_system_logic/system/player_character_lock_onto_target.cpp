@@ -131,6 +131,7 @@ void BT::system::player_character_lock_onto_target()
 
     vec3 ideal_orbit_cam_pos_as_flat;
     float_t ideal_orbit_cam_angle_tilt;
+    bool limit_cam_angle_tilt;
     {
         auto locked_on_ecs_entity{ entity_container.find_entity(follow_state->locked_on_entity) };
         auto& transform{ reg.get<component::Transform const>(locked_on_ecs_entity) };
@@ -144,6 +145,12 @@ void BT::system::player_character_lock_onto_target()
             static_cast<float_t>(transform.position.z),
         };
 
+        // Check to limit camera angle tilt.
+        constexpr float_t k_y_val_similarity_value{ 1.5f };  // @HARDCODE: y-axis similarity to limit cam angle tilt.  @NOTE: `follow_pos` could be focusing on a point above the player's body, whereas `target_locked_on_pos` will be where the target focus position always is.
+
+        limit_cam_angle_tilt =
+            (std::abs(target_locked_on_pos[1] - follow_pos[1]) < k_y_val_similarity_value);
+
         // Calc center of inscribing circle for desired angle.
         vec2s inscribe_circ_center;
         float_t inscribe_circ_radius;
@@ -151,7 +158,10 @@ void BT::system::player_character_lock_onto_target()
             // @REF: "targeting_cam_angle_idea2.png"
             float_t d{ glm_vec3_distance(follow_pos, target_locked_on_pos) };
 
-            float_t const min_d{ camera_circle_radius * 0.365f };  // @HARDCODE: value pulled from: https://www.desmos.com/calculator/y05tgmsplz
+            constexpr float_t k_framing_angle_difference{ glm_rad(20) };  // @HARDCODE: wanted angle difference is 20deg.
+            constexpr float_t k_cam_circ_rad_min_allowable{ 0.365f };  // @HARDCODE: value pulled from: https://www.desmos.com/calculator/y05tgmsplz  (@NOTE: use `k_framing_angle_difference` as `a`)
+
+            float_t const min_d{ camera_circle_radius * k_cam_circ_rad_min_allowable };
 
             if (d < min_d)
             {
@@ -167,7 +177,7 @@ void BT::system::player_character_lock_onto_target()
             }
 
             inscribe_circ_center.x = (d * 0.5f);
-            inscribe_circ_center.y = inscribe_circ_center.x / tanf(glm_rad(20.0f));  // @HARDCODE: wanted angle difference is 20deg.
+            inscribe_circ_center.y = inscribe_circ_center.x / tanf(k_framing_angle_difference);
 
             inscribe_circ_radius = glm_vec2_norm(inscribe_circ_center.raw);
         }
@@ -242,6 +252,13 @@ void BT::system::player_character_lock_onto_target()
     new_orbits[0] = std::atan2f(delta_pos[0], delta_pos[2]);
     new_orbits[1] = -std::atan2f(delta_pos[1], glm_vec2_norm(vec2{ delta_pos[0], delta_pos[2] })) +
                     ideal_orbit_cam_angle_tilt;
+
+    if (limit_cam_angle_tilt)
+    {
+        constexpr float_t k_similar_cam_angle_tilt_limit{ glm_rad(45) };  // @HARDCODE: tilt down limit when y axis values are similar enough.
+        new_orbits[1] = glm_min(new_orbits[1], k_similar_cam_angle_tilt_limit);
+    }
+
     camera.set_follow_orbit_orbits(new_orbits);
 
     // Save locked on facing angle.
