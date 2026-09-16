@@ -242,6 +242,11 @@
     - [x] there probably should be an orbit angle limit while grounded.
         - just made the angle be limited if y values of the target and the player are similar.
 
+- [x] simple ui adding for the target reticle
+
+- [ ] reimplement attack animations
+    - [ ] do the stupid one
+
 - [ ] SOMEDAY: figure out abstractions for shader and material creation
 
 - [ ] SOMEDAY: fix the "first-and-last frame average root motion" hack.

@@ -156,6 +156,7 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/sprite.shadrefl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/test_ktx_tex.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/debug_player_camera_guide.btui
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/target_lockon_reticle.btui
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/testo_jojo.btui
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/unnamed.mtl
 )

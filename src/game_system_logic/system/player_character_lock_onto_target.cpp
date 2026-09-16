@@ -62,6 +62,9 @@ void BT::system::player_character_lock_onto_target()
         s_prev_lockon_pressed = lockon_pressed;
     }
 
+    // Hold prev state.
+    bool const prev_locked_onto_entity{ !follow_state->locked_on_entity.is_nil() };
+
     // Remove other character reference if (1) clicked lock off or (2) reference is broken.
     if (!follow_state->locked_on_entity.is_nil())
     {
@@ -116,6 +119,17 @@ void BT::system::player_character_lock_onto_target()
         }
     }
 
+    // Hide lockon reticle UI if state changed to be no more lockon.
+    auto& reticle_ui_elem{ service_finder::find_service<TXP::UI_state>()
+                               .canvas("target_lockon_reticle.btui")
+                               .elem("lockon_reticle") };
+
+    bool const cur_locked_onto_entity{ !follow_state->locked_on_entity.is_nil() };
+    if (cur_locked_onto_entity != prev_locked_onto_entity && !cur_locked_onto_entity)
+    {
+        reticle_ui_elem.set_opacity(0);
+    }
+
     // Exit early if no locked on entity.
     if (follow_state->locked_on_entity.is_nil())
         return;
@@ -144,6 +158,20 @@ void BT::system::player_character_lock_onto_target()
             static_cast<float_t>(transform.position.y) + cam_lockon_target.follow_offset_y,
             static_cast<float_t>(transform.position.z),
         };
+
+        // Update lockon reticle UI position.
+        {
+            vec3 ndc_position;
+            bool const is_visible =
+                camera.calc_world_space_to_ndc_space(target_locked_on_pos, ndc_position);
+
+            reticle_ui_elem.set_opacity(is_visible ? 1 : 0);
+            if (is_visible)
+            {
+                reticle_ui_elem.set_position(ndc_position[0] * 0.5f * 360,
+                                             ndc_position[1] * 0.5f * 360);
+            }
+        }
 
         // Check to limit camera angle tilt.
         constexpr float_t k_y_val_similarity_value{ 1.5f };  // @HARDCODE: y-axis similarity to limit cam angle tilt.  @NOTE: `follow_pos` could be focusing on a point above the player's body, whereas `target_locked_on_pos` will be where the target focus position always is.

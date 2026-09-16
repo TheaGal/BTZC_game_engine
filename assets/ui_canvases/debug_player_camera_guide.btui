@@ -14,7 +14,7 @@
                     "y": 0.5
                 }
             },
-            "opacity": 0.75,
+            "opacity": 0.25,
             "image": "test_ktx_tex",
             "is_nine_slice": false
         },
@@ -32,7 +32,7 @@
                     "y": 0.5
                 }
             },
-            "opacity": 0.75,
+            "opacity": 0.25,
             "image": "test_ktx_tex",
             "is_nine_slice": false
         },
@@ -50,7 +50,7 @@
                     "y": 0.5
                 }
             },
-            "opacity": 0.75,
+            "opacity": 0.25,
             "image": "test_ktx_tex",
             "is_nine_slice": false
         },
@@ -68,7 +68,7 @@
                     "y": 0.5
                 }
             },
-            "opacity": 0.75,
+            "opacity": 0.25,
             "image": "test_ktx_tex",
             "is_nine_slice": false
         }
