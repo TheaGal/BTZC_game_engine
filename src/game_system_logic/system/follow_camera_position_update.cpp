@@ -34,6 +34,5 @@ void BT::system::follow_camera_position_update()
             vec3{ static_cast<float_t>(follow_pos.x),
                   static_cast<float_t>(follow_pos.y),
                   static_cast<float_t>(follow_pos.z) });
-        cam.set_follow_orbit_cam_angle_offset_euler(vec3{ glm_rad(-15), 0, 0 });  // @HARDCODE: assuming 90deg fov for camera.
     }
 }

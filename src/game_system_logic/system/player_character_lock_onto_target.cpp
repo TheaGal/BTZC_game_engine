@@ -33,8 +33,6 @@ void BT::system::player_character_lock_onto_target()
 
     // Get locked on entity.
     bool found_player_character{ false };
-    float_t lockon_target_offset_y_base{ 0 };
-    float_t lockon_target_offset_y_multi{ 0 };
     component::Follow_camera_follow_ref::State* follow_state{ nullptr };
     {
         size_t count{ 0 };
@@ -42,8 +40,6 @@ void BT::system::player_character_lock_onto_target()
             reg.view<component::Follow_camera_follow_ref, component::Transform const>().each())
         {
             found_player_character = true;
-            lockon_target_offset_y_base = follow_cam_follow_ref.lockon_target_offset_y_base;
-            lockon_target_offset_y_multi = follow_cam_follow_ref.lockon_target_offset_y_multi;
             follow_state = &follow_cam_follow_ref.state;
             count++;
         }
@@ -154,20 +150,12 @@ void BT::system::player_character_lock_onto_target()
             // @REF: "targeting_cam_angle_idea2.png"
             float_t d{ glm_vec3_distance(follow_pos, target_locked_on_pos) };
 
-            // float_t flat_d{ glm_vec2_distance(
-            //     vec2{ follow_pos[0], follow_pos[2] },
-            //     vec2{ target_locked_on_pos[0], target_locked_on_pos[2] }) };
-            float_t const min_d{ k_camera_circle_radius * 0.85f };  // @HARDCODE: value pulled from: https://www.desmos.com/calculator/y05tgmsplz
+            float_t const min_d{ k_camera_circle_radius * 0.365f };  // @HARDCODE: value pulled from: https://www.desmos.com/calculator/y05tgmsplz
 
-            // if (flat_d < min_flat_d)
             if (d < min_d)
             {
                 // To small to make an intersection for camera positioning; shove the locked on pos
                 // a bit further away.
-                // // float_t const scale_val{ min_flat_d / flat_d };
-                // float_t const scale_val{ min_flat_d / d };
-                // // float_t const scale_val2{ scale_val * scale_val };
-                // d *= scale_val;
                 d = min_d;
 
                 vec3 delta;
@@ -178,20 +166,10 @@ void BT::system::player_character_lock_onto_target()
             }
 
             inscribe_circ_center.x = (d * 0.5f);
-            inscribe_circ_center.y = inscribe_circ_center.x / tanf(glm_rad(40.0f));  // @HARDCODE: wanted angle difference is 40deg.
+            inscribe_circ_center.y = inscribe_circ_center.x / tanf(glm_rad(20.0f));  // @HARDCODE: wanted angle difference is 20deg.
 
             inscribe_circ_radius = glm_vec2_norm(inscribe_circ_center.raw);
         }
-
-
-
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////
 
         // Calc intersection point of camera circle and inscribe circle.
         vec2s circ_intersection;
@@ -207,12 +185,6 @@ void BT::system::player_character_lock_onto_target()
                 assert(!std::isnan(x));
                 assert(!std::isnan(y));
 
-                BT_WARNF("circ_intersect(%.3f, %.3f, %.3f)\tx=%.3f  y=%.3f",
-                         circle1_r,
-                         circle2_r,
-                         d,
-                         x,
-                         y);
                 return { .x = x, .y = y };
             };
 
@@ -231,10 +203,6 @@ void BT::system::player_character_lock_onto_target()
 
             glm_vec2_scale(basis_x, circ_intersection.x, inscribe_circ_intersection.raw);
             glm_vec2_muladds(basis_y, circ_intersection.y, inscribe_circ_intersection.raw);
-
-            BT_WARNF("\tinscribe_circ_intersect()\tx=%.3f  y=%.3f",
-                     inscribe_circ_intersection.x,
-                     inscribe_circ_intersection.y);
         }
 
         // Transform inscribe-circle-space intersection point into world space.
@@ -245,33 +213,15 @@ void BT::system::player_character_lock_onto_target()
             glm_vec3_normalize(basis_x);
             assert(basis_x[0] != 0 || basis_x[1] != 0 || basis_x[2] != 0);
 
-            // vec3 right;
-            // glm_vec3_cross(basis_x, vec3{ 0, 1, 0 }, right);
-
-            // vec3 basis_y;
-            // glm_vec3_crossn(right, basis_x, basis_y);
             vec3 basis_y{ 0, 1, 0 };  // since basis_x is flattened.
 
             glm_vec3_scale(basis_x, inscribe_circ_intersection.x, ideal_orbit_cam_pos_as_flat);
             glm_vec3_muladds(basis_y, inscribe_circ_intersection.y, ideal_orbit_cam_pos_as_flat);
 
-            BT_WARNF("\t\tbasis_x=\t\t[%.3f, %.3f, %.3f]", basis_x[0], basis_x[1], basis_x[2]);
-            BT_WARNF("\t\tbasis_y=\t\t[%.3f, %.3f, %.3f]", basis_y[0], basis_y[1], basis_y[2]);
-            BT_WARNF("\t\tideal_orbit_cam_pos=\t[%.3f, %.3f, %.3f]", ideal_orbit_cam_pos_as_flat[0], ideal_orbit_cam_pos_as_flat[1], ideal_orbit_cam_pos_as_flat[2]);
-
             // Find signed angle tilt of flattened delta (follow_pos to target_locked_on_pos).
             vec3 real_delta;
             glm_vec3_sub(target_locked_on_pos, follow_pos, real_delta);
 
-            // vec3 basis_x_projected_delta;
-            // glm_vec3_proj(real_delta, basis_x, basis_x_projected_delta);
-
-            // vec3 basis_y_projected_delta;
-            // glm_vec3_proj(real_delta, basis_y, basis_y_projected_delta);
-
-            // ideal_orbit_cam_angle_tilt = std::atan2f(glm_vec3_norm(basis_x_projected_delta),
-            //                                          -glm_vec3_norm(basis_y_projected_delta)) -
-            //                              glm_rad(90);
             ideal_orbit_cam_angle_tilt = std::atan2f(glm_vec3_dot(real_delta, basis_x),
                                                      glm_vec3_dot(real_delta, basis_y)) -
                                          glm_rad(90);
@@ -280,40 +230,15 @@ void BT::system::player_character_lock_onto_target()
                 ideal_orbit_cam_angle_tilt += glm_rad(360);
             while (ideal_orbit_cam_angle_tilt >= glm_rad(180))
                 ideal_orbit_cam_angle_tilt -= glm_rad(360);
-
-            BT_WARNF("\t\tideal_orbit_cam_angle_tilt=\t%.3f", glm_deg(ideal_orbit_cam_angle_tilt));
         }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////
-        ////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-        // @TODO: DELETE!!
-        // float_t lockon_target_offset_y{ glm_vec3_distance(locked_on_pos, follow_pos) *
-        //                                     lockon_target_offset_y_multi +
-        //                                 lockon_target_offset_y_base };
-        // locked_on_pos[1] += lockon_target_offset_y;
     }
 
     vec3 delta_pos;
-    // if (ideal_orbit_cam_pos[0] < 0)
-        glm_vec3_negate_to(ideal_orbit_cam_pos_as_flat, delta_pos);
-    // else
-    //     glm_vec3_copy(ideal_orbit_cam_pos, delta_pos);
-
-    // glm_vec3_sub(follow_pos, ideal_orbit_cam_pos, delta_pos);
+    glm_vec3_negate_to(ideal_orbit_cam_pos_as_flat, delta_pos);
 
     // Ref: https://assetsio.gnwcdn.com/sekiro-owl-father.jpg?width=1600&height=900&fit=crop&quality=100&format=png&enable=upscale&auto=webp
     vec2 new_orbits;
     new_orbits[0] = std::atan2f(delta_pos[0], delta_pos[2]);
-    BT_WARNF("\t\t\torbit[0]=\t%.3f", glm_deg(new_orbits[0]));
     new_orbits[1] = -std::atan2f(delta_pos[1], glm_vec2_norm(vec2{ delta_pos[0], delta_pos[2] })) +
                     ideal_orbit_cam_angle_tilt;
     camera.set_follow_orbit_orbits(new_orbits);
@@ -321,6 +246,4 @@ void BT::system::player_character_lock_onto_target()
     // Save locked on facing angle.
     follow_state->locked_on_facing_angle = new_orbits[0];
     assert(!std::isnan(follow_state->locked_on_facing_angle));
-
-    BT_WARN("");
 }
