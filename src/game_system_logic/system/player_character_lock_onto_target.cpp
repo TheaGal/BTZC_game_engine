@@ -126,7 +126,8 @@ void BT::system::player_character_lock_onto_target()
     vec3 follow_pos;
     camera.get_follow_orbit_follow_pos(follow_pos);
 
-    constexpr float_t k_camera_circle_radius{ 2 };  // @HARDCODE: cam offset position as circle1 radius.
+    float_t const camera_circle_radius{ camera.get_follow_orbit_cam_offset_distance() };
+    assert(camera_circle_radius > 0);
 
     vec3 ideal_orbit_cam_pos_as_flat;
     float_t ideal_orbit_cam_angle_tilt;
@@ -150,7 +151,7 @@ void BT::system::player_character_lock_onto_target()
             // @REF: "targeting_cam_angle_idea2.png"
             float_t d{ glm_vec3_distance(follow_pos, target_locked_on_pos) };
 
-            float_t const min_d{ k_camera_circle_radius * 0.365f };  // @HARDCODE: value pulled from: https://www.desmos.com/calculator/y05tgmsplz
+            float_t const min_d{ camera_circle_radius * 0.365f };  // @HARDCODE: value pulled from: https://www.desmos.com/calculator/y05tgmsplz
 
             if (d < min_d)
             {
@@ -190,7 +191,7 @@ void BT::system::player_character_lock_onto_target()
 
 
             circ_intersection =
-                k_calc_pos_circle_intersection(k_camera_circle_radius, inscribe_circ_radius, d);
+                k_calc_pos_circle_intersection(camera_circle_radius, inscribe_circ_radius, d);
         }
 
         // Transform intersection point into inscribe circle space.
