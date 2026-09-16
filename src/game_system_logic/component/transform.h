@@ -28,6 +28,9 @@ struct Transform
         rotation,
         scale
     );
+
+    /// Helper to make mat4 out of transform.
+    void calc_mat4_transform(mat4 out_transform) const;
 };
 
 /// References to other entities connected to this transform within the transform hierarchy.

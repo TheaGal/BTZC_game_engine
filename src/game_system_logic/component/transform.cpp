@@ -9,6 +9,19 @@
 #include <algorithm>
 
 
+void BT::component::Transform::calc_mat4_transform(mat4 out_transform) const
+{
+    // @TODO: Conform to `write_render_transforms.cpp`
+    vec3 position_float{ static_cast<float_t>(position.x),
+                         static_cast<float_t>(position.y),
+                         static_cast<float_t>(position.z) };
+
+    glm_translate_make(out_transform, position_float);
+    glm_quat_rotate(out_transform, const_cast<float_t*>(rotation.raw), out_transform);
+    glm_scale(out_transform, const_cast<float_t*>(scale.raw));
+}
+
+
 void BT::component::form_parent_child_relationship_helper(Entity_container& entity_container,
                                                           UUID parent,
                                                           UUID child)

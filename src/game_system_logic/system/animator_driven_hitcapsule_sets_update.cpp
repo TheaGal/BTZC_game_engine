@@ -1,6 +1,5 @@
 #include "animator_driven_hitcapsule_sets_update.h"
 
-#include "btdatecheck.h"
 #include "entt/entity/fwd.hpp"
 #include "entt/entity/registry.hpp"
 #include "game_system_logic/component/transform.h"
@@ -11,13 +10,9 @@
 
 void BT::system::animator_driven_hitcapsule_sets_update()
 {
-    date_deadline(2026, 9, 17);  // @CHECK: does this work?? needs the debug drawing.
-    // @TODO: this needs to not use the render transform bc it's not updated yet. this needs to use the physics transform bc it was just updated.
-
     auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
     auto view{ reg.view<TXP::component::Animator_driven_hitcapsule_set const,
-                        component::Transform const,
-                        TXP::component::Render_object_config const>() };
+                        component::Transform const>() };
     auto& renderer{ service_finder::find_service<TXP::Renderer>() };
 
     // Work with tagged entities.
@@ -33,11 +28,10 @@ void BT::system::animator_driven_hitcapsule_sets_update()
         animator.get_simulation_profile_frame_pose(animator.get_is_using_root_motion(),
                                                    joint_matrices);
 
-        auto& render_transform{ const_cast<mat4s&>(
-            view.get<TXP::component::Render_object_config const>(ent).transform) };
+        mat4 entity_transform;
+        view.get<component::Transform const>(ent).calc_mat4_transform(entity_transform);
 
-        animator.get_anim_frame_action_data_handle().update_hitcapsule_transforms(
-            render_transform.raw,
-            joint_matrices);
+        animator.get_anim_frame_action_data_handle().update_hitcapsule_transforms(entity_transform,
+                                                                                  joint_matrices);
     }
 }
