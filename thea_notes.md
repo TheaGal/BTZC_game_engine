@@ -245,7 +245,12 @@
 - [x] simple ui adding for the target reticle
 
 - [ ] reimplement attack animations
-    - [ ] do the stupid one
+    - [x] do the stupid one
+    - ok so there's an issue. the `character_movement.h` anim states sucks ass. there needs to be a way to know what state sets to create if an event (joystick tilted, jump btn pressed, )
+    - so then, maybe the jump queue list needs some kind of input event to watch for (or just generic event, since CPUs don't listen for input events), and if it hears that event, then switches to another state set instead of emplacing one.
+        - but then how do state sets work for something like a random set?
+        - there should be the option to transition to a random set of state sets. for something like the player character, it could be transitioning to "st_jump" or "st_jump_mirrored" or something randomly. weights could be applied here too to affect the randomness.
+        - and then for a CPU, it could be the list of available attacks to do.
 
 - [ ] SOMEDAY: figure out abstractions for shader and material creation
 

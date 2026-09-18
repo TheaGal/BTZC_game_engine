@@ -124,22 +124,37 @@ void BT::system::player_character_world_space_input()
         char_ws_input.crouch_pressed      = input_handler.get_keyboard_key_state(BT_KEY_LEFT_CONTROL).pressed;
 
         // On attack trigger.
-        bool attack_pressed{ input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_LEFT).pressed };
-        // @ANIMATOR_REFACTOR if (camera.is_follow_orbit() &&
-        // @ANIMATOR_REFACTOR     can_attack_exit &&
-        // @ANIMATOR_REFACTOR     !char_mvt_anim_state->state.prev_attack_pressed &&
-        // @ANIMATOR_REFACTOR     attack_pressed)
-        // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_attack = true;
-        char_mvt_anim_state->state.prev_attack_pressed = attack_pressed;
+        {
+            bool attack_pressed{
+                input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_LEFT).pressed
+            };
+            bool is_attacking{ main_camera.is_follow_orbit() && can_attack_exit && attack_pressed };
+
+            char_mvt_anim_state->input_mvt_state.on_attack_press =
+                (is_attacking && !char_mvt_anim_state->state.prev_attack_pressed);
+            char_mvt_anim_state->input_mvt_state.on_attack_release =
+                (!is_attacking && char_mvt_anim_state->state.prev_attack_pressed);
+
+            // @ANIMATOR_REFACTOR if (camera.is_follow_orbit() &&
+            // @ANIMATOR_REFACTOR     can_attack_exit &&
+            // @ANIMATOR_REFACTOR     !char_mvt_anim_state->state.prev_attack_pressed &&
+            // @ANIMATOR_REFACTOR     attack_pressed)
+            // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_attack = true;
+
+            char_mvt_anim_state->state.prev_attack_pressed = attack_pressed;
+        }
 
         // On guard trigger and is-guarding bool.
-        bool on_guard;
-        bool is_guarding;
         {
-            bool guard_pressed =
-                input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_RIGHT).pressed;
-            is_guarding = (main_camera.is_follow_orbit() && can_guard_exit && guard_pressed);
-            on_guard = (is_guarding && !char_mvt_anim_state->state.prev_guard_pressed);
+            bool guard_pressed{
+                input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_RIGHT).pressed
+            };
+            bool is_guarding{ main_camera.is_follow_orbit() && can_guard_exit && guard_pressed };
+
+            char_mvt_anim_state->input_mvt_state.on_guard_press =
+                (is_guarding && !char_mvt_anim_state->state.prev_guard_pressed);
+            char_mvt_anim_state->input_mvt_state.on_guard_release =
+                (!is_guarding && char_mvt_anim_state->state.prev_guard_pressed);
 
             char_mvt_anim_state->state.prev_guard_pressed = guard_pressed;
         }

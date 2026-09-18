@@ -70,24 +70,40 @@ void BT::system::tick_sim_char_mvt_animator()
             // @TODO: @THEA: @REFACTOR: The vv below vv code for calc'ing jump queues is only good for the player character. For CPUs, use a different system (that probably shouldn't be in here anyway!) (I'd make a system in the ECS for updating player character jump queues and another for CPU jump queues)
             {   // Calc next anim mvt state.
                 auto const& input{ char_mvt_anim_state.input_mvt_state };
-                auto& next_anim_state{ char_mvt_anim_state.anim_mvt_state.next };
-                auto const& prev_anim_state{ char_mvt_anim_state.anim_mvt_state.prev };
 
-                auto const calc_anim_changed_fn = [&next_anim_state, &prev_anim_state]() -> bool {
-                    return (next_anim_state != prev_anim_state);
+                using Anim_state_e =
+                    component::Character_mvt_animated_state::Anim_state::Anim_state_enum;
+
+                auto const calc_anim_changed_fn =
+                    [&char_mvt_anim_state](Anim_state_e next_anim_state) -> bool {
+                    bool changed{ next_anim_state != char_mvt_anim_state.anim_mvt_state.prev };
+                    char_mvt_anim_state.anim_mvt_state.next = next_anim_state;
+
+                    return changed;
                 };
 
                 bool is_grounded_real{ input.is_grounded && !input.on_jump };
 
-                using Anim_state_e = component::Character_mvt_animated_state::
-                    Anim_state::Anim_state_enum;
-
                 // Ground movement.
                 if (is_grounded_real)
                 {
-                    next_anim_state = (!input.is_moving ? Anim_state_e::AS_GROUNDED_IDLE
-                                                        : Anim_state_e::AS_GROUNDED_MOVE);
-                    if (calc_anim_changed_fn())
+                    if (input.on_attack_press &&
+                        calc_anim_changed_fn(Anim_state_e::AS_GROUNDED_ATTACK))
+                    {
+                        animator.emplace_jump_queue_state_set(
+                            "jq_attack",
+                            {
+                                .anim_state_indices = {
+                                    animator.get_animator_state_idx("st_attack_0"),
+                                    animator.get_animator_state_idx("st_idle"),
+                                },
+                                .loop_final_state = true,
+                            },
+                            1);
+                    }
+                    else if (calc_anim_changed_fn(!input.is_moving
+                                                      ? Anim_state_e::AS_GROUNDED_IDLE
+                                                      : Anim_state_e::AS_GROUNDED_MOVE))
                     {
                         animator.emplace_jump_queue_state_set(
                             "jq_grnd_mvt",
@@ -96,7 +112,7 @@ void BT::system::tick_sim_char_mvt_animator()
                                     animator.get_animator_state_idx(!input.is_moving ? "st_idle"
                                                                                      : "st_running")
                                 },
-                                .loop_final_state = true
+                                .loop_final_state = true,
                             },
                             1);
                     }
@@ -104,9 +120,7 @@ void BT::system::tick_sim_char_mvt_animator()
                 // Midair movement.
                 else
                 {
-                    next_anim_state = Anim_state_e::AS_MIDAIR;
-
-                    if (calc_anim_changed_fn())
+                    if (calc_anim_changed_fn(Anim_state_e::AS_MIDAIR))
                     {
                         TXP::Animator_state_set state_set;
                         if (input.on_jump)
@@ -114,7 +128,7 @@ void BT::system::tick_sim_char_mvt_animator()
                             state_set.anim_state_indices = {
                                 animator.get_animator_state_idx(!input.is_moving ? "st_jump"  // @TODO: separate if move or idle -based jump.
                                                                                  : "st_jump"),
-                                animator.get_animator_state_idx("st_fall")
+                                animator.get_animator_state_idx("st_fall"),
                             };
                             state_set.loop_final_state = false;
                         }
@@ -141,7 +155,7 @@ void BT::system::tick_sim_char_mvt_animator()
                 input_mut.on_jump = false;
 
                 // Finish.
-                char_mvt_anim_state.anim_mvt_state.prev = next_anim_state;
+                char_mvt_anim_state.anim_mvt_state.prev = char_mvt_anim_state.anim_mvt_state.next;
             }
 
             // Update animator.
