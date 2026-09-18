@@ -1,0 +1,22 @@
+{
+    "elements": [
+        {
+            "name": "lockon_reticle",
+            "parent": "",
+            "transform": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 4.0,
+                "h": 4.0,
+                "rot": 0.0,
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                }
+            },
+            "opacity": 0.0,
+            "image": "test_ktx_tex",
+            "is_nine_slice": false
+        }
+    ]
+}

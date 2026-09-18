@@ -5,7 +5,6 @@
 #include "Jolt/Physics/PhysicsSystem.h"
 #include "Jolt/Math/Vec3.h"
 #include "btglm.h"
-#include "game_system_logic/component/animator_root_motion.h"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/follow_camera.h"
 #include "game_system_logic/component/physics_object_settings.h"
@@ -14,10 +13,11 @@
 #include "physics_engine/physics_engine.h"
 #include "physics_engine/physics_object.h"
 #include "physics_engine/raycast_helper.h"
-#include "renderer/model_animator.h"  // For `Model_joint_animation::k_frames_per_second`
 #include "service_finder/service_finder.h"
+#include "txp_renderer_public.h"
 
 #include <cassert>
+#include <cmath>
 
 
 namespace
@@ -177,10 +177,12 @@ void process_midair_jump_interactions(
 void apply_grounded_facing_angle(component::Character_mvt_state::Grounded_state& grounded_state,
                                  component::Character_mvt_state::Settings const& mvt_settings,
                                  component::Character_mvt_animated_state* char_mvt_anim_state,
-                                 component::Animator_root_motion const* anim_root_motion,
+                                 TXP::component::Animator_root_motion const* anim_root_motion,
                                  float_t desired_facing_angle,
                                  float_t turn_speed)
 {
+    assert(!std::isnan(desired_facing_angle));
+
     float_t delta_direction{ desired_facing_angle - grounded_state.facing_angle };
     while (delta_direction > glm_rad(180.0f)) delta_direction -= glm_rad(360.0f);
     while (delta_direction <= glm_rad(-180.0f)) delta_direction += glm_rad(360.0f);
@@ -230,7 +232,7 @@ Char_mvt_logic_results character_controller_movement_logic(
     component::Character_world_space_input const& char_ws_input,
     component::Character_mvt_state& char_mvt_state,
     component::Character_mvt_animated_state* char_mvt_anim_state,
-    component::Animator_root_motion const* anim_root_motion,
+    TXP::component::Animator_root_motion const* anim_root_motion,
     component::Follow_camera_follow_ref::State const* follow_cam_state,
     Physics_object& phys_obj)
 {   // Get current character controller state.
@@ -278,7 +280,7 @@ Char_mvt_logic_results character_controller_movement_logic(
         //        it is correct.
         //        Maybe make your anim travel further if it looks slow?  -Thea 2025/11/27
         desired_velocity *=
-            anim_root_motion->root_motion_multiplier * Model_joint_animation::k_frames_per_second;
+            anim_root_motion->root_motion_multiplier * TXP::k_skeletal_anim_frames_per_second;
     }
     else if (mvt_type == MVT_TYPE_INPUT_BASED)
     {
@@ -465,6 +467,18 @@ Char_mvt_logic_results character_controller_movement_logic(
     }
     else assert(false);  // Unsupported movement type.
 
+    if (anim_root_motion && anim_root_motion->inherit_prev_velocity)
+    {
+        new_velocity.Set(char_mvt_state.prev_velocity[0],
+                         new_velocity.GetY(),
+                         char_mvt_state.prev_velocity[2]);
+    }
+
+    // Log previous velocity.
+    char_mvt_state.prev_velocity[0] = new_velocity.GetX();
+    char_mvt_state.prev_velocity[1] = new_velocity.GetY();
+    char_mvt_state.prev_velocity[2] = new_velocity.GetZ();
+
     // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
     // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.is_grounded = is_grounded;
     if (char_mvt_anim_state)
@@ -517,7 +531,7 @@ void BT::system::input_controlled_character_movement()
         auto& phys_obj{ *phys_engine.checkout_physics_object(phys_obj_uuid) };
 
         auto anim_root_motion{ char_mvt_anim_state
-                                   ? reg.try_get<component::Animator_root_motion const>(
+                                   ? reg.try_get<TXP::component::Animator_root_motion const>(
                                          entity_container.find_entity(
                                              char_mvt_anim_state->affecting_animator_uuid))
                                    : nullptr };

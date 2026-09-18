@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../uuid/uuid.h"
 #include "Jolt/Jolt.h"
 #include "Jolt/Core/TempAllocator.h"
 #include "Jolt/Math/Real.h"
@@ -8,6 +7,8 @@
 #include "Jolt/Physics/PhysicsSystem.h"
 #include "physics_engine.h"
 #include "physics_object.h"
+#include "txp_renderer_public.h"
+
 #include <vector>
 
 using std::vector;
@@ -15,8 +16,6 @@ using std::vector;
 
 namespace BT
 {
-
-class Model;
 
 class Phys_obj_impl_char_controller
     : public Physics_object_type_impl_ifc
@@ -58,16 +57,10 @@ public:
                               JPH::Vec3& io_linear_velocity,
                               JPH::Vec3& io_angular_velocity) override;
     void OnContactAdded(JPH::CharacterVirtual const* in_character,
-                        JPH::BodyID const& in_body_id2,
-                        JPH::SubShapeID const& in_sub_shape_id2,
-                        JPH::RVec3Arg in_contact_position,
-                        JPH::Vec3Arg in_contact_normal,
+                        JPH::CharacterContact const& in_contact,
                         JPH::CharacterContactSettings& io_settings) override;
     void OnCharacterContactAdded(JPH::CharacterVirtual const* in_character,
-                                 JPH::CharacterVirtual const* in_other_character,
-                                 JPH::SubShapeID const& in_sub_shape_id2,
-                                 JPH::RVec3Arg in_contact_position,
-                                 JPH::Vec3Arg in_contact_normal,
+                                 JPH::CharacterContact const& in_contact,
                                  JPH::CharacterContactSettings& io_settings) override;
     void OnContactSolve(JPH::CharacterVirtual const* in_character,
                         JPH::BodyID const& in_body_id2,
@@ -118,7 +111,7 @@ private:
     bool m_is_crouched;
     bool m_allow_sliding{ false };  // True when want to move.
 
-    UUID m_debug_mesh_id;
+    TXP::debug::debug_model_id_t m_debug_mesh_id;
 };
 
 }  // namespace BT

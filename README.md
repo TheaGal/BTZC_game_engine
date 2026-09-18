@@ -25,6 +25,18 @@ Install the same FMOD version in "Software Versions" and set `FMOD_STUDIO_API_DI
 
 > @NOTE: I know it says FMOD Studio in the name of the env var, but just ignore that. It's just FMOD Engine. It _may_ become FMOD Studio in the future, however.
 
+### JoltPhysics
+
+You may get this error when compiling on macOS:
+```
+[build] error: error: cannot execute tool 'metal' due to missing Metal Toolchain; use: xcodebuild -downloadComponent MetalToolchain
+```
+
+Run this in the terminal and it should work:
+```
+sudo xcodebuild -runFirstLaunch
+xcodebuild -downloadComponent MetalToolchain
+```
 
 ## 0.1.0-develop.2 (NEXT VERSION, WIP)
 

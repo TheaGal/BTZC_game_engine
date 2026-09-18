@@ -1,7 +1,8 @@
 #pragma once
 
+#include "btglm.h"
 #include "btjson.h"
-#include "uuid/uuid.h"
+#include "btuuid.h"
 
 
 namespace BT
@@ -14,10 +15,12 @@ namespace component
 struct Follow_camera_follow_ref
 {
     float_t follow_offset_y{ 1.0f };
+    float_t orbit_cam_offset_distance{ 2 };
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
         Follow_camera_follow_ref,
-        follow_offset_y
+        follow_offset_y,
+        orbit_cam_offset_distance
     );
 
     struct State

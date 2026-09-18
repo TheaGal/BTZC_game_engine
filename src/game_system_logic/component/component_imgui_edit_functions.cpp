@@ -1,10 +1,12 @@
 #include "component_imgui_edit_functions.h"
 
+#include "btdatecheck.h"
 #include "btglm.h"
+#include "btuuid.h"
 #include "character_movement.h"
 #include "combat_stats.h"
-#include "entity_metadata.h"
-#include "game_system_logic/component/animator_root_motion.h"
+#include "game_system_logic/component/follow_camera.h"
+#include "game_system_logic/component/rail_line.h"
 #include "game_system_logic/entity_container.h"
 #include "health_stats.h"
 #include "imgui.h"
@@ -12,13 +14,21 @@
 #include "misc/cpp/imgui_stdlib.h"
 #include "physics_engine/physics_object.h"
 #include "physics_object_settings.h"
-#include "render_object_settings.h"
-#include "renderer/render_layer.h"
-#include "renderer/renderer.h"
 #include "service_finder/service_finder.h"
 #include "transform.h"
-#include "uuid/uuid.h"
+#include "txp_renderer_public.h"
 
+#include <string>
+
+
+void BT::component::edit::internal::imgui_display_unimplemented_types(
+    std::vector<std::string> const& typenames)
+{
+    ImGui::Text("Unimplemented types:");
+
+    for (auto const& str : typenames)
+        ImGui::BulletText("%s", str.c_str());
+}
 
 bool BT::component::edit::internal::imgui_open_component_editing_header(std::string const& label)
 {
@@ -85,12 +95,12 @@ std::string convert_number_to_binary_bit_string(uint32_t str_len, auto number)
 // ImGui edit functions.
 void BT::component::edit::imgui_edit__sample(entt::registry& reg, entt::entity ecs_entity)
 {
-    auto const& meta{ reg.get<component::Entity_metadata const>(ecs_entity) };
+    auto const& meta{ reg.get<TXP::component::Entity_metadata const>(ecs_entity) };
 
     ImGui::PushID(&meta);
     ImGui::PushItemWidth(ImGui::GetFontSize() * -10);
 
-    ImGui::Text("Sample edit view! For entity %u", ecs_entity);
+    ImGui::TextColored(ImVec4(1, 1, 0, 1), "Sample edit view! For entity %u", ecs_entity);
 
     ImGui::PopItemWidth();
     ImGui::PopID();
@@ -98,7 +108,7 @@ void BT::component::edit::imgui_edit__sample(entt::registry& reg, entt::entity e
 
 void BT::component::edit::imgui_edit__entity_metadata(entt::registry& reg, entt::entity ecs_entity)
 {
-    auto& meta{ reg.get<component::Entity_metadata>(ecs_entity) };
+    auto& meta{ reg.get<TXP::component::Entity_metadata>(ecs_entity) };
 
     ImGui::PushID(&meta);
 
@@ -281,178 +291,129 @@ void BT::component::edit::imgui_edit__character_world_space_input(entt::registry
     ImGui::PopID();
 }
 
-void BT::component::edit::imgui_edit__render_object_settings(entt::registry& reg,
+void BT::component::edit::imgui_edit__follow_camera_follow_ref(entt::registry& reg,
+                                                               entt::entity ecs_entity)
+{
+    auto& fcfr{ reg.get<component::Follow_camera_follow_ref>(ecs_entity) };
+
+    ImGui::PushID(&fcfr);
+
+    ImGui::DragFloat("follow_offset_y", &fcfr.follow_offset_y);
+    ImGui::DragFloat("orbit_cam_offset_distance", &fcfr.orbit_cam_offset_distance);
+
+    ImGui::SeparatorText("State");
+
+    ImGui::BeginDisabled();
+
+    std::string locked_on_entity_pretty{ UUID_helper::to_pretty_repr(fcfr.state.locked_on_entity) };
+    ImGui::InputText("state.locked_on_entity",       &locked_on_entity_pretty);
+    ImGui::DragFloat("state.locked_on_facing_angle", &fcfr.state.locked_on_facing_angle);
+
+    ImGui::EndDisabled();
+
+    ImGui::PopID();
+}
+
+void BT::component::edit::imgui_edit__follow_camera_lockon_target(entt::registry& reg,
+                                                                  entt::entity ecs_entity)
+{
+    auto& fclt{ reg.get<component::Follow_camera_lockon_target>(ecs_entity) };
+
+    ImGui::PushID(&fclt);
+
+    ImGui::DragFloat("follow_offset_y", &fclt.follow_offset_y);
+
+    ImGui::PopID();
+}
+
+void BT::component::edit::imgui_edit__render_object_config(entt::registry& reg,
                                                              entt::entity ecs_entity)
 {
-    auto& rend_obj_settings{ reg.get<component::Render_object_settings>(ecs_entity) };
+    auto& rend_obj_settings{ reg.get<TXP::component::Render_object_config>(ecs_entity) };
 
     ImGui::PushID(&rend_obj_settings);
     ImGui::PushItemWidth(ImGui::GetFontSize() * -10);
 
-    bool is_disabled{ reg.any_of<component::Created_render_object_reference>(ecs_entity) };
-    if (is_disabled)
-        ImGui::TextColored(k_color_warning,
-                           "Settings are disabled while a render object is created.");
+    ImGui::TextWrapped(
+        "NOTE: if data is changed in this component, renderer will need to have its owned data "
+        "invalidated (see button at bottom) to force recreating the render object.");
 
     // Settings.
-    ImGui::BeginDisabled(is_disabled);
+    ImGui::SeparatorText("Required");
 
-    static std::vector<std::pair<std::string, Render_layer>> const s_layers{
-        { "Default",      RENDER_LAYER_DEFAULT      },
-        { "Invisible",    RENDER_LAYER_INVISIBLE    },
-        { "Level editor", RENDER_LAYER_LEVEL_EDITOR },
+    static std::vector<std::pair<std::string, TXP::Render_layer>> const k_layers{
+        { "Default",      TXP::RENDER_LAYER_DEFAULT      },
+        { "Invisible",    TXP::RENDER_LAYER_INVISIBLE    },
+        { "Level editor", TXP::RENDER_LAYER_LEVEL_EDITOR },
     };
 
-    // @NOTE: I just realized that this isn't applicable for the application (since I only want
-    //        one render layer for the one render object).
-    #if 0
-    ImGui::Text("Render layer mask: %s",
-                convert_number_to_binary_bit_string(8, rend_obj_settings.render_layer).c_str());
-    ImGui::SameLine();
-    if (ImGui::Button("Change.."))
-        ImGui::OpenPopup("change_layer_mask");
-    if (ImGui::BeginPopup("change_layer_mask"))
-    {
-
-        for (auto& [layer_str, layer_mask] : s_layers)
-        {   // Checkbox for layer.
-            bool layer_enabled{ (rend_obj_settings.render_layer & layer_mask) != 0 };
-            if (ImGui::Checkbox(layer_str.c_str(), &layer_enabled))
-            {
-                if (layer_enabled)
-                {
-                    rend_obj_settings.render_layer =
-                        Render_layer(rend_obj_settings.render_layer | layer_mask);
-                }
-                else
-                {
-                    rend_obj_settings.render_layer =
-                        Render_layer(rend_obj_settings.render_layer & ~layer_mask);
-                }
-            }
+    int32_t render_layer_cur_item = [&rend_obj_settings]() {
+        int32_t layer_idx = 0;
+        for (auto const& [str, layer] : k_layers)
+        {
+            if (rend_obj_settings.render_layer == layer)
+                break;
+            layer_idx++;
         }
+        return layer_idx;
+    }();
 
-        ImGui::EndPopup();
-    }
-    #endif  // 0
+    static std::vector<char const*> k_render_layer_str_list = []() {
+        std::vector<char const*> str_list;
+        str_list.reserve(k_layers.size());
 
-    std::string current_layer_str{ "INVALID LAYER" };
-
-    for (auto const& [layer_str, layer_mask] : s_layers)
-        if (rend_obj_settings.render_layer == layer_mask)
-            current_layer_str = layer_str;
-
-    if (ImGui::BeginCombo("Render layer", current_layer_str.c_str()))
-    {
-        for (auto const& [layer_str, layer_mask] : s_layers)
-        {   // Combo selectable item.
-            bool const is_selected{ rend_obj_settings.render_layer == layer_mask };
-            if (ImGui::Selectable(layer_str.c_str(), is_selected))
-                rend_obj_settings.render_layer = layer_mask;
-
-            if (is_selected)
-                ImGui::SetItemDefaultFocus();
+        for (auto const& [str, _] : k_layers)
+        {
+            str_list.emplace_back(str.data());
         }
+        return str_list;
+    }();
 
-        ImGui::EndCombo();
+    if (ImGui::Combo("render_layer",
+                     &render_layer_cur_item,
+                     k_render_layer_str_list.data(),
+                     k_render_layer_str_list.size()))
+    {
+        rend_obj_settings.render_layer = k_layers[render_layer_cur_item].second;
     }
 
-    ImGui::InputText("Model name", &rend_obj_settings.model_name);
-    ImGui::Checkbox("Is deformed", &rend_obj_settings.is_deformed);
+    ImGui::InputText("model_name", &rend_obj_settings.model_name);
 
-    ImGui::BeginDisabled(!rend_obj_settings.is_deformed);
-    ImGui::InputText("Animator template name", &rend_obj_settings.animator_template_name);
+    ImGui::DragFloat4("transform[0]", rend_obj_settings.transform.raw[0]);
+    ImGui::DragFloat4("transform[1]", rend_obj_settings.transform.raw[1]);
+    ImGui::DragFloat4("transform[2]", rend_obj_settings.transform.raw[2]);
+    ImGui::DragFloat4("transform[3]", rend_obj_settings.transform.raw[3]);
+
+    ImGui::SeparatorText("Optional");
+
+    ImGui::InputText("sub_mesh_name", &rend_obj_settings.sub_mesh_name);
+    ImGui::Checkbox("sub_mesh_zero_origin_position",
+                    &rend_obj_settings.sub_mesh_zero_origin_position);
+
+    ImGui::InputText("material_palette", &rend_obj_settings.material_palette);
+    ImGui::Checkbox("is_deformed", &rend_obj_settings.is_deformed);
+
+    ImGui::SeparatorText("Renderer-owned data");
+
+    ImGui::BeginDisabled();
+    ImGui::InputScalar("renderer_owned_data.pool_key",
+                       ImGuiDataType_U32,
+                       &rend_obj_settings.renderer_owned_data.pool_key);
     ImGui::EndDisabled();
 
-    ImGui::EndDisabled();
+    if (ImGui::Button("Invalidate renderer owned data\n(forces rebuild render object)"))
+    {
+        rend_obj_settings.renderer_owned_data = {};
+    }
 
     ImGui::PopItemWidth();
-    ImGui::PopID();
-}
-
-void BT::component::edit::imgui_edit__created_render_object_reference(entt::registry& reg,
-                                                                      entt::entity ecs_entity)
-{
-    auto const& rend_obj_ref{ reg.get<component::Created_render_object_reference const>(
-        ecs_entity) };
-
-    ImGui::PushID(&rend_obj_ref);
-
-    ImGui::TextWrapped("A render object is created in the renderer.\n  UUID: %s",
-                       UUID_helper::to_pretty_repr(rend_obj_ref.render_obj_uuid_ref).c_str());
-
-    #if 0 // @TODO: remove these extras.
-    // Extras for if there's an animator.
-    auto& rend_obj_pool{ service_finder::find_service<Renderer>().get_render_object_pool() };
-    auto& rend_obj{
-        *rend_obj_pool.checkout_render_obj_by_key({ rend_obj_ref.render_obj_uuid_ref }).front()
-    };
-
-    if (auto animator{ rend_obj.get_model_animator() }; animator != nullptr)
-    {   // EXTRAS!!
-        // Control the state machine!!
-        ImGui::SeparatorText("Extras: animator controls");
-
-        ImGui::Text("is_using_root_motion: %s",
-                    (animator->get_is_using_root_motion() ? "TRUE" : "FALSE"));
-
-        for (size_t var_idx = 0; var_idx < animator->get_num_animator_variables(); var_idx++)
-        {
-            auto const& anim_var{ animator->get_animator_variable(var_idx) };
-            switch (anim_var.type)
-            {
-            case anim_tmpl_types::Animator_variable::TYPE_BOOL:
-            {
-                bool var_val{ glm_eq(anim_var.var_value, anim_tmpl_types::k_bool_true) };
-                if (ImGui::Checkbox(anim_var.var_name.c_str(), &var_val))
-                {
-                    animator->set_bool_variable(anim_var.var_name, var_val);
-                }
-                break;
-            }
-
-            case anim_tmpl_types::Animator_variable::TYPE_INT:
-            {
-                int32_t var_val{ static_cast<int32_t>(anim_var.var_value) };
-                if (ImGui::InputInt(anim_var.var_name.c_str(), &var_val))
-                {
-                    animator->set_int_variable(anim_var.var_name, var_val);
-                }
-                break;
-            }
-
-            case anim_tmpl_types::Animator_variable::TYPE_FLOAT:
-            {
-                float_t var_val{ anim_var.var_value };
-                if (ImGui::DragFloat(anim_var.var_name.c_str(), &var_val, 0.1f))
-                {
-                    animator->set_float_variable(anim_var.var_name, var_val);
-                }
-                break;
-            }
-
-            case anim_tmpl_types::Animator_variable::TYPE_TRIGGER:
-                if (ImGui::Button(("Trigger \"" + anim_var.var_name + "\"").c_str()))
-                {
-                    animator->set_trigger_variable(anim_var.var_name);
-                }
-                break;
-
-            default: assert(false); break;
-            }
-        }
-    }
-
-    rend_obj_pool.return_render_objs({ &rend_obj });
-    #endif // 0 // @TODO: remove these extras.
-
     ImGui::PopID();
 }
 
 void BT::component::edit::imgui_edit__animator_root_motion(entt::registry& reg,
                                                            entt::entity ecs_entity)
 {
-    auto& anim_root_motion{ reg.get<component::Animator_root_motion>(ecs_entity) };
+    auto& anim_root_motion{ reg.get<TXP::component::Animator_root_motion>(ecs_entity) };
 
     ImGui::PushID(&anim_root_motion);
     ImGui::PushItemWidth(ImGui::GetFontSize() * -10);
@@ -624,6 +585,69 @@ void BT::component::edit::imgui_edit__base_combat_stats_data(entt::registry& reg
     ImGui::SeparatorText("Posture");
     ImGui::InputInt("posture_dmg_pts", &combat_stats_data.posture_dmg_pts);
     ImGui::InputInt("posture_dmg_def_pts", &combat_stats_data.posture_dmg_def_pts);
+
+    ImGui::PopItemWidth();
+    ImGui::PopID();
+}
+
+void BT::component::edit::imgui_edit__rail_line(entt::registry& reg, entt::entity ecs_entity)
+{
+    auto& rail_line_data{ reg.get<component::Rail_line>(ecs_entity) };
+
+    ImGui::PushID(&rail_line_data);
+    ImGui::PushItemWidth(ImGui::GetFontSize() * -20);
+
+    ImGui::SeparatorText("Rail Line");
+    ImGui::InputText("construction_code", &rail_line_data.construction_code);
+    ImGui::Text(
+        "Key:\n"
+        "  s    : straight (or straight incline/decline when in those modes)\n"
+        "  qwer : curve left (each char is a different curve radius (q is largest))\n"
+        "  uiop : curve right (each char is a different curve radius (p id largest))\n"
+        "  (    : start incline\n"
+        "  )    : end incline\n"
+        "  [    : start decline\n"
+        "  ]    : end decline\n"
+        "  f    : fork (not implemented yet\n");
+
+    ImGui::PopItemWidth();
+    ImGui::PopID();
+}
+
+void BT::component::edit::imgui_edit__rail_line_rider(entt::registry& reg, entt::entity ecs_entity)
+{
+    auto& rail_line_rider_data{ reg.get<component::Rail_line_rider>(ecs_entity) };
+
+    ImGui::PushID(&rail_line_rider_data);
+    ImGui::PushItemWidth(ImGui::GetFontSize() * -20);
+
+    ImGui::SeparatorText("Rail Line Rider");
+
+    ImGui::BeginDisabled();
+    std::string u = UUID_helper::to_pretty_repr(rail_line_rider_data.riding_line_uuid);
+    ImGui::InputText("riding_line_uuid", &u);
+    ImGui::EndDisabled();
+
+    ImGui::DragScalar("line_position", ImGuiDataType_Double, &rail_line_rider_data.line_position);
+
+    ImGui::SeparatorText("Bogie positions");
+    size_t i = 0;
+    for (auto& bogie_pos : rail_line_rider_data.bogie_positions)
+    {
+        ImGui::DragFloat(("bogie_pos[" + std::to_string(i) + "]").c_str(), &bogie_pos);
+        i++;
+    }
+
+    ImGui::SeparatorText("Bogie springs");
+    i = 0;
+    for (auto& bogie_spring : rail_line_rider_data.bogie_springs)
+    {
+        ImGui::DragFloat(("bogie_spring[" + std::to_string(i) + "].line_position").c_str(),
+                         &bogie_spring.line_position);
+        ImGui::DragFloat(("bogie_spring[" + std::to_string(i) + "].velocity").c_str(),
+                         &bogie_spring.velocity);
+        i++;
+    }
 
     ImGui::PopItemWidth();
     ImGui::PopID();

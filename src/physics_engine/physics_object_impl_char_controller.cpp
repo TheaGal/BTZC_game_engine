@@ -1,8 +1,6 @@
 #include "physics_object_impl_char_controller.h"
 
-#include "../renderer/debug_render_job.h"
-#include "../renderer/material.h"
-#include "../renderer/mesh.h"
+#include "btdatecheck.h"
 #include "Jolt/Jolt.h"
 #include "Jolt/Core/TempAllocator.h"
 #include "Jolt/Physics/Character/Character.h"
@@ -13,6 +11,7 @@
 #include "Jolt/Physics/PhysicsSystem.h"
 #include "physics_engine_impl_layers.h"
 #include "service_finder/service_finder.h"
+#include "txp_renderer_public.h"
 
 #include <cmath>
 
@@ -123,17 +122,12 @@ BT::Phys_obj_impl_char_controller::Phys_obj_impl_char_controller(float_t radius,
     m_character->SetListener(this);
 
     // Create debug render job.
-    static auto s_debug_model{ Model_bank::get_model("unit_box") };
-    m_debug_mesh_id = get_main_debug_mesh_pool().emplace_debug_mesh(
-        { s_debug_model,
-          Debug_mesh_pool::k_mask_phys_obj,
-          Material_bank::get_material("debug_physics_wireframe_fore_material"),
-          Material_bank::get_material("debug_physics_wireframe_back_material") });
+    m_debug_mesh_id = TXP::debug::emplace_debug_model("unit_box", TXP::debug::PHYSICS_WIREFRAME);
 }
 
 BT::Phys_obj_impl_char_controller::~Phys_obj_impl_char_controller()
 {
-    get_main_debug_mesh_pool().remove_debug_mesh(m_debug_mesh_id);
+    TXP::debug::remove_debug_model(m_debug_mesh_id);
 }
 
 // Phys obj impl ifc.
@@ -304,9 +298,7 @@ void BT::Phys_obj_impl_char_controller::update_debug_mesh()
     glm_scale(graphic_trans, vec3{ m_radius,
                                    0.5f * height + m_radius,
                                    m_radius });
-    glm_mat4_copy(graphic_trans,
-                  get_main_debug_mesh_pool()
-                      .get_debug_mesh_volatile_handle(m_debug_mesh_id).transform);
+    TXP::debug::update_debug_model_transform(m_debug_mesh_id, graphic_trans);
 }
 
 // Character contact listener.
@@ -321,10 +313,7 @@ void BT::Phys_obj_impl_char_controller::OnAdjustBodyVelocity(JPH::CharacterVirtu
 }
 
 void BT::Phys_obj_impl_char_controller::OnContactAdded(JPH::CharacterVirtual const* in_character,
-                                                       JPH::BodyID const& in_body_id2,
-                                                       JPH::SubShapeID const& in_sub_shape_id2,
-                                                       JPH::RVec3Arg in_contact_position,
-                                                       JPH::Vec3Arg in_contact_normal,
+                                                       JPH::CharacterContact const& in_contact,
                                                        JPH::CharacterContactSettings& io_settings)
 {
     // // Draw a box around the character when it enters the sensor
@@ -350,12 +339,10 @@ void BT::Phys_obj_impl_char_controller::OnContactAdded(JPH::CharacterVirtual con
     //     mAllowSliding = true;
 }
 
-void BT::Phys_obj_impl_char_controller::OnCharacterContactAdded(JPH::CharacterVirtual const* in_character,
-                                                                JPH::CharacterVirtual const* in_other_character,
-                                                                JPH::SubShapeID const& in_sub_shape_id2,
-                                                                JPH::RVec3Arg in_contact_position,
-                                                                JPH::Vec3Arg in_contact_normal,
-                                                                JPH::CharacterContactSettings& io_settings)
+void BT::Phys_obj_impl_char_controller::OnCharacterContactAdded(
+    JPH::CharacterVirtual const* in_character,
+    JPH::CharacterContact const& in_contact,
+    JPH::CharacterContactSettings& io_settings)
 {
     // // Characters can only be pushed in their own update
     // if (sPlayerCanPushOtherCharacters)

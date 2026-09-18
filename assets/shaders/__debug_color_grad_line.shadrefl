@@ -1,0 +1,153 @@
+{
+    "parameters": [
+
+    ],
+    "entryPoints": [
+        {
+            "name": "vertex_main",
+            "stage": "vertex",
+            "parameters": [
+                {
+                    "name": "input",
+                    "stage": "vertex",
+                    "binding": {"kind": "varyingInput", "index": 0, "count": 2},
+                    "type": {
+                        "kind": "struct",
+                        "name": "VS_input",
+                        "fields": [
+                            {
+                                "name": "pos",
+                                "type": {
+                                    "kind": "vector",
+                                    "elementCount": 3,
+                                    "elementType": {
+                                        "kind": "scalar",
+                                        "scalarType": "float32"
+                                    }
+                                },
+                                "stage": "vertex",
+                                "binding": {"kind": "varyingInput", "index": 0}
+                            },
+                            {
+                                "name": "color",
+                                "type": {
+                                    "kind": "vector",
+                                    "elementCount": 4,
+                                    "elementType": {
+                                        "kind": "scalar",
+                                        "scalarType": "float32"
+                                    }
+                                },
+                                "stage": "vertex",
+                                "binding": {"kind": "varyingInput", "index": 1}
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "env_data",
+                    "binding": {"kind": "uniform", "offset": 0, "size": 8, "elementStride": 0},
+                    "type": {
+                        "kind": "pointer",
+                        "valueType": "Environment_data"
+                    }
+                }
+            ],
+            "result": {
+                "stage": "vertex",
+                "binding": {"kind": "varyingOutput", "index": 0},
+                "type": {
+                    "kind": "struct",
+                    "name": "VS_output",
+                    "fields": [
+                        {
+                            "name": "pos",
+                            "type": {
+                                "kind": "vector",
+                                "elementCount": 4,
+                                "elementType": {
+                                    "kind": "scalar",
+                                    "scalarType": "float32"
+                                }
+                            },
+                            "semanticName": "SV_POSITION"
+                        },
+                        {
+                            "name": "color",
+                            "type": {
+                                "kind": "vector",
+                                "elementCount": 4,
+                                "elementType": {
+                                    "kind": "scalar",
+                                    "scalarType": "float32"
+                                }
+                            },
+                            "stage": "vertex",
+                            "binding": {"kind": "varyingOutput", "index": 0}
+                        }
+                    ]
+                }
+            },
+            "bindings": [
+
+            ]
+        },
+        {
+            "name": "fragment_main",
+            "stage": "fragment",
+            "parameters": [
+                {
+                    "name": "input",
+                    "stage": "fragment",
+                    "binding": {"kind": "varyingInput", "index": 0},
+                    "type": {
+                        "kind": "struct",
+                        "name": "VS_output",
+                        "fields": [
+                            {
+                                "name": "pos",
+                                "type": {
+                                    "kind": "vector",
+                                    "elementCount": 4,
+                                    "elementType": {
+                                        "kind": "scalar",
+                                        "scalarType": "float32"
+                                    }
+                                },
+                                "semanticName": "SV_POSITION"
+                            },
+                            {
+                                "name": "color",
+                                "type": {
+                                    "kind": "vector",
+                                    "elementCount": 4,
+                                    "elementType": {
+                                        "kind": "scalar",
+                                        "scalarType": "float32"
+                                    }
+                                },
+                                "stage": "fragment",
+                                "binding": {"kind": "varyingInput", "index": 0}
+                            }
+                        ]
+                    }
+                }
+            ],
+            "result": {
+                "stage": "fragment",
+                "binding": {"kind": "varyingOutput", "index": 0},
+                "type": {
+                    "kind": "vector",
+                    "elementCount": 4,
+                    "elementType": {
+                        "kind": "scalar",
+                        "scalarType": "float32"
+                    }
+                }
+            },
+            "bindings": [
+
+            ]
+        }
+    ]
+}

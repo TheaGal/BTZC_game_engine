@@ -4,11 +4,14 @@
 #include "btjson.h"
 #include "entt/entity/entity.hpp"
 #include "entt/entity/fwd.hpp"
-#include "uuid/uuid.h"
+#include "btuuid.h"
 
 
 namespace BT
 {
+
+class Entity_container;  // Forward decl.
+
 namespace component
 {
 
@@ -25,6 +28,9 @@ struct Transform
         rotation,
         scale
     );
+
+    /// Helper to make mat4 out of transform.
+    void calc_mat4_transform(mat4 out_transform) const;
 };
 
 /// References to other entities connected to this transform within the transform hierarchy.
@@ -39,6 +45,16 @@ struct Transform_hierarchy
         children_entities
     );
 };
+
+/// Helper to join parent-child relationship transform hierarchy.
+void form_parent_child_relationship_helper(Entity_container& entity_container,
+                                           UUID parent,
+                                           UUID child);
+
+/// Helper to sever parent-child relationship transform hierarchy.
+void sever_parent_child_relationship_helper(Entity_container& entity_container,
+                                            UUID parent,
+                                            UUID child);
 
 /// Tag that transform was changed (this is used for transform propagation thru the hierarchy, also
 /// to avoid directly mutating `Transform` component).

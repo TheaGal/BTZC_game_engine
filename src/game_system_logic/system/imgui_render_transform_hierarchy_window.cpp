@@ -1,25 +1,20 @@
 #include "imgui_render_transform_hierarchy_window.h"
 
+#include "btuuid.h"
+#include "btglm.h"
 #include "entt/entity/entity.hpp"
 #include "entt/entity/fwd.hpp"
 #include "game_system_logic/component/component_registry.h"
-#include "game_system_logic/component/entity_metadata.h"
 #include "game_system_logic/component/physics_object_settings.h"
-#include "game_system_logic/component/render_object_settings.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
 #include "imgui.h"
 #include "imgui_internal.h"
 #include "misc/cpp/imgui_stdlib.h"
-#include "ImGuizmo.h"
-#include "renderer/camera.h"
-#include "renderer/debug_render_job.h"
-#include "renderer/renderer.h"
 #include "service_finder/service_finder.h"
-#include "uuid/uuid.h"
+#include "txp_renderer_public.h"
 
 #include <cassert>
-
 
 
 namespace
@@ -30,7 +25,7 @@ using namespace BT;
 struct State
 {
     entt::entity selected_entity{ entt::null };
-    UUID debug_mesh_key;
+    TXP::debug::debug_model_id_t debug_mesh_key;
 };
 static State s_state;
 
@@ -58,7 +53,8 @@ bool internal_imgui_render_floating_entities()
 {
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
-    auto view{ reg.view<component::Entity_metadata const>(
+
+    auto view{ reg.view<TXP::component::Entity_metadata const>(
         entt::exclude<component::Transform, component::Transform_hierarchy>) };
 
     // Fill in data structure of nodes from view.
@@ -71,7 +67,7 @@ bool internal_imgui_render_floating_entities()
 
     for (auto entity : view)
     {
-        auto const& metadata{ view.get<component::Entity_metadata const>(entity) };
+        auto const& metadata{ view.get<TXP::component::Entity_metadata const>(entity) };
         entity_flat_nodes.emplace_back(metadata.name, metadata.uuid);
     }
 
@@ -113,22 +109,23 @@ void internal_recursive_iterate_transform_hierarchy(
     uint32_t indentation,
     entt::entity entity,
     Entity_container const& entity_container,
-    entt::registry const& view,
+    entt::registry const& reg,
     std::vector<Hierarchy_node>& entity_hierarchy_nodes)
 {
-    auto const& metadata{ view.get<component::Entity_metadata const>(entity) };
+    auto const& metadata{ reg.get<TXP::component::Entity_metadata const>(entity) };
     entity_hierarchy_nodes.emplace_back(indentation, metadata.name, metadata.uuid);
 
     // Process children.
-    auto const& trans_hierarchy{ view.get<component::Transform_hierarchy const>(entity) };
-    for (auto uuid : trans_hierarchy.children_entities)
-    {
-        internal_recursive_iterate_transform_hierarchy(indentation + 1,
-                                                       entity_container.find_entity(uuid),
-                                                       entity_container,
-                                                       view,
-                                                       entity_hierarchy_nodes);
-    }
+    auto const* trans_hierarchy{ reg.try_get<component::Transform_hierarchy const>(entity) };
+    if (trans_hierarchy != nullptr)
+        for (auto uuid : trans_hierarchy->children_entities)
+        {
+            internal_recursive_iterate_transform_hierarchy(indentation + 1,
+                                                           entity_container.find_entity(uuid),
+                                                           entity_container,
+                                                           reg,
+                                                           entity_hierarchy_nodes);
+        }
 }
 
 /// Renders entities belonging to the transform hierarchy in a cascading node-like fashion.
@@ -137,17 +134,16 @@ bool internal_imgui_render_entity_transform_hierarchy()
 {
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
-    auto view{ reg.view<component::Entity_metadata const,
-                        component::Transform const,
-                        component::Transform_hierarchy const>() };
+    auto view{ reg.view<TXP::component::Entity_metadata const,
+                        component::Transform const>() };
 
     // Fill in data structure of nodes from view.
     std::vector<Hierarchy_node> entity_hierarchy_nodes;
 
     for (auto entity : view)
     {   // Ensure that this entity is at root level in the hierarchy.
-        auto const& trans_hierarchy{ view.get<component::Transform_hierarchy const>(entity) };
-        if (trans_hierarchy.parent_entity.is_nil())
+        auto const* trans_hierarchy{ reg.try_get<component::Transform_hierarchy const>(entity) };
+        if (trans_hierarchy == nullptr || trans_hierarchy->parent_entity.is_nil())
         {   // Process as root node.
             internal_recursive_iterate_transform_hierarchy(0,
                                                            entity,
@@ -253,17 +249,15 @@ void internal_imgui_render_entities()
     ImGui::End();
 }
 
-/// Draws ImGuizmo's mat4 manipulate gizmo.
-bool internal_imguizmo_manipulate(entt::registry& reg,
-                                  Camera& camera,
-                                  rvec3s& out_pos,
-                                  versors& out_rot,
-                                  vec3s& out_sca)
+/// Adds transform to be manipulated and a callback if it happens.
+void internal_add_transform_to_manip_list(entt::registry& reg,
+                                          TXP::Renderer& renderer,
+                                          TXP::Camera& camera)
 {   // Get selected entity transform.
     auto const ent_transform{ reg.try_get<component::Transform const>(s_state.selected_entity) };
     if (ent_transform == nullptr)
     {   // Exit since entity does not have a transform.
-        return false;
+        return;
     }
 
     // Calculate TRS into mat4 transform.
@@ -279,60 +273,54 @@ bool internal_imguizmo_manipulate(entt::registry& reg,
     }
 
     // Extract float translation.
-    vec3 orig_flt_tra;
-    glm_vec3(transform[3], orig_flt_tra);
+    vec3s orig_flt_tra;
+    glm_vec3(transform[3], orig_flt_tra.raw);
 
-    // Get camera matrices.
-    mat4 proj;
-    mat4 view;
-    mat4 proj_view;
-    camera.fetch_calculated_camera_matrices(proj, view, proj_view);
-    proj[1][1] *= -1.0f;  // Fix neg-Y issue.
+    renderer.add_to_imguizmo_manipulate(
+        transform,
+        [&reg, orig_flt_tra](mat4 const new_transform) {
+            mat4 nt;
+            glm_mat4_copy(const_cast<vec4*>(new_transform), nt);
 
-    // Draw Imguizmo gizmo.
-    bool manipulated{ false };
-    if (ImGuizmo::Manipulate(&view[0][0],
-                             &proj[0][0],
-                             ImGuizmo::UNIVERSAL,
-                             false ? ImGuizmo::WORLD : ImGuizmo::LOCAL,
-                             &transform[0][0]))
-    {   // Copy result (@NOTE: This is reverse of the TRS->mat4 operation above).
-        vec4 tra;
-        mat4 rot;
-        vec3 sca;
-        glm_decompose(transform, tra, rot, sca);
+            vec4 dec_tra;
+            mat4 dec_rot;
+            vec3 dec_sca;
+            glm_decompose(nt, dec_tra, dec_rot, dec_sca);
 
-        out_pos.x = ent_transform->position.x + (tra[0] - orig_flt_tra[0]);
-        out_pos.y = ent_transform->position.y + (tra[1] - orig_flt_tra[1]);
-        out_pos.z = ent_transform->position.z + (tra[2] - orig_flt_tra[2]);
-        glm_mat4_quat(rot, out_rot.raw);
-        glm_vec3_copy(sca, out_sca.raw);
+            auto const& ent_transform{ reg.get<component::Transform const>(
+                s_state.selected_entity) };
 
-        // Mark as manipulated.
-        manipulated = true;
-    }
+            rvec3s pos;
+            versors rot;
+            vec3s sca;
 
-    return manipulated;
+            pos = {
+                .x = ent_transform.position.x + (dec_tra[0] - orig_flt_tra.x),
+                .y = ent_transform.position.y + (dec_tra[1] - orig_flt_tra.y),
+                .z = ent_transform.position.z + (dec_tra[2] - orig_flt_tra.z),
+            };
+            glm_mat4_quat(dec_rot, rot.raw);
+            glm_vec3_copy(dec_sca, sca.raw);
+
+            // Notify manipulation.
+            component::submit_transform_change_helper(reg, s_state.selected_entity, pos, rot, sca);
+            component::try_set_physics_object_transform_helper(reg,
+                                                               s_state.selected_entity,
+                                                               pos,
+                                                               rot);
+        });
 }
 
-/// Renders gizmo for transforms and updates entity transform if manipulated.
-void internal_imguizmo_transform_gizmo()
+/// Adds transform to transform manipulation list.
+void internal_manip_transform()
 {
-    auto& renderer{ service_finder::find_service<Renderer>() };
-    auto& camera{ *renderer.get_camera_obj() };
-
     auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
+    auto& renderer{ service_finder::find_service<TXP::Renderer>() };
+    auto& camera{ renderer.get_main_camera() };
 
-    ImGuizmo::Enable(!camera.is_mouse_captured());
+    renderer.set_imguizmo_enabled(camera.is_cursor_free());
 
-    rvec3s  pos;
-    versors rot;
-    vec3s   sca;
-    if (internal_imguizmo_manipulate(reg, camera, pos, rot, sca))
-    {
-        component::submit_transform_change_helper(reg, s_state.selected_entity, pos, rot, sca);
-        component::try_set_physics_object_transform_helper(reg, s_state.selected_entity, pos, rot);
-    }
+    internal_add_transform_to_manip_list(reg, renderer, camera);
 }
 
 /// "Properties inspector" window.
@@ -345,7 +333,7 @@ void internal_imgui_render_item_properties_inspector()
     }
     else
     {   // Inspect properties.
-        internal_imguizmo_transform_gizmo();
+        internal_manip_transform();
         component::imgui_render_components_edit_panes(s_state.selected_entity);
     }
     ImGui::End();
@@ -358,10 +346,10 @@ void BT::system::imgui_render_transform_hierarchy_window(bool clear_state)
 {
     if (clear_state)
     {
-        if (!s_state.debug_mesh_key.is_nil())
+        if (s_state.debug_mesh_key == -1)
         {   // Remove debug mesh from set of render jobs!
-            get_main_debug_mesh_pool().remove_debug_mesh(s_state.debug_mesh_key);
-            s_state.debug_mesh_key = UUID();
+            TXP::debug::remove_debug_model(s_state.debug_mesh_key);
+            s_state.debug_mesh_key = -1;
         }
 
         s_state = {};
@@ -371,8 +359,9 @@ void BT::system::imgui_render_transform_hierarchy_window(bool clear_state)
     internal_imgui_render_item_properties_inspector();
 }
 
-void BT::system::set_selected_entity(entt::entity entity)
+void BT::system::set_selected_entity(entt::entity entity)  // @THEA: @UNUSED
 {
+#if 0 // @TODO: implement the below!!!!
     if (!s_state.debug_mesh_key.is_nil())  // @COPYPASTA
     {   // Remove debug mesh from set of render jobs!
         get_main_debug_mesh_pool().remove_debug_mesh(s_state.debug_mesh_key);
@@ -381,13 +370,14 @@ void BT::system::set_selected_entity(entt::entity entity)
 
     // Set selected entity.
     s_state.selected_entity = entity;
+#endif // 0
 }
 
 void BT::system::update_selected_entity_debug_render_transform()
 {   // Make sure that there is an entity selected.
     if (s_state.selected_entity == entt::null)
         return;
-
+#if 0 // @TODO: implement the below!!!!
     // Look for selected entity's render object.
     auto poss_rend_obj_ref{ service_finder::find_service<Entity_container>()
                                 .get_ecs_registry()
@@ -397,14 +387,14 @@ void BT::system::update_selected_entity_debug_render_transform()
         return;
 
     // Create new debug mesh if doesn't exist yet.
-    if (s_state.debug_mesh_key.is_nil())
+    if (s_state.debug_mesh_key == -1)
     {
         auto& rend_obj_pool{ service_finder::find_service<Renderer>().get_render_object_pool() };
         auto checked_out_rend_objs{ rend_obj_pool.checkout_render_obj_by_key(
             { poss_rend_obj_ref->render_obj_uuid_ref }) };
 
         // Create debug mesh.
-        s_state.debug_mesh_key = get_main_debug_mesh_pool().emplace_debug_mesh(
+        s_state.debug_mesh_key = get_main_debug_mesh_pool().emplace_debug_mesh( // @TODO
             { checked_out_rend_objs.front()->get_renderable(),
               Debug_mesh_pool::k_mask_selected_obj,
               Material_bank::get_material("debug_selected_wireframe_fore_material"),
@@ -429,5 +419,6 @@ void BT::system::update_selected_entity_debug_render_transform()
                   get_main_debug_mesh_pool()
                       .get_debug_mesh_volatile_handle(s_state.debug_mesh_key)
                       .transform);
+#endif // 0
 }
 

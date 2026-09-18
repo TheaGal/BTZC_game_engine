@@ -3,7 +3,7 @@
 #include "btjson.h"
 #include "entt/entity/fwd.hpp"
 #include "physics_engine/physics_object.h"
-#include "uuid/uuid.h"
+#include "btuuid.h"
 
 
 namespace BT

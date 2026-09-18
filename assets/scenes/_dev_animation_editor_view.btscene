@@ -4,7 +4,7 @@
             "entity_uuid": "aae5fbab-7c2b-49a8-bcb9-658fdea987bf",
             "components": [
                 {
-                    "type_name": "component::Entity_metadata",
+                    "type_name": "TXP::component::Entity_metadata",
                     "members_j": {
                         "name": "Anim editor view focus object",
                         "uuid": "aae5fbab-7c2b-49a8-bcb9-658fdea987bf"
@@ -32,63 +32,8 @@
                     }
                 },
                 {
-                    "type_name": "component::Transform_hierarchy",
-                    "members_j": {
-                        "parent_entity": null,
-                        "children_entities": []
-                    }
-                },
-                {
-                    "type_name": "component::_Dev_animation_frame_action_editor_agent",
+                    "type_name": "TXP::component::_Dev_animation_frame_action_editor_agent",
                     "members_j": {}
-                }
-            ]
-        },
-        {
-            "entity_uuid": "88a277a7-3481-42e5-a584-e0d06f892d48",
-            "components": [
-                {
-                    "type_name": "component::Entity_metadata",
-                    "members_j": {
-                        "name": "Grid for XZ plane",
-                        "uuid": "88a277a7-3481-42e5-a584-e0d06f892d48"
-                    }
-                },
-                {
-                    "type_name": "component::Transform",
-                    "members_j": {
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "rotation": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0,
-                            "w": 1.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
-                        }
-                    }
-                },
-                {
-                    "type_name": "component::Transform_hierarchy",
-                    "members_j": {
-                        "parent_entity": null,
-                        "children_entities": []
-                    }
-                },
-                {
-                    "type_name": "component::Render_object_settings",
-                    "members_j": {
-                        "render_layer": 1,
-                        "model_name": "xz_grid",
-                        "is_deformed": false
-                    }
                 }
             ]
         }

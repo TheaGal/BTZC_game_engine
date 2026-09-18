@@ -2,7 +2,7 @@
 
 #include "btglm.h"
 #include "btjson.h"
-#include "uuid/uuid.h"
+#include "btuuid.h"
 
 #include <array>
 
@@ -63,6 +63,8 @@ struct Character_mvt_state
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Character_mvt_state, settings);
 
+    vec3 prev_velocity = GLM_VEC3_ZERO_INIT;
+
     /// Helper func that sets facing angle of this component.
     void set_facing_angle(float_t angle_radians);
 
@@ -99,8 +101,8 @@ struct Character_mvt_animated_state
         // Combat inputs.
         bool on_attack_press{ false };
         bool on_attack_release{ false };
-        bool on_parry_press{ false };
-        bool on_parry_release{ false };
+        bool on_guard_press{ false };
+        bool on_guard_release{ false };
     } input_mvt_state;
 
     /// For storing calculated anim state progression.
@@ -112,6 +114,7 @@ struct Character_mvt_animated_state
 
             AS_GROUNDED_IDLE = 0,
             AS_GROUNDED_MOVE,
+            AS_GROUNDED_ATTACK,
             AS_MIDAIR,
 
             AS_NOT_IMPLEMENTED_YET

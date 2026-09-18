@@ -3,21 +3,18 @@
 #include "Jolt/Jolt.h"
 #include "Jolt/Math/Vec3.h"
 #include "Jolt/Physics/PhysicsSystem.h"
-#include "animation_frame_action_tool/runtime_data.h"
+#include "btdatecheck.h"
 #include "btglm.h"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/physics_object_settings.h"
-#include "game_system_logic/component/render_object_settings.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
 #include "game_system_logic/system/helper_funcs.h"
-#include "input_handler/input_handler.h"
 #include "physics_engine/physics_engine.h"
 #include "physics_engine/physics_object.h"
 #include "physics_engine/raycast_helper.h"
-#include "renderer/camera.h"
-#include "renderer/renderer.h"
 #include "service_finder/service_finder.h"
+#include "txp_renderer_public.h"
 
 #include <cassert>
 
@@ -29,9 +26,11 @@ using namespace BT;
 
 /// Takes `input_vec` user input and transforms it into a world space input vector where forward is
 /// the direction the camera is facing.
-void transform_input_to_camera_pov_input(Camera& camera, vec2 const input_vec, vec3s& out_ws_input_vec)
+void transform_input_to_camera_pov_input(TXP::Camera& main_camera,
+                                         vec2 const input_vec,
+                                         vec3s& out_ws_input_vec)
 {
-    if (!camera.is_follow_orbit())
+    if (!main_camera.is_follow_orbit())
     {   // Exit since camera isn't accepting input.
         glm_vec3_zero(out_ws_input_vec.raw);
         return;
@@ -39,7 +38,7 @@ void transform_input_to_camera_pov_input(Camera& camera, vec2 const input_vec, v
 
     // Calc forward and right axis vectors.
     vec3 cam_forward;
-    camera.get_view_direction(cam_forward);
+    main_camera.get_view_direction(cam_forward);
     cam_forward[1] = 0;
     glm_vec3_normalize(cam_forward);
 
@@ -64,7 +63,7 @@ void transform_input_to_camera_pov_input(Camera& camera, vec2 const input_vec, v
 
 void BT::system::player_character_world_space_input()
 {
-    auto& camera{ *service_finder::find_service<Renderer>().get_camera_obj() };
+    auto& main_camera = service_finder::find_service<TXP::Renderer>().get_main_camera();
 
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
@@ -98,38 +97,64 @@ void BT::system::player_character_world_space_input()
         auto& char_ws_input{ view.get<component::Character_world_space_input>(entity) };
 
         // Get input for player character, transformed into camera view direction.
-        auto const& input_state{ service_finder::find_service<Input_handler>().get_input_state() };
+        auto const& input_handler{ service_finder::find_service<TXP::Input::Input_handler>() };
 
-        vec2 move_input{ input_state.move.x.val, input_state.move.y.val };
+        // @TODO: make better input vv below vv that can handle directional move.
+        vec2 move_input{ 0, 0 };
+        if (input_handler.get_keyboard_key_state(BT_KEY_W).pressed)
+            move_input[1] += 1;
+        if (input_handler.get_keyboard_key_state(BT_KEY_A).pressed)
+            move_input[0] -= 1;
+        if (input_handler.get_keyboard_key_state(BT_KEY_S).pressed)
+            move_input[1] -= 1;
+        if (input_handler.get_keyboard_key_state(BT_KEY_D).pressed)
+            move_input[0] += 1;
+
         if (!can_move)
             glm_vec2_zero(move_input);
 
-        transform_input_to_camera_pov_input(camera,
+        transform_input_to_camera_pov_input(main_camera,
                                             move_input,
                                             char_ws_input.ws_flat_clamped_input);
 
         // Update input state.
         char_ws_input.prev_jump_pressed   = char_ws_input.jump_pressed;
-        char_ws_input.jump_pressed        = input_state.jump.val;
+        char_ws_input.jump_pressed        = input_handler.get_keyboard_key_state(BT_KEY_SPACE).pressed;
         char_ws_input.prev_crouch_pressed = char_ws_input.crouch_pressed;
-        char_ws_input.crouch_pressed      = input_state.crouch.val;
+        char_ws_input.crouch_pressed      = input_handler.get_keyboard_key_state(BT_KEY_LEFT_CONTROL).pressed;
 
         // On attack trigger.
-        bool attack_pressed{ input_state.attack.val };
-        // @ANIMATOR_REFACTOR if (camera.is_follow_orbit() &&
-        // @ANIMATOR_REFACTOR     can_attack_exit &&
-        // @ANIMATOR_REFACTOR     !char_mvt_anim_state->state.prev_attack_pressed &&
-        // @ANIMATOR_REFACTOR     attack_pressed)
-        // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_attack = true;
-        char_mvt_anim_state->state.prev_attack_pressed = attack_pressed;
+        {
+            bool attack_pressed{
+                input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_LEFT).pressed
+            };
+            bool is_attacking{ main_camera.is_follow_orbit() && can_attack_exit && attack_pressed };
+
+            char_mvt_anim_state->input_mvt_state.on_attack_press =
+                (is_attacking && !char_mvt_anim_state->state.prev_attack_pressed);
+            char_mvt_anim_state->input_mvt_state.on_attack_release =
+                (!is_attacking && char_mvt_anim_state->state.prev_attack_pressed);
+
+            // @ANIMATOR_REFACTOR if (camera.is_follow_orbit() &&
+            // @ANIMATOR_REFACTOR     can_attack_exit &&
+            // @ANIMATOR_REFACTOR     !char_mvt_anim_state->state.prev_attack_pressed &&
+            // @ANIMATOR_REFACTOR     attack_pressed)
+            // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_attack = true;
+
+            char_mvt_anim_state->state.prev_attack_pressed = attack_pressed;
+        }
 
         // On guard trigger and is-guarding bool.
-        bool on_guard;
-        bool is_guarding;
         {
-            bool guard_pressed{ input_state.guard.val };
-            is_guarding = (camera.is_follow_orbit() && can_guard_exit && guard_pressed);
-            on_guard = (is_guarding && !char_mvt_anim_state->state.prev_guard_pressed);
+            bool guard_pressed{
+                input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_RIGHT).pressed
+            };
+            bool is_guarding{ main_camera.is_follow_orbit() && can_guard_exit && guard_pressed };
+
+            char_mvt_anim_state->input_mvt_state.on_guard_press =
+                (is_guarding && !char_mvt_anim_state->state.prev_guard_pressed);
+            char_mvt_anim_state->input_mvt_state.on_guard_release =
+                (!is_guarding && char_mvt_anim_state->state.prev_guard_pressed);
 
             char_mvt_anim_state->state.prev_guard_pressed = guard_pressed;
         }

@@ -4,8 +4,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include <cstdint>
-#include <string>
+#include "txp_renderer_public.h"
 
 
 namespace BT
@@ -30,19 +29,12 @@ void save_app_settings_to_disk();
 /// Global state of app settings.
 struct App_settings
 {
-    /// Window properties.
-    struct Window_settings
-    {
-        int32_t monitor_idx{ 0 };
+    /// Renderer properties.
+    TXP::Renderer_settings renderer_settings;
 
-        int32_t windowed_width{ 640 };
-        int32_t windowed_height{ 360 };
-
-        bool is_resizable{ true };
-        bool has_border{ true };
-        bool is_maximized{ false };
-        bool is_fullscreen{ false };
-    } window_settings;
+    // Renderer helpers.
+    void send_settings_to_renderer(TXP::Renderer& renderer) const;
+    void load_settings_from_renderer(TXP::Renderer& renderer);
 
     // The vv below vv is for preventing others from instantiating the struct.
     friend void ::BT::initialize_app_settings_from_file_or_fallback_to_defaults();
