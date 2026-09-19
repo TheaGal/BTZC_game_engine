@@ -169,26 +169,7 @@
             "state_name": "st_running"
         },
         {
-            "regions": [
-                {
-                    "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
-                    },
-                    "end_frame": 10,
-                    "row_idx": 8,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
-                    },
-                    "end_frame": 41,
-                    "row_idx": 8,
-                    "start_frame": 33
-                }
-            ],
+            "regions": [],
             "state_name": "st_running_turnaround"
         },
         {
@@ -485,17 +466,23 @@
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "hitcapsule_group_0_enabled",
+                            "true"
+                        ],
+                        "cmd_name": "var_ov"
                     },
-                    "end_frame": 103,
+                    "end_frame": 69,
                     "row_idx": 4,
-                    "start_frame": 32
+                    "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "hitcapsule_group_1_enabled",
+                            "true"
+                        ],
+                        "cmd_name": "var_ov"
                     },
                     "end_frame": 22,
                     "row_idx": 5,
@@ -503,8 +490,11 @@
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "hitcapsule_group_1_enabled",
+                            "true"
+                        ],
+                        "cmd_name": "var_ov"
                     },
                     "end_frame": 54,
                     "row_idx": 5,
@@ -530,8 +520,11 @@
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "turn_speed",
+                            "10"
+                        ],
+                        "cmd_name": "var_ov"
                     },
                     "end_frame": 16,
                     "row_idx": 8,
@@ -539,8 +532,11 @@
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "turn_speed",
+                            "10"
+                        ],
+                        "cmd_name": "var_ov"
                     },
                     "end_frame": 48,
                     "row_idx": 8,
@@ -548,17 +544,23 @@
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "turn_speed",
+                            "10"
+                        ],
+                        "cmd_name": "var_ov"
                     },
-                    "end_frame": 71,
+                    "end_frame": 69,
                     "row_idx": 8,
                     "start_frame": 53
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "attack_send_root_motion_multi",
+                            "1"
+                        ],
+                        "cmd_name": "var_wr"
                     },
                     "end_frame": 22,
                     "row_idx": 16,
@@ -566,17 +568,24 @@
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "attack_send_root_motion_multi",
+                            "2"
+                        ],
+                        "cmd_name": "var_wr"
                     },
                     "end_frame": 54,
-                    "row_idx": 17,
+                    "row_idx": 16,
                     "start_frame": 47
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "evq_on_guard_press",
+                            "st_ready_parry,st_hold_guard_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 54,
                     "row_idx": 20,
@@ -584,8 +593,10 @@
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "broadcast_attack_to_enemies"
+                        ],
+                        "cmd_name": "var_mark_reeve"
                     },
                     "end_frame": 17,
                     "row_idx": 21,
@@ -593,8 +604,10 @@
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "broadcast_attack_to_enemies"
+                        ],
+                        "cmd_name": "var_mark_reeve"
                     },
                     "end_frame": 50,
                     "row_idx": 21,
@@ -698,77 +711,6 @@
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [
-                            "turn_speed",
-                            "7.5"
-                        ],
-                        "cmd_name": "var_ov"
-                    },
-                    "end_frame": 15,
-                    "row_idx": 6,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "mvt_input_max_speed",
-                            "10"
-                        ],
-                        "cmd_name": "var_ov"
-                    },
-                    "end_frame": 15,
-                    "row_idx": 8,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "inherit_prev_velocity"
-                        ],
-                        "cmd_name": "var_mark_reeve"
-                    },
-                    "end_frame": 1,
-                    "row_idx": 9,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "mvt_input_accel",
-                            "60"
-                        ],
-                        "cmd_name": "var_ov"
-                    },
-                    "end_frame": 15,
-                    "row_idx": 10,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "mvt_input_decel",
-                            "30"
-                        ],
-                        "cmd_name": "var_ov"
-                    },
-                    "end_frame": 15,
-                    "row_idx": 11,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "mvt_input_enabled",
-                            "true"
-                        ],
-                        "cmd_name": "var_ov"
-                    },
-                    "end_frame": 15,
-                    "row_idx": 12,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
                         "argv": [],
                         "cmd_name": "nop"
                     },
@@ -789,57 +731,7 @@
             "state_name": "st_ready_parry"
         },
         {
-            "regions": [
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "evq_is_guard_released",
-                            "st_running",
-                            "1"
-                        ],
-                        "cmd_name": "watch_event_queue"
-                    },
-                    "end_frame": 49,
-                    "row_idx": 0,
-                    "start_frame": 20
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
-                    },
-                    "end_frame": 22,
-                    "row_idx": 2,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
-                    },
-                    "end_frame": 49,
-                    "row_idx": 4,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
-                    },
-                    "end_frame": 22,
-                    "row_idx": 8,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
-                    },
-                    "end_frame": 49,
-                    "row_idx": 15,
-                    "start_frame": 22
-                }
-            ],
+            "regions": [],
             "state_name": "st_ready_parry_from_running"
         },
         {
@@ -1114,7 +1006,7 @@
                         "radius": 0.10000000149011612
                     }
                 ],
-                "m_enabled": false,
+                "m_enabled": true,
                 "m_type": 0
             },
             {

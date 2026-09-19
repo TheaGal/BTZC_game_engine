@@ -271,15 +271,20 @@
 
 - [x] BUGFIX: afa editor capsules and runtime data not updating.
 
-- [ ] reimplement guard animations
+- [x] reimplement guard animations
     - [x] initial did it.
     - ok, so i think the first frame of a non-state-set-change state transition also needs to get run for any possible afa stuff too. it's weird with the guard animations.
     - hmmm, why is this not a thing with st_idle and st_running??
-        - [ ] fix this.
+        - [x] fix this.
     - when going up into a guard anim while running and locked onto a target:
-        - [ ] inherited velocity should not be the default state but the actual blended velocity.
-        - [ ] facing direction should be the direction the character changes to, not the velocity direction.
+        - [ ] ~~inherited velocity should not be the default state but the actual blended velocity.~~
+            - solved by just not using ready_parry_from_running anim
+        - [ ] ~~facing direction should be the direction the character changes to, not the velocity direction.~~
             - seems to just be an issue even with locking on and then jumping around. the facing direction is just inherited in a weird way?
+                - fix this sometime later
+            - solved it by just not letting input-based mvt be enabled in ready_parry anim
+
+- [x] check that attack broadcast system works
 
 - [ ] get enemy doing attacks
 

@@ -71,10 +71,6 @@ void BT::system::character_broadcast_attack_msg_to_enemies()
             continue;
         }
 
-        // @TODO: make sure that the broadcast code works here!!
-        // @TODO: confirm that this system works!
-        assert(false);
-
         // Broadcast event.
         for (auto&& [ecs_entity2, transform2, cpu_enemy_awareness2, detect_char2] : view2.each())
         {
