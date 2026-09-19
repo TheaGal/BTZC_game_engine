@@ -22,6 +22,19 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "evq_on_guard_press",
+                            "st_ready_parry,st_hold_guard_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 11,
+                    "row_idx": 1,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "evq_on_jump",
                             "st_jump,st_fall",
                             "0"
@@ -29,7 +42,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 11,
-                    "row_idx": 1,
+                    "row_idx": 2,
                     "start_frame": 0
                 },
                 {
@@ -42,7 +55,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 11,
-                    "row_idx": 2,
+                    "row_idx": 3,
                     "start_frame": 0
                 },
                 {
@@ -55,7 +68,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 11,
-                    "row_idx": 3,
+                    "row_idx": 4,
                     "start_frame": 0
                 },
                 {
@@ -67,7 +80,7 @@
                         "cmd_name": "var_ov"
                     },
                     "end_frame": 11,
-                    "row_idx": 5,
+                    "row_idx": 6,
                     "start_frame": 0
                 }
             ],
@@ -91,6 +104,19 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "evq_on_guard_press",
+                            "st_ready_parry,st_hold_guard_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 41,
+                    "row_idx": 1,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "evq_on_jump",
                             "st_jump,st_fall",
                             "0"
@@ -98,7 +124,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 41,
-                    "row_idx": 1,
+                    "row_idx": 2,
                     "start_frame": 0
                 },
                 {
@@ -111,7 +137,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 41,
-                    "row_idx": 2,
+                    "row_idx": 3,
                     "start_frame": 0
                 },
                 {
@@ -124,7 +150,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 41,
-                    "row_idx": 3,
+                    "row_idx": 4,
                     "start_frame": 0
                 },
                 {
@@ -136,7 +162,7 @@
                         "cmd_name": "var_ov"
                     },
                     "end_frame": 41,
-                    "row_idx": 7,
+                    "row_idx": 8,
                     "start_frame": 0
                 }
             ],
@@ -641,6 +667,19 @@
             "regions": [
                 {
                     "ctrl_cmd": {
+                        "argv": [
+                            "evq_is_guard_released",
+                            "st_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 17,
+                    "row_idx": 0,
+                    "start_frame": 10
+                },
+                {
+                    "ctrl_cmd": {
                         "argv": [],
                         "cmd_name": "nop"
                     },
@@ -654,7 +693,78 @@
                         "cmd_name": "nop"
                     },
                     "end_frame": 17,
-                    "row_idx": 4,
+                    "row_idx": 3,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "turn_speed",
+                            "7.5"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 15,
+                    "row_idx": 6,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "mvt_input_max_speed",
+                            "10"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 15,
+                    "row_idx": 8,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "inherit_prev_velocity"
+                        ],
+                        "cmd_name": "var_mark_reeve"
+                    },
+                    "end_frame": 1,
+                    "row_idx": 9,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "mvt_input_accel",
+                            "60"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 15,
+                    "row_idx": 10,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "mvt_input_decel",
+                            "30"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 15,
+                    "row_idx": 11,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "mvt_input_enabled",
+                            "true"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 15,
+                    "row_idx": 12,
                     "start_frame": 0
                 },
                 {
@@ -663,7 +773,7 @@
                         "cmd_name": "nop"
                     },
                     "end_frame": 12,
-                    "row_idx": 8,
+                    "row_idx": 15,
                     "start_frame": 0
                 },
                 {
@@ -672,7 +782,7 @@
                         "cmd_name": "nop"
                     },
                     "end_frame": 17,
-                    "row_idx": 15,
+                    "row_idx": 17,
                     "start_frame": 12
                 }
             ],
@@ -680,6 +790,19 @@
         },
         {
             "regions": [
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_is_guard_released",
+                            "st_running",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 49,
+                    "row_idx": 0,
+                    "start_frame": 20
+                },
                 {
                     "ctrl_cmd": {
                         "argv": [],
@@ -723,11 +846,28 @@
             "regions": [
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "evq_is_moving",
+                            "st_hold_guard_walking",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 11,
-                    "row_idx": 4,
+                    "row_idx": 0,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_is_guard_released",
+                            "st_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 11,
+                    "row_idx": 1,
                     "start_frame": 0
                 },
                 {
@@ -736,7 +876,7 @@
                         "cmd_name": "nop"
                     },
                     "end_frame": 11,
-                    "row_idx": 15,
+                    "row_idx": 4,
                     "start_frame": 0
                 }
             ],
@@ -744,6 +884,32 @@
         },
         {
             "regions": [
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_is_idle",
+                            "st_hold_guard_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 21,
+                    "row_idx": 0,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_is_guard_released",
+                            "st_running",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 21,
+                    "row_idx": 1,
+                    "start_frame": 0
+                },
                 {
                     "ctrl_cmd": {
                         "argv": [],
@@ -764,11 +930,14 @@
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "turn_speed",
+                            "10"
+                        ],
+                        "cmd_name": "var_ov"
                     },
                     "end_frame": 21,
-                    "row_idx": 15,
+                    "row_idx": 10,
                     "start_frame": 0
                 }
             ],
@@ -795,13 +964,13 @@
             "name": "evq_on_attack_press"
         },
         {
-            "name": "evq_on_attack_release"
+            "name": "evq_is_attack_released"
         },
         {
             "name": "evq_on_guard_press"
         },
         {
-            "name": "evq_on_guard_release"
+            "name": "evq_is_guard_released"
         }
     ],
     "animated_model_name": "simple_combat_char",

@@ -101,12 +101,12 @@ void BT::system::tick_sim_char_mvt_animator()
 
             if (mvt_state.on_attack_press)
                 animator.emplace_event("evq_on_attack_press", 0.5f);
-            if (mvt_state.on_attack_release)
-                animator.emplace_event("evq_on_attack_release", 0.5f);
+            if (mvt_state.is_attack_released)
+                animator.emplace_event("evq_is_attack_released", 0);
             if (mvt_state.on_guard_press)
                 animator.emplace_event("evq_on_guard_press", 0.5f);
-            if (mvt_state.on_guard_release)
-                animator.emplace_event("evq_on_guard_release", 0.5f);
+            if (mvt_state.is_guard_released)
+                animator.emplace_event("evq_is_guard_released", 0);
 
             // Reset inputs.
             char_mvt_anim_state.input_mvt_state =

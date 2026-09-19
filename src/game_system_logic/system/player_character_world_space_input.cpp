@@ -128,8 +128,7 @@ void BT::system::player_character_world_space_input()
 
             char_mvt_anim_state->input_mvt_state.on_attack_press =
                 (is_attacking && !char_mvt_anim_state->state.prev_attack_pressed);
-            char_mvt_anim_state->input_mvt_state.on_attack_release =
-                (!is_attacking && char_mvt_anim_state->state.prev_attack_pressed);
+            char_mvt_anim_state->input_mvt_state.is_attack_released = !is_attacking;
 
             // @ANIMATOR_REFACTOR if (camera.is_follow_orbit() &&
             // @ANIMATOR_REFACTOR     can_attack_exit &&
@@ -149,8 +148,7 @@ void BT::system::player_character_world_space_input()
 
             char_mvt_anim_state->input_mvt_state.on_guard_press =
                 (is_guarding && !char_mvt_anim_state->state.prev_guard_pressed);
-            char_mvt_anim_state->input_mvt_state.on_guard_release =
-                (!is_guarding && char_mvt_anim_state->state.prev_guard_pressed);
+            char_mvt_anim_state->input_mvt_state.is_guard_released = !is_guarding;
 
             char_mvt_anim_state->state.prev_guard_pressed = guard_pressed;
         }

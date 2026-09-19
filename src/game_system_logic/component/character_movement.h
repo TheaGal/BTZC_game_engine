@@ -100,9 +100,9 @@ struct Character_mvt_animated_state
 
         // Combat inputs (player char).
         bool on_attack_press{ false };
-        bool on_attack_release{ false };
+        bool is_attack_released{ false };
         bool on_guard_press{ false };
-        bool on_guard_release{ false };
+        bool is_guard_released{ false };
     } input_mvt_state;
 
     struct Write_to_animator_data
