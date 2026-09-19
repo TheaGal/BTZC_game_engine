@@ -26,14 +26,10 @@ void BT::system::cpu_character_world_space_input()
                  char_mvt_anim_state] : view.each())
     {   // Get AFA data.
         bool can_move{ false };
-        bool can_guard_exit{ false };
-        bool can_attack_exit{ false };
         helper::fetch_wanted_afa_data(entity_container,
                                       reg,
                                       char_mvt_anim_state,
-                                      can_move,
-                                      can_guard_exit,
-                                      can_attack_exit);
+                                      can_move);
 
         // World-space movement input.
         bool enter_state{ cpu_enemy_awareness.runtime_state.prev_enemy_awareness !=

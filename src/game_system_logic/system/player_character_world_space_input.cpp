@@ -82,16 +82,12 @@ void BT::system::player_character_world_space_input()
             entity) };
 
         bool can_move{ false };
-        bool can_guard_exit{ false };
-        bool can_attack_exit{ false };
 
         if (char_mvt_anim_state)
             helper::fetch_wanted_afa_data(entity_container,
                                           reg,
                                           *char_mvt_anim_state,
-                                          can_move,
-                                          can_guard_exit,
-                                          can_attack_exit);
+                                          can_move);
 
         // Get writing handle for world-space input.
         auto& char_ws_input{ view.get<component::Character_world_space_input>(entity) };
@@ -128,7 +124,7 @@ void BT::system::player_character_world_space_input()
             bool attack_pressed{
                 input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_LEFT).pressed
             };
-            bool is_attacking{ main_camera.is_follow_orbit() && can_attack_exit && attack_pressed };
+            bool is_attacking{ main_camera.is_follow_orbit() && attack_pressed };
 
             char_mvt_anim_state->input_mvt_state.on_attack_press =
                 (is_attacking && !char_mvt_anim_state->state.prev_attack_pressed);
@@ -149,7 +145,7 @@ void BT::system::player_character_world_space_input()
             bool guard_pressed{
                 input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_RIGHT).pressed
             };
-            bool is_guarding{ main_camera.is_follow_orbit() && can_guard_exit && guard_pressed };
+            bool is_guarding{ main_camera.is_follow_orbit() && guard_pressed };
 
             char_mvt_anim_state->input_mvt_state.on_guard_press =
                 (is_guarding && !char_mvt_anim_state->state.prev_guard_pressed);
