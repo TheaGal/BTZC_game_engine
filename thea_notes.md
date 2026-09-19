@@ -244,7 +244,7 @@
 
 - [x] simple ui adding for the target reticle
 
-- [ ] reimplement attack animations
+- [x] reimplement attack animations
     - [x] do the stupid one
     - ok so there's an issue. the `character_movement.h` anim states sucks ass. there needs to be a way to know what state sets to create if an event (joystick tilted, jump btn pressed, )
     - so then, maybe the jump queue list needs some kind of input event to watch for (or just generic event, since CPUs don't listen for input events), and if it hears that event, then switches to another state set instead of emplacing one.
@@ -260,12 +260,17 @@
         - needed to put the is_grounded detection event queue 2 ticks after the jump_up event instead of 1 tick after since the 1 tick delay for reeves getting executed.
         - [x] disable is_grounded for the one tick that jump_up reeve is happening (so 1 tick delay is swept under the rug essentially)
 
-- [ ] AFA editor really needs two features
-    - [ ] multi-select so i can drag multiple things at once
+- [x] AFA editor really needs two features
+    - [x] multi-select so i can drag multiple things at once
         - click and drag a rectangle for this???
-    - [ ] copy paste for regions
+            - i skipped it. only shift click. if rectangle is important, then do it but it doesn't seem worth atm
+    - [x] copy paste for regions
 
 - [ ] BUGFIX: resizing main view kills ui image.
+
+- [ ] reimplement guard animations
+
+- [ ] get enemy doing attacks
 
 - [ ] SOMEDAY: figure out abstractions for shader and material creation
 
