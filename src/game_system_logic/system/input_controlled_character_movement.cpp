@@ -299,7 +299,8 @@ Char_mvt_logic_results character_controller_movement_logic(
     JPH::Vec3 current_vertical_velocity = linear_velocity.Dot(up_direction) * up_direction;
     bool is_grounded{ ground_state == JPH::CharacterVirtual::EGroundState::OnGround &&
                       (current_vertical_velocity.GetY() - ground_velocity.GetY()) < 0.1f &&
-                      !char_con_impl->is_cc_slope_too_steep(ground_normal) };
+                      !char_con_impl->is_cc_slope_too_steep(ground_normal) &&
+                      !(anim_root_motion && anim_root_motion->jump_up) };  // force not-grounded if performing jump_up event.
 
     // Calc and apply desired velocity.
     JPH::Vec3 new_velocity;
@@ -313,8 +314,6 @@ Char_mvt_logic_results character_controller_movement_logic(
         }
         else if (!char_con_impl->get_cc_stance() && on_jump_press)
         {   // Jump.
-            new_velocity += mvt_settings.jump_speed * up_direction;
-
             // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
             // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_jump = true;
             if (char_mvt_anim_state)
@@ -468,11 +467,19 @@ Char_mvt_logic_results character_controller_movement_logic(
     }
     else assert(false);  // Unsupported movement type.
 
-    if (anim_root_motion && anim_root_motion->inherit_prev_velocity)
+    if (anim_root_motion)
     {
-        new_velocity.Set(char_mvt_state.prev_velocity[0],
-                         new_velocity.GetY(),
-                         char_mvt_state.prev_velocity[2]);
+        if (anim_root_motion->jump_up)
+        {
+            new_velocity += mvt_settings.jump_speed * up_direction;
+        }
+
+        if (anim_root_motion->inherit_prev_velocity)
+        {
+            new_velocity.Set(char_mvt_state.prev_velocity[0],
+                            new_velocity.GetY(),
+                            char_mvt_state.prev_velocity[2]);   
+        }
     }
 
     // Log previous velocity.

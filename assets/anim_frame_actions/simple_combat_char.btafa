@@ -244,13 +244,37 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "evq_is_grounded",
+                            "st_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 11,
+                    "row_idx": 0,
+                    "start_frame": 1
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "jump_up"
+                        ],
+                        "cmd_name": "var_mark_reeve"
+                    },
+                    "end_frame": 1,
+                    "row_idx": 1,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "turn_speed",
                             "1000000"
                         ],
                         "cmd_name": "var_ov"
                     },
                     "end_frame": 11,
-                    "row_idx": 0,
+                    "row_idx": 7,
                     "start_frame": 0
                 },
                 {
@@ -262,7 +286,7 @@
                         "cmd_name": "var_ov"
                     },
                     "end_frame": 11,
-                    "row_idx": 2,
+                    "row_idx": 9,
                     "start_frame": 0
                 },
                 {
@@ -273,7 +297,7 @@
                         "cmd_name": "var_mark_reeve"
                     },
                     "end_frame": 1,
-                    "row_idx": 3,
+                    "row_idx": 10,
                     "start_frame": 0
                 },
                 {
@@ -285,7 +309,7 @@
                         "cmd_name": "var_ov"
                     },
                     "end_frame": 11,
-                    "row_idx": 4,
+                    "row_idx": 11,
                     "start_frame": 0
                 },
                 {
@@ -297,7 +321,7 @@
                         "cmd_name": "var_ov"
                     },
                     "end_frame": 11,
-                    "row_idx": 5,
+                    "row_idx": 12,
                     "start_frame": 0
                 },
                 {
@@ -309,7 +333,7 @@
                         "cmd_name": "var_ov"
                     },
                     "end_frame": 11,
-                    "row_idx": 6,
+                    "row_idx": 13,
                     "start_frame": 0
                 }
             ],

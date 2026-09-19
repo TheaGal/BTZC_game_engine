@@ -251,9 +251,19 @@
         - but then how do state sets work for something like a random set?
         - there should be the option to transition to a random set of state sets. for something like the player character, it could be transitioning to "st_jump" or "st_jump_mirrored" or something randomly. weights could be applied here too to affect the randomness.
         - and then for a CPU, it could be the list of available attacks to do.
-    
+
     - hmmm, so the jump and the land are rough (landing goes to idle anim, then running anim)
         - [x] fixed the one-two with the landing going to idle anim then one tick later going to running anim instead of straight to running anim
+        - i think the one frame lag of is_grounded is fine, but i think the jump start needs to come from the animation as an event
+
+    - [x] got the jump up event put into the jump anim
+        - needed to put the is_grounded detection event queue 2 ticks after the jump_up event instead of 1 tick after since the 1 tick delay for reeves getting executed.
+        - [x] disable is_grounded for the one tick that jump_up reeve is happening (so 1 tick delay is swept under the rug essentially)
+
+- [ ] AFA editor really needs two features
+    - [ ] multi-select so i can drag multiple things at once
+        - click and drag a rectangle for this???
+    - [ ] copy paste for regions
 
 - [ ] BUGFIX: resizing main view kills ui image.
 
