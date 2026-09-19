@@ -95,33 +95,15 @@ struct Character_mvt_animated_state
     struct Input_mvt_state
     {   // Movement inputs.
         bool is_moving{ false };
-        bool is_grounded{ false };
         bool on_jump{ false };
+        bool is_grounded{ false };
 
-        // Combat inputs.
+        // Combat inputs (player char).
         bool on_attack_press{ false };
         bool on_attack_release{ false };
         bool on_guard_press{ false };
         bool on_guard_release{ false };
     } input_mvt_state;
-
-    /// For storing calculated anim state progression.
-    struct Anim_state
-    {
-        enum Anim_state_enum
-        {
-            AS_UNDEFINED     = -1,
-
-            AS_GROUNDED_IDLE = 0,
-            AS_GROUNDED_MOVE,
-            AS_GROUNDED_ATTACK,
-            AS_MIDAIR,
-
-            AS_NOT_IMPLEMENTED_YET
-        };
-        Anim_state_enum next{ AS_GROUNDED_IDLE };
-        Anim_state_enum prev{ AS_UNDEFINED };
-    } anim_mvt_state;
 
     struct Write_to_animator_data
     {

@@ -367,6 +367,8 @@ Char_mvt_logic_results character_controller_movement_logic(
     // Calc movement facing angle.
     if (char_mvt_anim_state)
     {
+        char_mvt_anim_state->input_mvt_state.is_moving = is_moving;
+
         // @ANIMATOR_REFACTOR char_mvt_anim_state->write_to_animator_data.is_locked_on = is_locked_on;
 
         if (is_locked_on)
@@ -397,8 +399,7 @@ Char_mvt_logic_results character_controller_movement_logic(
 
         // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
         // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.is_moving = is_moving;
-        if (char_mvt_anim_state)
-            char_mvt_anim_state->input_mvt_state.is_moving = is_moving;
+
         // if (char_mvt_anim_state)
         // {
         //     char_mvt_anim_state->write_to_animator_data.next_anim_state =

@@ -67,100 +67,56 @@ void BT::system::tick_sim_char_mvt_animator()
             #undef SET_ANIMATOR_FLOAT_VAR
             #undef SET_ANIMATOR_TRIGGER
 
-            // @TODO: @THEA: @REFACTOR: The vv below vv code for calc'ing jump queues is only good for the player character. For CPUs, use a different system (that probably shouldn't be in here anyway!) (I'd make a system in the ECS for updating player character jump queues and another for CPU jump queues)
-            {   // Calc next anim mvt state.
-                auto const& input{ char_mvt_anim_state.input_mvt_state };
+            // @THOUGHT: how the new event system should be working (from thea_notes.md).
+            //
+            //   - ok so there's an issue. the `character_movement.h` anim states sucks ass. there
+            //     needs to be a way to know what state sets to create if an event (joystick tilted,
+            //     jump btn pressed, )
+            //   - so then, maybe the ~~jump queue~~ event queue list needs some kind of input event
+            //     to watch for (or just generic event, since CPUs don't listen for input events),
+            //     and if it hears that event, then switches to another state set instead of
+            //     emplacing one.
+            //       - but then how do state sets work for something like a random set?
+            //       - there should be the option to transition to a random set of state sets. for
+            //         something like the player character, it could be transitioning to "st_jump"
+            //         or "st_jump_mirrored" or something randomly. weights could be applied here
+            //         too to affect the randomness.
+            //       - and then for a CPU, it could be the list of available attacks to do.
 
-                using Anim_state_e =
-                    component::Character_mvt_animated_state::Anim_state::Anim_state_enum;
+            // Send animator events.
+            auto const& mvt_state{ char_mvt_anim_state.input_mvt_state };
 
-                auto const calc_anim_changed_fn =
-                    [&char_mvt_anim_state](Anim_state_e next_anim_state) -> bool {
-                    bool changed{ next_anim_state != char_mvt_anim_state.anim_mvt_state.prev };
-                    char_mvt_anim_state.anim_mvt_state.next = next_anim_state;
+            if (mvt_state.is_moving)
+                animator.emplace_event("evq_is_moving", 0);
+            else
+                animator.emplace_event("evq_is_idle", 0);
 
-                    return changed;
-                };
+            if (mvt_state.on_jump)
+                animator.emplace_event("evq_on_jump", 0.5f);
 
-                bool is_grounded_real{ input.is_grounded && !input.on_jump };
+            if (mvt_state.is_grounded)
+                animator.emplace_event("evq_is_grounded", 0);
+            else
+                animator.emplace_event("evq_is_midair", 0);
 
-                // Ground movement.
-                if (is_grounded_real)
-                {
-                    if (input.on_attack_press &&
-                        calc_anim_changed_fn(Anim_state_e::AS_GROUNDED_ATTACK))
-                    {
-                        animator.emplace_jump_queue_state_set(
-                            "jq_attack",
-                            {
-                                .anim_state_indices = {
-                                    animator.get_animator_state_idx("st_attack_0"),
-                                    animator.get_animator_state_idx("st_idle"),
-                                },
-                                .loop_final_state = true,
-                            },
-                            1);
-                    }
-                    else if (calc_anim_changed_fn(!input.is_moving
-                                                      ? Anim_state_e::AS_GROUNDED_IDLE
-                                                      : Anim_state_e::AS_GROUNDED_MOVE))
-                    {
-                        animator.emplace_jump_queue_state_set(
-                            "jq_grnd_mvt",
-                            {
-                                .anim_state_indices = {
-                                    animator.get_animator_state_idx(!input.is_moving ? "st_idle"
-                                                                                     : "st_running")
-                                },
-                                .loop_final_state = true,
-                            },
-                            1);
-                    }
-                }
-                // Midair movement.
-                else
-                {
-                    if (calc_anim_changed_fn(Anim_state_e::AS_MIDAIR))
-                    {
-                        TXP::Animator_state_set state_set;
-                        if (input.on_jump)
-                        {
-                            state_set.anim_state_indices = {
-                                animator.get_animator_state_idx(!input.is_moving ? "st_jump"  // @TODO: separate if move or idle -based jump.
-                                                                                 : "st_jump"),
-                                animator.get_animator_state_idx("st_fall"),
-                            };
-                            state_set.loop_final_state = false;
-                        }
-                        else
-                        {
-                            state_set.anim_state_indices = {
-                                // @TODO: replace with a "st_fall_from_run" state so it can include
-                                //        the immediate accel on the first tick to kinda inherit the
-                                //        velocity of the running.  -Thea 2026/08/30
-                                animator.get_animator_state_idx("st_fall")
-                            };
-                            state_set.loop_final_state = false;
-                        }
+            if (mvt_state.on_attack_press)
+                animator.emplace_event("evq_on_attack_press", 0.5f);
+            if (mvt_state.on_attack_release)
+                animator.emplace_event("evq_on_attack_release", 0.5f);
+            if (mvt_state.on_guard_press)
+                animator.emplace_event("evq_on_guard_press", 0.5f);
+            if (mvt_state.on_guard_release)
+                animator.emplace_event("evq_on_guard_release", 0.5f);
 
-                        animator.emplace_jump_queue_state_set(
-                            "jq_midair",
-                            state_set,
-                            1);
-                    }
-                }
+            // Reset inputs.
+            char_mvt_anim_state.input_mvt_state =
+                component::Character_mvt_animated_state::Input_mvt_state{};
 
-                // Reset inputs.
-                auto& input_mut{ char_mvt_anim_state.input_mvt_state };
-                input_mut.on_jump = false;
-
-                // Finish.
-                char_mvt_anim_state.anim_mvt_state.prev = char_mvt_anim_state.anim_mvt_state.next;
-            }
 
             // Update animator.
             animator.update(TXP::SIMULATION_TIMER_PROFILE,
                             Physics_engine::k_simulation_delta_time);
+
 
             // Read animator root motion AFA data.
             if (animator.get_is_using_root_motion())

@@ -251,6 +251,11 @@
         - but then how do state sets work for something like a random set?
         - there should be the option to transition to a random set of state sets. for something like the player character, it could be transitioning to "st_jump" or "st_jump_mirrored" or something randomly. weights could be applied here too to affect the randomness.
         - and then for a CPU, it could be the list of available attacks to do.
+    
+    - hmmm, so the jump and the land are rough (landing goes to idle anim, then running anim)
+        - [x] fixed the one-two with the landing going to idle anim then one tick later going to running anim instead of straight to running anim
+
+- [ ] BUGFIX: resizing main view kills ui image.
 
 - [ ] SOMEDAY: figure out abstractions for shader and material creation
 
