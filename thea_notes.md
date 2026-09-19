@@ -266,7 +266,8 @@
             - i skipped it. only shift click. if rectangle is important, then do it but it doesn't seem worth atm
     - [x] copy paste for regions
 
-- [ ] BUGFIX: resizing main view kills ui image.
+- [x] BUGFIX: resizing main view kills ui image.
+    - turns out the image needed to get rerendered.
 
 - [ ] reimplement guard animations
 

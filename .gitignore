@@ -4,6 +4,9 @@
 # CMake build folder.
 [Bb]uild/
 
+# Xcode build folder.
+xcode_build/
+
 # CMake VSCode ext cache folder.
 .cache/
 
