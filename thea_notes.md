@@ -269,7 +269,7 @@
 - [x] BUGFIX: resizing main view kills ui image.
     - turns out the image needed to get rerendered.
 
-- [ ] BUGFIX: afa editor capsules and runtime data not updating.
+- [x] BUGFIX: afa editor capsules and runtime data not updating.
 
 - [ ] reimplement guard animations
     - [x] initial did it.
