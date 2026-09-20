@@ -288,6 +288,10 @@
 
 - [ ] get enemy doing attacks
     - [x] misc: have afa editor copy and paste independent of hovering over empty space (don't require the Shift+A tooltip to appear first).
+    - enemy won't really need to pick a movement direction, but rather just keep trying to move towards player
+        - as far as tilting, there's an assumption that the player character is a certain height.
+        - so really it's just the player that needs to do the tilting.
+        - enemy's midair tilting can be done w tilting the whole model so that shouldn't be that much of an issue.
 
 - [ ] SOMEDAY: get picking and the selected entity wireframe model back in.
 
