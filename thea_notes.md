@@ -287,6 +287,9 @@
 - [x] check that attack broadcast system works
 
 - [ ] get enemy doing attacks
+    - [x] misc: have afa editor copy and paste independent of hovering over empty space (don't require the Shift+A tooltip to appear first).
+
+- [ ] SOMEDAY: get picking and the selected entity wireframe model back in.
 
 - [ ] SOMEDAY: figure out abstractions for shader and material creation
 

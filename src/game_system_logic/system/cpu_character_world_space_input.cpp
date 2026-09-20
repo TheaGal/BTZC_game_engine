@@ -64,7 +64,6 @@ void BT::system::cpu_character_world_space_input()
                                 transform.position.raw,
                                 desired_direction);
 
-                // @TODO: Conform to `write_render_transforms.cpp`
                 char_ws_input.ws_flat_clamped_input.raw[0] = desired_direction[0];
                 char_ws_input.ws_flat_clamped_input.raw[1] = 0;  // desired_direction[1];
                 char_ws_input.ws_flat_clamped_input.raw[2] = desired_direction[2];
@@ -98,7 +97,6 @@ void BT::system::cpu_character_world_space_input()
                                 transform.position.raw,
                                 desired_direction);
 
-                // @TODO: Conform to `write_render_transforms.cpp`
                 char_ws_input.ws_flat_clamped_input.raw[0] = desired_direction[0];
                 char_ws_input.ws_flat_clamped_input.raw[1] = 0;  // desired_direction[1];
                 char_ws_input.ws_flat_clamped_input.raw[2] = desired_direction[2];
@@ -128,6 +126,7 @@ void BT::system::cpu_character_world_space_input()
                             if (flat_distance2 < k_max_flat_distance * k_max_flat_distance &&
                                 ang_diff > k_min_ang_diff)
                             {   // Accept this msg and attempt to parry attack.
+                                char_mvt_anim_state.input_mvt_state.on_guard_press = true;
                                 // @ANIMATOR_REFACTOR char_mvt_anim_state.write_to_animator_data.on_guard = true;
 
                                 // // @DEBUG: Just print out what's up.
