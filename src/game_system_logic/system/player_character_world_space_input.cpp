@@ -81,13 +81,13 @@ void BT::system::player_character_world_space_input()
         auto char_mvt_anim_state{ reg.try_get<component::Character_mvt_animated_state>(
             entity) };
 
-        bool can_move{ false };
+        bool _{ false };
 
         if (char_mvt_anim_state)
             helper::fetch_wanted_afa_data(entity_container,
                                           reg,
                                           *char_mvt_anim_state,
-                                          can_move);
+                                          _);
 
         // Get writing handle for world-space input.
         auto& char_ws_input{ view.get<component::Character_world_space_input>(entity) };
@@ -105,9 +105,6 @@ void BT::system::player_character_world_space_input()
             move_input[1] -= 1;
         if (input_handler.get_keyboard_key_state(BT_KEY_D).pressed)
             move_input[0] += 1;
-
-        if (!can_move)
-            glm_vec2_zero(move_input);
 
         transform_input_to_camera_pov_input(main_camera,
                                             move_input,

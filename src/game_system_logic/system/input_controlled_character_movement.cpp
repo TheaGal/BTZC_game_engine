@@ -232,7 +232,7 @@ Char_mvt_logic_results character_controller_movement_logic(
     component::Character_world_space_input const& char_ws_input,
     component::Character_mvt_state& char_mvt_state,
     component::Character_mvt_animated_state* char_mvt_anim_state,
-    TXP::component::Animator_root_motion const* anim_root_motion,
+    TXP::component::Animator_root_motion* anim_root_motion,
     component::Follow_camera_follow_ref::State const* follow_cam_state,
     Physics_object& phys_obj)
 {   // Get current character controller state.
@@ -258,6 +258,21 @@ Char_mvt_logic_results character_controller_movement_logic(
     up_rotation =
         JPH::Quat::sEulerAngles(JPH::Vec3(0, 0, 0));  // @NOCHECKIN: Overriding the up rot.
 
+    // Calc root motion multiplier for position of interest.
+    if (anim_root_motion && anim_root_motion->calc_pos_of_interest_root_motion_multi)
+    {
+        anim_root_motion->calc_pos_of_interest_root_motion_multi = false;
+
+        vec3 flat_pos_of_interest_delta;
+        glm_vec3_copy(const_cast<float_t*>(char_ws_input.delta_to_position_of_interest.raw),
+                      flat_pos_of_interest_delta);
+        flat_pos_of_interest_delta[1] = 0;
+
+        anim_root_motion->pos_of_interest_root_motion_multi =
+            glm_vec3_norm(flat_pos_of_interest_delta) /
+            10.0f;  // divide by 10 since 10m is standard amount in the anim itself.
+    }
+
     // Change input into desired velocity.
     auto const& mvt_settings{ char_mvt_state.settings };
 
@@ -279,8 +294,10 @@ Char_mvt_logic_results character_controller_movement_logic(
         // @NOTE: This is correct root motion, even tho it may look slow,
         //        it is correct.
         //        Maybe make your anim travel further if it looks slow?  -Thea 2025/11/27
-        desired_velocity *=
-            anim_root_motion->root_motion_multiplier * TXP::k_skeletal_anim_frames_per_second;
+        desired_velocity *= (anim_root_motion->use_pos_of_interest_root_motion_multi
+                                 ? anim_root_motion->pos_of_interest_root_motion_multi
+                                 : anim_root_motion->root_motion_multiplier) *
+                            TXP::k_skeletal_anim_frames_per_second;
     }
     else if (mvt_type == MVT_TYPE_INPUT_BASED)
     {
@@ -353,8 +370,9 @@ Char_mvt_logic_results character_controller_movement_logic(
     float_t input_angle{ desired_facing_angle };  // @TODO: Get this to interpolate!!
 
     // Override desired facing angle.
-    bool is_locked_on{ follow_cam_state && !follow_cam_state->locked_on_entity.is_nil() };
-    if (is_locked_on)
+    bool const is_follow_cam_locked_on{ follow_cam_state &&
+                                        !follow_cam_state->locked_on_entity.is_nil() };
+    if (is_follow_cam_locked_on)
     {
         has_desired_facing_angle = true;
         desired_facing_angle = follow_cam_state->locked_on_facing_angle;
@@ -368,9 +386,9 @@ Char_mvt_logic_results character_controller_movement_logic(
     {
         char_mvt_anim_state->input_mvt_state.is_moving = is_moving;
 
-        // @ANIMATOR_REFACTOR char_mvt_anim_state->write_to_animator_data.is_locked_on = is_locked_on;
+        // @ANIMATOR_REFACTOR char_mvt_anim_state->write_to_animator_data.is_follow_cam_locked_on = is_follow_cam_locked_on;
 
-        if (is_locked_on)
+        if (is_follow_cam_locked_on)
         {
             float_t facing_angle{ locked_on_angle - input_angle };
             while (facing_angle >= glm_rad(360.0f)) facing_angle -= glm_rad(360.0f);
@@ -538,11 +556,11 @@ void BT::system::input_controlled_character_movement()
         };
         auto& phys_obj{ *phys_engine.checkout_physics_object(phys_obj_uuid) };
 
-        auto anim_root_motion{ char_mvt_anim_state
-                                   ? reg.try_get<TXP::component::Animator_root_motion const>(
-                                         entity_container.find_entity(
-                                             char_mvt_anim_state->affecting_animator_uuid))
-                                   : nullptr };
+        auto* anim_root_motion{ char_mvt_anim_state
+                                    ? reg.try_get<TXP::component::Animator_root_motion>(
+                                          entity_container.find_entity(
+                                              char_mvt_anim_state->affecting_animator_uuid))
+                                    : nullptr };
 
         component::Follow_camera_follow_ref::State* follow_cam_state{ nullptr };
         auto poss_display_repr_ref{ reg.try_get<component::Display_repr_transform_ref>(entity) };

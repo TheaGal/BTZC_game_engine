@@ -665,6 +665,47 @@
             "state_name": "st_attack_0"
         },
         {
+            "regions": [
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "hitcapsule_group_0_enabled",
+                            "true"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 69,
+                    "row_idx": 4,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "hitcapsule_group_1_enabled",
+                            "true"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 43,
+                    "row_idx": 5,
+                    "start_frame": 36
+                }
+            ],
+            "state_name": "st_attack_1"
+        },
+        {
+            "regions": [],
+            "state_name": "st_jump_back_evade"
+        },
+        {
+            "regions": [],
+            "state_name": "st_yosumi_shift_left"
+        },
+        {
+            "regions": [],
+            "state_name": "st_yosumi_shift_right"
+        },
+        {
             "regions": [],
             "state_name": "st_cancel_parried_attack"
         },

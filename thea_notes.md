@@ -296,6 +296,7 @@
         - so how about jumping forward? the animation should probably be 1m forward (at whatever speed wanted) and then something to override the root motion multiplier to what the distance to cover. probably a bool?
             - ahh, but the multiplier needs to get set once, so an event that calculates the distance needed to cover needs to be triggered, and then a region with a bool to use that calculated root motion multiplier.
                 - [ ] do it.
+                    - currently wip
 
     - this is tough, trying to figure out what design decisions to make
 
@@ -311,6 +312,13 @@
     - have there be the knockback inherited from `attack_send_root_motion_multi` (both same value for hurt and parry and block (this helps to line up the attack combo))
         - this is same for KUSR
 
+
+- [ ] SOMEDAY: move actual movement to after afa regions are processed to remove one-tick lag from certain things (like jump_up reeve, or just reeves in general i think)
+    - well, it looks like it's not just reeves, it's just random stuff. ig the is_grounded event put in the event queue, but that's not quite this issue being pointed out.
+    - well, just do an investigation at the very least.
+
+- [ ] SOMEDAY: change the hitbox to one single hitcapsule group.
+- [ ] SOMEDAY: change the hurtboxes to an afa function region instead of a hitcapsule group that gets enabled/disabled.
 
 - [ ] SOMEDAY: get picking and the selected entity wireframe model back in.
 

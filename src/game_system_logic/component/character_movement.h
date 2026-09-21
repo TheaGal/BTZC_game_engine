@@ -4,8 +4,6 @@
 #include "btjson.h"
 #include "btuuid.h"
 
-#include <array>
-
 
 namespace BT
 {
@@ -28,6 +26,7 @@ struct Player_character
 struct Character_world_space_input
 {
     vec3s ws_flat_clamped_input{ 0, 0, 0 };
+    vec3s delta_to_position_of_interest{ 0, 0, 0 };
 
     bool jump_pressed{ false };
     bool prev_jump_pressed{ false };

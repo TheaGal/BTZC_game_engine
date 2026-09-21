@@ -154,6 +154,17 @@ void BT::system::tick_sim_char_mvt_animator()
                             AFA_ctrl::CTRL_DATA_LABEL_inherit_prev_velocity)
                         .check_if_rising_edge_occurred();
 
+                anim_root_motion.calc_pos_of_interest_root_motion_multi =
+                    anim_afa_data_handle
+                        .get_reeve_data_handle(
+                            AFA_ctrl::CTRL_DATA_LABEL_calc_pos_of_interest_root_motion_multi)
+                        .check_if_rising_edge_occurred();
+                anim_root_motion.use_pos_of_interest_root_motion_multi =
+                    anim_afa_data_handle
+                        .get_float_data_handle(
+                            AFA_ctrl::CTRL_DATA_LABEL_use_pos_of_interest_root_motion_multi)
+                        .get_val();
+
                 anim_root_motion.mvt_input.enabled =
                     anim_afa_data_handle
                         .get_bool_data_handle(AFA_ctrl::CTRL_DATA_LABEL_mvt_input_enabled)

@@ -25,11 +25,11 @@ void BT::system::cpu_character_world_space_input()
                  char_ws_input,
                  char_mvt_anim_state] : view.each())
     {   // Get AFA data.
-        bool can_move{ false };
+        bool _{ false };
         helper::fetch_wanted_afa_data(entity_container,
                                       reg,
                                       char_mvt_anim_state,
-                                      can_move);
+                                      _);
 
         // World-space movement input.
         bool enter_state{ cpu_enemy_awareness.runtime_state.prev_enemy_awareness !=
@@ -44,6 +44,7 @@ void BT::system::cpu_character_world_space_input()
 
             // Stand still.
             glm_vec3_zero(char_ws_input.ws_flat_clamped_input.raw);
+            glm_vec3_zero(char_ws_input.delta_to_position_of_interest.raw);
             break;
 
         case component::CPU_enemy_awareness::State::SUSPICIOUS:
@@ -56,6 +57,7 @@ void BT::system::cpu_character_world_space_input()
                 // the animator state to a different animation than the idle anim which will do an
                 // immediate turn speed which we want to avoid).
                 glm_vec3_zero(char_ws_input.ws_flat_clamped_input.raw);
+                glm_vec3_zero(char_ws_input.delta_to_position_of_interest.raw);
             }
             else
             {   // Calc desired direction.
@@ -68,16 +70,15 @@ void BT::system::cpu_character_world_space_input()
                 char_ws_input.ws_flat_clamped_input.raw[1] = 0;  // desired_direction[1];
                 char_ws_input.ws_flat_clamped_input.raw[2] = desired_direction[2];
 
+                char_ws_input.delta_to_position_of_interest.raw[0] = desired_direction[0];
+                char_ws_input.delta_to_position_of_interest.raw[1] = desired_direction[1];
+                char_ws_input.delta_to_position_of_interest.raw[2] = desired_direction[2];
+
                 constexpr float_t k_close_enough_dist{ 0.1f };
                 constexpr float_t k_close_enough_dist2{ k_close_enough_dist * k_close_enough_dist };
                 // @ANIMATOR_REFACTOR char_mvt_anim_state.write_to_animator_data.is_suspicious_approaching =
                 // @ANIMATOR_REFACTOR     (glm_vec3_norm2(char_ws_input.ws_flat_clamped_input.raw) >
                 // @ANIMATOR_REFACTOR      k_close_enough_dist2);
-
-                // Stand still (put this at the end so that other vars can take advantage of the
-                // desired movement vector).
-                if (!can_move)
-                    glm_vec3_zero(char_ws_input.ws_flat_clamped_input.raw);
             }
             break;
         }
@@ -100,6 +101,10 @@ void BT::system::cpu_character_world_space_input()
                 char_ws_input.ws_flat_clamped_input.raw[0] = desired_direction[0];
                 char_ws_input.ws_flat_clamped_input.raw[1] = 0;  // desired_direction[1];
                 char_ws_input.ws_flat_clamped_input.raw[2] = desired_direction[2];
+
+                char_ws_input.delta_to_position_of_interest.raw[0] = desired_direction[0];
+                char_ws_input.delta_to_position_of_interest.raw[1] = desired_direction[1];
+                char_ws_input.delta_to_position_of_interest.raw[2] = desired_direction[2];
 
                 // Reads broadcasts that other enemy is attacking.
                 if (auto detect_char{ reg.try_get<component::Detectable_character>(entity) };
