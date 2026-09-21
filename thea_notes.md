@@ -293,6 +293,25 @@
         - so really it's just the player that needs to do the tilting.
         - enemy's midair tilting can be done w tilting the whole model so that shouldn't be that much of an issue.
 
+        - so how about jumping forward? the animation should probably be 1m forward (at whatever speed wanted) and then something to override the root motion multiplier to what the distance to cover. probably a bool?
+            - ahh, but the multiplier needs to get set once, so an event that calculates the distance needed to cover needs to be triggered, and then a region with a bool to use that calculated root motion multiplier.
+                - [ ] do it.
+
+    - this is tough, trying to figure out what design decisions to make
+
+    - [x] animation for jump back and catch breath a bit.
+        - [x] jump back
+        - [x] side-to-side mvt for yousumi
+        - [x] charge forward 1m, but with that root motion multiplier honing in
+            - decided to make the jump 10m, so i think that'll be the standard.
+        - [x] a regular, close attack combo
+            - i'll just use the already made attack anim
+
+- [ ] get parry anims to do stuff.
+    - have there be the knockback inherited from `attack_send_root_motion_multi` (both same value for hurt and parry and block (this helps to line up the attack combo))
+        - this is same for KUSR
+
+
 - [ ] SOMEDAY: get picking and the selected entity wireframe model back in.
 
 - [ ] SOMEDAY: figure out abstractions for shader and material creation

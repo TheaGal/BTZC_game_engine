@@ -281,9 +281,9 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 11,
+                    "end_frame": 14,
                     "row_idx": 0,
-                    "start_frame": 1
+                    "start_frame": 4
                 },
                 {
                     "ctrl_cmd": {
@@ -292,9 +292,9 @@
                         ],
                         "cmd_name": "var_mark_reeve"
                     },
-                    "end_frame": 1,
+                    "end_frame": 4,
                     "row_idx": 1,
-                    "start_frame": 0
+                    "start_frame": 3
                 },
                 {
                     "ctrl_cmd": {
