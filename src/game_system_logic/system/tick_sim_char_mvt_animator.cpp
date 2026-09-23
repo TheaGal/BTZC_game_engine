@@ -161,7 +161,7 @@ void BT::system::tick_sim_char_mvt_animator()
                         .check_if_rising_edge_occurred();
                 anim_root_motion.use_pos_of_interest_root_motion_multi =
                     anim_afa_data_handle
-                        .get_float_data_handle(
+                        .get_bool_data_handle(
                             AFA_ctrl::CTRL_DATA_LABEL_use_pos_of_interest_root_motion_multi)
                         .get_val();
 

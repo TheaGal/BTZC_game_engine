@@ -307,6 +307,8 @@
             - decided to make the jump 10m, so i think that'll be the standard.
         - [x] a regular, close attack combo
             - i'll just use the already made attack anim
+    
+    - [ ] make the actual attacking and moving happen.
 
 - [ ] get parry anims to do stuff.
     - have there be the knockback inherited from `attack_send_root_motion_multi` (both same value for hurt and parry and block (this helps to line up the attack combo))
