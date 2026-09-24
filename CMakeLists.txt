@@ -188,6 +188,8 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btjson.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btlogger.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btlogger.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btrandom.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btrandom.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btuuid.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btuuid.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/btzc_game_engine.h
