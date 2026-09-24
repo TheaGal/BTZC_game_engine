@@ -331,6 +331,9 @@
 
         - [x] basic system like thingy is up and running i think????
         - [ ] get the animations/animators/afas to cooperate.
+            - [x] got basic structure and evq's filled in
+            - [ ] actual anims
+                - make sure to add the `request_new_attack` thing!!
 
 - [ ] get parry anims to do stuff.
     - have there be the knockback inherited from `attack_send_root_motion_multi` (both same value for hurt and parry and block (this helps to line up the attack combo))

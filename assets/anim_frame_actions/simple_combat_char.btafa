@@ -1032,6 +1032,12 @@
         },
         {
             "name": "evq_is_guard_released"
+        },
+        {
+            "name": "evq_exec_mvt_idx"
+        },
+        {
+            "name": "evq_exec_atk_combo_idx"
         }
     ],
     "animated_model_name": "simple_combat_char",
