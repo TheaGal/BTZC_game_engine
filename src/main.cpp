@@ -218,17 +218,19 @@ int32_t main()
             BT::Timer perf_timer;
             perf_timer.start_timer();
 
+            constexpr float_t k_sim_delta_time{ main_physics_engine.k_simulation_delta_time };
+
             // Pre-physics.
             BT::system::process_physics_object_lifetime();
 
-            TXP::Renderer::advance_afa_sim_timer(main_physics_engine.k_simulation_delta_time);
+            TXP::Renderer::advance_afa_sim_timer(k_sim_delta_time);
             BT::system::tick_sim_char_mvt_animator();
 
             BT::system::rail_line_rider_update();
 
             BT::system::character_broadcast_attack_msg_to_enemies();
             BT::system::cpu_character_enemy_detection();
-            BT::system::cpu_character_world_space_input();
+            BT::system::cpu_character_world_space_input(k_sim_delta_time);
             BT::system::player_character_world_space_input();
             BT::system::input_controlled_character_movement();
 
@@ -242,7 +244,7 @@ int32_t main()
             BT::system::player_character_lock_onto_target();
 
             BT::system::animator_driven_hitcapsule_sets_update();
-            BT::system::hitcapsule_attack_processing(BT::Physics_engine::k_simulation_delta_time);
+            BT::system::hitcapsule_attack_processing(k_sim_delta_time);
 
             // Audio tick.
             BT::audio::update();

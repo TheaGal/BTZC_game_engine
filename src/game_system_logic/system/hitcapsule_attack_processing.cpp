@@ -225,13 +225,6 @@ void process_attack_interaction(Entity_container& entity_container,
 
     s_apply_dmg_results_fn(offe_health_stats, atk_res.offender);
     s_apply_dmg_results_fn(defe_health_stats, atk_res.defender);
-
-    // Push random attack to attack queue.
-    if (auto attack_queue{ reg.try_get<component::Attack_queue>(defender_ecs_entity) };
-        attack_queue != nullptr)
-    {
-        attack_queue->push_attack_to_queue(0);  // @HARDCODE: @TODO: @NOCHECKIN
-    }
 }
 
 }  // namespace
@@ -239,7 +232,7 @@ void process_attack_interaction(Entity_container& entity_container,
 
 void BT::system::hitcapsule_attack_processing(float_t delta_time)
 {
-    date_deadline(2026, 9, 23);  // @CHECK: does this work?? needs the debug drawing.
+    date_deadline(2026, 9, 24);  // @CHECK: does this work?? needs the debug drawing.
 
     static double_t s_global_attack_timer{ 0 };
 
@@ -303,9 +296,4 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
 
     // Update attack timer.
     s_global_attack_timer += delta_time;
-
-    for (auto&& [_, atk_queue] : reg.view<component::Attack_queue>().each())
-    {
-        atk_queue.update_attack_timer(s_global_attack_timer);
-    }
 }

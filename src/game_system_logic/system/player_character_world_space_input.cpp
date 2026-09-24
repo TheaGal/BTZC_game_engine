@@ -81,13 +81,22 @@ void BT::system::player_character_world_space_input()
         auto char_mvt_anim_state{ reg.try_get<component::Character_mvt_animated_state>(
             entity) };
 
-        bool _{ false };
-
+        bool _[2];
         if (char_mvt_anim_state)
-            helper::fetch_wanted_afa_data(entity_container,
-                                          reg,
-                                          *char_mvt_anim_state,
-                                          _);
+        {
+            auto& mvt_mode{ char_mvt_anim_state->input_mvt_state.mode };
+            using mvt_mode_t = component::Character_mvt_animated_state::Input_mvt_state::Mode;
+            if (mvt_mode == mvt_mode_t::MODE_INVALID)
+                mvt_mode = mvt_mode_t::MODE_PLAYER_CHAR;
+
+            bool afa_data_success = helper::fetch_wanted_afa_data(entity_container,
+                                                                  reg,
+                                                                  *char_mvt_anim_state,
+                                                                  _[0],
+                                                                  _[1]);
+            if (!afa_data_success)
+                continue;
+        }
 
         // Get writing handle for world-space input.
         auto& char_ws_input{ view.get<component::Character_world_space_input>(entity) };

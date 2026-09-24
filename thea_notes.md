@@ -307,8 +307,30 @@
             - decided to make the jump 10m, so i think that'll be the standard.
         - [x] a regular, close attack combo
             - i'll just use the already made attack anim
-    
+
     - [ ] make the actual attacking and moving happen.
+        - pressure. if pc does X to mob, then it's Y pressure:
+            - attacks: 3
+            - parry: ??
+            - rushes up: 2
+            - stands still in-range: 1
+            - stands still out-range: 0
+            - backs away: -1
+            - consume consumable (e.g. heal): 1 (or could be a special case?)
+        - maybe, just broadcasting the actions the characters are doing is what's needed? for "rushes up" that could be just getting closer to the enemy, or just a repeated calc that happens during the running anim (maybe just every footstep?).
+            - when playing KUSR, walking/running around the enemy didnt have an effect, but doing a forward dodge had an effect.
+            - also, being too far seems to cause an effect but also maybe not?
+
+        - ok, so after playing a bunch of KUSR, it seems like it's just really down to a handful of things:
+            - what distance away oppo is
+            - whether oppo is currently healing
+            - whether oppo is attacking or going to attack (sprint forward into super close range, or possibly jumping too?)
+        - and then there's of course the pre-scripted things like the first action to happen during a phase etc.
+
+        - basically when there is an action from oppo, then read it and process it using the `Detectable_character::Runtime_state` component.
+
+        - [x] basic system like thingy is up and running i think????
+        - [ ] get the animations/animators/afas to cooperate.
 
 - [ ] get parry anims to do stuff.
     - have there be the knockback inherited from `attack_send_root_motion_multi` (both same value for hurt and parry and block (this helps to line up the attack combo))

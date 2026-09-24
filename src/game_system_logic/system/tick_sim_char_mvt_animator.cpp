@@ -1,13 +1,13 @@
 #include "tick_sim_char_mvt_animator.h"
 
 #include "game_system_logic/component/character_movement.h"
-#include "game_system_logic/component/combat_stats.h"
 #include "game_system_logic/entity_container.h"
 #include "physics_engine/physics_engine.h"  // for `k_simulation_delta_time`
 #include "service_finder/service_finder.h"
 #include "txp_renderer_public.h"
 
 #include <cassert>
+#include <stdexcept>
 
 
 void BT::system::tick_sim_char_mvt_animator()
@@ -86,27 +86,47 @@ void BT::system::tick_sim_char_mvt_animator()
             // Send animator events.
             auto const& mvt_state{ char_mvt_anim_state.input_mvt_state };
 
-            if (mvt_state.is_moving)
-                animator.emplace_event("evq_is_moving", 0);
-            else
-                animator.emplace_event("evq_is_idle", 0);
+            using mvt_state_mode_t = component::Character_mvt_animated_state::Input_mvt_state::Mode;
 
-            if (mvt_state.on_jump)
-                animator.emplace_event("evq_on_jump", 0.5f);
+            switch (mvt_state.mode)
+            {
+            case mvt_state_mode_t::MODE_PLAYER_CHAR:
+                if (mvt_state.is_moving)
+                    animator.emplace_event("evq_is_moving", 0.0f);
+                else
+                    animator.emplace_event("evq_is_idle", 0.0f);
 
-            if (mvt_state.is_grounded)
-                animator.emplace_event("evq_is_grounded", 0);
-            else
-                animator.emplace_event("evq_is_midair", 0);
+                if (mvt_state.on_jump)
+                    animator.emplace_event("evq_on_jump", 0.5f);
 
-            if (mvt_state.on_attack_press)
-                animator.emplace_event("evq_on_attack_press", 0.5f);
-            if (mvt_state.is_attack_released)
-                animator.emplace_event("evq_is_attack_released", 0);
-            if (mvt_state.on_guard_press)
-                animator.emplace_event("evq_on_guard_press", 0.5f);
-            if (mvt_state.is_guard_released)
-                animator.emplace_event("evq_is_guard_released", 0);
+                if (mvt_state.is_grounded)
+                    animator.emplace_event("evq_is_grounded", 0.0f);
+                else
+                    animator.emplace_event("evq_is_midair", 0.0f);
+
+                if (mvt_state.on_attack_press)
+                    animator.emplace_event("evq_on_attack_press", 0.5f);
+                if (mvt_state.is_attack_released)
+                    animator.emplace_event("evq_is_attack_released", 0.0f);
+                if (mvt_state.on_guard_press)
+                    animator.emplace_event("evq_on_guard_press", 0.5f);
+                if (mvt_state.is_guard_released)
+                    animator.emplace_event("evq_is_guard_released", 0.0f);
+                break;
+
+            case mvt_state_mode_t::MODE_CPU_CHAR:
+                if (mvt_state.on_guard_press)
+                    animator.emplace_event("evq_on_guard_press", 0.0f);
+
+                if (mvt_state.on_exec_movement_idx >= 0)
+                    animator.emplace_event("evq_exec_mvt_idx", 0.5f);
+                if (mvt_state.on_exec_attack_combo_idx >= 0)
+                    animator.emplace_event("evq_exec_atk_combo_idx", 0.5f);
+                break;
+            
+            default:
+                throw std::runtime_error("Cannot have invalid input mvt state mode.");
+            }
 
             // Reset inputs.
             char_mvt_anim_state.input_mvt_state =

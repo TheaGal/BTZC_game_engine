@@ -175,12 +175,6 @@
                         "dmg_pts": 2,
                         "posture_dmg_pts": 2
                     }
-                },
-                {
-                    "type_name": "component::Attack_queue",
-                    "members_j": {
-                        "queue_item_expire_time": 1.0
-                    }
                 }
             ]
         },
@@ -410,10 +404,6 @@
                         "dmg_pts": 2,
                         "posture_dmg_pts": 2
                     }
-                },
-                {
-                    "type_name": "component::Attack_queue",
-                    "members_j": {}
                 }
             ]
         },

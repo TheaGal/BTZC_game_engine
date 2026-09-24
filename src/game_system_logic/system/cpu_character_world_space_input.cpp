@@ -1,8 +1,9 @@
 #include "cpu_character_world_space_input.h"
 
+#include "btdatecheck.h"
 #include "btglm.h"
+#include "btrandom.h"
 #include "game_system_logic/component/character_movement.h"
-#include "game_system_logic/component/combat_stats.h"
 #include "game_system_logic/component/cpu_enemy_awareness.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
@@ -10,8 +11,11 @@
 #include "service_finder/service_finder.h"
 
 
-void BT::system::cpu_character_world_space_input()
+void BT::system::cpu_character_world_space_input(float_t const delta_time)
 {
+    // @REFACTOR: this needs to get broken up into smaller funcs.
+    date_deadline(2026, 10, 3);
+
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
     auto view{ reg.view<component::Transform const,
@@ -24,12 +28,24 @@ void BT::system::cpu_character_world_space_input()
                  cpu_enemy_awareness,
                  char_ws_input,
                  char_mvt_anim_state] : view.each())
-    {   // Get AFA data.
-        bool _{ false };
-        helper::fetch_wanted_afa_data(entity_container,
-                                      reg,
-                                      char_mvt_anim_state,
-                                      _);
+    {   // Reset mvt inputs.
+        char_mvt_anim_state.input_mvt_state.reset_state(false);
+
+        auto& mvt_mode{ char_mvt_anim_state.input_mvt_state.mode };
+        using mvt_mode_t = component::Character_mvt_animated_state::Input_mvt_state::Mode;
+        if (mvt_mode == mvt_mode_t::MODE_INVALID)
+            mvt_mode = mvt_mode_t::MODE_CPU_CHAR;
+
+        // Get AFA data.
+        bool _;
+        bool request_new_attack{ false };
+        bool afa_data_success = helper::fetch_wanted_afa_data(entity_container,
+                                                              reg,
+                                                              char_mvt_anim_state,
+                                                              _,
+                                                              request_new_attack);
+        if (!afa_data_success)
+            continue;
 
         // World-space movement input.
         bool enter_state{ cpu_enemy_awareness.runtime_state.prev_enemy_awareness !=
@@ -86,7 +102,7 @@ void BT::system::cpu_character_world_space_input()
         case component::CPU_enemy_awareness::State::AWARE:
             if (enter_state)
             {   // Trigger new state entered.
-                // @ANIMATOR_REFACTOR char_mvt_anim_state.write_to_animator_data.on_aware = true;
+                char_mvt_anim_state.input_mvt_state.reset_state(true);
             }
             else
             {   // @TEMP: @DEBUG: Keep attack anim up!
@@ -107,70 +123,110 @@ void BT::system::cpu_character_world_space_input()
                 char_ws_input.delta_to_position_of_interest.raw[2] = desired_direction[2];
 
                 // Reads broadcasts that other enemy is attacking.
-                if (auto detect_char{ reg.try_get<component::Detectable_character>(entity) };
+                if (auto* detect_char{ reg.try_get<component::Detectable_character>(entity) };
                     detect_char != nullptr)
                 {
                     size_t num_accepted_msgs{ 0 };
 
-                    if (auto char_mvt_st{ reg.try_get<component::Character_mvt_state>(entity) };  // @NOTE: I don't really like how this is getting accessed before `system::input_controlled_character_movement()` is run.
+                    if (auto* char_mvt_st{ reg.try_get<component::Character_mvt_state>(entity) };  // @NOTE: I don't really like how this is getting accessed before `system::input_controlled_character_movement()` is run.
                         char_mvt_st != nullptr)
                     {
                         for (auto const& msg : detect_char->state.broadcasted_enemy_atk_msgs)
                         {
                             float_t flat_distance2{ glm_vec2_norm2(  // @NOTE: Ignore Y axis.
                                 vec2{ msg.other_to_this_delta_pos[0],
-                                    msg.other_to_this_delta_pos[2] }) };
+                                      msg.other_to_this_delta_pos[2] }) };
 
                             // Get similarity of facing angles.
+                            date_deadline(2026, 9, 30);  // @TODO: remove try-get block for the character-mvt-state just for this one get_facing_angle(). (just have the try-get happen once right in here)
                             auto ang_diff{ std::abs(msg.other_facing_angle - char_mvt_st->get_facing_angle()) };
                             while (ang_diff > glm_rad(180.0f)) ang_diff -= glm_rad(360.0f);
                             while (ang_diff <= glm_rad(-180.0f)) ang_diff += glm_rad(360.0f);
 
                             constexpr float_t k_max_flat_distance{ 7.5f };
                             constexpr float_t k_min_ang_diff{ glm_rad(45.0f) };
+
                             if (flat_distance2 < k_max_flat_distance * k_max_flat_distance &&
                                 ang_diff > k_min_ang_diff)
-                            {   // Accept this msg and attempt to parry attack.
+                            {   // Accept msg and input to parry attack.
                                 char_mvt_anim_state.input_mvt_state.on_guard_press = true;
-                                // @ANIMATOR_REFACTOR char_mvt_anim_state.write_to_animator_data.on_guard = true;
-
-                                // // @DEBUG: Just print out what's up.
-                                // BT_TRACEF("Accept msg: flat_dist:%.3f \tang_diff(deg):%.3f",
-                                //           std::sqrtf(flat_distance2),
-                                //           glm_deg(ang_diff));
 
                                 num_accepted_msgs++;
                             }
                         }
 
-                        if (auto attack_queue{ reg.try_get<component::Attack_queue>(entity) };
-                            attack_queue != nullptr)
+                        for (auto const& msg : detect_char->state.broadcasted_enemy_heal_msgs)
                         {
-                            for (auto const& msg : detect_char->state.broadcasted_enemy_heal_msgs)
-                            {
-                                float_t flat_distance2{ glm_vec2_norm2(  // @NOTE: Ignore Y axis.
-                                    vec2{ msg.other_to_this_delta_pos[0],
-                                          msg.other_to_this_delta_pos[2] }) };
+                            float_t flat_distance2{ glm_vec2_norm2(  // @NOTE: Ignore Y axis.
+                                vec2{ msg.other_to_this_delta_pos[0],
+                                      msg.other_to_this_delta_pos[2] }) };
 
-                                constexpr float_t k_max_flat_distance{ 50.0f };  // Very far for far reaching pinch attacks.
-                                if (flat_distance2 < k_max_flat_distance * k_max_flat_distance)
-                                {   // Accept this msg and attempt to pinch in distance and attack.
-                                    attack_queue->push_attack_to_queue(0);  // @HARDCODE: @TODO: @NOCHECKIN
+                            /// Too far for distance-closing pinch attacks.
+                            constexpr float_t k_very_far_distance{ 50.0f };
 
-                                    num_accepted_msgs++;
-                                }
+                            /// Everything closer is close combat and the opposite is range combat
+                            /// distance.
+                            constexpr float_t k_range_combat_distance{ 25.0f };
+
+                            if (flat_distance2 < k_very_far_distance * k_very_far_distance)
+                            {   // Accept msg and input to pinch in distance and attack.
+                                char_mvt_anim_state.input_mvt_state.on_exec_attack_combo_idx = 123;  // @HARDCODE: idk maybe use some kind of setting? (set to -1 for do nothing when this happens?)
+
+                                num_accepted_msgs++;
                             }
                         }
                     }
 
-                    // Clear msgs.
+                    // Clear received msgs.
                     if (!detect_char->state.broadcasted_enemy_atk_msgs.empty())
                     {
-                        BT_TRACEF("Used %llu/%llu broadcasted atk msgs.",
+                        BT_TRACEF("Used %zu/%zu broadcasted atk msgs.",
                                   num_accepted_msgs,
                                   detect_char->state.broadcasted_enemy_atk_msgs.size());
                         detect_char->state.broadcasted_enemy_atk_msgs.clear();
                     }
+
+                    if (!detect_char->state.broadcasted_enemy_heal_msgs.empty())
+                    {
+                        BT_TRACEF("Used %zu/%zu broadcasted heal msgs.",
+                                  num_accepted_msgs,
+                                  detect_char->state.broadcasted_enemy_heal_msgs.size());
+                        detect_char->state.broadcasted_enemy_heal_msgs.clear();
+                    }
+                }
+
+                // Check if should request new attack.
+                {
+                    float_t& combat_tempo_timer{
+                        char_mvt_anim_state.input_mvt_state.cpu_char_combat_tempo_timer
+                    };
+                    float_t const resting_combat_tempo{
+                        char_mvt_anim_state.input_mvt_state.cpu_char_resting_combat_tempo
+                    };
+
+                    if (!request_new_attack && combat_tempo_timer >= resting_combat_tempo)
+                    {
+                        request_new_attack = (random::fast_float_01_exclusive() > 0.3f);
+                    }
+
+                    if (request_new_attack)
+                    {
+                        combat_tempo_timer = 0;
+                    }
+                    else
+                    {
+                        combat_tempo_timer += delta_time;
+                    }
+                }
+
+                // Input new movement.
+                if (request_new_attack)
+                {
+                    char_mvt_anim_state.input_mvt_state.on_exec_attack_combo_idx = 0;  // @HARDCODE
+                }
+                else
+                {
+                    char_mvt_anim_state.input_mvt_state.on_exec_movement_idx = 0;  // @HARDCODE
                 }
             }
             break;

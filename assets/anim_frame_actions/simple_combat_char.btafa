@@ -74,18 +74,6 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "hitcapsule_group_0_enabled",
-                            "true"
-                        ],
-                        "cmd_name": "var_ov"
-                    },
-                    "end_frame": 69,
-                    "row_idx": 6,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
                             "turn_speed",
                             "1000000"
                         ],
@@ -163,18 +151,6 @@
                     },
                     "end_frame": 41,
                     "row_idx": 4,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "hitcapsule_group_0_enabled",
-                            "true"
-                        ],
-                        "cmd_name": "var_ov"
-                    },
-                    "end_frame": 69,
-                    "row_idx": 6,
                     "start_frame": 0
                 },
                 {
@@ -299,18 +275,6 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "hitcapsule_group_0_enabled",
-                            "true"
-                        ],
-                        "cmd_name": "var_ov"
-                    },
-                    "end_frame": 69,
-                    "row_idx": 3,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
                             "turn_speed",
                             "1000000"
                         ],
@@ -400,18 +364,6 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "hitcapsule_group_0_enabled",
-                            "true"
-                        ],
-                        "cmd_name": "var_ov"
-                    },
-                    "end_frame": 69,
-                    "row_idx": 2,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
                             "turn_speed",
                             "7.5"
                         ],
@@ -487,6 +439,45 @@
             "regions": [
                 {
                     "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_guard_press",
+                            "st_ready_parry,st_hold_guard_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 9,
+                    "row_idx": 0,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_guard_press",
+                            "st_ready_parry,st_hold_guard_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 42,
+                    "row_idx": 0,
+                    "start_frame": 29
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_guard_press",
+                            "st_ready_parry,st_hold_guard_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 72,
+                    "row_idx": 0,
+                    "start_frame": 63
+                },
+                {
+                    "ctrl_cmd": {
                         "argv": [],
                         "cmd_name": "nop"
                     },
@@ -515,18 +506,6 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "hitcapsule_group_0_enabled",
-                            "true"
-                        ],
-                        "cmd_name": "var_ov"
-                    },
-                    "end_frame": 69,
-                    "row_idx": 4,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
                             "hitcapsule_group_1_enabled",
                             "true"
                         ],
@@ -550,11 +529,35 @@
                 },
                 {
                     "ctrl_cmd": {
+                        "argv": [
+                            "attack_send_root_motion_multi",
+                            "1"
+                        ],
+                        "cmd_name": "var_wr"
+                    },
+                    "end_frame": 22,
+                    "row_idx": 6,
+                    "start_frame": 14
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "attack_send_root_motion_multi",
+                            "2"
+                        ],
+                        "cmd_name": "var_wr"
+                    },
+                    "end_frame": 54,
+                    "row_idx": 6,
+                    "start_frame": 47
+                },
+                {
+                    "ctrl_cmd": {
                         "argv": [],
                         "cmd_name": "nop"
                     },
                     "end_frame": 22,
-                    "row_idx": 6,
+                    "row_idx": 7,
                     "start_frame": 14
                 },
                 {
@@ -563,7 +566,7 @@
                         "cmd_name": "nop"
                     },
                     "end_frame": 54,
-                    "row_idx": 6,
+                    "row_idx": 7,
                     "start_frame": 47
                 },
                 {
@@ -601,30 +604,6 @@
                     "end_frame": 69,
                     "row_idx": 8,
                     "start_frame": 53
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "attack_send_root_motion_multi",
-                            "1"
-                        ],
-                        "cmd_name": "var_wr"
-                    },
-                    "end_frame": 22,
-                    "row_idx": 16,
-                    "start_frame": 14
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "attack_send_root_motion_multi",
-                            "2"
-                        ],
-                        "cmd_name": "var_wr"
-                    },
-                    "end_frame": 54,
-                    "row_idx": 16,
-                    "start_frame": 47
                 },
                 {
                     "ctrl_cmd": {
@@ -669,14 +648,28 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "hitcapsule_group_0_enabled",
-                            "true"
+                            "evq_on_guard_press",
+                            "st_ready_parry,st_hold_guard_idle",
+                            "1"
                         ],
-                        "cmd_name": "var_ov"
+                        "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 69,
-                    "row_idx": 4,
+                    "end_frame": 30,
+                    "row_idx": 0,
                     "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_guard_press",
+                            "st_ready_parry,st_hold_guard_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 56,
+                    "row_idx": 0,
+                    "start_frame": 47
                 },
                 {
                     "ctrl_cmd": {
@@ -689,6 +682,18 @@
                     "end_frame": 43,
                     "row_idx": 5,
                     "start_frame": 36
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "attack_send_root_motion_multi",
+                            "2"
+                        ],
+                        "cmd_name": "var_wr"
+                    },
+                    "end_frame": 43,
+                    "row_idx": 6,
+                    "start_frame": 35
                 },
                 {
                     "ctrl_cmd": {
@@ -721,11 +726,63 @@
             "state_name": "st_jump_back_evade"
         },
         {
-            "regions": [],
+            "regions": [
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_guard_press",
+                            "st_ready_parry,st_hold_guard_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 0,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "turn_speed",
+                            "10"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 8,
+                    "start_frame": 0
+                }
+            ],
             "state_name": "st_yosumi_shift_left"
         },
         {
-            "regions": [],
+            "regions": [
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_guard_press",
+                            "st_ready_parry,st_hold_guard_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 0,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "turn_speed",
+                            "10"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 8,
+                    "start_frame": 0
+                }
+            ],
             "state_name": "st_yosumi_shift_right"
         },
         {
@@ -801,19 +858,7 @@
                     },
                     "end_frame": 17,
                     "row_idx": 0,
-                    "start_frame": 10
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "hitcapsule_group_0_enabled",
-                            "true"
-                        ],
-                        "cmd_name": "var_ov"
-                    },
-                    "end_frame": 69,
-                    "row_idx": 2,
-                    "start_frame": 0
+                    "start_frame": 15
                 },
                 {
                     "ctrl_cmd": {
@@ -888,18 +933,6 @@
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [
-                            "hitcapsule_group_0_enabled",
-                            "true"
-                        ],
-                        "cmd_name": "var_ov"
-                    },
-                    "end_frame": 69,
-                    "row_idx": 3,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
                         "argv": [],
                         "cmd_name": "nop"
                     },
@@ -936,18 +969,6 @@
                     },
                     "end_frame": 21,
                     "row_idx": 1,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "hitcapsule_group_0_enabled",
-                            "true"
-                        ],
-                        "cmd_name": "var_ov"
-                    },
-                    "end_frame": 69,
-                    "row_idx": 3,
                     "start_frame": 0
                 },
                 {

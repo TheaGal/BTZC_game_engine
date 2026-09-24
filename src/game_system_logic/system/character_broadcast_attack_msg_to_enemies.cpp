@@ -3,7 +3,6 @@
 #include "btdatecheck.h"
 #include "btglm.h"
 #include "game_system_logic/component/character_movement.h"
-#include "game_system_logic/component/combat_stats.h"
 #include "game_system_logic/component/cpu_enemy_awareness.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"

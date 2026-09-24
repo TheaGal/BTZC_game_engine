@@ -92,7 +92,15 @@ struct Character_mvt_animated_state
 
     /// For tracking input data from character.
     struct Input_mvt_state
-    {   // Movement inputs.
+    {   // Mode.
+        enum Mode : int32_t
+        {
+            MODE_INVALID = -1,
+            MODE_PLAYER_CHAR,
+            MODE_CPU_CHAR
+        } mode{ -1 };  // @TODO: make configurable seting.
+
+        // Movement inputs.
         bool is_moving{ false };
         bool on_jump{ false };
         bool is_grounded{ false };
@@ -102,6 +110,29 @@ struct Character_mvt_animated_state
         bool is_attack_released{ false };
         bool on_guard_press{ false };
         bool is_guard_released{ false };
+
+        // Combat tempo timer (cpu char).
+        float_t cpu_char_resting_combat_tempo{ 0.5f };  // @TODO: make configurable seting.
+        float_t cpu_char_combat_tempo_timer{ 0 };
+
+        // Combat inputs (cpu char).
+        int32_t on_exec_movement_idx{ -1 };
+        int32_t on_exec_attack_combo_idx{ -1 };
+
+        void reset_state(bool reset_persist_vals)
+        {
+            auto persist_val{ cpu_char_combat_tempo_timer };
+
+            *this = {
+                .mode = mode,
+                .cpu_char_resting_combat_tempo = cpu_char_resting_combat_tempo,
+            };
+
+            if (!reset_persist_vals)
+            {
+                cpu_char_combat_tempo_timer = persist_val;
+            }
+        }
     } input_mvt_state;
 
     struct Write_to_animator_data
