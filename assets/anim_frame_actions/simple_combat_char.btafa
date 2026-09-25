@@ -1153,11 +1153,14 @@
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "root_motion_multi",
+                            "1"
+                        ],
+                        "cmd_name": "var_wr"
                     },
                     "end_frame": 17,
-                    "row_idx": 18,
+                    "row_idx": 11,
                     "start_frame": 8
                 }
             ],
@@ -1230,11 +1233,14 @@
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "root_motion_multi",
+                            "1"
+                        ],
+                        "cmd_name": "var_wr"
                     },
                     "end_frame": 31,
-                    "row_idx": 18,
+                    "row_idx": 11,
                     "start_frame": 8
                 }
             ],

@@ -286,7 +286,7 @@
 
 - [x] check that attack broadcast system works
 
-- [ ] get enemy doing attacks
+- [x] get enemy doing attacks
     - [x] misc: have afa editor copy and paste independent of hovering over empty space (don't require the Shift+A tooltip to appear first).
     - enemy won't really need to pick a movement direction, but rather just keep trying to move towards player
         - as far as tilting, there's an assumption that the player character is a certain height.
@@ -344,7 +344,7 @@
 
 - [ ] add play sfx afa func
 
-- [ ] get parry anims to do stuff.
+- [x] get parry anims to do stuff.
     - have there be the knockback inherited from `attack_send_root_motion_multi` (both same value for hurt and parry and block (this helps to line up the attack combo))
         - this is same for KUSR
 
