@@ -308,7 +308,7 @@
         - [x] a regular, close attack combo
             - i'll just use the already made attack anim
 
-    - [ ] make the actual attacking and moving happen.
+    - [x] make the actual attacking and moving happen.
         - pressure. if pc does X to mob, then it's Y pressure:
             - attacks: 3
             - parry: ??
@@ -336,10 +336,13 @@
                 - make sure to add the `request_new_attack` thing!!
         - [x] step back 1m when doing zoom up.
             - ok ya that makes it feel soooo much better.
-        
-        - [ ] add randomization to which attacks get used.
+
+        - [x] add randomization to which attacks get used.
             - mmm having some kind of attack map or smth??
             - i was gonna use the arg for something, but idk how it'll be.
+            - maybe the resulting state-set transition should be "ACTION_MAP_attacks" and "ACTION_MAP_movements" as a pre-determined value that can be used as a state set name, and arg will be used as the idx of that map.
+
+- [ ] add play sfx afa func
 
 - [ ] get parry anims to do stuff.
     - have there be the knockback inherited from `attack_send_root_motion_multi` (both same value for hurt and parry and block (this helps to line up the attack combo))

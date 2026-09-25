@@ -105,6 +105,25 @@ struct Character_mvt_animated_state
         bool on_jump{ false };
         bool is_grounded{ false };
 
+        // Combat reactions.
+        enum Hurt_type : int32_t
+        {
+            HURT_TYPE_NONE = -1,
+
+            HURT_TYPE_LIGHT_FROM_FRONT,
+            HURT_TYPE_HEAVY_FROM_FRONT,
+            HURT_TYPE_LIGHT_FROM_BEHIND,
+            HURT_TYPE_HEAVY_FROM_BEHIND,
+            HURT_TYPE_LIGHT_FROM_ABOVE,
+            HURT_TYPE_HEAVY_FROM_ABOVE,
+            HURT_TYPE_LIGHT_FROM_BELOW,
+            HURT_TYPE_HEAVY_FROM_BELOW,
+            HURT_TYPE_LIGHT_FROM_LEFT,
+            HURT_TYPE_HEAVY_FROM_LEFT,
+            HURT_TYPE_LIGHT_FROM_RIGHT,
+            HURT_TYPE_HEAVY_FROM_RIGHT,
+        } on_hurt{ -1 };
+
         // Combat inputs (player char).
         bool on_attack_press{ false };
         bool is_attack_released{ false };

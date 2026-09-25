@@ -87,6 +87,7 @@ void BT::system::tick_sim_char_mvt_animator()
             auto const& mvt_state{ char_mvt_anim_state.input_mvt_state };
 
             using mvt_state_mode_t = component::Character_mvt_animated_state::Input_mvt_state::Mode;
+            using hurt_type_t = component::Character_mvt_animated_state::Input_mvt_state::Hurt_type;
 
             switch (mvt_state.mode)
             {
@@ -104,6 +105,9 @@ void BT::system::tick_sim_char_mvt_animator()
                 else
                     animator.emplace_event("evq_is_midair", 0.0f, 0);
 
+                if (mvt_state.on_hurt > hurt_type_t::HURT_TYPE_NONE)
+                    animator.emplace_event("evq_on_hurt", 0.0f, mvt_state.on_hurt);
+
                 if (mvt_state.on_attack_press)
                     animator.emplace_event("evq_on_attack_press", 0.5f, 0);
                 if (mvt_state.is_attack_released)
@@ -115,6 +119,9 @@ void BT::system::tick_sim_char_mvt_animator()
                 break;
 
             case mvt_state_mode_t::MODE_CPU_CHAR:
+                if (mvt_state.on_hurt > hurt_type_t::HURT_TYPE_NONE)
+                    animator.emplace_event("evq_on_hurt", 0.0f, mvt_state.on_hurt);
+
                 if (mvt_state.on_guard_press)
                     animator.emplace_event("evq_on_guard_press", 0.0f, 0);
 

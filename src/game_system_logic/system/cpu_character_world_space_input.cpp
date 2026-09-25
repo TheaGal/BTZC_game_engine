@@ -221,11 +221,14 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
                 // Input new movement.
                 if (request_new_attack)
                 {
-                    char_mvt_anim_state.input_mvt_state.on_exec_attack_combo_idx = 0;  // @HARDCODE
+                    date_deadline(2026, 9, 30);  // fix hardcode
+                    char_mvt_anim_state.input_mvt_state.on_exec_attack_combo_idx =
+                        (random::fast_float_01_exclusive() * 2);  // @HARDCODE
                 }
                 else
                 {
-                    char_mvt_anim_state.input_mvt_state.on_exec_movement_idx = 0;  // @HARDCODE
+                    char_mvt_anim_state.input_mvt_state.on_exec_movement_idx =
+                        (random::fast_float_01_exclusive() * 3);  // @HARDCODE
                 }
             }
             break;

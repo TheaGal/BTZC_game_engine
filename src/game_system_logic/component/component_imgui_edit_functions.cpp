@@ -555,6 +555,8 @@ void BT::component::edit::imgui_edit__health_stats_data(entt::registry& reg,
 
     ImGui::Checkbox("is_invincible", &health_stats_data.is_invincible);
 
+    date_deadline(2026, 9, 30);  // delete the OLD_HITCAPSULE_ATK_PROCESS code blocks.
+#if OLD_HITCAPSULE_ATK_PROCESS
     // atk_receive_debounce_time.
     float_t atk_receive_debounce_time_f = health_stats_data.atk_receive_debounce_time;
     if (ImGui::DragFloat("atk_receive_debounce_time", &atk_receive_debounce_time_f, 0.01f))
@@ -565,6 +567,7 @@ void BT::component::edit::imgui_edit__health_stats_data(entt::registry& reg,
     float_t prev_atk_rece_time_f = health_stats_data.prev_atk_received_time;
     ImGui::InputFloat("prev_atk_received_time", &prev_atk_rece_time_f);
     ImGui::EndDisabled();
+#endif // OLD_HITCAPSULE_ATK_PROCESS
 
     ImGui::PopItemWidth();
     ImGui::PopID();

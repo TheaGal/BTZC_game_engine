@@ -15,6 +15,8 @@
 
 #include <cassert>
 
+#define OLD_HITCAPSULE_ATK_PROCESS 0
+
 
 namespace
 {
@@ -25,14 +27,20 @@ void process_attack_interaction(Entity_container& entity_container,
                                 entt::registry& reg,
                                 TXP::Renderer& renderer,
                                 entt::entity offender_ecs_entity,
+#if OLD_HITCAPSULE_ATK_PROCESS
                                 component::Base_combat_stats_data const& offe_combat_stats,
                                 component::Health_stats_data& offe_health_stats,
+#endif // OLD_HITCAPSULE_ATK_PROCESS
                                 entt::entity defender_ecs_entity,
+#if OLD_HITCAPSULE_ATK_PROCESS
                                 component::Health_stats_data& defe_health_stats,
+#endif // OLD_HITCAPSULE_ATK_PROCESS
                                 double_t const global_attack_timer,
                                 UUID offender_uuid,
                                 UUID defender_uuid)
-{   // Update attack timer.
+{
+#if OLD_HITCAPSULE_ATK_PROCESS
+    // Update attack timer.
     bool attack_process_allowed{ false };
     if (defe_health_stats.prev_atk_received_time + defe_health_stats.atk_receive_debounce_time <=
         global_attack_timer)
@@ -70,6 +78,7 @@ void process_attack_interaction(Entity_container& entity_container,
         atk_res.defender.delta_hit_pts += defe_combat_stats.dmg_def_pts;
         atk_res.defender.delta_posture_pts -= defe_combat_stats.posture_dmg_def_pts;
     }
+#endif // OLD_HITCAPSULE_ATK_PROCESS
 
     auto defender_animator{ renderer.try_get_skeletal_animator(defender_ecs_entity) };
     auto offender_animator{ renderer.try_get_skeletal_animator(offender_ecs_entity) };
@@ -77,7 +86,9 @@ void process_attack_interaction(Entity_container& entity_container,
     if (defender_animator.has_value() && offender_animator.has_value())
     {   // Get sending root motion multiplier from offender.
         float_t root_motion_multiplier;
+#if OLD_HITCAPSULE_ATK_PROCESS
         bool can_cancel_attack_w_parry;
+#endif // OLD_HITCAPSULE_ATK_PROCESS
         {
             auto& animator{ offender_animator.value() };
 
@@ -87,23 +98,26 @@ void process_attack_interaction(Entity_container& entity_container,
                     .get_float_data_handle(
                         TXP::anim_frame_action::CTRL_DATA_LABEL_attack_send_root_motion_multi)
                     .get_val();
+#if OLD_HITCAPSULE_ATK_PROCESS
             can_cancel_attack_w_parry =
                 afa_data_handle
                     .get_bool_data_handle(
                         TXP::anim_frame_action::CTRL_DATA_LABEL_can_cancel_attack_w_parry)
                     .get_val();
+#endif // OLD_HITCAPSULE_ATK_PROCESS
         }
 
+#if OLD_HITCAPSULE_ATK_PROCESS
         // Check for parry or guard in defender.
-        // Also, write root motion multiplier from offender to defender.
         bool is_parry_active;
         bool is_guard_active;
+#endif // OLD_HITCAPSULE_ATK_PROCESS
+        // Write root motion multiplier from offender to defender.
         {
             auto& animator{ defender_animator.value() };
 
-            date_deadline(2026, 9, 27);  // @TODO: remove these bools, and just use regular event queue events.
-
             auto& afa_data_handle{ animator.get_anim_frame_action_data_handle() };
+#if OLD_HITCAPSULE_ATK_PROCESS
             is_parry_active =
                 afa_data_handle
                     .get_bool_data_handle(TXP::anim_frame_action::CTRL_DATA_LABEL_is_parry_active)
@@ -112,6 +126,7 @@ void process_attack_interaction(Entity_container& entity_container,
                 afa_data_handle
                     .get_bool_data_handle(TXP::anim_frame_action::CTRL_DATA_LABEL_is_guard_active)
                     .get_val();
+#endif // OLD_HITCAPSULE_ATK_PROCESS
 
             // Write root motion multiplier from offender to AFA data.
             afa_data_handle
@@ -119,6 +134,7 @@ void process_attack_interaction(Entity_container& entity_container,
                 .write_val(root_motion_multiplier);
         }
 
+#if OLD_HITCAPSULE_ATK_PROCESS
         // Parry attack.
         if (is_parry_active)
         {
@@ -134,22 +150,7 @@ void process_attack_interaction(Entity_container& entity_container,
         {
             atk_res.defender.delta_hit_pts = 0;
         }
-
-        // Get parent of offender.
-        auto offender_parent_ecs_entity{ entity_container.find_entity(
-            reg.get<component::Transform_hierarchy>(offender_ecs_entity).parent_entity) };
-
-        // Cancel attack anim of offender.
-        if (auto offender_char_mvt_anim_state{
-                reg.try_get<component::Character_mvt_animated_state>(offender_parent_ecs_entity) };
-            offender_char_mvt_anim_state)
-        {
-            assert(false);  // huh?
-            // @ANIMATOR_REFACTOR if (can_cancel_attack_w_parry && is_parry_active)
-            // @ANIMATOR_REFACTOR     // If defender is parrying and can cancel the attack, cancel attack from being
-            // @ANIMATOR_REFACTOR     // parried.
-            // @ANIMATOR_REFACTOR     offender_char_mvt_anim_state->write_to_animator_data.on_cancel_parried = true;
-        }
+#endif // OLD_HITCAPSULE_ATK_PROCESS
 
         // Get parent of defender.
         auto defender_parent_ecs_entity{ entity_container.find_entity(
@@ -200,6 +201,7 @@ void process_attack_interaction(Entity_container& entity_container,
                 defender_parent_ecs_entity) };
             char_mvt_anim_state)
         {
+#if OLD_HITCAPSULE_ATK_PROCESS
             assert(false);  // huh?
             // @ANIMATOR_REFACTOR if (turn_to_face_away)
             // @ANIMATOR_REFACTOR     // Parry/guard undoable when attacked from behind, so just do hurt-forward anim.
@@ -210,9 +212,14 @@ void process_attack_interaction(Entity_container& entity_container,
             // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_guard_hurt = true;
             // @ANIMATOR_REFACTOR else
             // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_receive_hurt = true;
+#endif // OLD_HITCAPSULE_ATK_PROCESS
+
+            using hurt_type_t = component::Character_mvt_animated_state::Input_mvt_state::Hurt_type;
+            char_mvt_anim_state->input_mvt_state.on_hurt = hurt_type_t::HURT_TYPE_LIGHT_FROM_FRONT;
         }
     }
 
+#if OLD_HITCAPSULE_ATK_PROCESS
     // Apply damage results.
     static auto const s_apply_dmg_results_fn =
         [](component::Health_stats_data& health_stats,
@@ -231,6 +238,7 @@ void process_attack_interaction(Entity_container& entity_container,
 
     s_apply_dmg_results_fn(offe_health_stats, atk_res.offender);
     s_apply_dmg_results_fn(defe_health_stats, atk_res.defender);
+#endif // OLD_HITCAPSULE_ATK_PROCESS
 }
 
 }  // namespace
@@ -289,10 +297,14 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
                                    reg,
                                    renderer,
                                    offender_ecs_entity,
+#if OLD_HITCAPSULE_ATK_PROCESS
                                    offe_combat_stats,
                                    offe_health_stats,
+#endif // OLD_HITCAPSULE_ATK_PROCESS
                                    defender_ecs_entity,
+#if OLD_HITCAPSULE_ATK_PROCESS
                                    defe_health_stats,
+#endif // OLD_HITCAPSULE_ATK_PROCESS
                                    s_global_attack_timer,
                                    offender_uuid,
                                    defender_uuid);
