@@ -29,8 +29,6 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
                  char_ws_input,
                  char_mvt_anim_state] : view.each())
     {   // Reset mvt inputs.
-        char_mvt_anim_state.input_mvt_state.reset_state(false);
-
         auto& mvt_mode{ char_mvt_anim_state.input_mvt_state.mode };
         using mvt_mode_t = component::Character_mvt_animated_state::Input_mvt_state::Mode;
         if (mvt_mode == mvt_mode_t::MODE_INVALID)
@@ -170,7 +168,7 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
 
                             if (flat_distance2 < k_very_far_distance * k_very_far_distance)
                             {   // Accept msg and input to pinch in distance and attack.
-                                char_mvt_anim_state.input_mvt_state.on_exec_attack_combo_idx = 123;  // @HARDCODE: idk maybe use some kind of setting? (set to -1 for do nothing when this happens?)
+                                char_mvt_anim_state.input_mvt_state.on_exec_attack_combo_idx = 123;  // @HARDCODE: idk maybe use some kind of setting? (set the setting to -1 for do nothing when this happens?)
 
                                 num_accepted_msgs++;
                             }
@@ -204,14 +202,15 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
                         char_mvt_anim_state.input_mvt_state.cpu_char_resting_combat_tempo
                     };
 
-                    if (!request_new_attack && combat_tempo_timer >= resting_combat_tempo)
-                    {
-                        request_new_attack = (random::fast_float_01_exclusive() > 0.3f);
-                    }
-
-                    if (request_new_attack)
+                    if (combat_tempo_timer >= resting_combat_tempo)
                     {
                         combat_tempo_timer = 0;
+
+                        if (!request_new_attack)
+                        {
+                            float_t rand_01{ random::fast_float_01_exclusive() };
+                            request_new_attack = (rand_01 < 0.3f);
+                        }
                     }
                     else
                     {

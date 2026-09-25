@@ -1,5 +1,6 @@
 #include "player_character_lock_onto_target.h"
 
+#include "btdatecheck.h"
 #include "btglm.h"
 #include "btlogger.h"
 #include "btuuid.h"
@@ -168,7 +169,11 @@ void BT::system::player_character_lock_onto_target()
             reticle_ui_elem.set_opacity(is_visible ? 1 : 0);
             if (is_visible)
             {
-                reticle_ui_elem.set_position(ndc_position[0] * 0.5f * 360,
+                // @TODO: add this into its own UI-related function.
+                date_deadline(2026, 10, 15);
+
+                reticle_ui_elem.set_position(ndc_position[0] * 0.5f * 360 *
+                                                 camera.get_aspect_ratio(),
                                              ndc_position[1] * 0.5f * 360);
             }
         }

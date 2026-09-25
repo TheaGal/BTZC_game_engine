@@ -330,10 +330,16 @@
         - basically when there is an action from oppo, then read it and process it using the `Detectable_character::Runtime_state` component.
 
         - [x] basic system like thingy is up and running i think????
-        - [ ] get the animations/animators/afas to cooperate.
+        - [x] get the animations/animators/afas to cooperate.
             - [x] got basic structure and evq's filled in
-            - [ ] actual anims
+            - [x] actual anims
                 - make sure to add the `request_new_attack` thing!!
+        - [x] step back 1m when doing zoom up.
+            - ok ya that makes it feel soooo much better.
+        
+        - [ ] add randomization to which attacks get used.
+            - mmm having some kind of attack map or smth??
+            - i was gonna use the arg for something, but idk how it'll be.
 
 - [ ] get parry anims to do stuff.
     - have there be the knockback inherited from `attack_send_root_motion_multi` (both same value for hurt and parry and block (this helps to line up the attack combo))

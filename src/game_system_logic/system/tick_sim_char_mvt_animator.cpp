@@ -120,21 +120,20 @@ void BT::system::tick_sim_char_mvt_animator()
 
                 if (mvt_state.on_exec_movement_idx >= 0)
                     animator.emplace_event("evq_exec_mvt_idx",
-                                           0.5f,
+                                           0.0f,
                                            mvt_state.on_exec_movement_idx);
                 if (mvt_state.on_exec_attack_combo_idx >= 0)
                     animator.emplace_event("evq_exec_atk_combo_idx",
-                                           0.5f,
+                                           mvt_state.cpu_char_resting_combat_tempo,
                                            mvt_state.on_exec_attack_combo_idx);
                 break;
-            
+
             default:
                 throw std::runtime_error("Cannot have invalid input mvt state mode.");
             }
 
             // Reset inputs.
-            char_mvt_anim_state.input_mvt_state =
-                component::Character_mvt_animated_state::Input_mvt_state{};
+            char_mvt_anim_state.input_mvt_state.reset_state(false);
 
 
             // Update animator.

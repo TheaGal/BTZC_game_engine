@@ -268,8 +268,11 @@ Char_mvt_logic_results character_controller_movement_logic(
                       flat_pos_of_interest_delta);
         flat_pos_of_interest_delta[1] = 0;
 
+        // @HARDCODE: this buffer/backoff value.
+        constexpr float_t k_opponent_space_buffer{ 1 };
+
         anim_root_motion->pos_of_interest_root_motion_multi =
-            glm_vec3_norm(flat_pos_of_interest_delta) /
+            glm_max(0, glm_vec3_norm(flat_pos_of_interest_delta) - k_opponent_space_buffer) /
             10.0f;  // divide by 10 since 10m is standard amount in the anim itself.
     }
 

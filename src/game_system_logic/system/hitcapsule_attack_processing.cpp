@@ -13,6 +13,8 @@
 #include "service_finder/service_finder.h"
 #include "txp_renderer_public.h"
 
+#include <cassert>
+
 
 namespace
 {
@@ -99,6 +101,8 @@ void process_attack_interaction(Entity_container& entity_container,
         {
             auto& animator{ defender_animator.value() };
 
+            date_deadline(2026, 9, 27);  // @TODO: remove these bools, and just use regular event queue events.
+
             auto& afa_data_handle{ animator.get_anim_frame_action_data_handle() };
             is_parry_active =
                 afa_data_handle
@@ -140,6 +144,7 @@ void process_attack_interaction(Entity_container& entity_container,
                 reg.try_get<component::Character_mvt_animated_state>(offender_parent_ecs_entity) };
             offender_char_mvt_anim_state)
         {
+            assert(false);  // huh?
             // @ANIMATOR_REFACTOR if (can_cancel_attack_w_parry && is_parry_active)
             // @ANIMATOR_REFACTOR     // If defender is parrying and can cancel the attack, cancel attack from being
             // @ANIMATOR_REFACTOR     // parried.
@@ -195,6 +200,7 @@ void process_attack_interaction(Entity_container& entity_container,
                 defender_parent_ecs_entity) };
             char_mvt_anim_state)
         {
+            assert(false);  // huh?
             // @ANIMATOR_REFACTOR if (turn_to_face_away)
             // @ANIMATOR_REFACTOR     // Parry/guard undoable when attacked from behind, so just do hurt-forward anim.
             // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_receive_hurt_from_back = true;
@@ -232,8 +238,6 @@ void process_attack_interaction(Entity_container& entity_container,
 
 void BT::system::hitcapsule_attack_processing(float_t delta_time)
 {
-    date_deadline(2026, 9, 24);  // @CHECK: does this work?? needs the debug drawing.
-
     static double_t s_global_attack_timer{ 0 };
 
     // Overlap pairs buffer for lagging the attacks by `k_lagging_ticks` ticks.
