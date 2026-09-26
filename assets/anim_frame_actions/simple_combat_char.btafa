@@ -418,6 +418,20 @@
                     "end_frame": 11,
                     "row_idx": 13,
                     "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "jump_grunt.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 4,
+                    "row_idx": 17,
+                    "start_frame": 3
                 }
             ],
             "state_name": "st_jump"
@@ -767,6 +781,62 @@
                     "end_frame": 50,
                     "row_idx": 21,
                     "start_frame": 49
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "slash2.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 19,
+                    "row_idx": 25,
+                    "start_frame": 18
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "attack_grunt1.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 17,
+                    "row_idx": 26,
+                    "start_frame": 16
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "slash3.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 44,
+                    "row_idx": 27,
+                    "start_frame": 43
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "attack_grunt2.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 43,
+                    "row_idx": 28,
+                    "start_frame": 42
                 }
             ],
             "state_name": "st_attack_0"
@@ -896,6 +966,62 @@
                     "end_frame": 49,
                     "row_idx": 12,
                     "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "fwoop.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 4,
+                    "row_idx": 16,
+                    "start_frame": 3
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "ready_grunt3.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 18,
+                    "row_idx": 17,
+                    "start_frame": 17
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "attack_grunt5.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 36,
+                    "row_idx": 18,
+                    "start_frame": 35
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "slash3.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 37,
+                    "row_idx": 19,
+                    "start_frame": 36
                 }
             ],
             "state_name": "st_attack_1"
@@ -951,9 +1077,9 @@
                         ],
                         "cmd_name": "play_sfx_oneshot"
                     },
-                    "end_frame": 1,
+                    "end_frame": 11,
                     "row_idx": 7,
-                    "start_frame": 0
+                    "start_frame": 10
                 }
             ],
             "state_name": "st_jump_back_evade"
@@ -1176,6 +1302,20 @@
                     "end_frame": 17,
                     "row_idx": 11,
                     "start_frame": 8
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "clang.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 3,
+                    "row_idx": 15,
+                    "start_frame": 2
                 }
             ],
             "state_name": "st_hurt_parry"
@@ -1256,6 +1396,20 @@
                     "end_frame": 31,
                     "row_idx": 11,
                     "start_frame": 8
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "clang_dull.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 2,
+                    "row_idx": 15,
+                    "start_frame": 1
                 }
             ],
             "state_name": "st_hurt_guard"
@@ -1323,6 +1477,20 @@
                     "end_frame": 21,
                     "row_idx": 9,
                     "start_frame": 8
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "classic_hurt.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 2,
+                    "row_idx": 13,
+                    "start_frame": 1
                 }
             ],
             "state_name": "st_hurt_receive"
@@ -1390,6 +1558,20 @@
                     "end_frame": 21,
                     "row_idx": 9,
                     "start_frame": 8
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "classic_hurt.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 2,
+                    "row_idx": 13,
+                    "start_frame": 1
                 }
             ],
             "state_name": "st_hurt_receive_from_back"
@@ -1478,6 +1660,20 @@
                     "end_frame": 17,
                     "row_idx": 9,
                     "start_frame": 13
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "raise_guard.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 7,
+                    "row_idx": 12,
+                    "start_frame": 6
                 },
                 {
                     "ctrl_cmd": {
