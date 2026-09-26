@@ -348,7 +348,8 @@
     - have there be the knockback inherited from `attack_send_root_motion_multi` (both same value for hurt and parry and block (this helps to line up the attack combo))
         - this is same for KUSR
 
-- [ ] add sfx to the attacks and stuff
+- [x] add sfx to the attacks and stuff
+    - yeah... umm, this really needs to get more readable and not stupid immediate.
 
 - [ ] INCOMPLETE: adds positional audio
 - [ ] INCOMPLETE: unloads audio once no channels are using a sound inside `update()`
