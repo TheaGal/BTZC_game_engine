@@ -33,7 +33,7 @@ void fetch_eyesight_data_and_AFA_data(component::CPU_enemy_awareness& in_out_awa
     out_chg_suspicious_to_unaware_request = false;
 
     std::vector<mat4s> joint_matrices;
-    animator.get_simulation_profile_frame_pose(animator.get_is_using_root_motion(), joint_matrices);
+    animator.get_simulation_profile_frame_pose(joint_matrices);
 
     if (in_out_awareness.runtime_state.eyes_bone_idx == (uint32_t)-1)
     {   // Get the bone idx for eyes-bone.

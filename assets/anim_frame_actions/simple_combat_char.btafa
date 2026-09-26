@@ -1401,8 +1401,8 @@
                     "ctrl_cmd": {
                         "argv": [
                             "clang_dull.wav",
-                            "0.000000 0.000000 0.000000",
-                            "",
+                            "0.000000 1.000000 0.000000",
+                            "Sword attachment",
                             "1.000000"
                         ],
                         "cmd_name": "play_sfx_oneshot"

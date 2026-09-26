@@ -356,8 +356,13 @@
     - it's _better_ but not good. im setting a deadline so i dont forget.
 - [x] INCOMPLETE: adds positional audio
     - needed right hand coordinates for audio engine huh.
-- [ ] INCOMPLETE: position audio at correct position of entity and at correct bone too.
+- [x] INCOMPLETE: position audio at correct position of entity and at correct bone too.
+    - it's done, but there needs to be a better editor tool (like for the hitcapsule placement too)
 - [ ] INCOMPLETE: unloads audio once no channels are using a sound inside `update()`
+    - maybe do the unload after a sound isn't getting used for 10 seconds (it would be a pain if a music track got unloaded heh).
+
+
+- [ ] SOMEDAY: create tool for easy placement of hitcapsules, hurtcapsules, and sfx emission.
 
 - [ ] SOMEDAY: move actual movement to after afa regions are processed to remove one-tick lag from certain things (like jump_up reeve, or just reeves in general i think)
     - well, it looks like it's not just reeves, it's just random stuff. ig the is_grounded event put in the event queue, but that's not quite this issue being pointed out.

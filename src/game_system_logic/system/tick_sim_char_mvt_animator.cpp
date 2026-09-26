@@ -1,6 +1,7 @@
 #include "tick_sim_char_mvt_animator.h"
 
 #include "game_system_logic/component/character_movement.h"
+#include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
 #include "physics_engine/physics_engine.h"  // for `k_simulation_delta_time`
 #include "service_finder/service_finder.h"
@@ -141,6 +142,14 @@ void BT::system::tick_sim_char_mvt_animator()
 
             // Reset inputs.
             char_mvt_anim_state.input_mvt_state.reset_state(false);
+
+
+            // Give animator transform information for update.
+            mat4 entity_transform;
+            reg.get<component::Transform const>(affecting_rend_obj_ecs_entity)
+                .calc_mat4_transform(entity_transform);
+
+            animator.cache_simulation_transform(entity_transform);
 
 
             // Update animator.

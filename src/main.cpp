@@ -142,7 +142,13 @@ int32_t main()
             BT::audio::play_sound_3d(snd_key, pos, BT::audio::volume_to_db(volume));
             BT::audio::unmark_snd_required(snd_key);
 
-            TXP::debug::emplace_debug_line_based_capsule(pos, pos, 1, vec4{ 1, 0, 0.2, 1 }, 0.5f);
+            BT_WARNF("Played sfx \"%s\" at (%.3f, %.3f, %.3f)",
+                     snd_name.c_str(),
+                     pos[0],
+                     pos[1],
+                     pos[2]);
+
+            TXP::debug::emplace_debug_line_based_capsule(pos, pos, 1, vec4{ 1, 0, 0.2, 1 }, 0.25f);
         });
 
     ui_state.canvas("target_lockon_reticle.btui");

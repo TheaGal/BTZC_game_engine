@@ -25,8 +25,7 @@ void BT::system::animator_driven_hitcapsule_sets_update()
         animator.get_anim_frame_action_data_handle().assign_hitcapsule_enabled_flags();
 
         std::vector<mat4s> joint_matrices;
-        animator.get_simulation_profile_frame_pose(animator.get_is_using_root_motion(),
-                                                   joint_matrices);
+        animator.get_simulation_profile_frame_pose(joint_matrices);
 
         mat4 entity_transform;
         view.get<component::Transform const>(ent).calc_mat4_transform(entity_transform);
