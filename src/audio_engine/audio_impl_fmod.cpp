@@ -118,7 +118,12 @@ void BT::audio::impl::Audio_impl_FMOD::unload_snd(snd_key_t key)
     m_loaded_snds.erase(key);
 }
 
-bool BT::audio::impl::Audio_impl_FMOD::is_snd_3d(snd_key_t key)
+bool BT::audio::impl::Audio_impl_FMOD::is_snd_loaded(snd_key_t key) const
+{
+    return (m_loaded_snds.find(key) != m_loaded_snds.end());
+}
+
+bool BT::audio::impl::Audio_impl_FMOD::is_snd_3d(snd_key_t key) const
 {
     FMOD_MODE mode;
     ERRCHECK(m_loaded_snds.at(key)->getMode(&mode));
@@ -137,11 +142,11 @@ BT::audio::channel_key_t BT::audio::impl::Audio_impl_FMOD::play_snd_paused(snd_k
 }
 
 void BT::audio::impl::Audio_impl_FMOD::set_channel_3d_props(channel_key_t key,
-                                                            vec3s const& pos,
-                                                            vec3s const& velo)
+                                                            vec3 const pos,
+                                                            vec3 const velo)
 {
-    FMOD_VECTOR fmod_pos{ pos.x, pos.y, pos.z };
-    FMOD_VECTOR fmod_velo{ velo.x, velo.y, velo.z };
+    FMOD_VECTOR fmod_pos{ pos[0], pos[1], pos[2] };
+    FMOD_VECTOR fmod_velo{ velo[0], velo[1], velo[2] };
     ERRCHECK(m_alive_channels.at(key)->set3DAttributes(&fmod_pos, &fmod_velo));
 }
 

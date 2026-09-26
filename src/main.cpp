@@ -133,6 +133,14 @@ int32_t main()
     main_renderer.set_imgui_build_contents_callback([]() {
         BT::system::imgui_render_transform_hierarchy_window(false);
     });
+    TXP::Skeletal_animator::set_play_audio_at_pos_oneshot_fn_callback(
+        [](std::string const& snd_name, vec3 const pos, float_t volume) {
+            auto snd_key{ BT::audio::mark_snd_required(snd_name, true, false, false) };
+            BT::audio::play_sound_3d(snd_key, pos, BT::audio::volume_to_db(volume));
+            BT::audio::unmark_snd_required(snd_key);
+
+            TXP::debug::emplace_debug_line_based_capsule(pos, pos, 1, vec4{ 1, 0, 0.2, 1 }, 0.5f);
+        });
 
     ui_state.canvas("target_lockon_reticle.btui");
     ui_state.canvas("debug_player_camera_guide.btui");
@@ -208,6 +216,7 @@ int32_t main()
         {
             auto snd_key{ BT::audio::mark_snd_required("test_sfx_0.ogg", false, false, false) };
             BT::audio::play_sound(snd_key, BT::audio::volume_to_db(0.25f));
+            BT::audio::unmark_snd_required(snd_key);
         }
 
         // Simulation loop.

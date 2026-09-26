@@ -45,14 +45,17 @@ public:
     /// Unload sound.
     void unload_snd(snd_key_t key);
 
+    /// Gets whether a sound is loaded.
+    bool is_snd_loaded(snd_key_t key) const;
+
     /// Gets whether a sound is 3D or not.
-    bool is_snd_3d(snd_key_t key);
+    bool is_snd_3d(snd_key_t key) const;
 
     /// Reserves a channel and starts playing a sound but paused.
     channel_key_t play_snd_paused(snd_key_t key);
 
     /// Sets a channel's 3D properties.
-    void set_channel_3d_props(channel_key_t key, vec3s const& pos, vec3s const& velo);
+    void set_channel_3d_props(channel_key_t key, vec3 const pos, vec3 const velo);
 
     /// Sets a channel's volume.
     void set_channel_volume(channel_key_t key, float_t db);

@@ -28,7 +28,7 @@ void unmark_snd_required(snd_key_t key);
 channel_key_t play_sound(snd_key_t key, float_t db = 0);
 
 /// Plays a sound in 3D space. Must be marked as required first.
-channel_key_t play_sound_3d(snd_key_t key, vec3s const& pos, float_t db = 0);
+channel_key_t play_sound_3d(snd_key_t key, vec3 const pos, float_t db = 0);
 
 /// Sets the position of the 3D listener.
 void set_3d_listener_trans(vec3s const& pos, vec3s const& forward);

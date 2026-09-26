@@ -1,6 +1,7 @@
 #include "audio_engine.h"
 
 #include "audio_impl_fmod.h"
+#include "btdatecheck.h"
 #include "btlogger.h"
 #include "util.h"
 
@@ -67,7 +68,7 @@ public:
         auto& snd_meta{ m_snd_metadatas.at(key) };
         snd_meta.refcount++;
 
-        if (snd_meta.refcount == 1)
+        if (snd_meta.refcount == 1 && !m_pimpl->is_snd_loaded(key))
         {   // Load sound.
             m_pimpl->load_snd(key,
                               snd_meta.snd_name,
@@ -85,7 +86,8 @@ public:
 
         if (snd_meta.refcount == 0)
         {   // Unload sound.
-            m_pimpl->unload_snd(key);
+            // m_pimpl->unload_snd(key);  @INCOMPLETE
+            BT::date_deadline(2026, 9, 30);
         }
         else if (snd_meta.refcount < 0)
         {
@@ -95,13 +97,13 @@ public:
     }
 
     /// Plays sound in 3D (sound does not have to be registered as a 3D sound).
-    channel_key_t play_sound_3d(snd_key_t snd_key, vec3s const& pos, float_t db)
+    channel_key_t play_sound_3d(snd_key_t snd_key, vec3 const pos, float_t db)
     {
         auto chan_key{ m_pimpl->play_snd_paused(snd_key) };
 
         if (m_pimpl->is_snd_3d(snd_key))
         {   // Setup 3D properties.
-            m_pimpl->set_channel_3d_props(chan_key, pos, vec3s{ 0, 0, 0 });
+            m_pimpl->set_channel_3d_props(chan_key, pos, vec3{ 0, 0, 0 });
         }
         m_pimpl->set_channel_volume(chan_key, db);
         m_pimpl->set_channel_paused(chan_key, false);
@@ -171,15 +173,17 @@ void BT::audio::unmark_snd_required(snd_key_t key)
 
 channel_key_t BT::audio::play_sound(snd_key_t key, float_t db)
 {
-    return play_sound_3d(key, vec3s{ 0, 0, 0 }, db);
+    return play_sound_3d(key, vec3{ 0, 0, 0 }, db);
 }
 
-channel_key_t BT::audio::play_sound_3d(snd_key_t key, vec3s const& pos, float_t db)
+channel_key_t BT::audio::play_sound_3d(snd_key_t key, vec3 const pos, float_t db)
 {
     return Audio_engine::instance().play_sound_3d(key, pos, db);
 }
 
 void BT::audio::set_3d_listener_trans(vec3s const& pos, vec3s const& forward)
 {
+    date_deadline(2026, 9, 30);  // change the params to non-struct vec3
+
     Audio_engine::instance().set_3d_listener_trans(pos, forward);
 }

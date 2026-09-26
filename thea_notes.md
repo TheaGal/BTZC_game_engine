@@ -342,12 +342,16 @@
             - i was gonna use the arg for something, but idk how it'll be.
             - maybe the resulting state-set transition should be "ACTION_MAP_attacks" and "ACTION_MAP_movements" as a pre-determined value that can be used as a state set name, and arg will be used as the idx of that map.
 
-- [ ] add play sfx afa func
+- [x] add play sfx afa func
 
 - [x] get parry anims to do stuff.
     - have there be the knockback inherited from `attack_send_root_motion_multi` (both same value for hurt and parry and block (this helps to line up the attack combo))
         - this is same for KUSR
 
+- [ ] add sfx to the attacks and stuff
+
+- [ ] INCOMPLETE: adds positional audio
+- [ ] INCOMPLETE: unloads audio once no channels are using a sound inside `update()`
 
 - [ ] SOMEDAY: move actual movement to after afa regions are processed to remove one-tick lag from certain things (like jump_up reeve, or just reeves in general i think)
     - well, it looks like it's not just reeves, it's just random stuff. ig the is_grounded event put in the event queue, but that's not quite this issue being pointed out.
