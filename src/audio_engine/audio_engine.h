@@ -17,6 +17,9 @@ void initialize();
 /// Ticks audio engine's update thread. Needed once per simulation tick.
 void update();
 
+/// Sets global volume.
+void set_master_db(float_t db);
+
 /// Marks a sound as required. If the first one to mark a sound as required, audio engine will load
 /// this sound into its memory.
 snd_key_t mark_snd_required(std::string const& snd_name, bool is_3d, bool is_looping, bool stream);
@@ -31,7 +34,7 @@ channel_key_t play_sound(snd_key_t key, float_t db = 0);
 channel_key_t play_sound_3d(snd_key_t key, vec3 const pos, float_t db = 0);
 
 /// Sets the position of the 3D listener.
-void set_3d_listener_trans(vec3s const& pos, vec3s const& forward);
+void set_3d_listener_trans(vec3 const pos, vec3 const forward);
 
 }  // namespace audio
 }  // namespace BT

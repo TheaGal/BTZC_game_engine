@@ -32,8 +32,11 @@ public:
     /// Update audio engine thread.
     void update();
 
+    /// Set global volume.
+    void set_master_db(float_t db);
+
     /// Sets audio listener's 3D transform.
-    void set_3d_listener_trans(vec3s const& pos, vec3s const& forward);
+    void set_3d_listener_trans(vec3 const pos, vec3 const forward);
 
     /// Load sound.
     void load_snd(snd_key_t key,

@@ -1,4 +1,5 @@
 #include "audio_engine/audio_engine.h"
+#include "audio_engine/util.h"
 #include "btdatecheck.h"
 #include "btuuid.h"
 #include "btzc_game_engine.h"
@@ -33,7 +34,9 @@
 #include "timer/watchdog_timer.h"
 #include "txp_renderer_public.h"
 
+#include <chrono>
 #include <cstdint>
+#include <thread>
 
 
 
@@ -256,7 +259,20 @@ int32_t main()
             BT::system::hitcapsule_attack_processing(k_sim_delta_time);
 
             // Audio tick.
-            BT::audio::update();
+            {
+                // @TODO: make this thread safe.
+                BT::date_deadline(2026, 11, 15);
+
+                vec3 cam_position;
+                vec3 cam_forward;
+                auto const& main_camera{ main_renderer.get_main_camera() };
+                main_camera.get_position(cam_position);
+                main_camera.get_view_direction(cam_forward);
+
+                BT::audio::set_3d_listener_trans(cam_position, cam_forward);
+
+                BT::audio::update();
+            }
 
             // Performance measure.
             main_renderer.report_performance_time(TXP::PERF_TIME_TYPE_SIMULATION_LOOP,
@@ -336,6 +352,16 @@ int32_t main()
 
         // Tick scene loader.
         main_scene_loader.process_scene_loading_requests();
+    }
+
+    // Try to fix audio popping when quitting app by fading out.
+    // Works very mediocre. Possibly try @TODO stopping audio on all channels?
+    BT::date_deadline(2026, 10, 1);
+    for (float_t fadeaway_vol = 1; fadeaway_vol >= 0; fadeaway_vol -= 0.05f)
+    {
+        BT::audio::set_master_db(BT::audio::volume_to_db(glm_max(0, fadeaway_vol)));
+        BT::audio::update();
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 
     // Write final state of settings file.

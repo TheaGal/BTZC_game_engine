@@ -351,7 +351,12 @@
 - [x] add sfx to the attacks and stuff
     - yeah... umm, this really needs to get more readable and not stupid immediate.
 
-- [ ] INCOMPLETE: adds positional audio
+- [x] shut down audioengine without popping
+    - ok ig popping isn't dangerous but it doesn't sound pleasant.
+    - it's _better_ but not good. im setting a deadline so i dont forget.
+- [x] INCOMPLETE: adds positional audio
+    - needed right hand coordinates for audio engine huh.
+- [ ] INCOMPLETE: position audio at correct position of entity and at correct bone too.
 - [ ] INCOMPLETE: unloads audio once no channels are using a sound inside `update()`
 
 - [ ] SOMEDAY: move actual movement to after afa regions are processed to remove one-tick lag from certain things (like jump_up reeve, or just reeves in general i think)

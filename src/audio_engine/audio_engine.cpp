@@ -29,6 +29,12 @@ public:
     {
         m_pimpl->update();
     }
+    
+    /// Sets global volume.
+    void set_master_db(float_t db)
+    {
+        m_pimpl->set_master_db(db);
+    }
 
     /// Gets or registers new sound.
     snd_key_t get_or_emplace_sound(std::string const& snd_name,
@@ -114,7 +120,7 @@ public:
     }
 
     /// Sets 3D listener transform.
-    void set_3d_listener_trans(vec3s const& pos, vec3s const& forward)
+    void set_3d_listener_trans(vec3 const pos, vec3 const forward)
     {
         m_pimpl->set_3d_listener_trans(pos, forward);
     }
@@ -156,6 +162,11 @@ void BT::audio::update()
     Audio_engine::instance().update();
 }
 
+void BT::audio::set_master_db(float_t db)
+{
+    Audio_engine::instance().set_master_db(db);
+}
+
 snd_key_t BT::audio::mark_snd_required(std::string const& snd_name, bool is_3d, bool is_looping, bool stream)
 {
     auto& eng{ Audio_engine::instance() };
@@ -181,9 +192,7 @@ channel_key_t BT::audio::play_sound_3d(snd_key_t key, vec3 const pos, float_t db
     return Audio_engine::instance().play_sound_3d(key, pos, db);
 }
 
-void BT::audio::set_3d_listener_trans(vec3s const& pos, vec3s const& forward)
+void BT::audio::set_3d_listener_trans(vec3 const pos, vec3 const forward)
 {
-    date_deadline(2026, 9, 30);  // change the params to non-struct vec3
-
     Audio_engine::instance().set_3d_listener_trans(pos, forward);
 }

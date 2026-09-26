@@ -31,7 +31,7 @@ BT::audio::impl::Audio_impl_FMOD::Audio_impl_FMOD()
 {
     ERRCHECK(FMOD::System_Create(&m_system));
 
-    auto init_mode{ FMOD_INIT_NORMAL };
+    auto init_mode{ FMOD_INIT_NORMAL | FMOD_INIT_3D_RIGHTHANDED };
     if constexpr (false)
     {   // Enable profiling.
         init_mode |= FMOD_INIT_PROFILE_ENABLE;
@@ -66,18 +66,36 @@ void BT::audio::impl::Audio_impl_FMOD::update()
     ERRCHECK(m_system->update());
 }
 
-void BT::audio::impl::Audio_impl_FMOD::set_3d_listener_trans(vec3s const& pos, vec3s const& forward)
+void BT::audio::impl::Audio_impl_FMOD::set_master_db(float_t db)
 {
-    FMOD_VECTOR fmod_pos{ pos.x, pos.y, pos.z };
+    FMOD::ChannelGroup* master_channel_grp{ nullptr };
+    ERRCHECK(m_system->getMasterChannelGroup(&master_channel_grp));
+
+    master_channel_grp->setVolume(db_to_volume(db));
+}
+
+void BT::audio::impl::Audio_impl_FMOD::set_3d_listener_trans(vec3 const pos, vec3 const forward)
+{
+    // Calc perpendicular up for `forward`.
+    constexpr vec3 k_world_up{ 0, 1, 0 };
+
+    vec3 right;
+    glm_vec3_cross(const_cast<float_t*>(forward), const_cast<float_t*>(k_world_up), right);
+
+    vec3 perpendicular_up;
+    glm_vec3_crossn(right, const_cast<float_t*>(forward), perpendicular_up);
+
+    // Send to FMOD.
+    FMOD_VECTOR fmod_pos{ pos[0], pos[1], pos[2] };
     static FMOD_VECTOR const k_fmod_velo{ 0, 0, 0 };
-    FMOD_VECTOR fmod_forward{ forward.x, forward.y, forward.z };
-    static FMOD_VECTOR const k_fmod_up{ 0, 1, 0 };
+    FMOD_VECTOR fmod_forward{ forward[0], forward[1], forward[2] };
+    FMOD_VECTOR const fmod_up{ perpendicular_up[0], perpendicular_up[1], perpendicular_up[2] };
 
     ERRCHECK(m_system->set3DListenerAttributes(0,
                                                &fmod_pos,
                                                &k_fmod_velo,
                                                &fmod_forward,
-                                               &k_fmod_up));
+                                               &fmod_up));
 }
 
 void BT::audio::impl::Audio_impl_FMOD::load_snd(snd_key_t key,
