@@ -838,22 +838,588 @@ while (running_game_loop)
 ## Have CPU character attack, and have there be guard, parry, hurt -type interaction.
 
 - [ ] Connect attack results to new animator.
-    - [ ] Report the attack results to the animator (somehow).
+    - [x] Report the attack results to the animator (somehow).
+        - I just piggybacked off the `Character_mvt_animated_state` struct created in the last task!
+    - [x] Fix not getting the right reference for the `Character_mvt_animated_state`
+        - Ok so now I can say that I tested this. It works as far as it should.
 
-    - [ ] Create knockback.
-        - [ ] Hurt.
-        - [ ] Parry.
-        - [ ] Guard.
+- [ ] Create knockback anims in blender.
+    - [x] Hurt.
+        - [x] Hurt_receive
+        - [x] Hurt_receive_strong
+    - [ ] Parry.
+        - [x] Parry_left (when attack comes from left)
+        - [x] Parry_right (when attack comes from right/up/down)
+        - [ ] Parry_strong (drag sword in ground)
+    - [ ] Guard.
+        - [x] Guard
+        - [ ] Guard_strong (reel/stumble back but stay on two feet)
+- [ ] Create other anims in blender.
+    - [x] Ready parry
+        - [x] From idle/walk/attack
+        - [x] From running
+    - [ ] Hold guard (slightly more relaxed than the parry anim)
+        - [x] Idle
+        - [ ] Slow walk
+            - [x] Try a root motion speed.
+            - [x] Figure out root motion speed.
+                - I think the 3 m/s is a good speed.
+            - [ ] Create slow walk anim.
+                - [x] Make a hilarious very wiggly walk anim.
+                - [ ] Make a better one later.
+- [x] Add knockback anims into the .btanitor and .btafa
+    - [x] Hurt_receive
 
+- [x] Add a bunch of animations to .btanitor and .btafa for guarding and readying parry.
+    - [x] Fix turn speed issues with guard-walk.
+
+- [x] Make deceleration on "ready_parry_from_running" not as fast.
+- [x] Make transition from "ready_parry(_from_running)" to "guard_idle" quicker (the lowering the sword part).
+
+- [x] CHECK: If anim doesn't exist when creating the btanitor, crash the program.
+- [x] CHECK: If .btafa anim state doesn't exist in .btanitor, crash the program.
+
+> Mmmm so I do think that there's just no good way to move 
+
+- [x] When receiving hurt, have char face offender.
+    - Hopefully this will get the problem solved with defender going a diverging direction.
+    - Maybe there needs to be an anim for getting hurt from behind?
+        - Yeah, bc guard blocking doesn't work from behind so just this is needed.
+        - And then if got hurt from behind, in this case too turn defender to face 180deg away from offender.
+    - [x] Initial.
+    - [x] Create getting hurt forward anim.
+        - Bc getting hurt back anim goes the wrong direction when played (w/ root motion).
+
+- [x] Add shape-in-shape for character virtual controllers (all the ones currently) so that they collide with each other and can't just walk thru each other.
+    - This helps a lot with reaction stuff bc now chars don't go thru each other.
+
+- [x] Adjust camera to make similar to KUSR.
+- [x] Add lock on for camera.
+    - It doesn't look quite as good as I was hoping, but it's a good start. It works.
+        - Vertical stuff kinda sucks.
+        - Also, the player can still attack in different directions from the camera direction, which I want to prevent!!! (But more work is required for this to happen).
+    - [x] BANDAID: Makes a simple component that can be locked onto w a y_offset value too.
+    - [x] BANDAID: Rotate down the camera a bit (marked w/ `@HARDCODE`)
+
+- [x] Change knockback anims to use -1.0 knockback distance, but have offender's AFA data send what length of knockback to defender.
+    - So it's kinda interesting. I played some sekiro and some kannagi usagi to see how the knockback stuff works there and it seems like it just doesn't happen when making contact with an enemy?
+        - Or maybe it's when the player is in range of an enemy? Idk really.
+        - At the very least, I think having a basic shape-in-shape thing going on with the character controllers is needed. (adding task above)
+    - [x] Get the `afa_data.send_root_motion_multiplier` -> `afa_data.root_motion_multi` -> `component_root_motion.root_motion_multiplier` cycle in there.
+    - [x] When hurt anims finish moving, reset the `root motion multiplier`.
+        - This needs to be done in the AFA timeline.
+        - I could do this by just not pressing play button.
+    - [x] Fix the AFA editor view not showing the root motion (i.e. the anim stays put in the editor and this is not wanted)
+        - Ok so it's a sometimes it's working and sometimes it's not????
+        - It looks like it works if you never hit play mode for some reason???
+            - As soon as you hit play mode once, then it stops working.
+        - ROOT CAUSE: Turns out it was editing a reference of a joint anim frame. After realizing that (alarm bells should've been ringing when I was doing a `const_cast` on a freaking reference!!)
+    - [x] Actually make the length of the knockback and stuff to 1.0
+
+- [x] Make attack only possible forwards when camera is locked on
+    - [x] Create strafing anims.
+        - [x] Just do the root bones for trying speed w/ root motion.
+        - [ ] ~~Make east/west ones be same speed as north one.~~
+            - I decided against this after getting the magnitude preservation in root motion stuff.
+        - [x] Create actual anims (for running)
+            - [x] East
+            - [x] West
+            - [x] South
+        - [x] Create actual anims (for guard-walking)
+            - [x] East
+            - [x] West
+            - [x] South
+    - [x] Blend between strafing anims with a blend tree.
+        - Have back moving one be slower since walking backwards.
+        - I think just the 4 directions is fine? Maybe there just needs to be a thing in the animator that uses two AFA data as the horiz and vert mvt input, and then it will combine the animations?
+        - [x] Create the animator template for blendtrees.
+        - [x] Import it correctly.
+        - [x] Assign values to `mvt_facing_angle`.
+        - [x] Blends animation correctly with the animator.
+    - [x] Face player forward all the time, even when moving (except for sprint moving if this is a thing).
+        - FOR NOW: Just make sprinting not a thing.
+        - [x] Faces visually
+        - [x] Override the facing direction and its input for the desired facing direction as well.
+            - Now that this is implemented this should be the foundation for the blendtree stuff.
+        - [x] Write the facing angle value to animator data.
+    - [x] Test that the anim blending is working correctly (after creating actual anims)
+        - Diagonals kinda have the same issue as the root motion where the magnitude is not preserved, but this isn't something I'm gonna worry about for now.
+    - [x] IMPROVE: Keep magnitude of root motion vector, instead of linearly interpolating.
+    - [x] Delete dead code (`#define DELETE_ME`)
+    - [x] BUGFIX: Still face forward even if doing attack over and over (currently doesn't reset to facing the target).
+    - [x] Smol perf timer for simulation and rendering just to see what was going on.
+    - [x] Add strafing anims to guard-walking.
+
+- [ ] CPU behavior. (I don't wanna say AI anymore)
+    - These are the CPU states I imagine:
+        - UNAWARE (watching, patrolling, etc.)
+            - If attacked or gains awareness of its enemy (by sight or sound or aura or something?), then will enter AWARE mode.
+            - If sees/hears/feels a sense of suspicion, then will enter SUSPICIOUS mode.
+            - It does seem like having some kind of SUSPICIOUS state is necessary tho, bc then the CPU doesn't just go super-chill after it loses sight of its enemy.
+        - SUSPICIOUS (searching for its enemy, only aware of the position of suspicion)
+            - CPU will typically investigate the position of suspicion.
+            - If the CPU happens upon its enemy (gains awareness), then will enter AWARE mode.
+            - If no gaining of awareness (no line-of-sight, etc.) after X time, then will return back to UNAWARE.
+        - AWARE (has definite sight of its enemy, "attack mode")
+            - ~~Keeps track of last known position of its enemy. If has line-of-sight of its enemy, then will update its last known position of its enemy.~~
+                - I think if it just "knows" where its enemy's position is at all times that's good enough and will make it easier and not have to worry about losing line-of-sight for programming the CPU.
+            - If CPU loses line-of-sight for X time, then will switch back to SUSPICIOUS.
+            - Will move to be in range of melee, or if a ranged CPU, will fire ranged weapon unless its enemy is in range of melee.
+
+    - [ ] Create CPU behavior component.
+        - [x] The struct for its enemy awareness.
+        - [x] Query the position/location of the head from the char model for eyesight.
+            - This way looking around can be accomplished by an actual looking around animation and doesn't have to be programmed.
+            - Perhaps could be similar to the hitcapsule-to-bone system?
+        - [ ] ~~Checkbox of "player character is an enemy".~~
+            - There needs to be a midpoint for the player character that the origin is, since the player origin is at the feet at the moment oof.
+            - Crossed out. Using a mask now.
+        - [ ] Current state text.
+        - [ ] Param of viewable fov and radius for line-of-sight awareness.
+        - [ ] Param of hearable radius for hearing points of suspicion.
+        - [ ] Param of viewable fov and radius for seeing points of suspicion.
+
+        - [x] Draw lines showing eyesight and CPU suspicion/awareness detection zone.
+            - You can create new color codes and stuff for this too.
+            - [x] Double check that using the "Eyes" bone for tracking eyesight is working correctly.
+            - [x] Detection zones.
+            - [x] Lines drawn from CPU to possible enemies.
+                - If too far, draw the extra distance as red, and the requisite distance as yellow.
+                - If close enough, draw the whole line as green (or whatever color wanted?)
+            - [x] Fix detection zones. Now they detect the enemy in them.
+            - [x] Utilize the `my_enemy_bitmask`.
+            - [x] Write awareness value into `CPU_enemy_awareness` component.
+
+        - [ ] Movement behavior that reads from the detection runtime data (different system than `cpu_character_enemy_detection.cpp`).
+            - [x] UNAWARE.
+                - Preprogrammed thingy. Just stand there for this POC.
+            - [ ] SUSPICIOUS.
+                - Preprogrammed thingy. Have a speed for going to the suspicious point of interest, and play an animation.
+                - [x] Special approaching/walking animation.
+                    - Have anim looking left and right while traveling to the point of interest.
+                    - [x] Initial just the normal running anim.
+                    - [ ] Create walk animation in blender.
+                        - [x] Ichiou
+                    - [x] Try just triggering into this instead of immediately running.
+                    - [x] Don't run on the change-state frame. (since the trigger + move is executing on the same frame but need it to lag behind one frame so that new BTAFA properties get read in.)
+                        - This is so that the char doesn't immediately turn towards the suspicion point, but rather faces where they are currently for the first part.
+                    - [x] Fix an issue w `st_awareness_suspicion_walking` turning into `idle` in the single frame when there's technically no moving, since the last frame of `st_awareness_suspicion_begin` has `can_move` set to `false`.
+                        - [x] Tried a workaround by setting `can_move` to `true` in the final frames.
+                            - IMO, it's a bit too complicated and corner-casey, so I think it would just be better if I made it allowed to have multiple cases for evaluation in the `"condition"` script part.
+                                - ~~Well, honestly, I could probably just work around this by having a `is_suspicious_and_moving` flag, where the end of it is it off.~~
+                                - The ^^ above ^^ would be a no. It's just not a good setting at all. It would be too confusing that way.
+                                    - But also, the double condition wouldn't work either...
+                                    - So cross out the logical AND task below.
+                        - [x] Put trigger for when the walk-over/search is done and the final look-around should be done `on_suspicious_walk_end` (or smth).
+                            - [x] ACTUALLY MAKE IT A BOOL. Since triggers have the possibility of getting eaten.
+                        - [x] Put event at end of animation to let behavior know to go from SUSPICIOUS to UNAWARE detection state.
+                        - [x] Read the return-to-UNAWARE event and go back to UNAWARE.
+                    - [ ] ~~Make a state transition that will be something like `on_running and is_suspicious eq true` w/ the regular running anim being `is_suspicious eq false`.~~
+                        - [ ] ~~Logical AND in state transition logic.~~
+                        - @NOTE: This wouldn't work, bc of the `is_moving` bug. Stopping for the final look-around at the end of the walk/search should be done by a trigger.
+                            - And then use an event from the AFA to call back to when the "suspicion" should return to "unaware".
+                - [x] "realize suspicion" animation, where there's a 0.5s window where the CPU goes from relaxed/unaware to alert, weapon-readied, and then starts turning around to look.
+                - [x] When arriving and there's no enemy, look around and make sure that the enemy isn't out of view (but since there's no leads for another place the enemy could be at, then don't look in another place).
+                    - Probably there needs to be a way for the CPU to realize another place to look is what to do.
+                        - FOR NOW: Do not implement this. No new leads when in SUSPICIOUS state.
+                    - [x] Make animation.
+                - [x] Fix not returning to UNAWARE animation.
+                - [x] Fix not going to some AWARE animation.
+                    - Since one doesn't exist, just use the attack animation.
+            - [ ] AWARE.
+                - [x] Ichiou: Have attack anim repeating and just go after CPU's enemy.
+                    - [x] Fix missing hitcapsules and missing guard/parry frames.
+                    - [x] It seems like there's frames where the hurtcapsules aren't hitting properly?
+                        - It just seems like the sending knockback needs to be halved and then that'll fix it?
+                        - Lengthening the time for the hurtboxes to be active could also help too.
+                            - Bc they just don't seem to be hitting at all???
+                            - Honestly this doesn't seem to be the move. Closing in on the char's enemy seems to be the move.
+                                - It just seems like there needs to be a more closeness.
+                        - @NOTE: After studying sekiro's animations, the char will often close in on its enemy right before or slightly during the first little bit of its attack. This ensures that it's right in the face of its enemy.
+                        - [x] Have char not hit enemy so far in knockback.
+                        - [x] Have char close in on enemy when starting attack.
+                            - I think ^^ this ^^ will help out the most since it seems like the char only closes in enough by the end of the attack, not the beginning or middle.
+                            - THOUGHT: After doing this this definitely helped out a lot w feel, tho it feels like not doing the knockback as much would also help out a lot too.
+                        - CONCLUSION: So it seems that it's a lot better for the attacks and they connect consistently now. I think that it's a lot better now, but something doesn't feel right? It's like the responsiveness of the animator ig??? Idk.
+                            - [x] Just check real quick that there's a good order for the input->write_animator_vals->update_animator
+                                - So it's update_animator->input->write_animator_vals.
+                                - It's BECAUSE it needs the AFA values that come from the `update_animator` for the input stuff.
+                                - AAAAAGGGHHHH I hate how circular this is. I have to compromise which one is going to come first.
+                                    - Well, having the AFA values available seems like very necessary, so this seems like a good order.
+                                    - (But then what can I do to make things feel more fluid???)
+                    - [x] The feel of the parrying and stuff doesn't feel right (from player end). Why is that?
+                        - Probably because there needs to be a way to cancel out of the ready-parry animation so it's a bit more responsive.
+                            - So then redoing a ready-parry is faster and doesn't feel like ER nightreign's sluggishness with the executor.
+                        - Made the parry animation as short as KUSR. That helped the feel out a looot.
+
+                - [x] Make change to state machine transition conditions to allow `and` keyword.
+                    - Now going from a hurt to a ready-parry is possible! It feels kinda different tho ngl for some reason.
+
+                - [x] Buffer overlaps of hurtboxes/hitboxes so that they lag by 1 or 2 update ticks (to compensate for the animator-input circular relationship).
+                    - Just PROMISE me that the simulation tick isn't gonna run any faster than the allocated 16.667ms. (Bc then that would mess up real world timing)
+                    - OH YES this needs to be included. It just doesn't feel like it's spot on (bc it's too early).
+                    - [ ] ~~Also buffer the other direction too. Extend "parry" and "guard" frames 1-2 frames beyond what the AFA dictates.~~
+                        - Just to make sure that things feel like it responds to player input.
+                        - INSTEAD: FOR NOW: Just extend the AFA by 2 frames. This should compensate enough properly.
+                            - [x] Do.
+                                - If anybody complains about the timing, make it more lax here too.
+
+                    - I tried doing this inside the animator, but (on top of it not working for some reason), there's an issue with writing the root motion from the hits.
+                        - This needs to be done inside the actual hitcapsule interactor.
+                        - [x] Do.
+                            - Ok this definitely helps a lot with the feel and timing. 2 ticks doesn't feel too forgiving but yeah.
+
+                - [x] Change inside shape for char con to be 45deg rotated box inscribing the char con box.
+                    - I think having capsules would be ideal, but for combat _and_ platforming, having an inscribed box would be better.
+                    - 感想：It just felt way too boxy, not smooth at all. Having a 45deg region was kinda nice tho.
+
+                - [x] Change to capsule shape.
+                    - This seems a lot better, but I need to figure out a better situation for the platforming.
+                    - Like for example, falling needs to get better, where if the angle is 45deg or more it just falls off immediately instead of slowly sliding sliding sliding and then fall off.
+                    - Also, for something like having ledges you don't want to fall off of, have a walking machine algorithm.
+
+                - [x] Enter awareness animation (something like drawing out a sword, or an aggression show).
+
+                - [x] Attack cancels.
+                    - If CPU's enemy deflect/parries a certain attack, the sequence is stopped. Usually the last attack of the sequence, but could also be stopped by mikiri in the middle (think kensei isshin).
+                    - The attack cancel should contain enough time for other enemy to do a counter attack.
+                    - [x] Deflect cancel animation.
+                        - Does this have to be the same animation for every attack chain??
+                        - [x] Create anim in blender.
+                        > @NOTE: The point of this is to give player char extra time to do a counter attack.
+
+                    - vv FUTURE vv
+                    - [ ] ~~Mikiri cancel animation.~~
+                    - [ ] ~~Stomp cancel animation.~~
+
+                - [ ] ~~If attack canceled, then don't have defender knockback.~~
+                    - Actually, this shouldn't be the case I think.
+                
+                - [x] When hit by its enemy, CPU is made aware of that enemy.
+                    - Maybe just turn CPU towards its enemy all the time.
+
+                - [ ] Detect these events from CPU's enemy. (Do inside `cpu_character_enemy_detection.cpp` since it's something all CPUs should have detection of (ig even "shy" NPCs could use this information!))
+                    - [ ] ~~Enemy attack -> 1st CPU guard, then 2nd CPU deflect, then counter attack.~~
+                        - [x] Create new hitcapsule type that signals aggro to another entity.
+                        - [ ] ~~Process the aggro signal overlap into `cpu_enemy_awareness.h` somehow.~~
+                            - [ ] ~~Something like `double_t last_aggro_signal_time;` and then use the timer to queue up a ready-parry anim?~~
+                    - [ ] ~~Enemy heal/consumable -> CPU pinch attack.~~
+                        - [ ] 
+                    - [ ] ~~Enemy run away -> CPU reapproach attack (can just be pinch attack, or a grab attack, or many ones to pick from).~~
+                    - [ ] ~~Enemy close in -> CPU attack.~~
+                    - [ ] ~~Enemy do nothing -> CPU 様子見, or CPU attack, or CPU guard.~~
+                    - @NOTE: See `Hawsoo_devnotes_enemy_aggression_reading.md` for more info.
+                    
+                    - [ ] Remove new hitcapsule type and change to an event to broadcast signal that a char is going to attack in 2 frames and they are at `origin` and have `facing_direction` (float/flat/2d) and have `sword_range` distance.
+                        - Enemies to that char can determine whether they are in the hitting direction and range, and if they are facing in the direction close to opposite of `facing_direction`, they will put up a ready-parry to oppose the attack. If not, there's nothing they can do.
+                        - [x] Removed new hitcapsule type and also the capsule interaction system too.
+                        - [x] Convert the "enable hitcapsule group 2" to an event.
+                        - [x] Plug in the event into the `cpu_character_enemy_detection.cpp` system, and create a message to get broadcasted to all other `cpu_enemy_awareness.h` components.
+                            - See `BT_TRACE("Emplaced attack msg broadcast.");`
+                        - [x] ~~Create another system that runs after CPU char enemy detection system.~~ Use `cpu_character_world_sppace_input` to process the broadcasted msgs and try to guard.
+                            - Have this one process the broadcasts if any (so that there's no tick lag for this broadcasted message).
+
+                    - [ ] If enemy uses heal/consumable, add attack to attack queue to be executed immediately.
+                        - [ ] For now..
+                            - [x] Create runtime data event for using consumable.
+                            - [x] Broadcast that event in the same way attack is broadcasted.
+                            - [x] If enemy, use the broadcasted event to add an attack.
+                        - [ ] Once jumptable feature is added..
+                            - [ ] @TODO
+
+                    - [ ] If any type of hurt (including parry/guard) occurs, add a random attack to the attack queue.
+                        - [x] 一応 (i.e. just put 0 as the attack index)
+
+## (detour) Redo combat AFA and animator to use jumptable system instead of conditional transitions.
+
+- [x] No more conditional transitions.
+- [x] Change AFA to use a string function in its region instead of the row dictating the region.
+    - [x] Cut out everything and redo the data structures.
+    - [x] Fix the compilation errors.
+        - [x] `update()` fn.
+        - [x] `imgui_renderer.cpp`
+            - [x] Very shotty pullout (to get ready for editing the actual tool).
+            - [x] Edit the actual tool to use the correct interface.
+                - [x] Figure out issue with popup not showing up. (ig this is the second time aaaa)
+                    > @NOTE: The RMB click and the `open_popup()` are getting triggered at the breakpoint.
+    > @NOTE: in the future, i may need to ensure that it won't crash if there's the wrong datatype in an argv when a cmd changes in the popup.
+
+- [x] Add ability to drag vertically regions (only on whole-drag mode).
+
+- [x] Do cleanup when saving AFA.
+    - [x] Sort regions by (1) row_idx, (2) start_frame, then (3) end_frame.
+    - [x] Ensure that the cmd names and number of argv's are correct.
+
+- [x] Some testing.
+    - [x] TEMP: remove old animator var setting (causing asserts ofc).
+    - [x] BUGFIX: fix jumping to frame 1 on first tick.
+        - Will have to ensure render version of timer is also not ahead.
+    > Got to `execute_command_code()` assert!!!
+
+- [ ] Implement `execute_command_code()`
+    - [x] Implements the actual function, but it fetches the documentation which contains the real funcs.
+    - [x] THINKING OF THE DESIGN
+        - So basically I want there to be a set of moves to transition to 
+            - EX: moving from idle.
+                1. insert into "mvt interrupt queue" << start-running and into "mvt queue" << running
+                    1. If start-running goes to the end then it will pick up something from "mvt queue" (running).
+                2. during either start-running or running, player decides to stop.
+                3. insert into "mvt interrupt queue" << cancel-running.
+                4. if player decides to jump, then the jump action is in "mvt_interrupt_queue" and then the fall action is in the "mvt_queue" to play right after (unless it gets interrupted by something like an attack or parry).
+                    > Ig at this point is where things should probably get separated into their own queues since there should be type filtering.
+                - [x] @TODO: @PROBLEM: I'm thinking there should be a better way to show continuation. Maybe just having a hardcoded "goto this anim next" at the end?
+                    - It could be like "a set of animation states that run in a line" -type setup? (anim state set)
+                        - This would give more control to the driving script of the anim, since this kind of state switching could dictate whether animations are looped or end at the end.
+                        - There needs to still be basic definitions of anim state, however.
+                            - What anim(s) (if blendtree, what var to use for stuff)
+                            - ~~Looping~~ doesn't seem necessary.
+                            - ~~Speed~~ doesn't seem necessary.
+                                - Ig it could be global speed in the animator for this? (e.g. for something like a speedup potion or whatever)
+                    - SOLUTION: Make the animator hold a packet of animation states that run in a line, and put that packet into the jump_state_queue instead of a single anim state.
+
+        - Items inside the queue do not last forever. If an anim state in the queue is expired, it is automatically discarded.
+
+    - [x] ALTERNATE DESIGN
+        - Have the anim states be manually controlled so that the anim state driver system can just immediately switch states.
+        - They would have to know what state the animator is in, and then whether the current anim state's AFA is in an uninterruptable state.
+        - Really useful for something like falling and landing -based events.
+        - These states have to happen immediately, no matter the anim state.
+            - Getting hurt anim.
+                - Blocked by "invincible_frames" var? (default: false)
+            - Falling/midair anim.
+                - Blocked by "should_be_midair" var? (default: false)
+            - Landing in water.
+            - Landing on ground.
+                - Blocked by "should_be_midair" var? (default: false)
+        - These states can only happen when the animation allows it.
+            - Attack anim.
+                - Allowed by "can_attack" var? (default: false)
+            - Jump anim.
+                - Allowed by "can_jump" var? (default: false)
+            - etc. (There are a lot of these cases it really seems)
+        
+    - [x] IS THERE A MIDDLE GROUND BETWEEN THE TWO DESIGNS??? (bc they both solve different problems)
+        > TTD: "THINKING OF THE DESIGN"
+        > ALD: "ALTERNATE DESIGN"
+        > UNQ: unique to the prev 2 designs.
+        - UNQ: have a state transition checking list of "jump_state_queue"'s (each w their own priority lvls) to check on every system tick, with this list having the immediate transitioning states (see ALD) being there by default.
+            - New jump-state-queues are added to this state transition checking list via the "jump_state_queue" control cmd (see TTD). Their priorities are set to be higher than the defaultly entered ones.
+            - Instead of having a bool var for something like "invincible_frames" (see ALD), there will be a func type that's like "ignore_jump_state_queue" for removing the immediate transitioning states from that state transition checking list.
+            - Then, once the state transition checking list is modified for the frame, it gets checked for if there is actually an anim state set (see TTD) inside the queue (check in order of highest-priority first).
+                - TTD: Items in these queues expire after a certain amount of time, but that provides a buffer too.
+                    - The "queues" are 1 item long, but anything that gets inserted, regardless of whether the existing 'anim state set' is expired or not, it will be overwritten. (that makes this just a variable you can set ig).
+    
+    - [x] IMPLEMENTATION of "IS THERE A MIDDLE GROUND.."
+        - [x] Initial gut out.
+        - [x] Write new data structures.
+        - [x] Implement new jump queues when configuring animator ctrl AFA information.
+            - [x] Marked everything w `static_assert()` where it needed implemented.
+            > Does there need to be some kind of default jump queue list?
+                > Is this a crutch or... maybe that's what should be there in the .btafa file?
+                > This is something that gets created at the time that the animator gets created, so it should be together with the animator. There is no reason to have a default jump queue list. Systems like player movement or enemy movement would have to expect the .btafa to have certain jump queues and certain anim states to be able to construct their anim state sets.
+                    > Which, ig is kind of just something that's hardcoded in. But, all of these different movement ecs-systems shouldn't know about the animator's existance, nor have a say in what the animator should do.
+                    > Having duplicate info in the .btafa file is fine, just ASSERT that the expected info is real.
+            - [x] Fix _dev_aniamtion_frame_action_editor.cpp assert.
+            - [x] Fix model_animator.cpp assert.
+            - [x] fix process_render_object_lifetime.cpp assert.
+                - [x] Get the jump queues listed in the AFA file.
+                - [x] Load the jump queue lists.
+                    - Just have the strings and whether by default they should be watched, and use the priority-assignment feature of the func!!!
+                - [x] Put it into this func that's asserted out.
+            - [x] Implement pop_one_state_set() and emplace_jump_queue_state_set()
+            - [x] Test that the expired entries work correctly in pop_one_state_set()
+            - [x] Implement changing state set func.
+                - I think this is done correctly.
+            - [x] Change state set state idx inside update()
+            - [x] Add helper func for accessing proper anim state idx.
+
+            - [x] Fix memory corruption with using state-set pointer.
+
+        - [x] Remove `.speed` and `.loop` from anim state data structure.
+            - Looping is supposed to come from the new state-sets
+            - Speed should be coming from the model animator level.
+
+            > @THOUGHT: there really isn't a way to have an animator speed since the AFA sim profile would need to be ticking a lot quicker than 60hz.
+                > There probaby could be a way to dilate time, but it would be something like running two ticks in one of the animator depending on the speed.
+                    > Honestly, doable. But no reason to implement this.
+
+        - [x] Make looping be based off whether is last state idx in the state-set and if the state-set says last anim should loop.
+            - [x] Whoops bug fix.
+
+        - [x] Rework the `update()` func for model_animator.
+            - [x] When changing state, set time to 0 instead of -1.
+                > Actually, make the settime(0) thing to set the sim timer to `0.5 / sim_frames_per_sec` to ensure no flooring issues.
+            - [x] Make the state transitions happen at the end.
+                - Order:
+                    1. (sim-only) Process current time's AFA stuff.
+                    2. Increment timer.
+                    3. (sim-only) Check for state changes.
+                > @NOTE: Ended up changing the order to 1 3 2 (and 2 runs only if 3 did not change any states).
+                > Why: checking if animator is at the last frame of an anim needs to happen before the timer is incremented, so 3 needs to run before 2.
+
+
+- [x] Use ~~jumptable~~ jump-state-anim-state-queue (higher row has precedence in the check).
+    > @NOTE: If there is a transition from the jumptable, no other conditions or mutations will be checked or adhered to in the sim tick.
+    - [x] Some planning for how it's gonna work.
+    - [x] Change ifc for adding state-sets (and also pre-configured state sets?)
+        - Maybe pretty deep interface?
+        - [x] Remove old interface, and use enums for the new one, while keeping track of prev-cur relationship for the jump queues.
+            - [x] Put in "ichiou" states.
+            - [x] Remove the usage of the old interface (use `@ANIMATOR_REFACTOR` as comment tag)
+            - [x] Fix memory corruption: copy `Animator_state_set` instead of capture pointer.
+            - [x] Create ctrl cmd to set (temporarily) AFA controllable data.
+                - [x] Do it.
+                - [x] Add ctrl cmd for setting `turn_speed` of the runtime data.
+                - [x] BUGFIX: why is turning only being done once every second?
+    - [x] Change `tick_sim_char_mvt_animator.cpp` to use new state-set insertion interface.
+        - [x] Partial (for run, idle, jump, and fall)
+        > So how do we mitigate if a wanted anim-state didn't get set to?
+            > Perhaps having that "Event" -type thing along the bottom would be good? Maybe we could be reporting back the anim state -- or rather how it interprets the state to be.
+                > It will be 1 tick behind. Maybe that's ok? There would have to be some kind of way of tracking animator discrepency.
+        - [ ] ~~DETOUR: add "rep_st" ctrl cmd in animator. (Reports the anim state)~~
+            - [ ] Ctrl cmd.
+            - [ ] Store the content into the model animator.
+            - [ ] Use it to ensure that the prev-state and its state are the same before it emplaces any state-sets into jump queues.
+            > ALTERNATIVE: just not have this. Maybe this just isn't necessary. It seems like it isn't.
+                > I CHOOSE THIS. Do nothing bc it doesn't matter anyway. It's a bad animator config if it bugs out.
+
+        - [ ] DEFER ~~For attacks.~~
+
+
+
+> It really seems messy: the "frontend" that adds jump-queue anims.
+> Perhaps the solution is to simply not have any nested logic for each jump queue and just have individual funcs that only care about the one single jump queue.
+```cpp
+update_grnd_mvt_jump_queue();
+update_midair_jump_queue();
+update_attack_jump_queue();
+update_parry_jump_queue();
+input_mvt_state.clear_triggers();  // Clears things such as `.on_jump`
+```
+> Then inside the jump queues, do work to determine what to have in the jump queue.
+```cpp
+void update_grnd_mvt_jump_queue()
+{
+    if (!input_mvt_state.is_grounded)
+    {
+        jump_queue.clear();
+        return;
+    }
+
+    if (input_mvt_state.is_moving)
+        jump_queue.set("st_running");
+    else
+        jump_queue.set("st_idle");
+}
+```
+> So then there's no tracking of previous anim states and trying to assume what state things are in.
+> It is very flat this way. And it relies on the btafa logic to determine what mvt state to be in.
+> Here's another example of a jump queue:
+```cpp
+void update_midair_jump_queue()
+{
+    if (input_mvt_state.is_grounded)
+    {
+        jump_queue.clear();
+        return;
+    }
+
+    if (input_mvt_state.on_jump)
+    {
+        jump_queue.set(input_mvt_state.is_moving ? "st_moving_jump" : "st_jump");
+    }
+    else
+    {   // Just regular midair.
+        jump_queue.set(input_mvt_state.is_moving ? "st_moving_fall" : "st_fall");
+    }
+}
+```
+> Here, it's influenced by whether the char is moving, however does not know if the animator will use this jump queue, or if the animator is already in some midair anim. It's just unknown.
+> So the jump queue should be only cleared or set, it seems.
+> But for something such as CPU-behavior jump queues, that should be very different. Very queue-like in this one.
+> ...
+> It kind of makes me wonder if this is something that should get saved somewhere else? Or that this system will fall apart when using for CPUs?
+> ...
+> Well, after thinking about this, I should keep it in mind and realize I'll have to do refactoring for this in the future.
+
+
+
+- [ ] Implement the ^^ above ^^ comments about a good way to organize all the code for the player character mvt animation.
+    - [ ] ff
+    - [ ] Add attack inputs for player character.
+
+- [x] Fix imgui for ctrl cmd window so that it properly deletes ctrl regions.
+
+- [ ] Change player char to use jumptable.
+    - [ ] Add movement thing in queue to do a "start-move" and then another for "stop-move".
+
+- [ ] Extra check: Assert that the length of animation clips for a blendtree state are all equal (since they all share the same AFA).
+    > The reason why this is necessary is so that you can do `anim_state.blend_anims.front().animation_idx` in order to access the timing or frames of an animation within a blendtree.
+        > And if all anims in the blendtree don't match up then this method blows up into a hellish super-nightmare.
+    - [ ] Crash program if they are not equal.
+
+
+## (return) Have CPU character attack, and have there be guard, parry, hurt-type interation.
+
+- Stuff that has already been addressed w "Redo combat AFA and animator".
+                    - [ ] ~~Create jumptable for transitioning if there are attacks in the attack queue.~~
+                        - Include parrying in this too.
+                        - 
+                        - This will require adding functionality to the AFA system.
+
+- New stuff to work on after "Redo combat AFA and animator".
+                    - [ ] If enemy rushes in or enters into a closer range, add close range attack into attack queue to be executed immediately.
+                    - [ ] If enemy doesn't do anything back, no attacks are added to attack queue, so it eventually empties.
+                        - [ ] When it empties, CPU can jump back and 様子見, or can just 様子見 right in front of their enemy. Whatever is inside the "move" queue I guess.
+                            - If the move queue is ever empty, the move queue should just get refilled automatically with random things.
+                            - And then occasionally there should be an attack inserted into the attack queue (generating events should happen around when the 様子見 is about over, so that it doesn't feel like it ended ubruptly.)
+                    
+
+
+                - [ ] Make one of each attack type animation.
+                    - [ ] Attack.
+                    - [ ] Counter attack (more aggressive attack).
+                    - [ ] Pinch attack.
+
+        - [ ] Revisit detection: Add line-of-sight detection with raycast. (`@FIXME` tags)
+        - [ ] Revisit detection: Ignore suspicious sight cone during SUSPICIOUS state.
+            - This is bc I want the CPU to cool-down even if player is in the cone for the SUSPICIOUS state. It's only when entering the detection or AWARE buildup is going up (inside AWARE detection cone) do I feel like the cool-down/calm-down timer should reset to 0.
+
+        - [x] BUGFIX: Detection line when drawn has only the suspicion color.
+            - I think that's simply bc even after awareness is checked, suspicion zone is still checked, thus overriding the color from before.
+            - FIX: Changes the line drawing so that only the color and whether the line should get drawn only gets mutated once.
+
+- [ ] Get strong attacks implemented (and have strong versions of knockbacks used)
+    - Perhaps by having some kind of AFA data point being like "is_strong_attack" that could indicate a strong attack being done?
+
+
+### Refactor and tech debt stuff.
+
+- [ ] Move all instances of converting `rvec3` to `vec3` into a helper lib (that will eventually change to doing it the "correct" way).
+    - (see "// @TODO: Conform to `write_render_transforms.cpp`")
+
+- [ ] Remove @NOCHECKIN and @TEMP tags from commit `570de0f27f0606db66525fb5984e20f391625053` (Faces forward even when moving and integrates strafing in.) (December 8, 2025 at 12:56 AM)
+    - It looks like this is going to be quite a lot of refactoring and in general just a lot of work that I'm not ready for.
+
+- [ ] ~~Feature: Time-parametrized state transitions (MAYBE?)~~
+    - Transitions out of state after only a certain time?
+    - Maybe it could just be accomplished with `can_move`->`is_moving` pairs?
+        - This honestly just seems like the most viable way to go about doing this tbh.
 
 - [ ] ~~REFACTOR: Delete the `calc_orig_pt_distance()` method in hitcapsule bc this info is really only needed when doing the actual collision and isn't needed most of the time.~~
     - No. This is used in the spherization of the capsules in the broad phase of the overlap check.
+
+- [ ] DESIGN FIX: Stop having the last frame of root motion be the average of 0th and n-1th frame. Calculate a proper last frame of root motion without interpolation (especially since there are one-off attacks that shouldn't have the beginning of the root motion leaking into the end like that).
 
 - [ ] REFACTOR: Move the AFA data handle from the animator to a component attached to the entity.
     - Bc it seems like everything that needs to use the AFA data handle part of the animator is accessing it from _not_ the renderer, so it should be somewhere else.
 
 - [ ] REFACTOR: Move the animator out into its own component.
     - This just needs to get out, bc reserving a render obj from the renderer and then grabbing the animator from there is just way too much of a hassle.
+
+- [ ] REFACTOR: Allow `Render_object_settings`/`Created_render_object_reference` to have a "mat4 local_transform" property that gets appended to the entity's transform at the end.
+    - This allows for no need to have a child object that solely houses the render object (and then needs to rely on the animator and has hectic stuff happen to it bc of that w/ the entity/component relationship)
+        - I think this change would make querying for things like animators SOOO much easier, and not require things like `affecting_entity_uuid` to appear in components too.
 
 - [ ] BUGFIX: When selecting an object that has a debug mesh render job, when you switch context from level editor to animation frame action data editor, it crashes bc it can't find the mesh job renderable (dangling pointer).
     - Confirmed that it's when it's displaying a deformed mesh (so if play mode is on and it's player model)

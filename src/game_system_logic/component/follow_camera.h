@@ -1,6 +1,8 @@
 #pragma once
 
+#include "btglm.h"
 #include "btjson.h"
+#include "btuuid.h"
 
 
 namespace BT
@@ -13,9 +15,29 @@ namespace component
 struct Follow_camera_follow_ref
 {
     float_t follow_offset_y{ 1.0f };
+    float_t orbit_cam_offset_distance{ 2 };
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
         Follow_camera_follow_ref,
+        follow_offset_y,
+        orbit_cam_offset_distance
+    );
+
+    struct State
+    {
+        UUID locked_on_entity;
+        float_t locked_on_facing_angle;
+    } state;
+};
+
+/// For entity that can be locked on. Must have a `Transform` component attached to the same entity
+/// to be used.
+struct Follow_camera_lockon_target
+{
+    float_t follow_offset_y{ 0.0f };
+
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
+        Follow_camera_lockon_target,
         follow_offset_y
     );
 };

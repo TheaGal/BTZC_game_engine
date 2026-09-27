@@ -1,0 +1,40 @@
+#pragma once
+
+#include "btglm.h"
+#include "util.h"
+
+#include <string>
+
+
+namespace BT
+{
+namespace audio
+{
+
+/// OPTIONAL. Creates audio engine object. Omitting this will lazy-load the audio engine.
+void initialize();
+
+/// Ticks audio engine's update thread. Needed once per simulation tick.
+void update();
+
+/// Sets global volume.
+void set_master_db(float_t db);
+
+/// Marks a sound as required. If the first one to mark a sound as required, audio engine will load
+/// this sound into its memory.
+snd_key_t mark_snd_required(std::string const& snd_name, bool is_3d, bool is_looping, bool stream);
+
+/// Unmarks a sound as required. After this point there's a promise to not use this sound anymore.
+void unmark_snd_required(snd_key_t key);
+
+/// Plays a sound. Must be marked as required first.
+channel_key_t play_sound(snd_key_t key, float_t db = 0);
+
+/// Plays a sound in 3D space. Must be marked as required first.
+channel_key_t play_sound_3d(snd_key_t key, vec3 const pos, float_t db = 0);
+
+/// Sets the position of the 3D listener.
+void set_3d_listener_trans(vec3 const pos, vec3 const forward);
+
+}  // namespace audio
+}  // namespace BT

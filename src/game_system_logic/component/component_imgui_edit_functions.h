@@ -1,7 +1,9 @@
 #pragma once
 
 #include "entt/entity/fwd.hpp"
+
 #include <string>
+#include <vector>
 
 
 namespace BT
@@ -12,6 +14,9 @@ namespace edit
 {
 namespace internal
 {
+
+/// Display list of unimplemented types.
+void imgui_display_unimplemented_types(std::vector<std::string> const& typenames);
 
 /// Creates a simple header for the start of the component editing view.
 bool imgui_open_component_editing_header(std::string const& label);
@@ -34,8 +39,9 @@ void imgui_edit__transform(entt::registry& reg, entt::entity ecs_entity);
 void imgui_edit__transform_hierarchy(entt::registry& reg, entt::entity ecs_entity);
 void imgui_edit__transform_changed(entt::registry& reg, entt::entity ecs_entity);
 void imgui_edit__character_world_space_input(entt::registry& reg, entt::entity ecs_entity);
-void imgui_edit__render_object_settings(entt::registry& reg, entt::entity ecs_entity);
-void imgui_edit__created_render_object_reference(entt::registry& reg, entt::entity ecs_entity);
+void imgui_edit__follow_camera_follow_ref(entt::registry& reg, entt::entity ecs_entity);
+void imgui_edit__follow_camera_lockon_target(entt::registry& reg, entt::entity ecs_entity);
+void imgui_edit__render_object_config(entt::registry& reg, entt::entity ecs_entity);
 void imgui_edit__animator_root_motion(entt::registry& reg, entt::entity ecs_entity);
 void imgui_edit__physics_object_settings(entt::registry& reg, entt::entity ecs_entity);
 void imgui_edit__physics_obj_type_triangle_mesh_settings(entt::registry& reg, entt::entity ecs_entity);
@@ -43,6 +49,8 @@ void imgui_edit__physics_obj_type_char_con_settings(entt::registry& reg, entt::e
 void imgui_edit__created_physics_object_reference(entt::registry& reg, entt::entity ecs_entity);
 void imgui_edit__health_stats_data(entt::registry& reg, entt::entity ecs_entity);
 void imgui_edit__base_combat_stats_data(entt::registry& reg, entt::entity ecs_entity);
+void imgui_edit__rail_line(entt::registry& reg, entt::entity ecs_entity);
+void imgui_edit__rail_line_rider(entt::registry& reg, entt::entity ecs_entity);
 
 }  // namespace edit
 }  // namespace component

@@ -1,17 +1,19 @@
 #include "physics_object_impl_char_controller.h"
 
-#include "../renderer/debug_render_job.h"
-#include "../renderer/material.h"
-#include "../renderer/mesh.h"
+#include "btdatecheck.h"
 #include "Jolt/Jolt.h"
 #include "Jolt/Core/TempAllocator.h"
 #include "Jolt/Physics/Character/Character.h"
 #include "Jolt/Physics/Character/CharacterVirtual.h"
 #include "Jolt/Physics/Collision/Shape/BoxShape.h"
+#include "Jolt/Physics/Collision/Shape/CapsuleShape.h"
 #include "Jolt/Physics/Collision/Shape/RotatedTranslatedShape.h"
 #include "Jolt/Physics/PhysicsSystem.h"
 #include "physics_engine_impl_layers.h"
 #include "service_finder/service_finder.h"
+#include "txp_renderer_public.h"
+
+#include <cmath>
 
 
 BT::Phys_obj_impl_char_controller::Phys_obj_impl_char_controller(float_t radius,
@@ -25,21 +27,72 @@ BT::Phys_obj_impl_char_controller::Phys_obj_impl_char_controller(float_t radius,
     , m_crouch_height{ crouch_height - 2.0f * radius }
     , m_is_crouched{ false }
 {
-    assert(m_height >= 0.0f);
-    assert(m_crouch_height >= 0.0f);
+    // Asserts required to create a capsule shape.
+    assert(m_height > 0.0f);
+    assert(m_crouch_height > 0.0f);
+
+    // Assert required to create a box shape.
+    assert(m_radius > 0.0f);
+
+    constexpr bool k_is_box_shape{ false };
 
     // @NOTE: Before the cylinder collider was used to get round sides and a flat
     //   bottom, however, the side collisions of the cylinder became so erratic that
     //   I had to switch to a box collider. It's a bit sad but the collision looks
     //   and feels great now!  -Thea 2025/05/29
-    m_standing_shape = JPH::RotatedTranslatedShapeSettings(
-        JPH::Vec3(0, 0.5f * m_height + m_radius, 0),
-        JPH::Quat::sIdentity(),
-        new JPH::BoxShape(JPH::Vec3(m_radius, 0.5f * m_height + m_radius, m_radius))).Create().Get();
-    m_crouching_shape = JPH::RotatedTranslatedShapeSettings(
-        JPH::Vec3(0, 0.5f * m_crouch_height + m_radius, 0),
-        JPH::Quat::sIdentity(),
-        new JPH::BoxShape(JPH::Vec3(m_radius, 0.5f * m_crouch_height + m_radius, m_radius))).Create().Get();
+    if constexpr (k_is_box_shape)
+    {
+        m_standing_shape = JPH::RotatedTranslatedShapeSettings(
+            JPH::Vec3(0, 0.5f * m_height + m_radius, 0),
+            JPH::Quat::sIdentity(),
+            new JPH::BoxShape(JPH::Vec3(m_radius, 0.5f * m_height + m_radius, m_radius))).Create().Get();
+
+        m_crouching_shape = JPH::RotatedTranslatedShapeSettings(
+            JPH::Vec3(0, 0.5f * m_crouch_height + m_radius, 0),
+            JPH::Quat::sIdentity(),
+            new JPH::BoxShape(JPH::Vec3(m_radius, 0.5f * m_crouch_height + m_radius, m_radius))).Create().Get();
+    }
+    else
+    {
+        m_standing_shape = JPH::RotatedTranslatedShapeSettings(
+            JPH::Vec3(0, 0.5f * m_height + m_radius, 0),
+            JPH::Quat::sIdentity(),
+            new JPH::CapsuleShape(0.5f * m_height, m_radius)).Create().Get();
+
+        m_crouching_shape = JPH::RotatedTranslatedShapeSettings(
+            JPH::Vec3(0, 0.5f * m_crouch_height + m_radius, 0),
+            JPH::Quat::sIdentity(),
+            new JPH::CapsuleShape(0.5f * m_crouch_height, m_radius)).Create().Get();
+    }
+
+    // @NOTE: The inner shapes are capsules so that it's smoother and doesn't feel boxy when trying
+    //        to move around other characters.  -Thea 2025/12/02
+    if constexpr (k_is_box_shape)
+    {
+        float_t sin_45_r{ m_radius * std::sinf(glm_rad(45)) };  // For 45 y-axis rotated inner box.
+
+        m_inner_standing_shape = JPH::RotatedTranslatedShapeSettings(
+            JPH::Vec3(0, 0.5f * m_height + m_radius, 0),
+            JPH::Quat::sEulerAngles(JPH::Vec3(glm_rad(0), glm_rad(45), glm_rad(0))),
+            new JPH::BoxShape(JPH::Vec3(sin_45_r, 0.5f * m_height + m_radius, sin_45_r) * k_inner_shape_fraction)).Create().Get();
+
+        m_inner_crouching_shape = JPH::RotatedTranslatedShapeSettings(
+            JPH::Vec3(0, 0.5f * m_crouch_height + m_radius, 0),
+            JPH::Quat::sEulerAngles(JPH::Vec3(glm_rad(0), glm_rad(45), glm_rad(0))),
+            new JPH::BoxShape(JPH::Vec3(sin_45_r, 0.5f * m_crouch_height + m_radius, sin_45_r) * k_inner_shape_fraction)).Create().Get();
+    }
+    else
+    {
+        m_inner_standing_shape = JPH::RotatedTranslatedShapeSettings(
+            JPH::Vec3(0, 0.5f * m_height + m_radius, 0),
+            JPH::Quat::sIdentity(),
+            new JPH::CapsuleShape(0.5f * m_height * k_inner_shape_fraction, m_radius * k_inner_shape_fraction)).Create().Get();
+
+        m_inner_crouching_shape = JPH::RotatedTranslatedShapeSettings(
+            JPH::Vec3(0, 0.5f * m_crouch_height + m_radius, 0),
+            JPH::Quat::sIdentity(),
+            new JPH::CapsuleShape(0.5f * m_crouch_height * k_inner_shape_fraction, m_radius * k_inner_shape_fraction)).Create().Get();
+    }
 
     JPH::Ref<JPH::CharacterVirtualSettings> settings = new JPH::CharacterVirtualSettings();
     settings->mMaxSlopeAngle = s_max_slope_angle;
@@ -53,8 +106,7 @@ BT::Phys_obj_impl_char_controller::Phys_obj_impl_char_controller(float_t radius,
     // Accept contacts that touch the lower sphere of the capsule.
     settings->mSupportingVolume = JPH::Plane(JPH::Vec3::sAxisY(), -m_radius);
     settings->mEnhancedInternalEdgeRemoval = s_enhanced_internal_edge_removal;
-    // @HERE: Add inner shape if wanted.  vv
-    settings->mInnerBodyShape = /*s_create_inner_body ? mInnerStandingShape :*/ nullptr; assert(!s_create_inner_body);
+    settings->mInnerBodyShape = s_create_inner_body ? m_inner_standing_shape : nullptr;
     settings->mInnerBodyLayer = Layers::MOVING;
     m_character = new JPH::CharacterVirtual(settings,
                                             init_transform.position,
@@ -70,17 +122,12 @@ BT::Phys_obj_impl_char_controller::Phys_obj_impl_char_controller(float_t radius,
     m_character->SetListener(this);
 
     // Create debug render job.
-    static auto s_debug_model{ Model_bank::get_model("unit_box") };
-    m_debug_mesh_id = get_main_debug_mesh_pool().emplace_debug_mesh(
-        { s_debug_model,
-          Debug_mesh_pool::k_mask_phys_obj,
-          Material_bank::get_material("debug_physics_wireframe_fore_material"),
-          Material_bank::get_material("debug_physics_wireframe_back_material") });
+    m_debug_mesh_id = TXP::debug::emplace_debug_model("unit_box", TXP::debug::PHYSICS_WIREFRAME);
 }
 
 BT::Phys_obj_impl_char_controller::~Phys_obj_impl_char_controller()
 {
-    get_main_debug_mesh_pool().remove_debug_mesh(m_debug_mesh_id);
+    TXP::debug::remove_debug_model(m_debug_mesh_id);
 }
 
 // Phys obj impl ifc.
@@ -137,9 +184,13 @@ bool BT::Phys_obj_impl_char_controller::set_cc_stance(bool is_crouching)
                                         { },
                                         m_phys_temp_allocator) };
     if (success)
-    {
-        // Update stance if switch succeeded.
+    {   // Update stance if switch succeeded.
         m_is_crouched = is_crouching;
+
+        if (s_create_inner_body)
+            // Update inner body shape to new stance.
+            m_character->SetInnerBodyShape(m_is_crouched ? m_inner_crouching_shape
+                                                         : m_inner_standing_shape);
     }
 
     return success;
@@ -247,9 +298,7 @@ void BT::Phys_obj_impl_char_controller::update_debug_mesh()
     glm_scale(graphic_trans, vec3{ m_radius,
                                    0.5f * height + m_radius,
                                    m_radius });
-    glm_mat4_copy(graphic_trans,
-                  get_main_debug_mesh_pool()
-                      .get_debug_mesh_volatile_handle(m_debug_mesh_id).transform);
+    TXP::debug::update_debug_model_transform(m_debug_mesh_id, graphic_trans);
 }
 
 // Character contact listener.
@@ -264,10 +313,7 @@ void BT::Phys_obj_impl_char_controller::OnAdjustBodyVelocity(JPH::CharacterVirtu
 }
 
 void BT::Phys_obj_impl_char_controller::OnContactAdded(JPH::CharacterVirtual const* in_character,
-                                                       JPH::BodyID const& in_body_id2,
-                                                       JPH::SubShapeID const& in_sub_shape_id2,
-                                                       JPH::RVec3Arg in_contact_position,
-                                                       JPH::Vec3Arg in_contact_normal,
+                                                       JPH::CharacterContact const& in_contact,
                                                        JPH::CharacterContactSettings& io_settings)
 {
     // // Draw a box around the character when it enters the sensor
@@ -293,12 +339,10 @@ void BT::Phys_obj_impl_char_controller::OnContactAdded(JPH::CharacterVirtual con
     //     mAllowSliding = true;
 }
 
-void BT::Phys_obj_impl_char_controller::OnCharacterContactAdded(JPH::CharacterVirtual const* in_character,
-                                                                JPH::CharacterVirtual const* in_other_character,
-                                                                JPH::SubShapeID const& in_sub_shape_id2,
-                                                                JPH::RVec3Arg in_contact_position,
-                                                                JPH::Vec3Arg in_contact_normal,
-                                                                JPH::CharacterContactSettings& io_settings)
+void BT::Phys_obj_impl_char_controller::OnCharacterContactAdded(
+    JPH::CharacterVirtual const* in_character,
+    JPH::CharacterContact const& in_contact,
+    JPH::CharacterContactSettings& io_settings)
 {
     // // Characters can only be pushed in their own update
     // if (sPlayerCanPushOtherCharacters)

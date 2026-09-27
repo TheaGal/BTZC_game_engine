@@ -5,18 +5,19 @@
 #include "Jolt/Physics/PhysicsSystem.h"
 #include "Jolt/Math/Vec3.h"
 #include "btglm.h"
-#include "game_system_logic/component/animator_root_motion.h"
 #include "game_system_logic/component/character_movement.h"
+#include "game_system_logic/component/follow_camera.h"
 #include "game_system_logic/component/physics_object_settings.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
 #include "physics_engine/physics_engine.h"
 #include "physics_engine/physics_object.h"
 #include "physics_engine/raycast_helper.h"
-#include "renderer/model_animator.h"
 #include "service_finder/service_finder.h"
+#include "txp_renderer_public.h"
 
 #include <cassert>
+#include <cmath>
 
 
 namespace
@@ -176,10 +177,12 @@ void process_midair_jump_interactions(
 void apply_grounded_facing_angle(component::Character_mvt_state::Grounded_state& grounded_state,
                                  component::Character_mvt_state::Settings const& mvt_settings,
                                  component::Character_mvt_animated_state* char_mvt_anim_state,
-                                 component::Animator_root_motion const* anim_root_motion,
+                                 TXP::component::Animator_root_motion const* anim_root_motion,
                                  float_t desired_facing_angle,
                                  float_t turn_speed)
 {
+    assert(!std::isnan(desired_facing_angle));
+
     float_t delta_direction{ desired_facing_angle - grounded_state.facing_angle };
     while (delta_direction > glm_rad(180.0f)) delta_direction -= glm_rad(360.0f);
     while (delta_direction <= glm_rad(-180.0f)) delta_direction += glm_rad(360.0f);
@@ -194,8 +197,8 @@ void apply_grounded_facing_angle(component::Character_mvt_state::Grounded_state&
 
     if (do_turnaround_anim)
     {   // Reverse facing angle (by snapping to the desired facing angle).
-        if (char_mvt_anim_state)
-            char_mvt_anim_state->write_to_animator_data.on_turnaround = true;
+        // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
+        // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_turnaround = true;
 
         while (desired_facing_angle > glm_rad(180.0f)) desired_facing_angle -= glm_rad(360.0f);
         while (desired_facing_angle <= glm_rad(-180.0f)) desired_facing_angle += glm_rad(360.0f);
@@ -229,7 +232,8 @@ Char_mvt_logic_results character_controller_movement_logic(
     component::Character_world_space_input const& char_ws_input,
     component::Character_mvt_state& char_mvt_state,
     component::Character_mvt_animated_state* char_mvt_anim_state,
-    component::Animator_root_motion const* anim_root_motion,
+    TXP::component::Animator_root_motion* anim_root_motion,
+    component::Follow_camera_follow_ref::State const* follow_cam_state,
     Physics_object& phys_obj)
 {   // Get current character controller state.
     auto char_con_impl{ phys_obj.get_impl() };
@@ -254,6 +258,24 @@ Char_mvt_logic_results character_controller_movement_logic(
     up_rotation =
         JPH::Quat::sEulerAngles(JPH::Vec3(0, 0, 0));  // @NOCHECKIN: Overriding the up rot.
 
+    // Calc root motion multiplier for position of interest.
+    if (anim_root_motion && anim_root_motion->calc_pos_of_interest_root_motion_multi)
+    {
+        anim_root_motion->calc_pos_of_interest_root_motion_multi = false;
+
+        vec3 flat_pos_of_interest_delta;
+        glm_vec3_copy(const_cast<float_t*>(char_ws_input.delta_to_position_of_interest.raw),
+                      flat_pos_of_interest_delta);
+        flat_pos_of_interest_delta[1] = 0;
+
+        // @HARDCODE: this buffer/backoff value.
+        constexpr float_t k_opponent_space_buffer{ 1 };
+
+        anim_root_motion->pos_of_interest_root_motion_multi =
+            glm_max(0, glm_vec3_norm(flat_pos_of_interest_delta) - k_opponent_space_buffer) /
+            10.0f;  // divide by 10 since 10m is standard amount in the anim itself.
+    }
+
     // Change input into desired velocity.
     auto const& mvt_settings{ char_mvt_state.settings };
 
@@ -275,8 +297,10 @@ Char_mvt_logic_results character_controller_movement_logic(
         // @NOTE: This is correct root motion, even tho it may look slow,
         //        it is correct.
         //        Maybe make your anim travel further if it looks slow?  -Thea 2025/11/27
-        desired_velocity *=
-            anim_root_motion->root_motion_multiplier * Model_joint_animation::k_frames_per_second;
+        desired_velocity *= (anim_root_motion->use_pos_of_interest_root_motion_multi
+                                 ? anim_root_motion->pos_of_interest_root_motion_multi
+                                 : anim_root_motion->root_motion_multiplier) *
+                            TXP::k_skeletal_anim_frames_per_second;
     }
     else if (mvt_type == MVT_TYPE_INPUT_BASED)
     {
@@ -295,7 +319,8 @@ Char_mvt_logic_results character_controller_movement_logic(
     JPH::Vec3 current_vertical_velocity = linear_velocity.Dot(up_direction) * up_direction;
     bool is_grounded{ ground_state == JPH::CharacterVirtual::EGroundState::OnGround &&
                       (current_vertical_velocity.GetY() - ground_velocity.GetY()) < 0.1f &&
-                      !char_con_impl->is_cc_slope_too_steep(ground_normal) };
+                      !char_con_impl->is_cc_slope_too_steep(ground_normal) &&
+                      !(anim_root_motion && anim_root_motion->jump_up) };  // force not-grounded if performing jump_up event.
 
     // Calc and apply desired velocity.
     JPH::Vec3 new_velocity;
@@ -309,10 +334,10 @@ Char_mvt_logic_results character_controller_movement_logic(
         }
         else if (!char_con_impl->get_cc_stance() && on_jump_press)
         {   // Jump.
-            new_velocity += mvt_settings.jump_speed * up_direction;
-
+            // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
+            // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_jump = true;
             if (char_mvt_anim_state)
-                char_mvt_anim_state->write_to_animator_data.on_jump = true;
+                char_mvt_anim_state->input_mvt_state.on_jump = true;
         }
     }
     else
@@ -335,13 +360,48 @@ Char_mvt_logic_results character_controller_movement_logic(
     }
 
     // Desired facing angle.
-    bool has_desired_facing_angle{ glm_vec3_norm2(const_cast<float_t*>(
-                                       char_ws_input.ws_flat_clamped_input.raw)) > 1e-6f * 1e-6f };
+    bool is_moving{ glm_vec3_norm2(const_cast<float_t*>(char_ws_input.ws_flat_clamped_input.raw)) >
+                    1e-6f * 1e-6f };
+    bool has_desired_facing_angle{ is_moving };
     float_t desired_facing_angle{ has_desired_facing_angle
                                       ? atan2f(char_ws_input.ws_flat_clamped_input.x,
                                                char_ws_input.ws_flat_clamped_input.z)
                                       : 0 };
     float_t turn_speed{ anim_root_motion ? anim_root_motion->turn_speed : 1000000.0f };
+
+    // Capture input angle.
+    float_t input_angle{ desired_facing_angle };  // @TODO: Get this to interpolate!!
+
+    // Override desired facing angle.
+    bool const is_follow_cam_locked_on{ follow_cam_state &&
+                                        !follow_cam_state->locked_on_entity.is_nil() };
+    if (is_follow_cam_locked_on)
+    {
+        has_desired_facing_angle = true;
+        desired_facing_angle = follow_cam_state->locked_on_facing_angle;
+    }
+
+    // Capture locked-on angle.
+    float_t locked_on_angle{ desired_facing_angle };  // @TODO: Get this to interpolate!! (Or not??)
+
+    // Calc movement facing angle.
+    if (char_mvt_anim_state)
+    {
+        char_mvt_anim_state->input_mvt_state.is_moving = is_moving;
+
+        // @ANIMATOR_REFACTOR char_mvt_anim_state->write_to_animator_data.is_follow_cam_locked_on = is_follow_cam_locked_on;
+
+        if (is_follow_cam_locked_on)
+        {
+            float_t facing_angle{ locked_on_angle - input_angle };
+            while (facing_angle >= glm_rad(360.0f)) facing_angle -= glm_rad(360.0f);
+            while (facing_angle < glm_rad(0.0f)) facing_angle += glm_rad(360.0f);
+
+            char_mvt_anim_state->write_to_animator_data.mvt_facing_angle = facing_angle;
+        }
+        else
+            char_mvt_anim_state->write_to_animator_data.mvt_facing_angle = 0;
+    }
 
     // Desired velocity.
     float_t display_facing_angle;
@@ -357,8 +417,17 @@ Char_mvt_logic_results character_controller_movement_logic(
                                         desired_facing_angle,
                                         turn_speed);
 
-        if (char_mvt_anim_state)
-            char_mvt_anim_state->write_to_animator_data.is_moving = has_desired_facing_angle;  // @THEA: @NOCHECKIN: Hmmm maybe this needs reordering to solve the 1 sim-tick lag as well?  -Thea 2025/11/27
+        // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
+        // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.is_moving = is_moving;
+
+        // if (char_mvt_anim_state)
+        // {
+        //     char_mvt_anim_state->write_to_animator_data.next_anim_state =
+        //         (!is_moving ? component::Character_mvt_animated_state::Write_to_animator_data::
+        //                           AS_GROUNDED_IDLE
+        //                     : component::Character_mvt_animated_state::Write_to_animator_data::
+        //                           AS_GROUNDED_MOVE);
+        // }
 
         grounded_state.allow_grounded_sliding = (desired_velocity.LengthSq() > 1e-6f * 1e-6f);
 
@@ -394,7 +463,7 @@ Char_mvt_logic_results character_controller_movement_logic(
         new_velocity += effective_velocity;
 
         if (has_desired_facing_angle)
-        {   // Move towards input angle.
+        {   // Move facing angle towards desired facing angle.
             float_t delta_direction{ desired_facing_angle - airborne_state.input_facing_angle };
             while (delta_direction > glm_rad(180.0f)) delta_direction -= glm_rad(360.0f);
             while (delta_direction <= glm_rad(-180.0f)) delta_direction += glm_rad(360.0f);
@@ -419,8 +488,30 @@ Char_mvt_logic_results character_controller_movement_logic(
     }
     else assert(false);  // Unsupported movement type.
 
+    if (anim_root_motion)
+    {
+        if (anim_root_motion->jump_up)
+        {
+            new_velocity += mvt_settings.jump_speed * up_direction;
+        }
+
+        if (anim_root_motion->inherit_prev_velocity)
+        {
+            new_velocity.Set(char_mvt_state.prev_velocity[0],
+                            new_velocity.GetY(),
+                            char_mvt_state.prev_velocity[2]);   
+        }
+    }
+
+    // Log previous velocity.
+    char_mvt_state.prev_velocity[0] = new_velocity.GetX();
+    char_mvt_state.prev_velocity[1] = new_velocity.GetY();
+    char_mvt_state.prev_velocity[2] = new_velocity.GetZ();
+
+    // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
+    // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.is_grounded = is_grounded;
     if (char_mvt_anim_state)
-        char_mvt_anim_state->write_to_animator_data.is_grounded = is_grounded;
+        char_mvt_anim_state->input_mvt_state.is_grounded = is_grounded;
 
     return { is_grounded, up_rotation, new_velocity, display_facing_angle };
 }
@@ -451,6 +542,7 @@ void BT::system::input_controlled_character_movement()
     auto view{ reg.view<component::Character_world_space_input const,
                         component::Character_mvt_state,
                         component::Created_physics_object_reference const>() };
+    auto& phys_engine{ service_finder::find_service<Physics_engine>() };
 
     // Process all character movements.
     for (auto entity : view)
@@ -462,22 +554,36 @@ void BT::system::input_controlled_character_movement()
         auto char_mvt_anim_state{ reg.try_get<component::Character_mvt_animated_state>(entity) };
 
         // Process input into character movement logic.
-        auto& phys_engine{ service_finder::find_service<Physics_engine>() };
         auto phys_obj_uuid{
             view.get<component::Created_physics_object_reference const>(entity).physics_obj_uuid_ref
         };
         auto& phys_obj{ *phys_engine.checkout_physics_object(phys_obj_uuid) };
 
-        auto anim_root_motion{ char_mvt_anim_state
-                                   ? reg.try_get<component::Animator_root_motion const>(
-                                         entity_container.find_entity(
-                                             char_mvt_anim_state->affecting_animator_uuid))
-                                   : nullptr };
+        auto* anim_root_motion{ char_mvt_anim_state
+                                    ? reg.try_get<TXP::component::Animator_root_motion>(
+                                          entity_container.find_entity(
+                                              char_mvt_anim_state->affecting_animator_uuid))
+                                    : nullptr };
+
+        component::Follow_camera_follow_ref::State* follow_cam_state{ nullptr };
+        auto poss_display_repr_ref{ reg.try_get<component::Display_repr_transform_ref>(entity) };
+        if (poss_display_repr_ref != nullptr)
+        {
+            auto display_repr_ecs_ent{ entity_container.find_entity(
+                poss_display_repr_ref->display_repr_uuid) };
+
+            auto follow_cam_follow_ref{ reg.try_get<component::Follow_camera_follow_ref>(
+                display_repr_ecs_ent) };
+
+            if (follow_cam_follow_ref != nullptr)
+                follow_cam_state = &follow_cam_follow_ref->state;
+        }
 
         auto mvt_logic_result = character_controller_movement_logic(char_ws_input,
                                                                     char_mvt_state,
                                                                     char_mvt_anim_state,
                                                                     anim_root_motion,
+                                                                    follow_cam_state,
                                                                     phys_obj);
 
         // Apply movement logic outputs to physics object character controller inputs.
@@ -496,9 +602,7 @@ void BT::system::input_controlled_character_movement()
         phys_engine.return_physics_object(&phys_obj);
 
         // Try writing a new facing direction.
-        if (auto poss_display_repr_ref{
-                reg.try_get<component::Display_repr_transform_ref>(entity) };
-            poss_display_repr_ref != nullptr)
+        if (poss_display_repr_ref != nullptr)
         {   // Calculate rotation.
             versors rot;
             glm_quat(rot.raw, mvt_logic_result.display_facing_angle, 0.0f, 1.0f, 0.0f);

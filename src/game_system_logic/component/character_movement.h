@@ -2,9 +2,7 @@
 
 #include "btglm.h"
 #include "btjson.h"
-#include "uuid/uuid.h"
-
-#include <array>
+#include "btuuid.h"
 
 
 namespace BT
@@ -28,6 +26,7 @@ struct Player_character
 struct Character_world_space_input
 {
     vec3s ws_flat_clamped_input{ 0, 0, 0 };
+    vec3s delta_to_position_of_interest{ 0, 0, 0 };
 
     bool jump_pressed{ false };
     bool prev_jump_pressed{ false };
@@ -62,6 +61,14 @@ struct Character_mvt_state
     } settings;
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Character_mvt_state, settings);
+
+    vec3 prev_velocity = GLM_VEC3_ZERO_INIT;
+
+    /// Helper func that sets facing angle of this component.
+    void set_facing_angle(float_t angle_radians);
+
+    /// Helper func that gets facing angle of this component.
+    float_t get_facing_angle() const;
 };
 
 /// Stores the reference to the entity with the transform of the display representation. This is
@@ -83,18 +90,100 @@ struct Character_mvt_animated_state
     /// UUID that contains the animator to affect.
     UUID affecting_animator_uuid;
 
+    /// For tracking input data from character.
+    struct Input_mvt_state
+    {   // Mode.
+        enum Mode : int32_t
+        {
+            MODE_INVALID = -1,
+            MODE_PLAYER_CHAR,
+            MODE_CPU_CHAR
+        } mode{ -1 };  // @TODO: make configurable seting.
+
+        // Movement inputs.
+        bool is_moving{ false };
+        bool on_jump{ false };
+        bool is_grounded{ false };
+
+        // Combat reactions.
+        enum Hurt_type : int32_t
+        {
+            HURT_TYPE_NONE = -1,
+
+            HURT_TYPE_LIGHT_FROM_FRONT,
+            HURT_TYPE_HEAVY_FROM_FRONT,
+            HURT_TYPE_LIGHT_FROM_BEHIND,
+            HURT_TYPE_HEAVY_FROM_BEHIND,
+            HURT_TYPE_LIGHT_FROM_ABOVE,
+            HURT_TYPE_HEAVY_FROM_ABOVE,
+            HURT_TYPE_LIGHT_FROM_BELOW,
+            HURT_TYPE_HEAVY_FROM_BELOW,
+            HURT_TYPE_LIGHT_FROM_LEFT,
+            HURT_TYPE_HEAVY_FROM_LEFT,
+            HURT_TYPE_LIGHT_FROM_RIGHT,
+            HURT_TYPE_HEAVY_FROM_RIGHT,
+        } on_hurt{ -1 };
+
+        // Combat inputs (player char).
+        bool on_attack_press{ false };
+        bool is_attack_released{ false };
+        bool on_guard_press{ false };
+        bool is_guard_released{ false };
+
+        // Combat tempo timer (cpu char).
+        float_t cpu_char_resting_combat_tempo{ 0.5f };  // @TODO: make configurable seting.
+        float_t cpu_char_combat_tempo_timer{ 0 };
+
+        // Combat inputs (cpu char).
+        int32_t on_exec_movement_idx{ -1 };
+        int32_t on_exec_attack_combo_idx{ -1 };
+
+        void reset_state(bool reset_persist_vals)
+        {
+            auto persist_val{ cpu_char_combat_tempo_timer };
+
+            *this = {
+                .mode = mode,
+                .cpu_char_resting_combat_tempo = cpu_char_resting_combat_tempo,
+            };
+
+            if (!reset_persist_vals)
+            {
+                cpu_char_combat_tempo_timer = persist_val;
+            }
+        }
+    } input_mvt_state;
+
     struct Write_to_animator_data
     {
-        bool is_moving{ false };
-        bool on_turnaround{ false };
-        bool is_grounded{ false };
-        bool on_jump{ false };
-        bool on_attack{ false };
+        float_t mvt_facing_angle{ 0 };
+
+        // @ANIMATOR_REFACTOR vv
+        // // vv @NOTE: below the old information to write. vv
+        // bool is_moving{ false };
+        // bool is_locked_on{ false };  // Unused. Had a former use but made every movement blendtrees.
+        // bool on_suspicion{ false };
+        // bool is_suspicious_approaching{ false };
+        // bool on_unaware{ false };
+        // bool on_aware{ false };
+        // float_t mvt_facing_angle{ 0 };
+        // bool on_turnaround{ false };
+        // bool is_grounded{ false };
+        // bool on_jump{ false };
+        // bool on_attack{ false };
+        // bool on_cancel_parried{ false };
+        // bool on_parry_hurt{ false };
+        // bool on_guard_hurt{ false };
+        // bool on_receive_hurt{ false };
+        // bool on_receive_hurt_from_back{ false };
+        // bool on_guard{ false };
+        // bool is_guarding{ false };
     } write_to_animator_data;
 
     struct State
     {
         bool prev_attack_pressed{ false };
+        bool prev_guard_pressed{ false };
     } state;
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(

@@ -1,0 +1,699 @@
+# @NOTE: UNFINISHED: This needs work with parsing the tokens into different modules (`extract_modules_from_tokens()`).
+# Perhaps, if you decide to pick this up again, it may be good to just take a different approach to parsing. For example, just parsing everything! Or idk.
+
+from pathlib import Path
+import re
+
+
+def find_src_entries() -> list[str]:
+    CMAKELISTS_FNAME = './CMakeLists.txt'
+    START_BLOCK = 'set(MAIN_SOURCES'
+    END_BLOCK = ')'
+    SRC_FILE_ENTRY_START = '${CMAKE_CURRENT_SOURCE_DIR}'
+
+    block_process = 0  # 0:before; 1:within; 2:after;
+    found_source_files = []
+    with open(CMAKELISTS_FNAME) as f:
+        for line in f:
+            if block_process == 0:
+                if line.strip() == START_BLOCK:
+                    # Found start of block.
+                    block_process = 1
+            elif block_process == 1:
+                if line.strip().startswith(SRC_FILE_ENTRY_START):
+                    # Add file entry.
+                    entry_start_str_len = len(SRC_FILE_ENTRY_START)+1  # +1 for '/' after.
+                    found_source_files.append(line.strip()[entry_start_str_len:])
+                elif line.strip() == END_BLOCK:
+                    # Found end of block.
+                    block_process = 2
+            elif block_process == 2:
+                # Exit reading file.
+                break
+
+    return found_source_files
+
+
+def find_existing_files() -> list[Path]:
+    SEARCH_DIRS = ['./src/']
+    SEARCH_EXTENSIONS = ['h',
+                         'hpp',
+                         'ixx',  # I think this is for modules???
+                         'c',
+                         'cxx',
+                         'cpp']
+    all_found_files = []
+    for search_dir in SEARCH_DIRS:
+        for search_ext in SEARCH_EXTENSIONS:
+            # Convert `search_ext` to case-insensitive extension.
+            case_insensitive_ext = '*.'
+            for ext_char in search_ext:
+                case_insensitive_ext += f'[{ext_char.lower()}{ext_char.upper()}]'
+
+            # Search directory for extension.
+            files = list(Path(search_dir).rglob(case_insensitive_ext))
+            all_found_files.extend(files)
+
+    return all_found_files
+
+
+def find_missing_src_entry_in_src_entries(src_entries: list[str],
+                                          existing_files: list[Path]):
+    missing_entries = []  # If the file exists but not the entry in cmake, then append!
+    src_entry_paths = [Path(x) for x in src_entries]
+    for existing_file in existing_files:
+        if existing_file not in src_entry_paths:
+            # Found missing entry.
+            missing_entry = str(existing_file).replace('\\', '/')
+            missing_entries.append(missing_entry)
+
+    missing_entries.sort()
+    return missing_entries
+
+
+class Module:
+    m_type: str
+    VALID_TYPES = ["namespace", "enum", "struct", "class", "func"]
+    TYPE_PREFIXES = ["", "e-", "s-", "c-", "f-"]
+
+    # Cooked in ctor.
+    m_full_name: str
+
+    # # Namespace.
+    # m_ns_name: str
+
+    # Enum.
+    m_is_enum_class: bool
+
+    # Func.
+    m_func_return_type: str
+
+    def __init__(self, type: str, name: str, parent_full_name: str):
+        self.m_type = type
+        assert self.m_type in self.VALID_TYPES
+        self.m_full_name = ((parent_full_name + '.') if len(parent_full_name) > 0 else '') + \
+                           (self.TYPE_PREFIXES[self.VALID_TYPES.index(self.m_type)]) + \
+                           name
+
+    def get_local_name(self) -> str:
+        return self.m_full_name.split(sep='.')[-1]
+
+
+def strip_unnec_parts(buffer_lines: list[str]) -> list[str]:
+    scan_mode = 0  # 0:code  1:sing-str  2:dbl-str  3:preproc  4:block-comment  5:comment
+
+    erase_regions = []  # from_line, from_idx, to_line, to_idx, leave_space
+
+    # Scan for erase regions.
+    line_idx = 0
+    for line in buffer_lines:
+        # Helper func.
+        def get_char_safe(idx: int):
+            if idx < 0 or idx >= len(line):
+                return ''
+            else:
+                return line[idx]
+
+        # Scan.
+        c_idx = 0
+        found_non_ws = False
+        while True:
+            cm_char = get_char_safe(c_idx - 1)
+            c0_char = get_char_safe(c_idx + 0)
+            c1_char = get_char_safe(c_idx + 1)
+
+            # Mode switch.
+            if scan_mode == 0:
+                # Code mode.
+                if c0_char == '\'':
+                    erase_regions.append({})
+                    erase_regions[-1]["from_line"] = line_idx
+                    erase_regions[-1]["from_idx"]  = c_idx
+                    scan_mode = 1
+                    c_idx += 1
+                elif c0_char == "\"":
+                    erase_regions.append({})
+                    erase_regions[-1]["from_line"] = line_idx
+                    erase_regions[-1]["from_idx"]  = c_idx
+                    scan_mode = 2
+                    c_idx += 1
+                elif c0_char == "#" and not found_non_ws:
+                    erase_regions.append({})
+                    erase_regions[-1]["from_line"] = line_idx
+                    erase_regions[-1]["from_idx"]  = c_idx
+                    scan_mode = 3
+                    c_idx += 1
+                elif c0_char == '/' and c1_char == '*':
+                    erase_regions.append({})
+                    erase_regions[-1]["from_line"] = line_idx
+                    erase_regions[-1]["from_idx"]  = c_idx
+                    scan_mode = 4
+                    c_idx += 2
+                elif c0_char == '/' and c1_char == '/':
+                    erase_regions.append({})
+                    erase_regions[-1]["from_line"] = line_idx
+                    erase_regions[-1]["from_idx"]  = c_idx
+                    scan_mode = 5
+                    c_idx += 2
+                else:
+                    c_idx += 1
+
+            elif scan_mode == 1:
+                # Single str mode.
+                if c0_char == '\\':
+                    # Escape c1 char.
+                    c_idx += 2
+                elif c0_char == '\'':
+                    erase_regions[-1]["to_line"] = line_idx
+                    erase_regions[-1]["to_idx"]  = c_idx
+                    scan_mode = 0
+                    c_idx += 1
+                else:
+                    c_idx += 1
+
+            elif scan_mode == 2:
+                # Double str mode.
+                if c0_char == '\\':
+                    # Escape c1 char.
+                    c_idx += 2
+                elif c0_char == '\"':
+                    erase_regions[-1]["to_line"] = line_idx
+                    erase_regions[-1]["to_idx"]  = c_idx
+                    scan_mode = 0
+                    c_idx += 1
+                else:
+                    c_idx += 1
+
+            elif scan_mode == 3:
+                # Preprocessor mode.
+                if c0_char == '':
+                    # End of line.
+                    if cm_char == '\\':
+                        # Continue to next line of preprocessor mode.
+                        pass
+                    else:
+                        # End preprocessor mode.
+                        erase_regions[-1]["to_line"] = line_idx
+                        erase_regions[-1]["to_idx"]  = c_idx
+                        scan_mode = 0
+                else:
+                    c_idx += 1
+
+            elif scan_mode == 4:
+                # Block comment mode.
+                if c0_char == '*' and c1_char == '/':
+                    # End block comment mode.
+                    erase_regions[-1]["to_line"] = line_idx
+                    erase_regions[-1]["to_idx"]  = c_idx + 2
+                    scan_mode = 0
+                    c_idx += 2
+                else:
+                    c_idx += 1
+
+            elif scan_mode == 5:
+                # End comment mode.
+                erase_regions[-1]["to_line"] = erase_regions[-1]["from_line"]
+                erase_regions[-1]["to_idx"]  = len(line) - 1
+                scan_mode = 0
+                c_idx = len(line)
+
+            else:
+                # Unknown.
+                assert False
+                import sys; sys.exit(1)
+
+            # Check if c0 is a non-whitespace char.
+            if len(c0_char.strip()) > 0:
+                found_non_ws = True
+
+            # Exit if ran to end of line.
+            if c0_char == '':
+                assert scan_mode != 1
+                assert scan_mode != 2
+                assert scan_mode != 5
+                break
+
+        # Next line!
+        line_idx += 1
+
+    # Process erase regions.
+    for region in erase_regions:
+        if region["from_line"] == region["to_line"]:
+            # Erase within single line.
+            replacement_line = buffer_lines[region["from_line"]][:region["from_idx"]]
+            replacement_line += " "  # To prevent token mixing.
+            replacement_line += buffer_lines[region["to_line"]][region["to_idx"]:]
+            buffer_lines[region["from_line"]] = replacement_line
+        else:
+            # Replace "from" line.
+            replacement_line = buffer_lines[region["from_line"]][:region["from_idx"]]
+            buffer_lines[region["from_line"]] = replacement_line
+
+            # Replace "to" line.
+            replacement_line = buffer_lines[region["to_line"]][region["to_idx"]:]
+            buffer_lines[region["to_line"]] = replacement_line
+
+            # Empty between lines.
+            for i in range(region["from_line"] + 1, region["to_line"]):
+                buffer_lines[i] = ""
+
+    return buffer_lines
+
+
+def strip_empty_lines(buffer_lines: list[str]) -> list[str]:
+    non_empty_lines = []
+
+    for line in buffer_lines:
+        if len(line.strip()) > 0:
+            non_empty_lines.append(line)
+
+    return non_empty_lines
+
+
+def extract_tokens_from_lines(buffer_lines: list[str]) -> list[str]:
+    tokens: list[str] = []
+    for line in buffer_lines:
+        prev_type = 0  # 0:non-word char  1:word char
+
+        for c_char in line:
+            # Calc current type.
+            cur_type = 0
+            if c_char.isalnum() or c_char == '_':
+                cur_type = 1
+
+            # Check if new type.
+            if cur_type != prev_type:
+                tokens.append('')
+
+            # Append to token.
+            tokens[-1] += c_char
+
+            # Separate to individual chars for non-word chars.
+            if cur_type == 0:
+                tokens.append('')
+
+            # End.
+            prev_type = cur_type
+
+    # Remove empty tokens (also removing whitespace-only tokens).
+    non_empty_tokens: list[str] = []
+    for t in tokens:
+        if len(t.strip()) > 0:
+            non_empty_tokens.append(t)
+
+    return non_empty_tokens
+
+
+def extract_modules_from_tokens(tokens: list[str]) -> list[Module]:
+    modules: list[Module] = []
+
+    # Helper func.
+    def get_token_safe(idx: int):
+        if idx < 0 or idx >= len(tokens):
+            return ''
+        else:
+            return tokens[idx]
+
+    mod_nesting: list[str] = []
+    def get_full_mod_nesting_str() -> str:
+        return '.'.join(mod_nesting)
+
+    # Scan tokens.
+    t_idx = 0
+    while t_idx < len(tokens):
+        t0 = get_token_safe(t_idx)
+
+        # @NOTE: Ignore forward declarations.
+
+        if t0 == '}':
+            # Exit one nesting.
+            assert len(mod_nesting) >= 1
+            mod_nesting = mod_nesting[:-1]
+
+        elif t0 == 'namespace':
+            # Namespace module?
+            t_nxt_idx = t_idx + 1
+            ns_name = get_token_safe(t_nxt_idx)
+
+            t_nxt_idx += 1
+            if get_token_safe(t_nxt_idx) == '{':
+                # Confirmed.
+                modules.append(Module("namespace", ns_name, get_full_mod_nesting_str()))
+                mod_nesting.append(modules[-1].get_local_name())
+            else:
+                print("Unknown syntax?!")
+                assert False
+            
+            t_idx = t_nxt_idx
+
+        elif t0 == 'enum':
+            # Enum module?
+            t_nxt_idx = t_idx + 1
+            nxt_tok = get_token_safe(t_nxt_idx)
+
+            is_enum_class = False
+            if nxt_tok == 'class':
+                is_enum_class = True
+
+                t_nxt_idx += 1
+                nxt_tok = get_token_safe(t_nxt_idx)
+
+            enum_name = nxt_tok
+
+            t_nxt_idx += 1
+            nxt_tok = get_token_safe(t_nxt_idx)
+
+            if nxt_tok == '{':
+                # Confirmed.
+                modules.append(Module("enum", enum_name, get_full_mod_nesting_str()))
+                modules[-1].m_is_enum_class = is_enum_class
+
+                mod_nesting.append(modules[-1].get_local_name())
+            elif nxt_tok == ';':
+                # Is forward declaration. SKIP.
+                pass
+            else:
+                print("Unknown syntax?!")
+                assert False
+            
+            t_idx = t_nxt_idx
+
+        elif t0 == 'struct':
+            # Struct module?
+            t_nxt_idx = t_idx + 1
+            nxt_tok = get_token_safe(t_nxt_idx)
+
+            struct_name = nxt_tok
+
+            t_nxt_idx += 1
+            nxt_tok = get_token_safe(t_nxt_idx)
+
+            if nxt_tok == '{':
+                # Confirmed.
+                modules.append(Module("struct", struct_name, get_full_mod_nesting_str()))
+
+                mod_nesting.append(modules[-1].get_local_name())
+            elif nxt_tok == ';':
+                # Is forward declaration. SKIP.
+                pass
+            else:
+                print("Unknown syntax?!")
+                assert False
+            
+            t_idx = t_nxt_idx
+
+        elif t0 == 'class':
+            # Class module?    @COPYPASTA w struct version.
+            t_nxt_idx = t_idx + 1
+            nxt_tok = get_token_safe(t_nxt_idx)
+
+            class_name = nxt_tok
+
+            t_nxt_idx += 1
+            nxt_tok = get_token_safe(t_nxt_idx)
+
+            if nxt_tok == '{':
+                # Confirmed.
+                modules.append(Module("class", class_name, get_full_mod_nesting_str()))
+
+                mod_nesting.append(modules[-1].get_local_name())
+            elif nxt_tok == ';':
+                # Is forward declaration. SKIP.
+                pass
+            else:
+                print("Unknown syntax?!")
+                assert False
+            
+            t_idx = t_nxt_idx
+
+        else:
+            # Func module?
+            t_nxt_idx = t_idx
+
+            # Try to find function tokens.
+            func_read_stage = 0  # 0:return type and func name  1:param list  2:post quals
+            ret_type_fn_name_toks = []
+            param_list_toks = [[]]
+            post_qual_toks = []
+
+            num_param_bracket_nest = 0  # For knowing when stage1 (param list) ends.
+
+            while True:
+                t_nxt_idx += 1
+                nxt_tok = get_token_safe(t_nxt_idx)
+
+                # Return type & func name.
+                if func_read_stage == 0:
+                    if nxt_tok in ["<", ">", "[", "]", ":", "*", "&"]:
+                        ret_type_fn_name_toks.append(nxt_tok)
+                    elif nxt_tok in ["const", "static", "inline", "friend", "constexpr", "volatile"]:
+                        ret_type_fn_name_toks.append(nxt_tok)
+                    elif nxt_tok[0].isalnum() or nxt_tok[0] == '_':
+                        # Assume is a type.
+                        ret_type_fn_name_toks.append(nxt_tok)
+                    elif nxt_tok == '(':
+                        # Oops we have the start of the param list in here!
+                        func_read_stage = 1
+                    else:
+                        # @TODO: If the prog makes it here, it likely means it's not a function, but we should drain the tokens until it's done? Probably??
+                        # @TODO: Figure out why it's hitting here! And mitigate.
+                        # @TODO: I just realized that the `std::function<void()>` type here could trigger the wrong syntax!!! AAAAGGGHHHH
+                        print("Unknown syntax?!")
+                        assert False
+
+                # Param list.
+                if func_read_stage == 1:
+                    if nxt_tok == '(':  # @NOTE: Could be from `std::function<void()>` as well, for example.
+                        num_param_bracket_nest += 1
+                    elif nxt_tok == ')':
+                        num_param_bracket_nest -= 1
+                        if num_param_bracket_nest == 0:
+                            # Finish param list and move on.
+                            func_read_stage = 2
+                            continue  # To force reading the next token.
+
+                        elif num_param_bracket_nest < 0:
+                            # It's only the parenthesis that can end the param list.
+                            print("Error somewhere?!?!")
+                            assert False
+
+                    elif nxt_tok in ["<", ">", "[", "]", ":", "*", "&"]:
+                        param_list_toks[-1].append(nxt_tok)
+
+                        if nxt_tok in ["<", "["]:
+                            num_param_bracket_nest += 1
+                        elif nxt_tok in [">", "]"]:
+                            num_param_bracket_nest -= 1
+
+                    elif nxt_tok in ["const"]:
+                        param_list_toks[-1].append(nxt_tok)
+                    elif num_param_bracket_nest > 1 and nxt_tok == ',':
+                        # Just a token.
+                        param_list_toks.append([])
+                    elif num_param_bracket_nest == 1 and nxt_tok == ',':
+                        # New param.
+                        param_list_toks.append([])
+                    elif nxt_tok[0].isalnum() or nxt_tok[0] == '_':
+                        # Assume is a type.
+                        ret_type_fn_name_toks.append(nxt_tok)
+                    else:
+                        print("Unknown syntax?!")
+                        assert False
+                
+                # Postfix qualifiers.
+                if func_read_stage == 2:
+                    if nxt_tok in ['const', 'override']:
+                        post_qual_toks.append(nxt_tok)
+                    elif nxt_tok in [';', '{']:
+                        # Confirmed! (@NOTE: Do not add to module nesting)
+                        func_name = ret_type_fn_name_toks[-1]
+                        modules.append(Module("func", func_name, get_full_mod_nesting_str()))
+
+                        if nxt_tok == '{':
+                            # Continue to drain everything in the function body.
+                            # (exclude any possible modules inside of functions for simplicity)
+                            assert False  # @TODO
+                        
+                        # Finish while-true.
+                        break
+
+    return modules
+
+
+def extract_modules(buffer_lines: list[str]) -> list[Module]:
+    modules = []
+    buffer_lines = strip_unnec_parts(buffer_lines)
+    buffer_lines = strip_empty_lines(buffer_lines)
+    tokens = extract_tokens_from_lines(buffer_lines)
+    modules = extract_modules_from_tokens(tokens)
+
+    return modules
+
+
+def build_module_database(existing_files: list[Path]) -> list[Module]:
+    modules = []
+    for existing_file in existing_files:
+        with open(existing_file, 'r', encoding='utf-8') as f:
+            buffer_lines = f.readlines()
+            modules.extend(extract_modules(buffer_lines))
+
+    return modules
+
+
+def print_quit_help():
+    print("[quit/q]")
+    print("  Exits the program.")
+
+
+def print_help_help():
+    print("[help/h]")
+    print("  Displays this prompt.")
+
+
+def print_list_help():
+    print("[list/l]")
+    print("  Lists all modules.")
+
+
+def print_module_name_example():
+    print("    EXAMPLE OF MODULE NAME: BT.world.c-Scene_loader.f-load_scene")
+    print("      No prefix : namespace")
+    print("      f-        : function or method")
+    print("      e-        : enum or enum class")
+    print("      s-        : struct")
+    print("      c-        : class")
+
+
+def print_view_help():
+    print("[view/v] module_name")
+    print("  Views properties of a module. If module name is not an exact match, " \
+          "similar ones are suggested.")
+    print_module_name_example()
+
+
+def print_new_help():
+    print("[new/n] module_name")
+    print("  Creates a new module. If module name is an exact match with another, " \
+          "raises an error message.")
+    print_module_name_example()
+
+
+def print_all_help():
+    print_quit_help()
+    print()
+    print_help_help()
+    print()
+    print_list_help()
+    print()
+    print_view_help()
+    print()
+    print_new_help()
+
+
+def check_token_exists(token_name: str) -> bool:
+    pass
+
+
+def token_view_interactive_mode(token_name: str):
+    pass
+
+
+def token_create_interactive_mode(token_name: str):
+    pass
+
+
+def search_for_token_and_print_results(query: str):
+    pass
+
+
+def interactive_mode(proj_files: list[Path]):
+    # Loop for commands in interactive mode.
+    while True:
+        print()
+        user_ans = input("コマンド⊳ ").split()  # Split on whitespace.
+        print()
+        
+        # Check if input is valid.
+        if len(user_ans) == 0:
+            print("Enter 'help' or 'h' to view list of commands, or enter a command.")
+            continue
+
+        # 'quit'
+        if user_ans[0].lower() in ['q', 'quit']:
+            break
+
+        # 'help'
+        if user_ans[0].lower() in ['h', 'help']:
+            print_all_help()
+            continue
+
+        # 'list'
+        if user_ans[0].lower() in ['l', 'list']:
+            search_for_token_and_print_results('')
+            continue
+
+        # 'view'
+        if user_ans[0].lower() in ['v', 'view']:
+            if len(user_ans) != 2:
+                print_view_help()
+                continue
+
+            if check_token_exists(user_ans[1]):
+                token_view_interactive_mode(user_ans[1])
+            else:
+                search_for_token_and_print_results(user_ans[1])
+            continue
+
+        # 'new'
+        if user_ans[0].lower() in ['n', 'new']:
+            if len(user_ans) != 2:
+                print_new_help()
+                continue
+
+            if check_token_exists(user_ans[1]):
+                print("ERROR: Token already exists.")
+            else:
+                token_create_interactive_mode(user_ans[1])
+            continue
+
+
+if __name__ == '__main__':
+    print("STARTUP: Finding project files... ", end='', flush=True)
+
+    src_entries = find_src_entries()
+    existing_files = find_existing_files()
+
+    files_missing_in_src_entries = \
+        find_missing_src_entry_in_src_entries(src_entries, existing_files)
+
+    print("DONE")
+
+
+    print("STARTUP: Building module database... ", end='', flush=True)
+    all_modules = build_module_database(existing_files)
+    print("DONE")
+
+
+    print("STARTUP finished.")
+    print()
+    print("Entering interactive mode!")
+
+    interactive_mode(all_modules)
+
+
+
+
+
+
+
+    # Print result.
+    if len(files_missing_in_src_entries) > 0:
+        print('==== MISSING ENTRIES ============================================')
+    for missing_file in files_missing_in_src_entries:
+        print(missing_file)
+
+    # Ask to update cmakelists.
+    user_ans = input("Update CMakeLists file? (Y/n): ").lower()
+    if len(user_ans) == 0 or user_ans[0] == "y":
+        print("Starting update CMakeLists script.")
+        exec(open('./update_cmakelists.py').read()) 

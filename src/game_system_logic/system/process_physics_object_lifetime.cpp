@@ -9,13 +9,10 @@
 #include "game_system_logic/world/world_properties.h"
 #include "physics_engine/physics_engine.h"
 #include "physics_engine/physics_object.h"
-#include "renderer/mesh.h"
 #include "service_finder/service_finder.h"
-#include "uuid/uuid.h"
+#include "btuuid.h"
 
 #include <memory>
-
-// @NOTE: See `process_render_object_lifetime.cpp` for a similar system.
 
 
 namespace
@@ -118,7 +115,7 @@ void create_staged_physics_objects(entt::registry& reg, Physics_engine& phys_eng
             };
             new_phys_obj = Physics_object::create_triangle_mesh(
                 false,
-                Model_bank::get_model(tm_settings.model_name),
+                tm_settings.model_name,
                 JPH::EMotionType{ tm_settings.motion_type },
                 Physics_transform::make_phys_trans(transform.position, transform.rotation));
             break;

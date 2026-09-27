@@ -2,9 +2,7 @@
 
 #include "btjson.h"
 
-#include <cmath>
 #include <cstdint>
-#include <limits>
 
 
 namespace BT
