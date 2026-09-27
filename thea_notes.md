@@ -1,3 +1,5 @@
+## Part 1
+
 - [x] Get the physics_engine folder to not have any .txt files (make all the .cpp files compile correctly)
     - It doesn't seem toooo difficult, but there needs to be some work on getting this to use TXP_renderer instead.
 
@@ -362,6 +364,13 @@
     - maybe do the unload after a sound isn't getting used for 10 seconds (it would be a pain if a music track got unloaded heh).
     - does unload check every 1024 ticks
 
+
+## Part 2
+
+- [ ] 
+
+
+## SOMEDAY
 
 - [ ] SOMEDAY: create tool for easy placement of hitcapsules, hurtcapsules, and sfx emission.
 
