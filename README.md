@@ -10,7 +10,7 @@ Bozzy-Thea Zelda-like Collectathon Game Engine. Simple to get off the ground.
 
 ## Software Versions.
 - Clang 20.1.4
-- OpenGL 4.5 (In the future Vulkan 1.3)
+- Vulkan 1.3 (macOS: KosmicKrisp)
 - Blender 3.2.2
     > @NOTE: For macOS and future, perhaps using the LTS version (3.3) would be better? Try it out and see.
 - Milton 1.9.1
@@ -81,13 +81,14 @@ xcodebuild -downloadComponent MetalToolchain
 - [x] Gameplay work (not engine work rly).
 - [x] Skeletal animations using compute shaders.
 - [x] Misc logger-related bugfixes.
-- [ ] Create Vulkan 1.3 gfx impl; remove OpenGL 4.5 gfx impl.
-- [ ] Some things I want to create!!!! (script->EnTT ecs, editor improvements, AFA editor/runtime improvements)
+- [x] Create Vulkan 1.3 gfx impl; remove OpenGL 4.5 gfx impl.
+- [x] Some things I want to create!!!! (script->EnTT ecs, editor improvements, AFA editor/runtime improvements)
 - [ ] ~~Unity to this engine migration.~~
 - [ ] Trenchbroom `.map` loader.
-- [ ] Move from GLSL to SLANG shaders.
-- [ ] Graphics library procedure abstraction (basic).
-- [ ] Swordplay combat.
+- [x] Move from GLSL to SLANG shaders.
+- [ ] ~~Graphics library procedure abstraction (basic).~~
+    - do this if porting to consoles
+- [x] Swordplay combat.
 - [ ] Refactor: materials attached to mesh -> material set system.
 - [ ] Small concerns.
 - [ ] Level authoring tools.

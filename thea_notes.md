@@ -367,7 +367,42 @@
 
 ## Part 2
 
-- [ ] 
+> it feels like the next goal is making a real enemy with a few attacks and a real fight w health and posture.
+
+- [ ] make some gfx improvements
+    XXXXXXXXX - [ ] more materials
+    XXXXXXXXX - [ ] texture converter to ktx2
+    XXXXXXXXX - [ ] DECISION: uber shader or multiple different shaders?
+    XXXXXXXXX     - good to think about at least, since making a material editor or at least viewer would be good... well that could just be a museum huh
+    XXXXXXXXX     - maybe a script to gather and display everything in a gym could be good? like if something's a prefab type of thing
+    XXXXXXXXX         - material orbs
+    XXXXXXXXX         - prefabs
+    XXXXXXXXX         - particle sims (also would be prefabs but hey)
+    XXXXXXXXX         - decals??
+    XXXXXXXXX     - for displaying all ui test stuff, there should be a debug menu in the pause menu
+    - [ ] ok so for now, just make these materials:
+        - player body
+        - enemy body
+        - sword
+        - ground
+    - [ ] make sure that the diffuse and specular in the shader are correct.
+
+- [ ] improve enemy attacks w readability
+    - give enemy 5 different attack combos
+    - make sure it's readable to parry all of them
+    - QA them with this info:
+        - [ ] has hurtcapsules for the attacks
+        - [ ] sets sending root motion multiplier (maybe this should just be a part of the attack thing)
+
+- [ ] add ui health and posture
+
+- [ ] death screen and "ninsatsu" screen
+    - using "will to live" consumables (tier 1 is gotten from "assassin training", but tier 2 is from tutorial end boss (the doctor) and tier 3 is from extra quest from the doctor)
+
+- [ ] give player character attack combo
+    - if press lmb a bunch of times type of thing.
+
+- [ ] some fun: energy ball enemy shoots and you have to parry it back to each other until one of you gets hit.
 
 
 ## SOMEDAY
