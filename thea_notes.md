@@ -358,8 +358,9 @@
     - needed right hand coordinates for audio engine huh.
 - [x] INCOMPLETE: position audio at correct position of entity and at correct bone too.
     - it's done, but there needs to be a better editor tool (like for the hitcapsule placement too)
-- [ ] INCOMPLETE: unloads audio once no channels are using a sound inside `update()`
+- [x] INCOMPLETE: unloads audio once no channels are using a sound inside `update()`
     - maybe do the unload after a sound isn't getting used for 10 seconds (it would be a pain if a music track got unloaded heh).
+    - does unload check every 1024 ticks
 
 
 - [ ] SOMEDAY: create tool for easy placement of hitcapsules, hurtcapsules, and sfx emission.

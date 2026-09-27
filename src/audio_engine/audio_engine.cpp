@@ -5,6 +5,7 @@
 #include "btlogger.h"
 #include "util.h"
 
+#include <cstdint>
 #include <memory>
 #include <unordered_map>
 
@@ -27,6 +28,27 @@ public:
     /// Updates impl's audio thread and state.
     void update()
     {
+        // Do garbage collection.
+        constexpr uint32_t k_garbage_collect_check_interval{ 1024 };
+        static_assert((k_garbage_collect_check_interval & (k_garbage_collect_check_interval - 1)) ==
+                          0,
+                      "This number is not a power of 2");
+
+        if ((m_garbage_collection_timer++ & (k_garbage_collect_check_interval - 1)) == 0)
+        {
+            for (auto const& [snd_name, snd_key] : m_snd_name_to_key)
+            {
+                if (m_pimpl->is_snd_loaded(snd_key) && m_snd_metadatas.at(snd_key).refcount == 0 &&
+                    !m_pimpl->is_snd_used_anywhere(snd_key))
+                {
+                    // Unload sound!!
+                    m_pimpl->unload_snd(snd_key);
+                    BT_WARNF("Unloaded sound \"%s\"", snd_name.c_str());
+                }
+            }
+        }
+
+        // Update backend.
         m_pimpl->update();
     }
     
@@ -81,6 +103,7 @@ public:
                               snd_meta.is_3d,
                               snd_meta.is_looping,
                               snd_meta.stream);
+            BT_WARNF("Loaded sound \"%s\"", snd_meta.snd_name.c_str());
         }
     }
 
@@ -90,12 +113,7 @@ public:
         auto& snd_meta{ m_snd_metadatas.at(key) };
         snd_meta.refcount--;
 
-        if (snd_meta.refcount == 0)
-        {   // Unload sound.
-            // m_pimpl->unload_snd(key);  @INCOMPLETE
-            BT::date_deadline(2026, 9, 30);
-        }
-        else if (snd_meta.refcount < 0)
+        if (snd_meta.refcount < 0)
         {
             BT_ERRORF("Sound %d refcount has dropped below 0. Something is wrong.", key);
             assert(false);
@@ -147,6 +165,8 @@ private:
         int32_t refcount;
     };
     std::unordered_map<snd_key_t, Sound_metadata> m_snd_metadatas;
+
+    uint32_t m_garbage_collection_timer{ 0 };
 };
 
 }  // namespace

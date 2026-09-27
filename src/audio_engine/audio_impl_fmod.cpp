@@ -52,7 +52,7 @@ void BT::audio::impl::Audio_impl_FMOD::update()
     for (auto it = m_alive_channels.begin(); it != m_alive_channels.end(); it++)
     {
         bool is_playing;
-        ERRCHECK(it->second->isPlaying(&is_playing));
+        ERRCHECK(it->second.fmod_channel->isPlaying(&is_playing));
 
         if (!is_playing)
         {
@@ -141,6 +141,17 @@ bool BT::audio::impl::Audio_impl_FMOD::is_snd_loaded(snd_key_t key) const
     return (m_loaded_snds.find(key) != m_loaded_snds.end());
 }
 
+bool BT::audio::impl::Audio_impl_FMOD::is_snd_used_anywhere(snd_key_t key) const
+{
+    for (auto const& [_, alive_channel] : m_alive_channels)
+    {
+        if (alive_channel.using_snd_key == key)
+            return true;
+    }
+
+    return false;
+}
+
 bool BT::audio::impl::Audio_impl_FMOD::is_snd_3d(snd_key_t key) const
 {
     FMOD_MODE mode;
@@ -152,9 +163,9 @@ BT::audio::channel_key_t BT::audio::impl::Audio_impl_FMOD::play_snd_paused(snd_k
 {
     FMOD::Channel* channel{ nullptr };
     ERRCHECK(m_system->playSound(m_loaded_snds.at(key), nullptr, true, &channel));
-    
+
     auto channel_key{ m_next_key++ };
-    m_alive_channels.emplace(channel_key, channel);
+    m_alive_channels.emplace(channel_key, Alive_channel{ key, channel });
 
     return channel_key;
 }
@@ -165,15 +176,15 @@ void BT::audio::impl::Audio_impl_FMOD::set_channel_3d_props(channel_key_t key,
 {
     FMOD_VECTOR fmod_pos{ pos[0], pos[1], pos[2] };
     FMOD_VECTOR fmod_velo{ velo[0], velo[1], velo[2] };
-    ERRCHECK(m_alive_channels.at(key)->set3DAttributes(&fmod_pos, &fmod_velo));
+    ERRCHECK(m_alive_channels.at(key).fmod_channel->set3DAttributes(&fmod_pos, &fmod_velo));
 }
 
 void BT::audio::impl::Audio_impl_FMOD::set_channel_volume(channel_key_t key, float_t db)
 {
-    ERRCHECK(m_alive_channels.at(key)->setVolume(db_to_volume(db)));
+    ERRCHECK(m_alive_channels.at(key).fmod_channel->setVolume(db_to_volume(db)));
 }
 
 void BT::audio::impl::Audio_impl_FMOD::set_channel_paused(channel_key_t key, bool is_paused)
 {
-    ERRCHECK(m_alive_channels.at(key)->setPaused(is_paused));
+    ERRCHECK(m_alive_channels.at(key).fmod_channel->setPaused(is_paused));
 }
