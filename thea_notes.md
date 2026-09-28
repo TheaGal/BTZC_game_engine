@@ -385,7 +385,8 @@
         - enemy body
         - sword
         - ground
-    - [ ] make sure that the diffuse and specular in the shader are correct.
+    - [x] make sure that the diffuse and specular in the shader are correct.
+        - [x] or just make a pbr shader real quick?
 
 - [ ] improve enemy attacks w readability
     - give enemy 5 different attack combos
@@ -398,6 +399,7 @@
 
 - [ ] death screen and "ninsatsu" screen
     - using "will to live" consumables (tier 1 is gotten from "assassin training", but tier 2 is from tutorial end boss (the doctor) and tier 3 is from extra quest from the doctor)
+    - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.
 
 - [ ] give player character attack combo
     - if press lmb a bunch of times type of thing.

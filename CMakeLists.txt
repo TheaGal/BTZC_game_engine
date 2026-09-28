@@ -148,6 +148,8 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/default_shader.shadrefl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/gradient.shader
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/gradient.shadrefl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/pbr.shader
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/pbr.shadrefl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/postprocess.shader
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/postprocess.shadrefl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/skinned_model.shader
