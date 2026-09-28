@@ -54,14 +54,6 @@ if __name__ == '__main__':
     print()
 
     print('=' * 80)
-    print(' Compile TXP Renderer Textures')
-    print('=' * 80)
-    subprocess.call([PYTHON_CMD, TXP_RENDERER_COMPILE_TEXTURES_SCRIPT_PATH],
-                     cwd=TXP_RENDERER_REPO_DIR)
-    print()
-    print()
-
-    print('=' * 80)
     print(' Update TXP Renderer Build Script')
     print('=' * 80)
     subprocess.call([PYTHON_CMD, TXP_RENDERER_UPDATE_BUILD_SCRIPT_SCRIPT_PATH],
@@ -74,6 +66,14 @@ if __name__ == '__main__':
     print(' Copy TXP Renderer Shaders to Asset Directory')
     print('=' * 80)
     copy_built_shaders_to_asset_dir()
+    print()
+    print()
+
+    print('=' * 80)
+    print(' Compile Textures (using TXP Renderer\'s script)')
+    print('=' * 80)
+    subprocess.call([PYTHON_CMD, TXP_RENDERER_COMPILE_TEXTURES_SCRIPT_PATH],
+                     cwd=MY_REPO_DIR)
     print()
     print()
 
