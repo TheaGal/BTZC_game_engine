@@ -10,7 +10,8 @@ MY_SHADERS_DIR = f'{MY_REPO_DIR}/assets/shaders/'
 MY_UPDATE_BUILD_SCRIPT_SCRIPT_PATH = f'{MY_REPO_DIR}/update_cmakelists.py'
 
 TXP_RENDERER_REPO_DIR = f'{MY_REPO_DIR}/third_party/TXP_renderer'
-TXP_RENDERER_COMPILE_SCRIPT_PATH = f'{TXP_RENDERER_REPO_DIR}/compile_shaders.py'
+TXP_RENDERER_COMPILE_SHADERS_SCRIPT_PATH = f'{TXP_RENDERER_REPO_DIR}/compile_shaders.py'
+TXP_RENDERER_COMPILE_TEXTURES_SCRIPT_PATH = f'{TXP_RENDERER_REPO_DIR}/compile_textures.py'
 TXP_RENDERER_UPDATE_BUILD_SCRIPT_SCRIPT_PATH = f'{TXP_RENDERER_REPO_DIR}/update_cmakelists.py'
 TXP_RENDERER_SHADERS_DIR = f'{TXP_RENDERER_REPO_DIR}/assets/shaders/'
 
@@ -45,14 +46,23 @@ def copy_built_shaders_to_asset_dir():
 
 if __name__ == '__main__':
     print('=' * 80)
-    print('Compile TXP Renderer Shaders')
+    print(' Compile TXP Renderer Shaders')
     print('=' * 80)
-    subprocess.call([PYTHON_CMD, TXP_RENDERER_COMPILE_SCRIPT_PATH], cwd=TXP_RENDERER_REPO_DIR)
+    subprocess.call([PYTHON_CMD, TXP_RENDERER_COMPILE_SHADERS_SCRIPT_PATH],
+                     cwd=TXP_RENDERER_REPO_DIR)
     print()
     print()
 
     print('=' * 80)
-    print('Update TXP Renderer Build Script')
+    print(' Compile TXP Renderer Textures')
+    print('=' * 80)
+    subprocess.call([PYTHON_CMD, TXP_RENDERER_COMPILE_TEXTURES_SCRIPT_PATH],
+                     cwd=TXP_RENDERER_REPO_DIR)
+    print()
+    print()
+
+    print('=' * 80)
+    print(' Update TXP Renderer Build Script')
     print('=' * 80)
     subprocess.call([PYTHON_CMD, TXP_RENDERER_UPDATE_BUILD_SCRIPT_SCRIPT_PATH],
                     cwd=TXP_RENDERER_REPO_DIR)
@@ -61,14 +71,14 @@ if __name__ == '__main__':
     print()
 
     print('=' * 80)
-    print('Copy TXP Renderer Shaders to Asset Directory')
+    print(' Copy TXP Renderer Shaders to Asset Directory')
     print('=' * 80)
     copy_built_shaders_to_asset_dir()
     print()
     print()
 
     print('=' * 80)
-    print('Update Build Script')
+    print(' Update Build Script')
     print('=' * 80)
     subprocess.call([PYTHON_CMD, MY_UPDATE_BUILD_SCRIPT_SCRIPT_PATH],
                     cwd=MY_REPO_DIR)
