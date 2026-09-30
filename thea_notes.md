@@ -391,9 +391,34 @@
 - [ ] improve enemy attacks w readability
     - give enemy 5 different attack combos
     - make sure it's readable to parry all of them
+    - it seems like something needs to give in order to have certain moves. ~~maybe there needs to be a distance-correcting anim that plays before each attack? so then the state-set would look like: `st_dist_to_3m,st_attack_2`, and if "st_dist_to_3m" is already around 3m, then it will just cut straight to the next anim, but if not then it will move either forward or backward to that position.~~
+        - so KUSR solves this by only rewarding the player by being aggressive. if player backs off, then enemy backs off too which causes enemy to "heal" posture.
+        - so ig the enemy should have this logic:
+            - have close range attacks, and far range attacks
+            - if posture is low (healed), then enable doing pinch attacks to close distance w player. i.e., do a pinch attack immediately.
+            - if posture is high (danger), then be a bit more passive/conservative with far range attacks. give maybe 1-2 idle moves before doing a pinch attack.
+            - if player heals, do a pinch attack.
+            - assume player has to be 1m away to attack themselves, so make that assumption if was hit by player's sword.
+            > i think this works bc the player won't be able to win unless they aggressively participate in the battle. if you had infinite KUSR spirit emblems, then it would be possible to spam mortal blade or a ranged attack, but that would be not fun cheese.
+            > hmmm, ig KUSR's dragon flash, which is a ranged attack. also, the umbrella has projected force on it. hmmm, and shuriken and kunai exist. ig ranged attacks are just something that is a limited resource.
+
     - QA them with this info:
         - [ ] has hurtcapsules for the attacks
         - [ ] sets sending root motion multiplier (maybe this should just be a part of the attack thing)
+        - [ ] accepts msg from player that player is attacking rn (when wanted)
+        - [ ] cancels anim into hurt anim when hit, or just gets additive anim to get hurt which doesn't cancel anim (when wanted)
+
+- [x] BUGFIX: pbr isn't getting drawn correctly??
+    - specular highlights show up on underside instead of overside
+        - i think it's fixed??? would need ibl to double check ig.
+        - [x] nope, need to do `cam_pos - world_pos` for the proper `V`
+    - normal maps are weird af (better but the perturbance is not good enough??)
+        - idk what im doing rly
+        - disabled normal maps for now.
+        - maybe once the specular highlights are fixed then normal maps will be fixed too???
+        - [x] fixed! turns out it was bc they were imported as srgb instead of linear (compile_textures.py didnt convert to linear until a transfer func was assigned to the texture)
+
+- [ ] BUGFIX: there's a lot of crashing happening w the sound system. is unloading sounds really that hard???
 
 - [ ] add ui health and posture
 
