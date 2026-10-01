@@ -78,6 +78,11 @@
             "anim_name": "Attack_charge_forward"
         },
         {
+            "state_name": "st_attack_2",
+            "state_type": "single_anim",
+            "anim_name": "Attack_naname"
+        },
+        {
             "state_name": "st_jump_back_evade",
             "state_type": "single_anim",
             "anim_name": "Jump_back_evade"

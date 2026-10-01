@@ -397,10 +397,18 @@
             - have close range attacks, and far range attacks
             - if posture is low (healed), then enable doing pinch attacks to close distance w player. i.e., do a pinch attack immediately.
             - if posture is high (danger), then be a bit more passive/conservative with far range attacks. give maybe 1-2 idle moves before doing a pinch attack.
+                - or do that posture healing move that some characters in KUSR do.
             - if player heals, do a pinch attack.
             - assume player has to be 1m away to attack themselves, so make that assumption if was hit by player's sword.
             > i think this works bc the player won't be able to win unless they aggressively participate in the battle. if you had infinite KUSR spirit emblems, then it would be possible to spam mortal blade or a ranged attack, but that would be not fun cheese.
             > hmmm, ig KUSR's dragon flash, which is a ranged attack. also, the umbrella has projected force on it. hmmm, and shuriken and kunai exist. ig ranged attacks are just something that is a limited resource.
+    
+    - [x] add a maximum allowed distance for a certain attack.
+        - added an attack min-max range so that limits which attacks can happen in which area.
+    
+    - there needs to be a reliable way to keep track of the distance.
+        - i think just having a weird little list of realtime printed values would be useful.
+        - [ ] make the thing (in renderer external ifc).
 
     - QA them with this info:
         - [ ] has hurtcapsules for the attacks
