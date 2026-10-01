@@ -9,6 +9,7 @@
 #include "game_system_logic/entity_container.h"
 #include "game_system_logic/system/helper_funcs.h"
 #include "service_finder/service_finder.h"
+#include "txp_renderer/debug/debug_printable_info.h"
 
 
 void BT::system::cpu_character_world_space_input(float_t const delta_time)
@@ -227,7 +228,7 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
                 float_t const flat_distance_to_target{ glm_vec2_norm(
                     vec2{ static_cast<float_t>(desired_direction[0]),
                           static_cast<float_t>(desired_direction[2]) }) };
-                BT_WARNF("Distance to target (flat): %.3f", flat_distance_to_target);
+                TXP::debug::emplace_data_point("CPU-dist-to-target", flat_distance_to_target);
 
                 if (request_new_attack)
                 {

@@ -4,17 +4,17 @@
             "name": "ACTION_MAP_attacks",
             "actions": [
                 {
-                    "min_max_range": [0, 5],
+                    "min_max_range": [0, 3],
                     "weight": 0.1,
                     "state_set": "st_attack_0"
                 },
                 {
-                    "min_max_range": [5, 10],
+                    "min_max_range": [3, 10],
                     "weight": 0.1,
                     "state_set": "st_attack_1"
                 },
                 {
-                    "min_max_range": [0, 5],
+                    "min_max_range": [0, 3],
                     "weight": 0.1,
                     "state_set": "st_attack_2"
                 }
@@ -24,17 +24,17 @@
             "name": "ACTION_MAP_movements",
             "actions": [
                 {
-                    "min_max_range": [0, 5],
+                    "min_max_range": [0, 3],
                     "weight": 0.05,
                     "state_set": "st_jump_back_evade"
                 },
                 {
-                    "min_max_range": [5, 1000000],
+                    "min_max_range": [3, 1000000],
                     "weight": 0.1,
                     "state_set": "st_yosumi_shift_left"
                 },
                 {
-                    "min_max_range": [5, 1000000],
+                    "min_max_range": [3, 1000000],
                     "weight": 0.1,
                     "state_set": "st_yosumi_shift_right"
                 }

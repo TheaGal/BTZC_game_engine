@@ -408,7 +408,8 @@
     
     - there needs to be a reliable way to keep track of the distance.
         - i think just having a weird little list of realtime printed values would be useful.
-        - [ ] make the thing (in renderer external ifc).
+        - [x] make the thing (in renderer external ifc).
+        - this makes it a lot easier to see how the ranges are being moved thru.
 
     - QA them with this info:
         - [ ] has hurtcapsules for the attacks
