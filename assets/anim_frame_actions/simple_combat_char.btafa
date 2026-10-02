@@ -8,7 +8,7 @@
                         3.0
                     ],
                     "state_set": "st_attack_0",
-                    "weight": 0.10000000149011612
+                    "weight": 0.0
                 },
                 {
                     "min_max_range": [
@@ -25,6 +25,14 @@
                     ],
                     "state_set": "st_attack_2",
                     "weight": 0.10000000149011612
+                },
+                {
+                    "min_max_range": [
+                        0.0,
+                        3.0
+                    ],
+                    "state_set": "st_attack_3",
+                    "weight": 0.0
                 }
             ],
             "name": "ACTION_MAP_attacks"
@@ -37,7 +45,15 @@
                         3.0
                     ],
                     "state_set": "st_jump_back_evade",
-                    "weight": 0.025
+                    "weight": 0.02500000037252903
+                },
+                {
+                    "min_max_range": [
+                        10.0,
+                        1000000.0
+                    ],
+                    "state_set": "st_running",
+                    "weight": 0.20000000298023224
                 },
                 {
                     "min_max_range": [
@@ -292,13 +308,39 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "evq_exec_atk_combo_idx",
+                            "ACTION_MAP_attacks",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 41,
+                    "row_idx": 8,
+                    "start_frame": 38
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_exec_mvt_idx",
+                            "ACTION_MAP_movements",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 41,
+                    "row_idx": 9,
+                    "start_frame": 39
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "turn_speed",
                             "10"
                         ],
                         "cmd_name": "var_ov"
                     },
                     "end_frame": 41,
-                    "row_idx": 8,
+                    "row_idx": 11,
                     "start_frame": 0
                 }
             ],
@@ -1123,6 +1165,193 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
+                    "end_frame": 125,
+                    "row_idx": 2,
+                    "start_frame": 122
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_exec_mvt_idx",
+                            "ACTION_MAP_movements",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 125,
+                    "row_idx": 3,
+                    "start_frame": 123
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "turn_speed",
+                            "5"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 64,
+                    "row_idx": 4,
+                    "start_frame": 50
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "turn_speed",
+                            "25"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 64,
+                    "row_idx": 5,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "turn_speed",
+                            "25"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 125,
+                    "row_idx": 5,
+                    "start_frame": 64
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "hitcapsule_group_1_enabled",
+                            "true"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 63,
+                    "row_idx": 7,
+                    "start_frame": 56
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "attack_send_root_motion_multi",
+                            "2"
+                        ],
+                        "cmd_name": "var_wr"
+                    },
+                    "end_frame": 63,
+                    "row_idx": 8,
+                    "start_frame": 55
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_hurt",
+                            "ACTION_MAP_hurt",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 49,
+                    "row_idx": 12,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "ready_grunt3.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 22,
+                    "row_idx": 17,
+                    "start_frame": 21
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "attack_grunt5.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 65,
+                    "row_idx": 18,
+                    "start_frame": 64
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "slash3.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 66,
+                    "row_idx": 19,
+                    "start_frame": 65
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "attack_grunt2.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 93,
+                    "row_idx": 20,
+                    "start_frame": 92
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "slash1.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 94,
+                    "row_idx": 21,
+                    "start_frame": 93
+                }
+            ],
+            "state_name": "st_attack_2"
+        },
+        {
+            "regions": [
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_guard_press",
+                            "st_ready_parry,st_hold_guard_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 30,
+                    "row_idx": 0,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_exec_atk_combo_idx",
+                            "ACTION_MAP_attacks",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
                     "end_frame": 141,
                     "row_idx": 2,
                     "start_frame": 138
@@ -1272,7 +1501,7 @@
                     "start_frame": 109
                 }
             ],
-            "state_name": "st_attack_2"
+            "state_name": "st_attack_3"
         },
         {
             "regions": [
