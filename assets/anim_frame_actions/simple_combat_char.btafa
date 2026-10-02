@@ -1,59 +1,99 @@
 {
     "action_maps": [
         {
-            "name": "ACTION_MAP_attacks",
             "actions": [
                 {
-                    "min_max_range": [0, 3],
-                    "weight": 0.1,
-                    "state_set": "st_attack_0"
+                    "min_max_range": [
+                        0.0,
+                        3.0
+                    ],
+                    "state_set": "st_attack_0",
+                    "weight": 0.10000000149011612
                 },
                 {
-                    "min_max_range": [3, 10],
-                    "weight": 0.1,
-                    "state_set": "st_attack_1"
+                    "min_max_range": [
+                        3.0,
+                        10.0
+                    ],
+                    "state_set": "st_attack_1",
+                    "weight": 0.10000000149011612
                 },
                 {
-                    "min_max_range": [0, 3],
-                    "weight": 0.1,
-                    "state_set": "st_attack_2"
+                    "min_max_range": [
+                        0.0,
+                        3.0
+                    ],
+                    "state_set": "st_attack_2",
+                    "weight": 0.10000000149011612
                 }
-            ]
+            ],
+            "name": "ACTION_MAP_attacks"
         },
         {
-            "name": "ACTION_MAP_movements",
             "actions": [
                 {
-                    "min_max_range": [0, 3],
-                    "weight": 0.05,
-                    "state_set": "st_jump_back_evade"
+                    "min_max_range": [
+                        0.0,
+                        3.0
+                    ],
+                    "state_set": "st_jump_back_evade",
+                    "weight": 0.025
                 },
                 {
-                    "min_max_range": [3, 1000000],
-                    "weight": 0.1,
-                    "state_set": "st_yosumi_shift_left"
+                    "min_max_range": [
+                        3.0,
+                        1000000.0
+                    ],
+                    "state_set": "st_yosumi_shift_left",
+                    "weight": 0.10000000149011612
                 },
                 {
-                    "min_max_range": [3, 1000000],
-                    "weight": 0.1,
-                    "state_set": "st_yosumi_shift_right"
+                    "min_max_range": [
+                        3.0,
+                        1000000.0
+                    ],
+                    "state_set": "st_yosumi_shift_right",
+                    "weight": 0.10000000149011612
+                },
+                {
+                    "min_max_range": [
+                        0.0,
+                        3.0
+                    ],
+                    "state_set": "st_yosumi_shift_left_close",
+                    "weight": 0.10000000149011612
+                },
+                {
+                    "min_max_range": [
+                        0.0,
+                        3.0
+                    ],
+                    "state_set": "st_yosumi_shift_right_close",
+                    "weight": 0.10000000149011612
                 }
-            ]
+            ],
+            "name": "ACTION_MAP_movements"
         },
         {
-            "name": "ACTION_MAP_hurt",
             "actions": [
                 {
-                    "min_max_range": [0, 1000000],
-                    "weight": 0.1,
-                    "state_set": "st_hurt_receive"
+                    "min_max_range": [
+                        0.0,
+                        1000000.0
+                    ],
+                    "state_set": "st_hurt_receive",
+                    "weight": 0.10000000149011612
                 },
                 {
-                    "min_max_range": [0, 1000000],
-                    "weight": 0.1,
-                    "state_set": "st_hurt_receive_from_back"
+                    "min_max_range": [
+                        0.0,
+                        1000000.0
+                    ],
+                    "state_set": "st_hurt_receive_from_back",
+                    "weight": 0.10000000149011612
                 }
-            ]
+            ],
+            "name": "ACTION_MAP_hurt"
         }
     ],
     "anim_frame_action_timelines": [
@@ -1083,9 +1123,9 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 121,
+                    "end_frame": 141,
                     "row_idx": 2,
-                    "start_frame": 118
+                    "start_frame": 138
                 },
                 {
                     "ctrl_cmd": {
@@ -1096,9 +1136,9 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 121,
+                    "end_frame": 141,
                     "row_idx": 3,
-                    "start_frame": 119
+                    "start_frame": 139
                 },
                 {
                     "ctrl_cmd": {
@@ -1108,9 +1148,21 @@
                         ],
                         "cmd_name": "var_ov"
                     },
-                    "end_frame": 121,
+                    "end_frame": 1,
                     "row_idx": 5,
                     "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "turn_speed",
+                            "25"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 141,
+                    "row_idx": 5,
+                    "start_frame": 65
                 },
                 {
                     "ctrl_cmd": {
@@ -1120,9 +1172,9 @@
                         ],
                         "cmd_name": "var_ov"
                     },
-                    "end_frame": 43,
+                    "end_frame": 63,
                     "row_idx": 7,
-                    "start_frame": 36
+                    "start_frame": 56
                 },
                 {
                     "ctrl_cmd": {
@@ -1132,9 +1184,9 @@
                         ],
                         "cmd_name": "var_wr"
                     },
-                    "end_frame": 43,
+                    "end_frame": 63,
                     "row_idx": 8,
-                    "start_frame": 35
+                    "start_frame": 55
                 },
                 {
                     "ctrl_cmd": {
@@ -1159,9 +1211,9 @@
                         ],
                         "cmd_name": "play_sfx_oneshot"
                     },
-                    "end_frame": 2,
+                    "end_frame": 22,
                     "row_idx": 17,
-                    "start_frame": 1
+                    "start_frame": 21
                 },
                 {
                     "ctrl_cmd": {
@@ -1173,9 +1225,9 @@
                         ],
                         "cmd_name": "play_sfx_oneshot"
                     },
-                    "end_frame": 61,
+                    "end_frame": 81,
                     "row_idx": 18,
-                    "start_frame": 60
+                    "start_frame": 80
                 },
                 {
                     "ctrl_cmd": {
@@ -1187,9 +1239,9 @@
                         ],
                         "cmd_name": "play_sfx_oneshot"
                     },
-                    "end_frame": 62,
+                    "end_frame": 82,
                     "row_idx": 19,
-                    "start_frame": 61
+                    "start_frame": 81
                 },
                 {
                     "ctrl_cmd": {
@@ -1201,9 +1253,9 @@
                         ],
                         "cmd_name": "play_sfx_oneshot"
                     },
-                    "end_frame": 89,
+                    "end_frame": 109,
                     "row_idx": 20,
-                    "start_frame": 88
+                    "start_frame": 108
                 },
                 {
                     "ctrl_cmd": {
@@ -1215,9 +1267,9 @@
                         ],
                         "cmd_name": "play_sfx_oneshot"
                     },
-                    "end_frame": 90,
+                    "end_frame": 110,
                     "row_idx": 21,
-                    "start_frame": 89
+                    "start_frame": 109
                 }
             ],
             "state_name": "st_attack_2"
@@ -1417,6 +1469,144 @@
                 }
             ],
             "state_name": "st_yosumi_shift_right"
+        },
+        {
+            "regions": [
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_guard_press",
+                            "st_ready_parry,st_hold_guard_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 0,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_exec_atk_combo_idx",
+                            "ACTION_MAP_attacks",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 1,
+                    "start_frame": 58
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_exec_mvt_idx",
+                            "ACTION_MAP_movements",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 2,
+                    "start_frame": 59
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_hurt",
+                            "ACTION_MAP_hurt",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 4,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "turn_speed",
+                            "10"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 8,
+                    "start_frame": 0
+                }
+            ],
+            "state_name": "st_yosumi_shift_left_close"
+        },
+        {
+            "regions": [
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_guard_press",
+                            "st_ready_parry,st_hold_guard_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 0,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_exec_atk_combo_idx",
+                            "ACTION_MAP_attacks",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 1,
+                    "start_frame": 58
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_exec_mvt_idx",
+                            "ACTION_MAP_movements",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 2,
+                    "start_frame": 59
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_hurt",
+                            "ACTION_MAP_hurt",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 4,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "turn_speed",
+                            "10"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 8,
+                    "start_frame": 0
+                }
+            ],
+            "state_name": "st_yosumi_shift_right_close"
         },
         {
             "regions": [],

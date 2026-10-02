@@ -98,6 +98,16 @@
             "anim_name": "Yosumi_shift_right"
         },
         {
+            "state_name": "st_yosumi_shift_left_close",
+            "state_type": "single_anim",
+            "anim_name": "Yosumi_shift_left_close"
+        },
+        {
+            "state_name": "st_yosumi_shift_right_close",
+            "state_type": "single_anim",
+            "anim_name": "Yosumi_shift_right_close"
+        },
+        {
             "state_name": "st_cancel_parried_attack",
             "state_type": "single_anim",
             "anim_name": "Cancel_parried_attack"

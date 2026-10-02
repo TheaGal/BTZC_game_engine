@@ -411,6 +411,9 @@
         - [x] make the thing (in renderer external ifc).
         - this makes it a lot easier to see how the ranges are being moved thru.
 
+    - having the enemy push an attack onto the stack and play a faraway attack when the attack distance becomes close range is stupid
+        - easy solution: just decrease the atk action expiration time to make attacks think more in realtime
+
     - QA them with this info:
         - [ ] has hurtcapsules for the attacks
         - [ ] sets sending root motion multiplier (maybe this should just be a part of the attack thing)
