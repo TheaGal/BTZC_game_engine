@@ -78,6 +78,16 @@
             "anim_name": "Attack_charge_forward"
         },
         {
+            "state_name": "st_attack_2",
+            "state_type": "single_anim",
+            "anim_name": "Attack_naname"
+        },
+        {
+            "state_name": "st_attack_3",
+            "state_type": "single_anim",
+            "anim_name": "Attack_naname_somethingelse"
+        },
+        {
             "state_name": "st_jump_back_evade",
             "state_type": "single_anim",
             "anim_name": "Jump_back_evade"
@@ -91,6 +101,16 @@
             "state_name": "st_yosumi_shift_right",
             "state_type": "single_anim",
             "anim_name": "Yosumi_shift_right"
+        },
+        {
+            "state_name": "st_yosumi_shift_left_close",
+            "state_type": "single_anim",
+            "anim_name": "Yosumi_shift_left_close"
+        },
+        {
+            "state_name": "st_yosumi_shift_right_close",
+            "state_type": "single_anim",
+            "anim_name": "Yosumi_shift_right_close"
         },
         {
             "state_name": "st_cancel_parried_attack",

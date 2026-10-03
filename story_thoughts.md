@@ -50,3 +50,17 @@
 
 - [ ] make it that the hospital-church machine isn't broken. it should just be that there's code deleted, not both deleted and machine broken (or something else could be the cause)
     - actually, it would be better if doc suspected eugenics but wanted to find how the hospital-church's machine was different where it allowed infants to live. then, the missing code could be a clue of where to look next.
+
+- note: guy youre helping should be perfectly nice and kind, but when revealing that he's trying to get you to readopt the unoabara after finding out thru a "fatherly hug" that youre missing the abara, when pc refuses, the guy says that it is his duty for him to help others get into heaven, and pc won't have a chance if they continue sinning by removing their abara. letting someone sin puts blood on his hands for his final judgment, so he must do everything in his power to bring pc closer to god, and that would be by an exorcism (killing pc so they are freed of their broken, mentally diseased body that is poisoning their spirit, so they can get freed from the mental delusion, be overall purer and cleaner, so that when pc is resurrected, they may be more worthy and clean, plus with a perfected body, the body no longer has the mental illness of believing it was meant to have the other abara)
+    - father refers to the body as a "meat robot" you pilot. the body is simply a tool, an avatar. father uses the branding for keeping his mental in check.
+
+
+
+
+# dreams
+
+- the first dream is of what appears to be pc's mother, but a figure that seems like god promises the mother of having a beautiful and happy family.
+    - "pc's mother" has a happy expression and starts crying tears of joy from hearing this promise
+    - it then cuts to pc being awake in bed, face puffy and eyes red from tears, with a horribly dead and depressed expression.
+    - pc has the same mole "pc's mother" has, showing their resemblence (spoiler: when finding an old photo of pc's actual mother, the mole is on the opposite side, but that detail is not noted)
+    - pc's hair color, eye lifeness, etc one by one changes to resemble how "pc's mother" looked

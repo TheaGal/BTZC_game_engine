@@ -90,7 +90,6 @@ void BT::system::player_character_world_space_input()
                 mvt_mode = mvt_mode_t::MODE_PLAYER_CHAR;
 
             bool afa_data_success = helper::fetch_wanted_afa_data(entity_container,
-                                                                  reg,
                                                                   *char_mvt_anim_state,
                                                                   _[0],
                                                                   _[1]);

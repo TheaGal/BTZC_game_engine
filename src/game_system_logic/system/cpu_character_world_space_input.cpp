@@ -9,6 +9,7 @@
 #include "game_system_logic/entity_container.h"
 #include "game_system_logic/system/helper_funcs.h"
 #include "service_finder/service_finder.h"
+#include "txp_renderer/debug/debug_printable_info.h"
 
 
 void BT::system::cpu_character_world_space_input(float_t const delta_time)
@@ -38,7 +39,6 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
         bool _;
         bool request_new_attack{ false };
         bool afa_data_success = helper::fetch_wanted_afa_data(entity_container,
-                                                              reg,
                                                               char_mvt_anim_state,
                                                               _,
                                                               request_new_attack);
@@ -126,52 +126,58 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
                 {
                     size_t num_accepted_msgs{ 0 };
 
-                    if (auto* char_mvt_st{ reg.try_get<component::Character_mvt_state>(entity) };  // @NOTE: I don't really like how this is getting accessed before `system::input_controlled_character_movement()` is run.
-                        char_mvt_st != nullptr)
+                    float_t char_facing_angle;
                     {
-                        for (auto const& msg : detect_char->state.broadcasted_enemy_atk_msgs)
-                        {
-                            float_t flat_distance2{ glm_vec2_norm2(  // @NOTE: Ignore Y axis.
-                                vec2{ msg.other_to_this_delta_pos[0],
-                                      msg.other_to_this_delta_pos[2] }) };
+                        // @NOTE: I don't really like how this is getting accessed before
+                        //        `system::input_controlled_character_movement()` is run.
+                        auto* char_mvt_st{ reg.try_get<component::Character_mvt_state>(entity) };
+                        char_facing_angle =
+                            (char_mvt_st == nullptr ? 0 : char_mvt_st->get_facing_angle());
+                    }
 
-                            // Get similarity of facing angles.
-                            date_deadline(2026, 9, 30);  // @TODO: remove try-get block for the character-mvt-state just for this one get_facing_angle(). (just have the try-get happen once right in here)
-                            auto ang_diff{ std::abs(msg.other_facing_angle - char_mvt_st->get_facing_angle()) };
-                            while (ang_diff > glm_rad(180.0f)) ang_diff -= glm_rad(360.0f);
-                            while (ang_diff <= glm_rad(-180.0f)) ang_diff += glm_rad(360.0f);
+                    for (auto const& msg : detect_char->state.broadcasted_enemy_atk_msgs)
+                    {
+                        float_t flat_distance2{ glm_vec2_norm2(  // @NOTE: Ignore Y axis.
+                            vec2{ msg.other_to_this_delta_pos[0],
+                                  msg.other_to_this_delta_pos[2] }) };
 
-                            constexpr float_t k_max_flat_distance{ 7.5f };
-                            constexpr float_t k_min_ang_diff{ glm_rad(45.0f) };
+                        // Get similarity of facing angles.
+                        auto ang_diff{ std::abs(msg.other_facing_angle - char_facing_angle) };
+                        while (ang_diff > glm_rad(180.0f))
+                            ang_diff -= glm_rad(360.0f);
+                        while (ang_diff <= glm_rad(-180.0f))
+                            ang_diff += glm_rad(360.0f);
 
-                            if (flat_distance2 < k_max_flat_distance * k_max_flat_distance &&
-                                ang_diff > k_min_ang_diff)
-                            {   // Accept msg and input to parry attack.
-                                char_mvt_anim_state.input_mvt_state.on_guard_press = true;
+                        constexpr float_t k_max_flat_distance{ 7.5f };
+                        constexpr float_t k_min_ang_diff{ glm_rad(45.0f) };
 
-                                num_accepted_msgs++;
-                            }
+                        if (flat_distance2 < k_max_flat_distance * k_max_flat_distance &&
+                            ang_diff > k_min_ang_diff)
+                        {  // Accept msg and input to parry attack.
+                            char_mvt_anim_state.input_mvt_state.on_guard_press = true;
+
+                            num_accepted_msgs++;
                         }
+                    }
 
-                        for (auto const& msg : detect_char->state.broadcasted_enemy_heal_msgs)
-                        {
-                            float_t flat_distance2{ glm_vec2_norm2(  // @NOTE: Ignore Y axis.
-                                vec2{ msg.other_to_this_delta_pos[0],
-                                      msg.other_to_this_delta_pos[2] }) };
+                    for (auto const& msg : detect_char->state.broadcasted_enemy_heal_msgs)
+                    {
+                        float_t flat_distance2{ glm_vec2_norm2(  // @NOTE: Ignore Y axis.
+                            vec2{ msg.other_to_this_delta_pos[0],
+                                  msg.other_to_this_delta_pos[2] }) };
 
-                            /// Too far for distance-closing pinch attacks.
-                            constexpr float_t k_very_far_distance{ 50.0f };
+                        /// Too far for distance-closing pinch attacks.
+                        constexpr float_t k_very_far_distance{ 50.0f };
 
-                            /// Everything closer is close combat and the opposite is range combat
-                            /// distance.
-                            constexpr float_t k_range_combat_distance{ 25.0f };
+                        /// Everything closer is close combat and the opposite is range combat
+                        /// distance.
+                        constexpr float_t k_range_combat_distance{ 25.0f };
 
-                            if (flat_distance2 < k_very_far_distance * k_very_far_distance)
-                            {   // Accept msg and input to pinch in distance and attack.
-                                char_mvt_anim_state.input_mvt_state.on_exec_attack_combo_idx = 123;  // @HARDCODE: idk maybe use some kind of setting? (set the setting to -1 for do nothing when this happens?)
+                        if (flat_distance2 < k_very_far_distance * k_very_far_distance)
+                        {  // Accept msg and input to pinch in distance and attack.
+                            char_mvt_anim_state.input_mvt_state.on_exec_attack_combo_idx = 123;  // @HARDCODE: idk maybe use some kind of setting? (set the setting to -1 for do nothing when this happens?)
 
-                                num_accepted_msgs++;
-                            }
+                            num_accepted_msgs++;
                         }
                     }
 
@@ -219,16 +225,26 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
                 }
 
                 // Input new movement.
+                float_t const flat_distance_to_target{ glm_vec2_norm(
+                    vec2{ static_cast<float_t>(desired_direction[0]),
+                          static_cast<float_t>(desired_direction[2]) }) };
+                TXP::debug::emplace_data_point("CPU-dist-to-target", flat_distance_to_target);
+
                 if (request_new_attack)
                 {
-                    date_deadline(2026, 9, 30);  // fix hardcode
                     char_mvt_anim_state.input_mvt_state.on_exec_attack_combo_idx =
-                        (random::fast_float_01_exclusive() * 2);  // @HARDCODE
+                        helper::calc_random_afa_action_map_action_idx(entity_container,
+                                                                      char_mvt_anim_state,
+                                                                      "ACTION_MAP_attacks",
+                                                                      flat_distance_to_target);
                 }
                 else
                 {
                     char_mvt_anim_state.input_mvt_state.on_exec_movement_idx =
-                        (random::fast_float_01_exclusive() * 3);  // @HARDCODE
+                        helper::calc_random_afa_action_map_action_idx(entity_container,
+                                                                      char_mvt_anim_state,
+                                                                      "ACTION_MAP_movements",
+                                                                      flat_distance_to_target);
                 }
             }
             break;

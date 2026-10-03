@@ -115,15 +115,39 @@ int32_t main()
         });
 
     main_renderer.add_texture("test_ktx_tex", ".ktx2");
-    main_renderer.add_material("default_mat", "basic_diffuse", { { "texture0", "test_ktx_tex" } });
+    main_renderer.add_texture("grid_1m", ".ktx2");
+    main_renderer.add_texture("tiles084_basecolor", ".ktx2");
+    main_renderer.add_texture("tiles084_physdesc", ".ktx2");
+    main_renderer.add_texture("tiles084_normal", ".ktx2");
+    main_renderer.add_texture("tiles084_occlusion", ".ktx2");
+    // main_renderer.add_material("default_mat",
+    //                            "pbr",
+    //                            { { "base_color_factor", "0.75 0.75 0.5 1" },
+    //                              { "metallic_factor", "0.3" },
+    //                              { "roughness_factor", "0.5" },
+    //                              { "base_color_texture", "grid_1m" } });
+    main_renderer.add_material("default_mat",
+                               "pbr",
+                               { { "base_color_factor", "1 1 1 1" },
+                                 { "metallic_factor", "1" },
+                                 { "roughness_factor", "1" },
+                                 { "base_color_texture", "tiles084_basecolor" },
+                                 { "physical_descriptor_texture", "tiles084_physdesc" },
+                                 { "normal_texture", "tiles084_normal" },
+                                 { "occlusion_texture", "tiles084_occlusion" } });
     main_renderer.add_material("ProBuilderDefault",
-                               "basic_diffuse",
-                               { { "texture0", "test_ktx_tex" } });
+                               "pbr",
+                               { { "base_color_factor", "0.25 0.25 0.25 1" },
+                                 { "metallic_factor", "0" },
+                                 { "roughness_factor", "0.3" },
+                                 { "base_color_texture", "grid_1m" } });
     main_renderer.add_material("__gradient_mat",
                                "gradient",
                                { { "image", "__hdr_draw_image_color" } });
     main_renderer.add_material_palette("default_material_palette", { "default_mat" });
+    main_renderer.add_material_palette("probuilder_material_palette", { "ProBuilderDefault" });
     main_renderer.add_model("unit_box", ".wobj", false, false);
+    main_renderer.add_model("material_viewer_ball", ".glb", false, false);
     main_renderer.add_model("probuilder_example", ".wobj", false, false);
     main_renderer.add_model("simple_combat_char", ".glb", true, true);
     main_renderer.add_model("rail_line_editor_gizmo", ".wobj", false, false);

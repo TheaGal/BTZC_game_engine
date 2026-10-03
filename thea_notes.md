@@ -369,7 +369,7 @@
 
 > it feels like the next goal is making a real enemy with a few attacks and a real fight w health and posture.
 
-- [ ] make some gfx improvements
+- [x] make some gfx improvements
     XXXXXXXXX - [ ] more materials
     XXXXXXXXX - [ ] texture converter to ktx2
     XXXXXXXXX - [ ] DECISION: uber shader or multiple different shaders?
@@ -380,29 +380,77 @@
     XXXXXXXXX         - particle sims (also would be prefabs but hey)
     XXXXXXXXX         - decals??
     XXXXXXXXX     - for displaying all ui test stuff, there should be a debug menu in the pause menu
-    - [ ] ok so for now, just make these materials:
+    - [x] ok so for now, just make these materials:
         - player body
-        - enemy body
-        - sword
+        - ~~enemy body~~
+        - ~~sword~~
         - ground
-    - [ ] make sure that the diffuse and specular in the shader are correct.
+    - [x] make sure that the diffuse and specular in the shader are correct.
+        - [x] or just make a pbr shader real quick?
+
+- [x] BUGFIX: pbr isn't getting drawn correctly??
+    - specular highlights show up on underside instead of overside
+        - i think it's fixed??? would need ibl to double check ig.
+        - [x] nope, need to do `cam_pos - world_pos` for the proper `V`
+    - normal maps are weird af (better but the perturbance is not good enough??)
+        - idk what im doing rly
+        - disabled normal maps for now.
+        - maybe once the specular highlights are fixed then normal maps will be fixed too???
+        - [x] fixed! turns out it was bc they were imported as srgb instead of linear (compile_textures.py didnt convert to linear until a transfer func was assigned to the texture)
+
+- [ ] give player character attack combo
+    - if press/release lmb a bunch of times type of thing.
+    - [ ] add feature in afa editor to be able to play anim at 60fps looping
+    - [ ] add feature in afa editor to focus on root bone with camera
 
 - [ ] improve enemy attacks w readability
     - give enemy 5 different attack combos
     - make sure it's readable to parry all of them
+    - it seems like something needs to give in order to have certain moves. ~~maybe there needs to be a distance-correcting anim that plays before each attack? so then the state-set would look like: `st_dist_to_3m,st_attack_2`, and if "st_dist_to_3m" is already around 3m, then it will just cut straight to the next anim, but if not then it will move either forward or backward to that position.~~
+        - so KUSR solves this by only rewarding the player by being aggressive. if player backs off, then enemy backs off too which causes enemy to "heal" posture.
+        - so ig the enemy should have this logic:
+            - have close range attacks, and far range attacks
+            - if posture is low (healed), then enable doing pinch attacks to close distance w player. i.e., do a pinch attack immediately.
+            - if posture is high (danger), then be a bit more passive/conservative with far range attacks. give maybe 1-2 idle moves before doing a pinch attack.
+                - or do that posture healing move that some characters in KUSR do.
+            - if player heals, do a pinch attack.
+            - assume player has to be 1m away to attack themselves, so make that assumption if was hit by player's sword.
+            > i think this works bc the player won't be able to win unless they aggressively participate in the battle. if you had infinite KUSR spirit emblems, then it would be possible to spam mortal blade or a ranged attack, but that would be not fun cheese.
+            > hmmm, ig KUSR's dragon flash, which is a ranged attack. also, the umbrella has projected force on it. hmmm, and shuriken and kunai exist. ig ranged attacks are just something that is a limited resource.
+    
+    - [x] add a maximum allowed distance for a certain attack.
+        - added an attack min-max range so that limits which attacks can happen in which area.
+    
+    - there needs to be a reliable way to keep track of the distance.
+        - i think just having a weird little list of realtime printed values would be useful.
+        - [x] make the thing (in renderer external ifc).
+        - this makes it a lot easier to see how the ranges are being moved thru.
+
+    - having the enemy push an attack onto the stack and play a faraway attack when the attack distance becomes close range is stupid
+        - easy solution: just decrease the atk action expiration time to make attacks think more in realtime
+
     - QA them with this info:
         - [ ] has hurtcapsules for the attacks
         - [ ] sets sending root motion multiplier (maybe this should just be a part of the attack thing)
+        - [ ] accepts msg from player that player is attacking rn (when wanted)
+        - [ ] cancels anim into hurt anim when hit, or just gets additive anim to get hurt which doesn't cancel anim (when wanted)
+
+- [ ] BUGFIX: there's a lot of crashing happening w the sound system. is unloading sounds really that hard???
 
 - [ ] add ui health and posture
 
 - [ ] death screen and "ninsatsu" screen
     - using "will to live" consumables (tier 1 is gotten from "assassin training", but tier 2 is from tutorial end boss (the doctor) and tier 3 is from extra quest from the doctor)
+    - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.
 
-- [ ] give player character attack combo
-    - if press lmb a bunch of times type of thing.
+- [ ] add shadows for pbr renderer
+    - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
+        - so max 3 cascades (both realtime cascades and one static cascade if dir light changes) get updated on one frame
 
+- [ ] create projectile spawning
 - [ ] some fun: energy ball enemy shoots and you have to parry it back to each other until one of you gets hit.
+
+- @NOTE: for pathfinding, just have to set enemy facing direction to go to next node to go to. pathfinding would happen during the st_runnning anim until enemy is close enough to player to do an attack
 
 
 ## SOMEDAY
@@ -422,3 +470,26 @@
 
 - [ ] SOMEDAY: fix the "first-and-last frame average root motion" hack.
     - this will definitely come up when doing start and stop root motion animations.
+
+
+## RENDERER PLAN
+
+- kick off compute for:
+    - shadow cascade(s) mesh culling
+        - has a far cutoff, but no near cutoff since things can be behind the ortho camera for shadow maps
+    - main view mesh culling
+        - frustum and occlusion using prev frame's hi-z depth
+    - ~~light clustering into froxels~~   <- if needed
+- shadow(s) pass.
+- z-prepass that includes `discard;` like cutouts and dithers.
+- opaque pass that uses `depth_equal` and no `discard;`.
+- stencil z-prepass for transparent objects.
+- copy and blur opaque image for frosted glass.
+- transparent pass that uses opaque image copy and `depth_equal` with z-prepass.
+
+- SSAO
+- SSSR
+- DoF
+- vignette
+- exposure targeting depending on what you're looking at.
+- tonemapping
