@@ -1265,9 +1265,9 @@
                         ],
                         "cmd_name": "play_sfx_oneshot"
                     },
-                    "end_frame": 22,
+                    "end_frame": 11,
                     "row_idx": 17,
-                    "start_frame": 21
+                    "start_frame": 10
                 },
                 {
                     "ctrl_cmd": {
