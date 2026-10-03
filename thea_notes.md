@@ -401,10 +401,13 @@
 - [ ] give player character attack combo
     - if press/release lmb a bunch of times type of thing.
     - [x] make rough charge/release anims
-    - [ ] add feature in afa editor to be able to play anim at 60fps looping
+    - [x] add feature in afa editor to be able to play anim at 60fps looping
     - [ ] add feature in afa editor to focus on root bone with camera
+    - [ ] move main camera sound position to where the main scene camera is
 
-- [ ] BUGFIX: there's a lot of crashing happening w the sound system. is unloading sounds really that hard???
+- [x] BUGFIX: there's a lot of crashing happening w the sound system. is unloading sounds really that hard???
+    - i think it loses the memory pointers to strings when `std::unordered_map` has to reallocate. so i changed them to c strings.
+    - open this back up if it's still an issue?
 
 - [x] made skeleton of some kind of main viewport cam view preview slideshow.
     - i was thinking of having it be a slideshow of a moodboard (probably super far away), what the player sees from each entrance, an overhead view or smth, various views the player will see in funnels etc.
