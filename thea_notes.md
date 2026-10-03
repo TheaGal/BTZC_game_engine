@@ -404,6 +404,11 @@
     - [ ] add feature in afa editor to be able to play anim at 60fps looping
     - [ ] add feature in afa editor to focus on root bone with camera
 
+- [ ] BUGFIX: there's a lot of crashing happening w the sound system. is unloading sounds really that hard???
+
+- [x] made skeleton of some kind of main viewport cam view preview slideshow.
+    - i was thinking of having it be a slideshow of a moodboard (probably super far away), what the player sees from each entrance, an overhead view or smth, various views the player will see in funnels etc.
+
 - [ ] improve enemy attacks w readability
     - give enemy 5 different attack combos
     - make sure it's readable to parry all of them
@@ -435,8 +440,6 @@
         - [ ] sets sending root motion multiplier (maybe this should just be a part of the attack thing)
         - [ ] accepts msg from player that player is attacking rn (when wanted)
         - [ ] cancels anim into hurt anim when hit, or just gets additive anim to get hurt which doesn't cancel anim (when wanted)
-
-- [ ] BUGFIX: there's a lot of crashing happening w the sound system. is unloading sounds really that hard???
 
 - [ ] add ui health and posture
 
