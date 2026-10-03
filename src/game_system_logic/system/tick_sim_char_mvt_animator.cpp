@@ -110,7 +110,7 @@ void BT::system::tick_sim_char_mvt_animator()
                     animator.emplace_event("evq_on_hurt", 0.0f, mvt_state.on_hurt);
 
                 if (mvt_state.on_attack_press)
-                    animator.emplace_event("evq_on_attack_press", 0.5f, 0);
+                    animator.emplace_event("evq_on_attack_press", 1.0f, 0);
                 if (mvt_state.is_attack_released)
                     animator.emplace_event("evq_is_attack_released", 0.0f, 0);
                 if (mvt_state.on_guard_press)

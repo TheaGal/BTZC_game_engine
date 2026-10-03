@@ -400,6 +400,7 @@
 
 - [ ] give player character attack combo
     - if press/release lmb a bunch of times type of thing.
+    - [x] make rough charge/release anims
     - [ ] add feature in afa editor to be able to play anim at 60fps looping
     - [ ] add feature in afa editor to focus on root bone with camera
 
