@@ -470,3 +470,26 @@
 
 - [ ] SOMEDAY: fix the "first-and-last frame average root motion" hack.
     - this will definitely come up when doing start and stop root motion animations.
+
+
+## RENDERER PLAN
+
+- kick off compute for:
+    - shadow cascade(s) mesh culling
+        - has a far cutoff, but no near cutoff since things can be behind the ortho camera for shadow maps
+    - main view mesh culling
+        - frustum and occlusion using prev frame's hi-z depth
+    - ~~light clustering into froxels~~   <- if needed
+- shadow(s) pass.
+- z-prepass that includes `discard;` like cutouts and dithers.
+- opaque pass that uses `depth_equal` and no `discard;`.
+- stencil z-prepass for transparent objects.
+- copy and blur opaque image for frosted glass.
+- transparent pass that uses opaque image copy and `depth_equal` with z-prepass.
+
+- SSAO
+- SSSR
+- DoF
+- vignette
+- exposure targeting depending on what you're looking at.
+- tonemapping
