@@ -404,6 +404,11 @@
     - [x] add feature in afa editor to be able to play anim at 60fps looping
     - [ ] add feature in afa editor to focus on root bone with camera
     - [ ] move main camera sound position to where the main scene camera is
+    - [x] make anims more smooth
+        - the timing feels responsive, but it's discontinuous at the end of the 3rd move looping back into the 1st move.
+        - the 3rd atk release is meant to stretch a bit longer, with 1st and 2nd being shorter.
+        - eventually want it to be a 5 move, with 1 2 3- 4 5-
+    - [x] add sfx and hurtcapsules for anims
 
 - [x] BUGFIX: there's a lot of crashing happening w the sound system. is unloading sounds really that hard???
     - i think it loses the memory pointers to strings when `std::unordered_map` has to reallocate. so i changed them to c strings.
@@ -456,6 +461,8 @@
 
 - [ ] create projectile spawning
 - [ ] some fun: energy ball enemy shoots and you have to parry it back to each other until one of you gets hit.
+
+- [ ] fix sound playing on bones where the sound position updates to follow the bone every frame.
 
 - @NOTE: for pathfinding, just have to set enemy facing direction to go to next node to go to. pathfinding would happen during the st_runnning anim until enemy is close enough to player to do an attack
 

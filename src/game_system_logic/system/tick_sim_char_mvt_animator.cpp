@@ -101,6 +101,7 @@ void BT::system::tick_sim_char_mvt_animator()
                 if (mvt_state.on_jump)
                     animator.emplace_event("evq_on_jump", 0.5f, 0);
 
+                TXP::debug::emplace_data_point("mvt_state.is_grounded", mvt_state.is_grounded);
                 if (mvt_state.is_grounded)
                     animator.emplace_event("evq_is_grounded", 0.0f, 0);
                 else
