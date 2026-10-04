@@ -45,7 +45,10 @@
 
 int main()
 {
-    BT_TRACE(
+    BT::Timer startup_timer;
+    startup_timer.start_timer();
+
+    BT_INFO(
         "================================================================================\n"
         "===-=-=-=-=-=-=-=-=-=-=-=-        BTZC  ENGINE        -=-=-=-=-=-=-=-=-=-=-=-===\n"
         "================================================================================\n");
@@ -206,7 +209,7 @@ int main()
         TEARDOWN_ITERATION,
         EXIT_LOOP,
     };
-    BT_TRACE("==== ENTERING MAIN LOOP (FIRST RUNNING ITERATION) ==============");
+    BT_INFO("==== ENTERING MAIN LOOP (FIRST RUNNING ITERATION) ==============");
     Iteration_type iter_type{ Iteration_type::FIRST_RUNNING_ITERATION };
 
     // Main loop.
@@ -240,7 +243,7 @@ int main()
             }
 
             if (changed)
-                BT_TRACEF("Timescale changed to: %.3f", time_scale);
+                BT_INFOF("Timescale changed to: %.3f", time_scale);
 
             s_prev_ts_decr_pressed = ts_decr_pressed;
             s_prev_ts_incr_pressed = ts_incr_pressed;
@@ -353,13 +356,16 @@ int main()
         switch (iter_type)
         {
         case Iteration_type::FIRST_RUNNING_ITERATION:
-            // Turn off logging to the console (except for errors and warnings).
-            BT_TRACE("==== ENTERING RUNNING ==========================================");
-            BT_TRACE("Set logger to not print to console (except for errors and warnings).");
+            // Turn off TRACE logging to the console.
+            BT_TRACE("Setting logger to not print TRACE to console.");
             BT::logger::set_logging_print_mask(  // @TODO: @FIXME: Make bitmask support better. This sucks ass.  -Thea 2025/11/23
-                (BT::logger::Log_type)((uint32_t)BT::logger::ERROR | (uint32_t)BT::logger::WARN));
+                (BT::logger::Log_type)((uint32_t)BT::logger::ALL ^ (uint32_t)BT::logger::TRACE));
 
+            BT_INFO("==== ENTERING RUNNING ==========================================");
             iter_type = Iteration_type::RUNNING_ITERATION;
+
+            BT_INFOF("Startup (program start to RUNNING state) took %.2fms",
+                     startup_timer.calc_delta_time() * 1024.0);
             break;
 
         case Iteration_type::RUNNING_ITERATION:
@@ -369,13 +375,13 @@ int main()
 
                 BT::logger::set_logging_print_mask(BT::logger::ALL);
 
-                BT_TRACE("==== ENTERING TEARDOWN =========================================");
+                BT_INFO("==== ENTERING TEARDOWN =========================================");
                 iter_type = Iteration_type::TEARDOWN_ITERATION;
             }
             break;
 
         case Iteration_type::TEARDOWN_ITERATION:
-            BT_TRACE("==== EXITING MAIN LOOP =========================================");
+            BT_INFO("==== EXITING MAIN LOOP =========================================");
             iter_type = Iteration_type::EXIT_LOOP;
             break;
 
@@ -416,7 +422,7 @@ int main()
     BT::save_app_settings_to_disk();
 
     // Show stats prior to cleanup.
-    BT_TRACEF(
+    BT_INFOF(
         "Post-teardown statistics:\n"
         "  Num scenes                        : %i\n"
         "  Num entities                      : %i\n"

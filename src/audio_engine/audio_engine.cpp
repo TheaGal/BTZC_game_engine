@@ -46,7 +46,7 @@ public:
                 {
                     // Unload sound!!
                     m_pimpl->unload_snd(snd_key);
-                    BT_WARNF("Unloaded sound \"%s\"", snd_name.c_str());
+                    BT_TRACEF("Unloaded sound \"%s\"", snd_name.c_str());
                 }
             }
         }
@@ -121,7 +121,7 @@ public:
                               snd_meta.is_3d,
                               snd_meta.is_looping,
                               snd_meta.stream);
-            BT_WARNF("Loaded sound \"%s\"", snd_meta.snd_name_str);
+            BT_TRACEF("Loaded sound \"%s\"", snd_meta.snd_name_str);
         }
     }
 

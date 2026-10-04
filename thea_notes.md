@@ -404,6 +404,7 @@
     - [x] add feature in afa editor to be able to play anim at 60fps looping
     - [ ] add feature in afa editor to focus on root bone with camera
     - [ ] move main camera sound position to where the main scene camera is
+        - while the afa editor is open, should just move the main cam to wherever the first afa editor cam is.
     - [x] make anims more smooth
         - the timing feels responsive, but it's discontinuous at the end of the 3rd move looping back into the 1st move.
         - the 3rd atk release is meant to stretch a bit longer, with 1st and 2nd being shorter.
