@@ -403,7 +403,7 @@
     - [x] make rough charge/release anims
     - [x] add feature in afa editor to be able to play anim at 60fps looping
     - [ ] add feature in afa editor to focus on root bone with camera
-    - [ ] move main camera sound position to where the main scene camera is
+    - [x] move main camera sound position to where the main scene camera is
         - while the afa editor is open, should just move the main cam to wherever the first afa editor cam is.
     - [x] make anims more smooth
         - the timing feels responsive, but it's discontinuous at the end of the 3rd move looping back into the 1st move.
@@ -486,6 +486,9 @@
 - [ ] SOMEDAY: fix the "first-and-last frame average root motion" hack.
     - this will definitely come up when doing start and stop root motion animations.
 
+- [ ] SOMEDAY: make logging output to a file.
+    - also, have runtime-error exceptions not contain a message, but rather print out the error message so it's viewable in the logging file.
+    - also having a crash handler would be great.
 
 ## RENDERER PLAN
 
