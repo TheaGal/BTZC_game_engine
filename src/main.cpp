@@ -149,12 +149,21 @@ int main()
                                  { "metallic_factor", "0" },
                                  { "roughness_factor", "0.3" },
                                  { "base_color_texture", "grid_1m" } });
+    main_renderer.add_material("large_grid_mat",
+                               "pbr",
+                               { { "base_color_factor", "0.25 0.25 0.25 1" },
+                                 { "metallic_factor", "0" },
+                                 { "roughness_factor", "0.3" },
+                                 { "base_color_texture", "grid_1m" },
+                                 { "uv_offset_tiling", "0 0 100 100" } });
     main_renderer.add_material("__gradient_mat",
                                "gradient",
                                { { "image", "__hdr_draw_image_color" } });
     main_renderer.add_material_palette("default_material_palette", { "default_mat" });
     main_renderer.add_material_palette("probuilder_material_palette", { "ProBuilderDefault" });
+    main_renderer.add_material_palette("large_grid_material_palette", { "large_grid_mat" });
     main_renderer.add_model("unit_box", ".wobj", false, false);
+    main_renderer.add_model("unit_plane", ".glb", false, false);
     main_renderer.add_model("material_viewer_ball", ".glb", false, false);
     main_renderer.add_model("probuilder_example", ".wobj", false, false);
     main_renderer.add_model("simple_combat_char", ".glb", true, true);

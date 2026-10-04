@@ -403,7 +403,8 @@
     - [x] make rough charge/release anims
     - [x] add feature in afa editor to be able to play anim at 60fps looping
     - [x] add feature in afa editor to focus on root bone with camera
-    - [ ] ok now there needs to be a grid that shows how much character has moved in afa editor.
+    - [x] ok now there needs to be a grid that shows how much character has moved in afa editor.
+        - dang, wish it were transpraent ngl but oh well
     - [x] move main camera sound position to where the main scene camera is
         - while the afa editor is open, should just move the main cam to wherever the first afa editor cam is.
     - [x] make anims more smooth

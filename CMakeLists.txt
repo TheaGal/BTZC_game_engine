@@ -135,6 +135,7 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/stupid_polygon_grid.mtl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/unit_box.mtl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/unit_box.wobj
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/unit_plane.glb
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/scenes/_dev_animation_editor_view.btscene
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/scenes/_dev_animation_editor_view_OLD_COPY.btscene
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/scenes/_dev_sample_scene.btscene

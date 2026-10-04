@@ -36,6 +36,47 @@
                     "members_j": {}
                 }
             ]
+        },
+        {
+            "entity_uuid": "82993987-fb54-4b39-945e-c97d4c89fd05",
+            "components": [
+                {
+                    "type_name": "TXP::component::Entity_metadata",
+                    "members_j": {
+                        "name": "grid",
+                        "uuid": "82993987-fb54-4b39-945e-c97d4c89fd05"
+                    }
+                },
+                {
+                    "type_name": "component::Transform",
+                    "members_j": {
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "scale": {
+                            "x": 100.0,
+                            "y": 100.0,
+                            "z": 100.0
+                        }
+                    }
+                },
+                {
+                    "type_name": "TXP::component::Render_object_config",
+                    "members_j": {
+                        "render_layer": 1,
+                        "model_name": "unit_plane",
+                        "material_palette": "large_grid_material_palette"
+                    }
+                }
+            ]
         }
     ]
 }
