@@ -1,6 +1,5 @@
 #include "cpu_character_world_space_input.h"
 
-#include "btdatecheck.h"
 #include "btglm.h"
 #include "btrandom.h"
 #include "game_system_logic/component/character_movement.h"
@@ -12,11 +11,134 @@
 #include "txp_renderer/debug/debug_printable_info.h"
 
 
+namespace
+{
+using namespace BT;
+
+/// Convert rvec3 to vec3.
+void cust_btglm_rvec3_to_vec3(rvec3 const src, vec3 dest)
+{
+    dest[0] = src[0];
+    dest[1] = src[1];
+    dest[2] = src[2];
+}
+
+/// Convert rvec3 to vec3 with custom y value.
+void cust_btglm_rvec3_to_vec3_xz(rvec3 const src, float_t const y, vec3 dest)
+{
+    dest[0] = src[0];
+    dest[1] = y;
+    dest[2] = src[2];
+}
+
+/// Reads and processes broadcasts of actions the enemy is doing.
+void process_broadcasted_enemy_msgs(component::Detectable_character* detect_char,
+                                    component::Character_mvt_state const* char_mvt_state,
+                                    component::Character_mvt_animated_state& char_mvt_anim_state)
+{
+    if (detect_char == nullptr)
+        return;
+
+
+    float_t char_facing_angle;
+    {
+        // @NOTE: I don't really like how this is getting accessed before
+        //        `system::input_controlled_character_movement()` is run.
+        char_facing_angle = (char_mvt_state == nullptr ? 0 : char_mvt_state->get_facing_angle());
+    }
+
+    // Attack messages.
+    size_t num_atk_accepted_msgs{ 0 };
+    for (auto const& msg : detect_char->state.broadcasted_enemy_atk_msgs)
+    {
+        float_t flat_distance2{ glm_vec2_norm2(  // @NOTE: Ignore Y axis.
+            vec2{ msg.other_to_this_delta_pos[0], msg.other_to_this_delta_pos[2] }) };
+
+        // Get similarity of facing angles.
+        auto ang_diff{ std::abs(msg.other_facing_angle - char_facing_angle) };
+        while (ang_diff > glm_rad(180.0f))
+            ang_diff -= glm_rad(360.0f);
+        while (ang_diff <= glm_rad(-180.0f))
+            ang_diff += glm_rad(360.0f);
+
+        constexpr float_t k_max_flat_distance{ 7.5f };
+        constexpr float_t k_min_ang_diff{ glm_rad(45.0f) };
+
+        if (flat_distance2 < k_max_flat_distance * k_max_flat_distance && ang_diff > k_min_ang_diff)
+        {  // Accept msg and input to parry attack.
+            char_mvt_anim_state.input_mvt_state.on_guard_press = true;
+
+            num_atk_accepted_msgs++;
+        }
+    }
+    if (!detect_char->state.broadcasted_enemy_atk_msgs.empty())
+    {
+        BT_TRACEF("Used %zu/%zu broadcasted atk msgs.",
+                  num_atk_accepted_msgs,
+                  detect_char->state.broadcasted_enemy_atk_msgs.size());
+        detect_char->state.broadcasted_enemy_atk_msgs.clear();
+    }
+
+    // Heal messages.
+    size_t num_heal_accepted_msgs{ 0 };
+    for (auto const& msg : detect_char->state.broadcasted_enemy_heal_msgs)
+    {
+        float_t flat_distance2{ glm_vec2_norm2(  // @NOTE: Ignore Y axis.
+            vec2{ msg.other_to_this_delta_pos[0], msg.other_to_this_delta_pos[2] }) };
+
+        /// Too far for distance-closing pinch attacks.
+        constexpr float_t k_very_far_distance{ 50.0f };
+
+        /// Everything closer is close combat and the opposite is range combat
+        /// distance.
+        constexpr float_t k_range_combat_distance{ 25.0f };
+
+        if (flat_distance2 < k_very_far_distance * k_very_far_distance)
+        {  // Accept msg and input to pinch in distance and attack.
+            char_mvt_anim_state.input_mvt_state.on_exec_attack_combo_idx = 123;  // @HARDCODE: idk maybe use some kind of setting? (set the setting to -1 for do nothing when this happens?)
+
+            num_heal_accepted_msgs++;
+        }
+    }
+    if (!detect_char->state.broadcasted_enemy_heal_msgs.empty())
+    {
+        BT_TRACEF("Used %zu/%zu broadcasted heal msgs.",
+                  num_heal_accepted_msgs,
+                  detect_char->state.broadcasted_enemy_heal_msgs.size());
+        detect_char->state.broadcasted_enemy_heal_msgs.clear();
+    }
+}
+
+/// Request new attack based off tempo.
+bool request_new_attack_from_tempo(
+    component::Character_mvt_animated_state::Input_mvt_state& input_mvt_state,
+    float_t const delta_time)
+{
+    bool request_new_attack{ false };
+
+    float_t& combat_tempo_timer{ input_mvt_state.cpu_char_combat_tempo_timer };
+    float_t const resting_combat_tempo{ input_mvt_state.cpu_char_resting_combat_tempo };
+
+    if (combat_tempo_timer >= resting_combat_tempo)
+    {
+        combat_tempo_timer = 0;
+
+        float_t rand_01{ random::fast_float_01_exclusive() };
+        request_new_attack = (rand_01 < 0.3f);
+    }
+    else
+    {
+        combat_tempo_timer += delta_time;
+    }
+
+    return request_new_attack;
+}
+
+} // namespace
+
+
 void BT::system::cpu_character_world_space_input(float_t const delta_time)
 {
-    // @REFACTOR: this needs to get broken up into smaller funcs.
-    date_deadline(2026, 10, 3);
-
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
     auto view{ reg.view<component::Transform const,
@@ -80,13 +202,11 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
                                 transform.position.raw,
                                 desired_direction);
 
-                char_ws_input.ws_flat_clamped_input.raw[0] = desired_direction[0];
-                char_ws_input.ws_flat_clamped_input.raw[1] = 0;  // desired_direction[1];
-                char_ws_input.ws_flat_clamped_input.raw[2] = desired_direction[2];
-
-                char_ws_input.delta_to_position_of_interest.raw[0] = desired_direction[0];
-                char_ws_input.delta_to_position_of_interest.raw[1] = desired_direction[1];
-                char_ws_input.delta_to_position_of_interest.raw[2] = desired_direction[2];
+                cust_btglm_rvec3_to_vec3_xz(desired_direction,
+                                            0,
+                                            char_ws_input.ws_flat_clamped_input.raw);
+                cust_btglm_rvec3_to_vec3(desired_direction,
+                                         char_ws_input.delta_to_position_of_interest.raw);
 
                 constexpr float_t k_close_enough_dist{ 0.1f };
                 constexpr float_t k_close_enough_dist2{ k_close_enough_dist * k_close_enough_dist };
@@ -103,126 +223,30 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
                 char_mvt_anim_state.input_mvt_state.reset_state(true);
             }
             else
-            {   // @TEMP: @DEBUG: Keep attack anim up!
-                // char_mvt_anim_state.write_to_animator_data.on_attack = true;
-                
+            {
                 // Calc desired direction. (@COPYPASTA, also @TEMP bc this just assumes the attack anim.)
                 rvec3 desired_direction{ 0, 0, 0 };
                 btglm_rvec3_sub(cpu_enemy_awareness.runtime_state.position_of_interest,
                                 transform.position.raw,
                                 desired_direction);
 
-                char_ws_input.ws_flat_clamped_input.raw[0] = desired_direction[0];
-                char_ws_input.ws_flat_clamped_input.raw[1] = 0;  // desired_direction[1];
-                char_ws_input.ws_flat_clamped_input.raw[2] = desired_direction[2];
+                cust_btglm_rvec3_to_vec3_xz(desired_direction,
+                                            0,
+                                            char_ws_input.ws_flat_clamped_input.raw);
+                cust_btglm_rvec3_to_vec3(desired_direction,
+                                         char_ws_input.delta_to_position_of_interest.raw);
 
-                char_ws_input.delta_to_position_of_interest.raw[0] = desired_direction[0];
-                char_ws_input.delta_to_position_of_interest.raw[1] = desired_direction[1];
-                char_ws_input.delta_to_position_of_interest.raw[2] = desired_direction[2];
-
-                // Reads broadcasts that other enemy is attacking.
-                if (auto* detect_char{ reg.try_get<component::Detectable_character>(entity) };
-                    detect_char != nullptr)
-                {
-                    size_t num_accepted_msgs{ 0 };
-
-                    float_t char_facing_angle;
-                    {
-                        // @NOTE: I don't really like how this is getting accessed before
-                        //        `system::input_controlled_character_movement()` is run.
-                        auto* char_mvt_st{ reg.try_get<component::Character_mvt_state>(entity) };
-                        char_facing_angle =
-                            (char_mvt_st == nullptr ? 0 : char_mvt_st->get_facing_angle());
-                    }
-
-                    for (auto const& msg : detect_char->state.broadcasted_enemy_atk_msgs)
-                    {
-                        float_t flat_distance2{ glm_vec2_norm2(  // @NOTE: Ignore Y axis.
-                            vec2{ msg.other_to_this_delta_pos[0],
-                                  msg.other_to_this_delta_pos[2] }) };
-
-                        // Get similarity of facing angles.
-                        auto ang_diff{ std::abs(msg.other_facing_angle - char_facing_angle) };
-                        while (ang_diff > glm_rad(180.0f))
-                            ang_diff -= glm_rad(360.0f);
-                        while (ang_diff <= glm_rad(-180.0f))
-                            ang_diff += glm_rad(360.0f);
-
-                        constexpr float_t k_max_flat_distance{ 7.5f };
-                        constexpr float_t k_min_ang_diff{ glm_rad(45.0f) };
-
-                        if (flat_distance2 < k_max_flat_distance * k_max_flat_distance &&
-                            ang_diff > k_min_ang_diff)
-                        {  // Accept msg and input to parry attack.
-                            char_mvt_anim_state.input_mvt_state.on_guard_press = true;
-
-                            num_accepted_msgs++;
-                        }
-                    }
-
-                    for (auto const& msg : detect_char->state.broadcasted_enemy_heal_msgs)
-                    {
-                        float_t flat_distance2{ glm_vec2_norm2(  // @NOTE: Ignore Y axis.
-                            vec2{ msg.other_to_this_delta_pos[0],
-                                  msg.other_to_this_delta_pos[2] }) };
-
-                        /// Too far for distance-closing pinch attacks.
-                        constexpr float_t k_very_far_distance{ 50.0f };
-
-                        /// Everything closer is close combat and the opposite is range combat
-                        /// distance.
-                        constexpr float_t k_range_combat_distance{ 25.0f };
-
-                        if (flat_distance2 < k_very_far_distance * k_very_far_distance)
-                        {  // Accept msg and input to pinch in distance and attack.
-                            char_mvt_anim_state.input_mvt_state.on_exec_attack_combo_idx = 123;  // @HARDCODE: idk maybe use some kind of setting? (set the setting to -1 for do nothing when this happens?)
-
-                            num_accepted_msgs++;
-                        }
-                    }
-
-                    // Clear received msgs.
-                    if (!detect_char->state.broadcasted_enemy_atk_msgs.empty())
-                    {
-                        BT_TRACEF("Used %zu/%zu broadcasted atk msgs.",
-                                  num_accepted_msgs,
-                                  detect_char->state.broadcasted_enemy_atk_msgs.size());
-                        detect_char->state.broadcasted_enemy_atk_msgs.clear();
-                    }
-
-                    if (!detect_char->state.broadcasted_enemy_heal_msgs.empty())
-                    {
-                        BT_TRACEF("Used %zu/%zu broadcasted heal msgs.",
-                                  num_accepted_msgs,
-                                  detect_char->state.broadcasted_enemy_heal_msgs.size());
-                        detect_char->state.broadcasted_enemy_heal_msgs.clear();
-                    }
-                }
+                // Reads broadcasts of actions the enemy is doing.
+                process_broadcasted_enemy_msgs(
+                    reg.try_get<component::Detectable_character>(entity),
+                    reg.try_get<component::Character_mvt_state>(entity),
+                    char_mvt_anim_state);
 
                 // Check if should request new attack.
-                {
-                    float_t& combat_tempo_timer{
-                        char_mvt_anim_state.input_mvt_state.cpu_char_combat_tempo_timer
-                    };
-                    float_t const resting_combat_tempo{
-                        char_mvt_anim_state.input_mvt_state.cpu_char_resting_combat_tempo
-                    };
-
-                    if (combat_tempo_timer >= resting_combat_tempo)
-                    {
-                        combat_tempo_timer = 0;
-
-                        if (!request_new_attack)
-                        {
-                            float_t rand_01{ random::fast_float_01_exclusive() };
-                            request_new_attack = (rand_01 < 0.3f);
-                        }
-                    }
-                    else
-                    {
-                        combat_tempo_timer += delta_time;
-                    }
-                }
+                if (!request_new_attack)
+                    request_new_attack =
+                        request_new_attack_from_tempo(char_mvt_anim_state.input_mvt_state,
+                                                      delta_time);
 
                 // Input new movement.
                 float_t const flat_distance_to_target{ glm_vec2_norm(
