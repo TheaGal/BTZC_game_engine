@@ -64,3 +64,16 @@
     - it then cuts to pc being awake in bed, face puffy and eyes red from tears, with a horribly dead and depressed expression.
     - pc has the same mole "pc's mother" has, showing their resemblence (spoiler: when finding an old photo of pc's actual mother, the mole is on the opposite side, but that detail is not noted)
     - pc's hair color, eye lifeness, etc one by one changes to resemble how "pc's mother" looked
+
+
+# early ending
+
+- so instead of making PC make it all the way to the top in the first mission in the pre-game, make it so that the initial gauntlet isn't one you're supposed to make it thru. Like first time genichiro, but you do actually finish the game if you make it to the end.
+    - this way it can be like significantly harder than the final boss of the good ending.
+
+- the further up PC climbs the tower for the org, the more you hear from the ppl you defeat abt what's happening. finally, the last person before the doctor (who is the strongest boss) begs PC to spare their daughter that is currently in the OR, but PC gets a text from their work phone to make sure to defeat the doctor since they are the gravest sinner.
+    - PC approaches the doctor and while trying to progress further thru their work they beg PC to let them finish the operation. if the timer runs out for PC, they pass out and the regular story continues, but if PC attacks doctor, then doctor tries to parry with his scalpel, but his arm gets cut off.
+    - the timer disappears here, so the job must be finished.
+    - doctor tries to fight back, but eventually he runs out of stamina either by PC depleting doctor's health/posture, or time. doctor drops the scalpel and kneels, ready to die.
+    - PC executes doctor, and after the exhaustion kicks in, PC collapses and gets texted they got an award for bravery. congratulations are in order.
+    - the final scene is PC's funeral, where their bravery and glory is shared, and the story ends with PC's gravestone with a name that PC never used, with the description of PC being a hero.
