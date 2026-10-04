@@ -77,3 +77,8 @@
     - doctor tries to fight back, but eventually he runs out of stamina either by PC depleting doctor's health/posture, or time. doctor drops the scalpel and kneels, ready to die.
     - PC executes doctor, and after the exhaustion kicks in, PC collapses and gets texted they got an award for bravery. congratulations are in order.
     - the final scene is PC's funeral, where their bravery and glory is shared, and the story ends with PC's gravestone with a name that PC never used, with the description of PC being a hero.
+
+
+# learn both unoabara and sanoabara moves from scrolls
+
+- learning sanoabara is something that pc can use while learning and is a nice side quest to go thru, but pc can also learn unoabara from old temples that are more hidden from view. they are secrets that dont get revealed unless player is paying attention to hints from the initial climb of the first mission
