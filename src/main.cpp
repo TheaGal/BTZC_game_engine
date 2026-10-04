@@ -386,13 +386,19 @@ int32_t main()
 
     // Try to fix audio popping when quitting app by fading out.
     // Works very mediocre. Possibly try @TODO stopping audio on all channels?
-    BT::date_deadline(2026, 10, 1);
-    for (float_t fadeaway_vol = 1; fadeaway_vol >= 0; fadeaway_vol -= 0.05f)
-    {
-        BT::audio::set_master_db(BT::audio::volume_to_db(glm_max(0, fadeaway_vol)));
-        BT::audio::update();
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
+    // @THEA: @CHECK: does this work better now??
+    auto const fadeaway_audio_fn = [](float_t const total_time, uint32_t const ticks_per_second) {
+        for (float_t fadeaway_vol = 1; fadeaway_vol >= 0;
+             fadeaway_vol -= total_time / ticks_per_second)
+        {
+            BT::audio::set_master_db(BT::audio::volume_to_db(glm_max(0, fadeaway_vol)));
+            BT::audio::update();
+
+            constexpr uint64_t k_1sec_as_ns{ 1'000'000'000 };
+            std::this_thread::sleep_for(std::chrono::nanoseconds(k_1sec_as_ns / ticks_per_second));
+        }
+    };
+    fadeaway_audio_fn(1.5, 60);
 
     // Write final state of settings file.
     BT::get_app_settings_write_handle().load_settings_from_renderer(main_renderer);
