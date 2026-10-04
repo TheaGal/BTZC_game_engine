@@ -45,6 +45,10 @@
 
 int main()
 {
+    BT_TRACE("================================================================================");
+    BT_TRACE("===-=-=-=-=-=-=-=-=-=-=-=-        BTZC  ENGINE        -=-=-=-=-=-=-=-=-=-=-=-===");
+    BT_TRACE("================================================================================");
+
     BT::initialize_app_settings_from_file_or_fallback_to_defaults();
     BT::App_settings const& app_settings{ BT::get_app_settings_read_handle() };
 
