@@ -402,7 +402,8 @@
     - if press/release lmb a bunch of times type of thing.
     - [x] make rough charge/release anims
     - [x] add feature in afa editor to be able to play anim at 60fps looping
-    - [ ] add feature in afa editor to focus on root bone with camera
+    - [x] add feature in afa editor to focus on root bone with camera
+    - [ ] ok now there needs to be a grid that shows how much character has moved in afa editor.
     - [x] move main camera sound position to where the main scene camera is
         - while the afa editor is open, should just move the main cam to wherever the first afa editor cam is.
     - [x] make anims more smooth
@@ -410,6 +411,8 @@
         - the 3rd atk release is meant to stretch a bit longer, with 1st and 2nd being shorter.
         - eventually want it to be a 5 move, with 1 2 3- 4 5-
     - [x] add sfx and hurtcapsules for anims
+
+    - [ ] add guard canceling to anims.
 
 - [x] BUGFIX: there's a lot of crashing happening w the sound system. is unloading sounds really that hard???
     - i think it loses the memory pointers to strings when `std::unordered_map` has to reallocate. so i changed them to c strings.
@@ -489,6 +492,13 @@
 - [ ] SOMEDAY: make logging output to a file.
     - also, have runtime-error exceptions not contain a message, but rather print out the error message so it's viewable in the logging file.
     - also having a crash handler would be great.
+
+- [ ] SOMEDAY: make helper lib to convert rvec3 to vec3 like this:
+    ```cpp
+    void btglm_rvec3_to_vec3(ivec3 const chunk_xyz, rvec3 const src, vec3 dest);
+    void btglm_vec3_to_rvec3(ivec3 const chunk_xyz, vec3 const src, rvec3 dest);
+    ```
+    - uses chunk system to copy things over.
 
 ## RENDERER PLAN
 
