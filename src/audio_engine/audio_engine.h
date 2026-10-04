@@ -18,7 +18,10 @@ void initialize();
 void update();
 
 /// Sets global volume.
-void set_master_db(float_t db);
+void set_master_db(float_t const db);
+
+/// Get global volume in dB.
+float_t get_master_db();
 
 /// Marks a sound as required. If the first one to mark a sound as required, audio engine will load
 /// this sound into its memory.

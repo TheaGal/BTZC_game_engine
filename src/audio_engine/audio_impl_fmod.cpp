@@ -66,12 +66,22 @@ void BT::audio::impl::Audio_impl_FMOD::update()
     ERRCHECK(m_system->update());
 }
 
-void BT::audio::impl::Audio_impl_FMOD::set_master_db(float_t db)
+void BT::audio::impl::Audio_impl_FMOD::set_master_db(float_t const db)
 {
     FMOD::ChannelGroup* master_channel_grp{ nullptr };
     ERRCHECK(m_system->getMasterChannelGroup(&master_channel_grp));
 
     master_channel_grp->setVolume(db_to_volume(db));
+}
+
+float_t BT::audio::impl::Audio_impl_FMOD::get_master_db() const
+{
+    FMOD::ChannelGroup* master_channel_grp{ nullptr };
+    ERRCHECK(m_system->getMasterChannelGroup(&master_channel_grp));
+
+    float_t vol;
+    master_channel_grp->getVolume(&vol);
+    return volume_to_db(vol);
 }
 
 void BT::audio::impl::Audio_impl_FMOD::set_3d_listener_trans(vec3 const pos, vec3 const forward)

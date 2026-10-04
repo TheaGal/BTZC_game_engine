@@ -54,11 +54,17 @@ public:
         // Update backend.
         m_pimpl->update();
     }
-    
+
     /// Sets global volume.
-    void set_master_db(float_t db)
+    void set_master_db(float_t const db)
     {
         m_pimpl->set_master_db(db);
+    }
+
+    /// Get global volume in dB.
+    float_t get_master_db() const
+    {
+        return m_pimpl->get_master_db();
     }
 
     /// Gets or registers new sound.
@@ -195,9 +201,14 @@ void BT::audio::update()
     Audio_engine::instance().update();
 }
 
-void BT::audio::set_master_db(float_t db)
+void BT::audio::set_master_db(float_t const db)
 {
     Audio_engine::instance().set_master_db(db);
+}
+
+float_t BT::audio::get_master_db()
+{
+    return Audio_engine::instance().get_master_db();
 }
 
 snd_key_t BT::audio::mark_snd_required(std::string const& snd_name, bool is_3d, bool is_looping, bool stream)

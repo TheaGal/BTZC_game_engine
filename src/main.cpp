@@ -384,19 +384,25 @@ int32_t main()
         main_scene_loader.process_scene_loading_requests();
     }
 
-    // Try to fix audio popping when quitting app by fading out.
-    // Works very mediocre. Possibly try @TODO stopping audio on all channels?
-    // @THEA: @CHECK: does this work better now??
+    // Try to fix audio popping when quitting app by fading out sound master volume.
+    // UPDATE 2026/10/03: it works a lot better, but there still is one pop unfortunately. good
+    //                    enough for now.  -Thea
     auto const fadeaway_audio_fn = [](float_t const total_time, uint32_t const ticks_per_second) {
-        for (float_t fadeaway_vol = 1; fadeaway_vol >= 0;
-             fadeaway_vol -= total_time / ticks_per_second)
+        using namespace BT;
+
+        float_t const start_vol = audio::db_to_volume(audio::get_master_db());
+        float_t fadeaway_vol{ start_vol };
+
+        do
         {
-            BT::audio::set_master_db(BT::audio::volume_to_db(glm_max(0, fadeaway_vol)));
-            BT::audio::update();
+            fadeaway_vol -= total_time / ticks_per_second;
+
+            audio::set_master_db(audio::volume_to_db(glm_max(0, fadeaway_vol)));
+            audio::update();
 
             constexpr uint64_t k_1sec_as_ns{ 1'000'000'000 };
             std::this_thread::sleep_for(std::chrono::nanoseconds(k_1sec_as_ns / ticks_per_second));
-        }
+        } while (fadeaway_vol >= 0);
     };
     fadeaway_audio_fn(1.5, 60);
 
