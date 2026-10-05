@@ -122,6 +122,7 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/SlimeGirl.glb
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/box_0.5_2.mtl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/cylinder_0.5_2.mtl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/floor_compass.glb
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/material_viewer_ball.glb
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/player_model_0.5_2.mtl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/probuilder_example.mtl

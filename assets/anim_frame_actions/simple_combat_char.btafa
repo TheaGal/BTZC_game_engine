@@ -714,6 +714,19 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "evq_on_guard_press",
+                            "st_ready_parry",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 25,
+                    "row_idx": 2,
+                    "start_frame": 10
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "evq_on_attack_press",
                             "st_pc_attack_2cha",
                             "0"
@@ -840,6 +853,19 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "evq_on_guard_press",
+                            "st_ready_parry",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 25,
+                    "row_idx": 2,
+                    "start_frame": 10
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "evq_on_attack_press",
                             "st_pc_attack_3cha",
                             "0"
@@ -963,6 +989,19 @@
         },
         {
             "regions": [
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_guard_press",
+                            "st_ready_parry",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 41,
+                    "row_idx": 2,
+                    "start_frame": 21
+                },
                 {
                     "ctrl_cmd": {
                         "argv": [

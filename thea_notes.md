@@ -414,7 +414,10 @@
     - [x] add sfx and hurtcapsules for anims
     - [x] add floor compass for showing where start of char mvt is in grid floor.
 
-    - [ ] add guard canceling to anims.
+    - [x] add guard canceling to anims.
+        - might be too generous but it's in!
+
+- [x] RENDERER: vignette
 
 - [x] BUGFIX: there's a lot of crashing happening w the sound system. is unloading sounds really that hard???
     - i think it loses the memory pointers to strings when `std::unordered_map` has to reallocate. so i changed them to c strings.
@@ -502,6 +505,7 @@
     ```
     - uses chunk system to copy things over.
 
+
 ## RENDERER PLAN
 
 - kick off compute for:
@@ -520,6 +524,6 @@
 - SSAO
 - SSSR
 - DoF
-- vignette
+- [x] vignette
 - exposure targeting depending on what you're looking at.
 - tonemapping

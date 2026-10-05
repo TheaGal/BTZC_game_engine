@@ -271,8 +271,8 @@ int main()
         // @NOCHECKIN: @DEBUG: Fun little sfx for audio engine.
         if (iter_type == Iteration_type::FIRST_RUNNING_ITERATION)
         {
-            auto snd_key{ BT::audio::mark_snd_required("test_sfx_0.ogg", false, false, false) };
-            BT::audio::play_sound(snd_key, BT::audio::volume_to_db(0.25f));
+            auto snd_key{ BT::audio::mark_snd_required("startup_sfx.wav", false, false, false) };
+            BT::audio::play_sound(snd_key, BT::audio::volume_to_db(1.0f));
             BT::audio::unmark_snd_required(snd_key);
         }
 
