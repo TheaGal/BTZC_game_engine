@@ -398,7 +398,7 @@
         - maybe once the specular highlights are fixed then normal maps will be fixed too???
         - [x] fixed! turns out it was bc they were imported as srgb instead of linear (compile_textures.py didnt convert to linear until a transfer func was assigned to the texture)
 
-- [ ] give player character attack combo
+- [x] give player character attack combo
     - if press/release lmb a bunch of times type of thing.
     - [x] make rough charge/release anims
     - [x] add feature in afa editor to be able to play anim at 60fps looping
