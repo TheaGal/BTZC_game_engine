@@ -412,6 +412,7 @@
         - the 3rd atk release is meant to stretch a bit longer, with 1st and 2nd being shorter.
         - eventually want it to be a 5 move, with 1 2 3- 4 5-
     - [x] add sfx and hurtcapsules for anims
+    - [x] add floor compass for showing where start of char mvt is in grid floor.
 
     - [ ] add guard canceling to anims.
 

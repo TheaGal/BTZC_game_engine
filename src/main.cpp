@@ -156,6 +156,12 @@ int main()
                                  { "roughness_factor", "0.3" },
                                  { "base_color_texture", "grid_1m" },
                                  { "uv_offset_tiling", "0 0 100 100" } });
+    main_renderer.add_material("green_grid_mat",
+                               "pbr",
+                               { { "base_color_factor", "0.1 0.5 0.1 1" },
+                                 { "metallic_factor", "0" },
+                                 { "roughness_factor", "0.75" },
+                                 { "base_color_texture", "grid_1m" } });
     main_renderer.add_material("__gradient_mat",
                                "gradient",
                                { { "image", "__hdr_draw_image_color" } });
@@ -168,6 +174,7 @@ int main()
     main_renderer.add_model("probuilder_example", ".wobj", false, false);
     main_renderer.add_model("simple_combat_char", ".glb", true, true);
     main_renderer.add_model("rail_line_editor_gizmo", ".wobj", false, false);
+    main_renderer.add_model("floor_compass", ".glb", false, false);
     main_renderer.add_model("rails", ".wobj", false, false);
 
     main_renderer.build();
