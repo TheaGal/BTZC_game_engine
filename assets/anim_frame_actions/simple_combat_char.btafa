@@ -1643,9 +1643,21 @@
                         ],
                         "cmd_name": "var_ov"
                     },
-                    "end_frame": 63,
+                    "end_frame": 78,
                     "row_idx": 7,
-                    "start_frame": 56
+                    "start_frame": 64
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "hitcapsule_group_1_enabled",
+                            "true"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 105,
+                    "row_idx": 7,
+                    "start_frame": 93
                 },
                 {
                     "ctrl_cmd": {
@@ -1655,9 +1667,21 @@
                         ],
                         "cmd_name": "var_wr"
                     },
-                    "end_frame": 63,
+                    "end_frame": 78,
                     "row_idx": 8,
-                    "start_frame": 55
+                    "start_frame": 63
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "attack_send_root_motion_multi",
+                            "2"
+                        ],
+                        "cmd_name": "var_wr"
+                    },
+                    "end_frame": 105,
+                    "row_idx": 8,
+                    "start_frame": 92
                 },
                 {
                     "ctrl_cmd": {
