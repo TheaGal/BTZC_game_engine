@@ -451,6 +451,14 @@
 
     - having the enemy push an attack onto the stack and play a faraway attack when the attack distance becomes close range is stupid
         - easy solution: just decrease the atk action expiration time to make attacks think more in realtime
+        - refactory solution: have `arg` be a float from 0-1 and that will be stored inside for the event. then, when the actual thing happens, then it will figure out the correct attack.
+            - mmmm this wouldn't work so well with knowing the distance to the target.
+        - split the difference: inside of the `arg` record the distance to the target. Then, if the event gets accepted, use the distance calculation and generate a new random number from 0 to 1.
+            - [ ] do this (also make the attack request messages last for longer than the tempo attack messages)
+    
+    - ok to have a working relationship w player attacks, the parry block anim and the guard block anim both need to be extended, so they can parry cancel but can't rly attack cancel or move cancel.
+        - ofc tune to your discretion
+        - [ ] do it
 
     - QA them with this info:
         - [ ] has hurtcapsules for the attacks
@@ -517,6 +525,7 @@
 - shadow(s) pass.
 - z-prepass that includes `discard;` like cutouts and dithers.
 - opaque pass that uses `depth_equal` and no `discard;`.
+- skybox pass
 - stencil z-prepass for transparent objects.
 - copy and blur opaque image for frosted glass.
 - transparent pass that uses opaque image copy and `depth_equal` with z-prepass.
@@ -526,4 +535,4 @@
 - DoF
 - [x] vignette
 - exposure targeting depending on what you're looking at.
-- tonemapping
+- [x] tonemapping
