@@ -458,7 +458,11 @@
     
     - ok to have a working relationship w player attacks, the parry block anim and the guard block anim both need to be extended, so they can parry cancel but can't rly attack cancel or move cancel.
         - ofc tune to your discretion
-        - [ ] do it
+        - [x] do it
+        - @NOTE: so it turns out there needs to be an attack debounce, and the quickest that enemies in KUSR attack is 360bpm (jinsuke saze and emma), or 10 ticks @60fps, so that will be the debounce limit.
+            - but the anim has to finish the parry knockback before the debounce is over. so the knockback is 8 frames and then on the 10th you can get hit or parry again.
+                - ig the nightjar ninjas w their spinning blades never seemed to actually attack faster than 360bpm.
+                - [x] limit ready-parry anim to only being able to re-parry after 10 ticks.
 
     - QA them with this info:
         - [ ] has hurtcapsules for the attacks
@@ -494,6 +498,11 @@
 
 - [ ] SOMEDAY: change the hitbox to one single hitcapsule group.
 - [ ] SOMEDAY: change the hurtboxes to an afa function region instead of a hitcapsule group that gets enabled/disabled.
+    - the dynamic hurtcapsule should have:
+        - the damage to deal
+        - the knockback multiplier
+        - what kind of parry opponent should do (parry-left, parry-right, or parry-strong)
+        - whether perilous attack
 
 - [ ] SOMEDAY: get picking and the selected entity wireframe model back in.
 

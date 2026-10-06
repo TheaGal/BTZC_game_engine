@@ -173,9 +173,12 @@ BT::audio::channel_key_t BT::audio::impl::Audio_impl_FMOD::play_snd_paused(snd_k
 {
     FMOD::Channel* channel{ nullptr };
     ERRCHECK(m_system->playSound(m_loaded_snds.at(key), nullptr, true, &channel));
+    assert(channel != nullptr);  // @THEA: hopefully instead of the channel pointer pointing to
+                                 // <invalid address> in later errors this will catch it?
 
     auto channel_key{ m_next_key++ };
-    m_alive_channels.emplace(channel_key, Alive_channel{ key, channel });
+    m_alive_channels.emplace(channel_key,
+                             Alive_channel{ .using_snd_key = key, .fmod_channel = channel });
 
     return channel_key;
 }

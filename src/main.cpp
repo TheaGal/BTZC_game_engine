@@ -239,10 +239,10 @@ int main()
             static bool s_prev_ts_decr_pressed{ false };
             static bool s_prev_ts_incr_pressed{ false };
 
-            bool ts_decr_pressed{
+            bool const ts_decr_pressed{
                 input_handler.get_keyboard_key_state(BT_KEY_LEFT_BRACKET).pressed
             };
-            bool ts_incr_pressed{
+            bool const ts_incr_pressed{
                 input_handler.get_keyboard_key_state(BT_KEY_RIGHT_BRACKET).pressed
             };
 

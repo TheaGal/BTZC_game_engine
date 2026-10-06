@@ -2293,9 +2293,9 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 17,
+                    "end_frame": 25,
                     "row_idx": 0,
-                    "start_frame": 13
+                    "start_frame": 21
                 },
                 {
                     "ctrl_cmd": {
@@ -2306,9 +2306,22 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 17,
+                    "end_frame": 25,
                     "row_idx": 1,
-                    "start_frame": 14
+                    "start_frame": 22
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_attack_press",
+                            "st_pc_attack_1cha",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 25,
+                    "row_idx": 2,
+                    "start_frame": 10
                 },
                 {
                     "ctrl_cmd": {
@@ -2319,9 +2332,9 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 17,
+                    "end_frame": 25,
                     "row_idx": 3,
-                    "start_frame": 14
+                    "start_frame": 22
                 },
                 {
                     "ctrl_cmd": {
@@ -2332,9 +2345,22 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 17,
+                    "end_frame": 25,
                     "row_idx": 4,
-                    "start_frame": 14
+                    "start_frame": 22
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_hurt",
+                            "st_hurt_guard",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 25,
+                    "row_idx": 5,
+                    "start_frame": 10
                 },
                 {
                     "ctrl_cmd": {
@@ -2345,9 +2371,9 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 17,
-                    "row_idx": 6,
-                    "start_frame": 1
+                    "end_frame": 25,
+                    "row_idx": 8,
+                    "start_frame": 10
                 },
                 {
                     "ctrl_cmd": {
@@ -2356,9 +2382,9 @@
                         ],
                         "cmd_name": "var_mark_reeve"
                     },
-                    "end_frame": 13,
-                    "row_idx": 8,
-                    "start_frame": 12
+                    "end_frame": 21,
+                    "row_idx": 10,
+                    "start_frame": 20
                 },
                 {
                     "ctrl_cmd": {
@@ -2368,9 +2394,9 @@
                         ],
                         "cmd_name": "var_wr"
                     },
-                    "end_frame": 17,
-                    "row_idx": 11,
-                    "start_frame": 8
+                    "end_frame": 18,
+                    "row_idx": 12,
+                    "start_frame": 9
                 },
                 {
                     "ctrl_cmd": {
@@ -2394,15 +2420,28 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "evq_on_guard_press",
+                            "st_hurt_parry",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 1,
+                    "row_idx": 0,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "evq_exec_atk_combo_idx",
                             "ACTION_MAP_attacks",
                             "0"
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 31,
+                    "end_frame": 61,
                     "row_idx": 0,
-                    "start_frame": 27
+                    "start_frame": 57
                 },
                 {
                     "ctrl_cmd": {
@@ -2413,9 +2452,22 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 31,
+                    "end_frame": 61,
                     "row_idx": 1,
-                    "start_frame": 28
+                    "start_frame": 58
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_attack_press",
+                            "st_pc_attack_1cha",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 2,
+                    "start_frame": 46
                 },
                 {
                     "ctrl_cmd": {
@@ -2426,9 +2478,9 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 31,
+                    "end_frame": 61,
                     "row_idx": 3,
-                    "start_frame": 28
+                    "start_frame": 58
                 },
                 {
                     "ctrl_cmd": {
@@ -2439,9 +2491,22 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 31,
+                    "end_frame": 61,
                     "row_idx": 4,
-                    "start_frame": 28
+                    "start_frame": 58
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_hurt",
+                            "st_hurt_guard",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 5,
+                    "start_frame": 10
                 },
                 {
                     "ctrl_cmd": {
@@ -2452,9 +2517,9 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 31,
+                    "end_frame": 61,
                     "row_idx": 6,
-                    "start_frame": 1
+                    "start_frame": 9
                 },
                 {
                     "ctrl_cmd": {
@@ -2463,9 +2528,9 @@
                         ],
                         "cmd_name": "var_mark_reeve"
                     },
-                    "end_frame": 26,
+                    "end_frame": 57,
                     "row_idx": 8,
-                    "start_frame": 25
+                    "start_frame": 56
                 },
                 {
                     "ctrl_cmd": {
@@ -2475,9 +2540,9 @@
                         ],
                         "cmd_name": "var_wr"
                     },
-                    "end_frame": 31,
+                    "end_frame": 32,
                     "row_idx": 11,
-                    "start_frame": 8
+                    "start_frame": 9
                 },
                 {
                     "ctrl_cmd": {
@@ -2489,9 +2554,9 @@
                         ],
                         "cmd_name": "play_sfx_oneshot"
                     },
-                    "end_frame": 2,
+                    "end_frame": 3,
                     "row_idx": 15,
-                    "start_frame": 1
+                    "start_frame": 2
                 }
             ],
             "state_name": "st_hurt_guard"
@@ -2792,7 +2857,7 @@
                     },
                     "end_frame": 17,
                     "row_idx": 10,
-                    "start_frame": 6
+                    "start_frame": 10
                 },
                 {
                     "ctrl_cmd": {
