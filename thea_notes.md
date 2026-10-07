@@ -454,7 +454,7 @@
         - refactory solution: have `arg` be a float from 0-1 and that will be stored inside for the event. then, when the actual thing happens, then it will figure out the correct attack.
             - mmmm this wouldn't work so well with knowing the distance to the target.
         - split the difference: inside of the `arg` record the distance to the target. Then, if the event gets accepted, use the distance calculation and generate a new random number from 0 to 1.
-            - [ ] do this (also make the attack request messages last for longer than the tempo attack messages)
+            - [x] do this (also make the attack request messages last for longer than the tempo attack messages)
     
     - ok to have a working relationship w player attacks, the parry block anim and the guard block anim both need to be extended, so they can parry cancel but can't rly attack cancel or move cancel.
         - ofc tune to your discretion
@@ -469,6 +469,7 @@
         - [ ] sets sending root motion multiplier (maybe this should just be a part of the attack thing)
         - [ ] accepts msg from player that player is attacking rn (when wanted)
         - [ ] cancels anim into hurt anim when hit, or just gets additive anim to get hurt which doesn't cancel anim (when wanted)
+        - [ ] hurtcapsules don't appear closer than 10 ticks apart (emma's ashina cross is that fast)
 
 - [ ] add ui health and posture
 

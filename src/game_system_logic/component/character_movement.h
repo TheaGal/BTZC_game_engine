@@ -4,6 +4,9 @@
 #include "btjson.h"
 #include "btuuid.h"
 
+#include <cmath>
+#include <cstdint>
+
 
 namespace BT
 {
@@ -130,26 +133,32 @@ struct Character_mvt_animated_state
         bool on_guard_press{ false };
         bool is_guard_released{ false };
 
-        // Combat tempo timer (cpu char).
-        float_t cpu_char_resting_combat_tempo{ 0.5f };  // @TODO: make configurable seting.
-        float_t cpu_char_combat_tempo_timer{ 0 };
+        // @THOUGHT: maybe the CPU can have some kind of anxiety or fatigue when posture bar goes up
+        //           or a long attack?  -Thea 2026/10/06
 
         // Combat inputs (cpu char).
-        int32_t on_exec_movement_idx{ -1 };
-        int32_t on_exec_attack_combo_idx{ -1 };
+        bool on_exec_movement{ false };
+
+        enum CPU_attack_type : int32_t
+        {
+            CPU_ATK_TYPE_NONE = 0,
+            CPU_ATK_TYPE_REQUESTED,
+            CPU_ATK_TYPE_BY_CHANCE,
+        } on_exec_attack_combo{ 0 };
+
+        float_t distance_to_target{ 0 };
 
         void reset_state(bool reset_persist_vals)
         {
-            auto persist_val{ cpu_char_combat_tempo_timer };
+            // capture persistent vals here.
 
             *this = {
                 .mode = mode,
-                .cpu_char_resting_combat_tempo = cpu_char_resting_combat_tempo,
             };
 
             if (!reset_persist_vals)
             {
-                cpu_char_combat_tempo_timer = persist_val;
+                // rewrite in persistent vals here.
             }
         }
     } input_mvt_state;

@@ -94,47 +94,56 @@ void BT::system::tick_sim_char_mvt_animator()
             {
             case mvt_state_mode_t::MODE_PLAYER_CHAR:
                 if (mvt_state.is_moving)
-                    animator.emplace_event("evq_is_moving", 0.0f, 0);
+                    animator.emplace_event("evq_is_moving", 0.0f, {});
                 else
-                    animator.emplace_event("evq_is_idle", 0.0f, 0);
+                    animator.emplace_event("evq_is_idle", 0.0f, {});
 
                 if (mvt_state.on_jump)
-                    animator.emplace_event("evq_on_jump", 0.5f, 0);
+                    animator.emplace_event("evq_on_jump", 0.5f, {});
 
                 TXP::debug::emplace_data_point("mvt_state.is_grounded", mvt_state.is_grounded);
                 if (mvt_state.is_grounded)
-                    animator.emplace_event("evq_is_grounded", 0.0f, 0);
+                    animator.emplace_event("evq_is_grounded", 0.0f, {});
                 else
-                    animator.emplace_event("evq_is_midair", 0.0f, 0);
+                    animator.emplace_event("evq_is_midair", 0.0f, {});
 
                 if (mvt_state.on_hurt > hurt_type_t::HURT_TYPE_NONE)
-                    animator.emplace_event("evq_on_hurt", 0.0f, mvt_state.on_hurt);
+                    animator.emplace_event("evq_on_hurt",
+                                           0.0f,
+                                           { .action_idx = mvt_state.on_hurt });
 
                 if (mvt_state.on_attack_press)
-                    animator.emplace_event("evq_on_attack_press", 1.0f, 0);
+                    animator.emplace_event("evq_on_attack_press", 1.0f, {});
                 if (mvt_state.is_attack_released)
-                    animator.emplace_event("evq_is_attack_released", 0.0f, 0);
+                    animator.emplace_event("evq_is_attack_released", 0.0f, {});
                 if (mvt_state.on_guard_press)
-                    animator.emplace_event("evq_on_guard_press", 0.5f, 0);
+                    animator.emplace_event("evq_on_guard_press", 0.5f, {});
                 if (mvt_state.is_guard_released)
-                    animator.emplace_event("evq_is_guard_released", 0.0f, 0);
+                    animator.emplace_event("evq_is_guard_released", 0.0f, {});
                 break;
 
             case mvt_state_mode_t::MODE_CPU_CHAR:
                 if (mvt_state.on_hurt > hurt_type_t::HURT_TYPE_NONE)
-                    animator.emplace_event("evq_on_hurt", 0.0f, mvt_state.on_hurt);
+                    animator.emplace_event("evq_on_hurt",
+                                           0.0f,
+                                           { .action_idx = mvt_state.on_hurt });
 
                 if (mvt_state.on_guard_press)
-                    animator.emplace_event("evq_on_guard_press", 0.0f, 0);
+                    animator.emplace_event("evq_on_guard_press", 0.0f, {});
 
-                if (mvt_state.on_exec_movement_idx >= 0)
+                if (mvt_state.on_exec_movement)
                     animator.emplace_event("evq_exec_mvt_idx",
                                            0.0f,
-                                           mvt_state.on_exec_movement_idx);
-                if (mvt_state.on_exec_attack_combo_idx >= 0)
+                                           { .distance_to_target = mvt_state.distance_to_target });
+
+                if (mvt_state.on_exec_attack_combo > mvt_state.CPU_ATK_TYPE_NONE)
+                {
+                    bool const is_requested_attack{ mvt_state.on_exec_attack_combo ==
+                                                    mvt_state.CPU_ATK_TYPE_REQUESTED };
                     animator.emplace_event("evq_exec_atk_combo_idx",
-                                           mvt_state.cpu_char_resting_combat_tempo,
-                                           mvt_state.on_exec_attack_combo_idx);
+                                           is_requested_attack ? 0.5f : 0,
+                                           { .distance_to_target = mvt_state.distance_to_target });
+                }
                 break;
 
             default:

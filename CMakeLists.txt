@@ -310,6 +310,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/timer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/watchdog_timer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/watchdog_timer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/txp_renderer_callback_impls.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/uuid/uuid_ifc.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/uuid/uuid_ifc.h
 )

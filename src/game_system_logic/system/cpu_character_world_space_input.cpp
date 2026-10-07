@@ -10,6 +10,8 @@
 #include "service_finder/service_finder.h"
 #include "txp_renderer/debug/debug_printable_info.h"
 
+#include <cstdint>
+
 
 namespace
 {
@@ -94,8 +96,9 @@ void process_broadcasted_enemy_msgs(component::Detectable_character* detect_char
         constexpr float_t k_range_combat_distance{ 25.0f };
 
         if (flat_distance2 < k_very_far_distance * k_very_far_distance)
-        {  // Accept msg and input to pinch in distance and attack.
-            char_mvt_anim_state.input_mvt_state.on_exec_attack_combo_idx = 123;  // @HARDCODE: idk maybe use some kind of setting? (set the setting to -1 for do nothing when this happens?)
+        {   // Accept msg and input to pinch in distance and attack.
+            // char_mvt_anim_state.input_mvt_state.on_exec_attack_combo_idx = 123;  // @HARDCODE: idk maybe use some kind of setting? (set the setting to -1 for do nothing when this happens?)
+            assert(false);  // @TODO: do ^^ above ^^
 
             num_heal_accepted_msgs++;
         }
@@ -107,31 +110,6 @@ void process_broadcasted_enemy_msgs(component::Detectable_character* detect_char
                   detect_char->state.broadcasted_enemy_heal_msgs.size());
         detect_char->state.broadcasted_enemy_heal_msgs.clear();
     }
-}
-
-/// Request new attack based off tempo.
-bool request_new_attack_from_tempo(
-    component::Character_mvt_animated_state::Input_mvt_state& input_mvt_state,
-    float_t const delta_time)
-{
-    bool request_new_attack{ false };
-
-    float_t& combat_tempo_timer{ input_mvt_state.cpu_char_combat_tempo_timer };
-    float_t const resting_combat_tempo{ input_mvt_state.cpu_char_resting_combat_tempo };
-
-    if (combat_tempo_timer >= resting_combat_tempo)
-    {
-        combat_tempo_timer = 0;
-
-        float_t rand_01{ random::fast_float_01_exclusive() };
-        request_new_attack = (rand_01 < 0.3f);
-    }
-    else
-    {
-        combat_tempo_timer += delta_time;
-    }
-
-    return request_new_attack;
 }
 
 } // namespace
@@ -159,13 +137,19 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
 
         // Get AFA data.
         bool _;
-        bool request_new_attack{ false };
+        bool do_attack_by_request{ false };
         bool afa_data_success = helper::fetch_wanted_afa_data(entity_container,
                                                               char_mvt_anim_state,
                                                               _,
-                                                              request_new_attack);
+                                                              do_attack_by_request);
         if (!afa_data_success)
             continue;
+
+        constexpr uint32_t k_do_action_movement{ 0 };
+        constexpr uint32_t k_do_action_atk_by_request{ 1 };
+        constexpr uint32_t k_do_action_atk_by_chance{ 2 };
+        uint32_t action_to_submit{ do_attack_by_request ? k_do_action_atk_by_request
+                                                        : k_do_action_movement };
 
         // World-space movement input.
         bool enter_state{ cpu_enemy_awareness.runtime_state.prev_enemy_awareness !=
@@ -242,11 +226,10 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
                     reg.try_get<component::Character_mvt_state>(entity),
                     char_mvt_anim_state);
 
-                // Check if should request new attack.
-                if (!request_new_attack)
-                    request_new_attack =
-                        request_new_attack_from_tempo(char_mvt_anim_state.input_mvt_state,
-                                                      delta_time);
+                // Check if should do new attack.
+                if (action_to_submit == k_do_action_movement &&
+                    random::fast_float_01_exclusive() < 0.3f)
+                    action_to_submit = k_do_action_atk_by_chance;
 
                 // Input new movement.
                 float_t const flat_distance_to_target{ glm_vec2_norm(
@@ -254,21 +237,26 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
                           static_cast<float_t>(desired_direction[2]) }) };
                 TXP::debug::emplace_data_point("CPU-dist-to-target", flat_distance_to_target);
 
-                if (request_new_attack)
+                using Atk_t =
+                        component::Character_mvt_animated_state::Input_mvt_state::CPU_attack_type;
+
+                char_mvt_anim_state.input_mvt_state.distance_to_target = flat_distance_to_target;
+
+                switch (action_to_submit)
                 {
-                    char_mvt_anim_state.input_mvt_state.on_exec_attack_combo_idx =
-                        helper::calc_random_afa_action_map_action_idx(entity_container,
-                                                                      char_mvt_anim_state,
-                                                                      "ACTION_MAP_attacks",
-                                                                      flat_distance_to_target);
-                }
-                else
-                {
-                    char_mvt_anim_state.input_mvt_state.on_exec_movement_idx =
-                        helper::calc_random_afa_action_map_action_idx(entity_container,
-                                                                      char_mvt_anim_state,
-                                                                      "ACTION_MAP_movements",
-                                                                      flat_distance_to_target);
+                case k_do_action_movement:
+                    char_mvt_anim_state.input_mvt_state.on_exec_movement = true;
+                    break;
+
+                case k_do_action_atk_by_request:
+                    char_mvt_anim_state.input_mvt_state.on_exec_attack_combo =
+                        Atk_t::CPU_ATK_TYPE_REQUESTED;
+                    break;
+
+                case k_do_action_atk_by_chance:
+                    char_mvt_anim_state.input_mvt_state.on_exec_attack_combo =
+                        Atk_t::CPU_ATK_TYPE_BY_CHANCE;
+                    break;
                 }
             }
             break;
