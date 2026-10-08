@@ -466,10 +466,16 @@
 
     - QA them with this info:
         - [ ] has hurtcapsules for the attacks
-        - [ ] sets sending root motion multiplier (maybe this should just be a part of the attack thing)
+        - [ ] sets sending root motion multiplier (maybe this should just be a part of the attack afa func thing)
         - [ ] accepts msg from player that player is attacking rn (when wanted)
         - [ ] cancels anim into hurt anim when hit, or just gets additive anim to get hurt which doesn't cancel anim (when wanted)
+            - since additive anims arent a thing yet, there needs to be a separate func to read a hit as something to play the hurt sfx and drop health.
         - [ ] hurtcapsules don't appear closer than 10 ticks apart (emma's ashina cross is that fast)
+
+- [ ] make camera not immediately track target
+    - this is mostly for making tracking the enemy a little harder, but it also allows for more aesthetic
+    - so for the accel speed, there's a signed x velocity to the target, but for decel, it needs to know it's coming in too hot at a certain distance
+    - [x] wip implementation
 
 - [ ] add ui health and posture
 

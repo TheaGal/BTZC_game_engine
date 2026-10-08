@@ -15,7 +15,7 @@
 #include <cmath>
 
 
-void BT::system::player_character_lock_onto_target()
+void BT::system::player_character_lock_onto_target(float_t const delta_time)
 {   // Exit early if simulation not running.
     if (!service_finder::find_service<world::World_properties_container>()
              .get_data_handle()
@@ -291,6 +291,38 @@ void BT::system::player_character_lock_onto_target()
         constexpr float_t k_similar_cam_angle_tilt_limit{ glm_rad(45) };  // @HARDCODE: tilt down limit when y axis values are similar enough.
         new_orbits[1] = glm_min(new_orbits[1], k_similar_cam_angle_tilt_limit);
     }
+
+    vec2 prev_orbits;
+    camera.get_follow_orbit_orbits(prev_orbits);
+
+    // Helper func.
+    static auto const k_orbit_move_towards = [](vec2 const prev_orbits,
+                                                vec2 const target_orbits,
+                                                float_t const orbit_max_speed,
+                                                float_t const delta_time,
+                                                vec2 dest_orbits) -> void {
+        vec2 delta_orbits;
+        glm_vec2_sub(const_cast<float_t*>(target_orbits),
+                     const_cast<float_t*>(prev_orbits),
+                     delta_orbits);
+
+        while (delta_orbits[0] < glm_rad(-180))
+            delta_orbits[0] += glm_rad(360);
+        while (delta_orbits[0] >= glm_rad(180))
+            delta_orbits[0] -= glm_rad(360);
+
+        float_t const delta_dist{ glm_vec2_norm(delta_orbits) };
+        float_t delta_orbits_multi{ 1 };
+        if (delta_dist > orbit_max_speed * delta_time)
+        {
+            delta_orbits_multi = (orbit_max_speed * delta_time / delta_dist);
+        }
+
+        glm_vec2_copy(const_cast<float_t*>(prev_orbits), dest_orbits);
+        glm_vec2_muladds(delta_orbits, delta_orbits_multi, dest_orbits);
+    };
+
+    k_orbit_move_towards(prev_orbits, new_orbits, glm_rad(360), delta_time, new_orbits);
 
     camera.set_follow_orbit_orbits(new_orbits);
 

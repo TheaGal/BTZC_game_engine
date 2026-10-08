@@ -7,6 +7,8 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
+#include <cmath>
+
 
 namespace BT
 {
@@ -14,7 +16,7 @@ namespace system
 {
 
 /// Processes input and following entity for locking the camera onto an opponent/other character.
-void player_character_lock_onto_target();
+void player_character_lock_onto_target(float_t const delta_time);
 
 }  // namespace system
 }  // namespace BT

@@ -307,7 +307,7 @@ int main()
             BT::system::write_entity_transforms_from_physics();
             BT::system::propagate_changed_transforms();
 
-            BT::system::player_character_lock_onto_target();
+            BT::system::player_character_lock_onto_target(k_sim_delta_time);
 
             BT::system::animator_driven_hitcapsule_sets_update();
             BT::system::hitcapsule_attack_processing(k_sim_delta_time);
