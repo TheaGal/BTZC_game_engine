@@ -33,7 +33,10 @@ public:
     void update();
 
     /// Set global volume.
-    void set_master_db(float_t db);
+    void set_master_db(float_t const db);
+
+    /// Get global volume in dB.
+    float_t get_master_db() const;
 
     /// Sets audio listener's 3D transform.
     void set_3d_listener_trans(vec3 const pos, vec3 const forward);

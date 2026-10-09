@@ -66,12 +66,22 @@ void BT::audio::impl::Audio_impl_FMOD::update()
     ERRCHECK(m_system->update());
 }
 
-void BT::audio::impl::Audio_impl_FMOD::set_master_db(float_t db)
+void BT::audio::impl::Audio_impl_FMOD::set_master_db(float_t const db)
 {
     FMOD::ChannelGroup* master_channel_grp{ nullptr };
     ERRCHECK(m_system->getMasterChannelGroup(&master_channel_grp));
 
     master_channel_grp->setVolume(db_to_volume(db));
+}
+
+float_t BT::audio::impl::Audio_impl_FMOD::get_master_db() const
+{
+    FMOD::ChannelGroup* master_channel_grp{ nullptr };
+    ERRCHECK(m_system->getMasterChannelGroup(&master_channel_grp));
+
+    float_t vol;
+    master_channel_grp->getVolume(&vol);
+    return volume_to_db(vol);
 }
 
 void BT::audio::impl::Audio_impl_FMOD::set_3d_listener_trans(vec3 const pos, vec3 const forward)
@@ -163,9 +173,12 @@ BT::audio::channel_key_t BT::audio::impl::Audio_impl_FMOD::play_snd_paused(snd_k
 {
     FMOD::Channel* channel{ nullptr };
     ERRCHECK(m_system->playSound(m_loaded_snds.at(key), nullptr, true, &channel));
+    assert(channel != nullptr);  // @THEA: hopefully instead of the channel pointer pointing to
+                                 // <invalid address> in later errors this will catch it?
 
     auto channel_key{ m_next_key++ };
-    m_alive_channels.emplace(channel_key, Alive_channel{ key, channel });
+    m_alive_channels.emplace(channel_key,
+                             Alive_channel{ .using_snd_key = key, .fmod_channel = channel });
 
     return channel_key;
 }

@@ -122,6 +122,7 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/SlimeGirl.glb
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/box_0.5_2.mtl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/cylinder_0.5_2.mtl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/floor_compass.glb
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/material_viewer_ball.glb
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/player_model_0.5_2.mtl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/probuilder_example.mtl
@@ -135,6 +136,7 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/stupid_polygon_grid.mtl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/unit_box.mtl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/unit_box.wobj
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/unit_plane.glb
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/scenes/_dev_animation_editor_view.btscene
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/scenes/_dev_animation_editor_view_OLD_COPY.btscene
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/scenes/_dev_sample_scene.btscene
@@ -308,6 +310,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/timer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/watchdog_timer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/watchdog_timer.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/txp_renderer_callback_impls.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/uuid/uuid_ifc.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/uuid/uuid_ifc.h
 )

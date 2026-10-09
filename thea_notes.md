@@ -398,10 +398,33 @@
         - maybe once the specular highlights are fixed then normal maps will be fixed too???
         - [x] fixed! turns out it was bc they were imported as srgb instead of linear (compile_textures.py didnt convert to linear until a transfer func was assigned to the texture)
 
-- [ ] give player character attack combo
+- [x] give player character attack combo
     - if press/release lmb a bunch of times type of thing.
-    - [ ] add feature in afa editor to be able to play anim at 60fps looping
-    - [ ] add feature in afa editor to focus on root bone with camera
+    - [x] make rough charge/release anims
+    - [x] add feature in afa editor to be able to play anim at 60fps looping
+    - [x] add feature in afa editor to focus on root bone with camera
+    - [x] ok now there needs to be a grid that shows how much character has moved in afa editor.
+        - dang, wish it were transpraent ngl but oh well
+    - [x] move main camera sound position to where the main scene camera is
+        - while the afa editor is open, should just move the main cam to wherever the first afa editor cam is.
+    - [x] make anims more smooth
+        - the timing feels responsive, but it's discontinuous at the end of the 3rd move looping back into the 1st move.
+        - the 3rd atk release is meant to stretch a bit longer, with 1st and 2nd being shorter.
+        - eventually want it to be a 5 move, with 1 2 3- 4 5-
+    - [x] add sfx and hurtcapsules for anims
+    - [x] add floor compass for showing where start of char mvt is in grid floor.
+
+    - [x] add guard canceling to anims.
+        - might be too generous but it's in!
+
+- [x] RENDERER: vignette
+
+- [x] BUGFIX: there's a lot of crashing happening w the sound system. is unloading sounds really that hard???
+    - i think it loses the memory pointers to strings when `std::unordered_map` has to reallocate. so i changed them to c strings.
+    - open this back up if it's still an issue?
+
+- [x] made skeleton of some kind of main viewport cam view preview slideshow.
+    - i was thinking of having it be a slideshow of a moodboard (probably super far away), what the player sees from each entrance, an overhead view or smth, various views the player will see in funnels etc.
 
 - [ ] improve enemy attacks w readability
     - give enemy 5 different attack combos
@@ -428,14 +451,33 @@
 
     - having the enemy push an attack onto the stack and play a faraway attack when the attack distance becomes close range is stupid
         - easy solution: just decrease the atk action expiration time to make attacks think more in realtime
+        - refactory solution: have `arg` be a float from 0-1 and that will be stored inside for the event. then, when the actual thing happens, then it will figure out the correct attack.
+            - mmmm this wouldn't work so well with knowing the distance to the target.
+        - split the difference: inside of the `arg` record the distance to the target. Then, if the event gets accepted, use the distance calculation and generate a new random number from 0 to 1.
+            - [x] do this (also make the attack request messages last for longer than the tempo attack messages)
+    
+    - ok to have a working relationship w player attacks, the parry block anim and the guard block anim both need to be extended, so they can parry cancel but can't rly attack cancel or move cancel.
+        - ofc tune to your discretion
+        - [x] do it
+        - @NOTE: so it turns out there needs to be an attack debounce, and the quickest that enemies in KUSR attack is 360bpm (jinsuke saze and emma), or 10 ticks @60fps, so that will be the debounce limit.
+            - but the anim has to finish the parry knockback before the debounce is over. so the knockback is 8 frames and then on the 10th you can get hit or parry again.
+                - ig the nightjar ninjas w their spinning blades never seemed to actually attack faster than 360bpm.
+                - [x] limit ready-parry anim to only being able to re-parry after 10 ticks.
 
     - QA them with this info:
         - [ ] has hurtcapsules for the attacks
-        - [ ] sets sending root motion multiplier (maybe this should just be a part of the attack thing)
+        - [ ] sets sending root motion multiplier (maybe this should just be a part of the attack afa func thing)
         - [ ] accepts msg from player that player is attacking rn (when wanted)
         - [ ] cancels anim into hurt anim when hit, or just gets additive anim to get hurt which doesn't cancel anim (when wanted)
+            - since additive anims arent a thing yet, there needs to be a separate func to read a hit as something to play the hurt sfx and drop health.
+        - [ ] hurtcapsules don't appear closer than 10 ticks apart (emma's ashina cross is that fast)
 
-- [ ] BUGFIX: there's a lot of crashing happening w the sound system. is unloading sounds really that hard???
+    - [ ] thing: have some attacks that take advantage of the camera tracking!!
+
+- [x] make camera not immediately track target
+    - this is mostly for making tracking the enemy a little harder, but it also allows for more aesthetic
+    - so for the accel speed, there's a signed x velocity to the target, but for decel, it needs to know it's coming in too hot at a certain distance
+    - [x] wip implementation
 
 - [ ] add ui health and posture
 
@@ -447,10 +489,18 @@
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
         - so max 3 cascades (both realtime cascades and one static cascade if dir light changes) get updated on one frame
 
+- [ ] add sweep attacks and thrust attacks
+    - hell yeah mikiri
+    - jump goomba stomp
+
 - [ ] create projectile spawning
 - [ ] some fun: energy ball enemy shoots and you have to parry it back to each other until one of you gets hit.
 
+- [ ] fix sound playing on bones where the sound position updates to follow the bone every frame.
+
 - @NOTE: for pathfinding, just have to set enemy facing direction to go to next node to go to. pathfinding would happen during the st_runnning anim until enemy is close enough to player to do an attack
+
+- [ ] ahhh frick, there's another audio engine error that pops up sometimes in `_error_check()`
 
 
 ## SOMEDAY
@@ -463,6 +513,11 @@
 
 - [ ] SOMEDAY: change the hitbox to one single hitcapsule group.
 - [ ] SOMEDAY: change the hurtboxes to an afa function region instead of a hitcapsule group that gets enabled/disabled.
+    - the dynamic hurtcapsule should have:
+        - the damage to deal
+        - the knockback multiplier
+        - what kind of parry opponent should do (parry-left, parry-right, or parry-strong)
+        - whether perilous attack
 
 - [ ] SOMEDAY: get picking and the selected entity wireframe model back in.
 
@@ -470,6 +525,17 @@
 
 - [ ] SOMEDAY: fix the "first-and-last frame average root motion" hack.
     - this will definitely come up when doing start and stop root motion animations.
+
+- [ ] SOMEDAY: make logging output to a file.
+    - also, have runtime-error exceptions not contain a message, but rather print out the error message so it's viewable in the logging file.
+    - also having a crash handler would be great.
+
+- [ ] SOMEDAY: make helper lib to convert rvec3 to vec3 like this:
+    ```cpp
+    void btglm_rvec3_to_vec3(ivec3 const chunk_xyz, rvec3 const src, vec3 dest);
+    void btglm_vec3_to_rvec3(ivec3 const chunk_xyz, vec3 const src, rvec3 dest);
+    ```
+    - uses chunk system to copy things over.
 
 
 ## RENDERER PLAN
@@ -483,6 +549,7 @@
 - shadow(s) pass.
 - z-prepass that includes `discard;` like cutouts and dithers.
 - opaque pass that uses `depth_equal` and no `discard;`.
+- skybox pass
 - stencil z-prepass for transparent objects.
 - copy and blur opaque image for frosted glass.
 - transparent pass that uses opaque image copy and `depth_equal` with z-prepass.
@@ -490,6 +557,6 @@
 - SSAO
 - SSSR
 - DoF
-- vignette
+- [x] vignette
 - exposure targeting depending on what you're looking at.
-- tonemapping
+- [x] tonemapping

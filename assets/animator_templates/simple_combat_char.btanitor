@@ -68,6 +68,36 @@
             "anim_name": "Fall"
         },
         {
+            "state_name": "st_pc_attack_1cha",
+            "state_type": "single_anim",
+            "anim_name": "PC_attack_1cha"
+        },
+        {
+            "state_name": "st_pc_attack_1rel",
+            "state_type": "single_anim",
+            "anim_name": "PC_attack_1rel"
+        },
+        {
+            "state_name": "st_pc_attack_2cha",
+            "state_type": "single_anim",
+            "anim_name": "PC_attack_2cha"
+        },
+        {
+            "state_name": "st_pc_attack_2rel",
+            "state_type": "single_anim",
+            "anim_name": "PC_attack_2rel"
+        },
+        {
+            "state_name": "st_pc_attack_3cha",
+            "state_type": "single_anim",
+            "anim_name": "PC_attack_3cha"
+        },
+        {
+            "state_name": "st_pc_attack_3rel",
+            "state_type": "single_anim",
+            "anim_name": "PC_attack_3rel"
+        },
+        {
             "state_name": "st_attack_0",
             "state_type": "single_anim",
             "anim_name": "Sample_attack"

@@ -147,7 +147,7 @@ void destroy_dangling_child_entities(Entity_container& entity_container)
         entity_container.destroy_entity(id);
     }
 
-    BT_WARNF("%s() took %.3f ms.", __func__, timer.calc_delta_time() * 1000);
+    BT_INFOF("%s() took %.3f ms.", __func__, timer.calc_delta_time() * 1000);
 }
 
 void check_loaded_scenes_integrity(Entity_container& entity_container)
@@ -209,7 +209,7 @@ void check_loaded_scenes_integrity(Entity_container& entity_container)
         }
     }
 
-    BT_WARNF("%s() took %.3f ms.", __func__, timer.calc_delta_time() * 1000);
+    BT_INFOF("%s() took %.3f ms.", __func__, timer.calc_delta_time() * 1000);
 }
 
 }  // namespace

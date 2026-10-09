@@ -43,8 +43,16 @@
 #define IMPLEMENT_THIS 0
 
 
-int32_t main()
+int main()
 {
+    BT::Timer startup_timer;
+    startup_timer.start_timer();
+
+    BT_INFO(
+        "================================================================================\n"
+        "===-=-=-=-=-=-=-=-=-=-=-=-        BTZC  ENGINE        -=-=-=-=-=-=-=-=-=-=-=-===\n"
+        "================================================================================\n");
+
     BT::initialize_app_settings_from_file_or_fallback_to_defaults();
     BT::App_settings const& app_settings{ BT::get_app_settings_read_handle() };
 
@@ -141,16 +149,32 @@ int32_t main()
                                  { "metallic_factor", "0" },
                                  { "roughness_factor", "0.3" },
                                  { "base_color_texture", "grid_1m" } });
+    main_renderer.add_material("large_grid_mat",
+                               "pbr",
+                               { { "base_color_factor", "0.25 0.25 0.25 1" },
+                                 { "metallic_factor", "0" },
+                                 { "roughness_factor", "0.3" },
+                                 { "base_color_texture", "grid_1m" },
+                                 { "uv_offset_tiling", "0 0 100 100" } });
+    main_renderer.add_material("green_grid_mat",
+                               "pbr",
+                               { { "base_color_factor", "0.1 0.5 0.1 1" },
+                                 { "metallic_factor", "0" },
+                                 { "roughness_factor", "0.75" },
+                                 { "base_color_texture", "grid_1m" } });
     main_renderer.add_material("__gradient_mat",
                                "gradient",
                                { { "image", "__hdr_draw_image_color" } });
     main_renderer.add_material_palette("default_material_palette", { "default_mat" });
     main_renderer.add_material_palette("probuilder_material_palette", { "ProBuilderDefault" });
+    main_renderer.add_material_palette("large_grid_material_palette", { "large_grid_mat" });
     main_renderer.add_model("unit_box", ".wobj", false, false);
+    main_renderer.add_model("unit_plane", ".glb", false, false);
     main_renderer.add_model("material_viewer_ball", ".glb", false, false);
     main_renderer.add_model("probuilder_example", ".wobj", false, false);
     main_renderer.add_model("simple_combat_char", ".glb", true, true);
     main_renderer.add_model("rail_line_editor_gizmo", ".wobj", false, false);
+    main_renderer.add_model("floor_compass", ".glb", false, false);
     main_renderer.add_model("rails", ".wobj", false, false);
 
     main_renderer.build();
@@ -201,7 +225,7 @@ int32_t main()
         TEARDOWN_ITERATION,
         EXIT_LOOP,
     };
-    BT_TRACE("==== ENTERING MAIN LOOP (FIRST RUNNING ITERATION) ==============");
+    BT_INFO("==== ENTERING MAIN LOOP (FIRST RUNNING ITERATION) ==============");
     Iteration_type iter_type{ Iteration_type::FIRST_RUNNING_ITERATION };
 
     // Main loop.
@@ -215,10 +239,10 @@ int32_t main()
             static bool s_prev_ts_decr_pressed{ false };
             static bool s_prev_ts_incr_pressed{ false };
 
-            bool ts_decr_pressed{
+            bool const ts_decr_pressed{
                 input_handler.get_keyboard_key_state(BT_KEY_LEFT_BRACKET).pressed
             };
-            bool ts_incr_pressed{
+            bool const ts_incr_pressed{
                 input_handler.get_keyboard_key_state(BT_KEY_RIGHT_BRACKET).pressed
             };
 
@@ -235,7 +259,7 @@ int32_t main()
             }
 
             if (changed)
-                BT_TRACEF("Timescale changed to: %.3f", time_scale);
+                BT_INFOF("Timescale changed to: %.3f", time_scale);
 
             s_prev_ts_decr_pressed = ts_decr_pressed;
             s_prev_ts_incr_pressed = ts_incr_pressed;
@@ -247,8 +271,8 @@ int32_t main()
         // @NOCHECKIN: @DEBUG: Fun little sfx for audio engine.
         if (iter_type == Iteration_type::FIRST_RUNNING_ITERATION)
         {
-            auto snd_key{ BT::audio::mark_snd_required("test_sfx_0.ogg", false, false, false) };
-            BT::audio::play_sound(snd_key, BT::audio::volume_to_db(0.25f));
+            auto snd_key{ BT::audio::mark_snd_required("startup_sfx.wav", false, false, false) };
+            BT::audio::play_sound(snd_key, BT::audio::volume_to_db(1.0f));
             BT::audio::unmark_snd_required(snd_key);
         }
 
@@ -283,7 +307,7 @@ int32_t main()
             BT::system::write_entity_transforms_from_physics();
             BT::system::propagate_changed_transforms();
 
-            BT::system::player_character_lock_onto_target();
+            BT::system::player_character_lock_onto_target(k_sim_delta_time);
 
             BT::system::animator_driven_hitcapsule_sets_update();
             BT::system::hitcapsule_attack_processing(k_sim_delta_time);
@@ -348,13 +372,16 @@ int32_t main()
         switch (iter_type)
         {
         case Iteration_type::FIRST_RUNNING_ITERATION:
-            // Turn off logging to the console (except for errors and warnings).
-            BT_TRACE("Set logger to not print to console (except for errors and warnings).");
+            // Turn off TRACE logging to the console.
+            BT_TRACE("Setting logger to not print TRACE to console.");
             BT::logger::set_logging_print_mask(  // @TODO: @FIXME: Make bitmask support better. This sucks ass.  -Thea 2025/11/23
-                (BT::logger::Log_type)((uint32_t)BT::logger::ERROR | (uint32_t)BT::logger::WARN));
+                (BT::logger::Log_type)((uint32_t)BT::logger::ALL ^ (uint32_t)BT::logger::TRACE));
 
-            BT_TRACE("==== ENTERING RUNNING ==========================================");
+            BT_INFO("==== ENTERING RUNNING ==========================================");
             iter_type = Iteration_type::RUNNING_ITERATION;
+
+            BT_INFOF("Startup (program start to RUNNING state) took %.2fms",
+                     startup_timer.calc_delta_time() * 1024.0);
             break;
 
         case Iteration_type::RUNNING_ITERATION:
@@ -364,13 +391,13 @@ int32_t main()
 
                 BT::logger::set_logging_print_mask(BT::logger::ALL);
 
-                BT_TRACE("==== ENTERING TEARDOWN =========================================");
+                BT_INFO("==== ENTERING TEARDOWN =========================================");
                 iter_type = Iteration_type::TEARDOWN_ITERATION;
             }
             break;
 
         case Iteration_type::TEARDOWN_ITERATION:
-            BT_TRACE("==== EXITING MAIN LOOP =========================================");
+            BT_INFO("==== EXITING MAIN LOOP =========================================");
             iter_type = Iteration_type::EXIT_LOOP;
             break;
 
@@ -384,22 +411,34 @@ int32_t main()
         main_scene_loader.process_scene_loading_requests();
     }
 
-    // Try to fix audio popping when quitting app by fading out.
-    // Works very mediocre. Possibly try @TODO stopping audio on all channels?
-    BT::date_deadline(2026, 10, 1);
-    for (float_t fadeaway_vol = 1; fadeaway_vol >= 0; fadeaway_vol -= 0.05f)
-    {
-        BT::audio::set_master_db(BT::audio::volume_to_db(glm_max(0, fadeaway_vol)));
-        BT::audio::update();
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
+    // Try to fix audio popping when quitting app by fading out sound master volume.
+    // UPDATE 2026/10/03: it works a lot better, but there still is one pop unfortunately. good
+    //                    enough for now.  -Thea
+    auto const fadeaway_audio_fn = [](float_t const total_time, uint32_t const ticks_per_second) {
+        using namespace BT;
+
+        float_t const start_vol = audio::db_to_volume(audio::get_master_db());
+        float_t fadeaway_vol{ start_vol };
+
+        do
+        {
+            fadeaway_vol -= total_time / ticks_per_second;
+
+            audio::set_master_db(audio::volume_to_db(glm_max(0, fadeaway_vol)));
+            audio::update();
+
+            constexpr uint64_t k_1sec_as_ns{ 1'000'000'000 };
+            std::this_thread::sleep_for(std::chrono::nanoseconds(k_1sec_as_ns / ticks_per_second));
+        } while (fadeaway_vol >= 0);
+    };
+    fadeaway_audio_fn(1.5, 60);
 
     // Write final state of settings file.
     BT::get_app_settings_write_handle().load_settings_from_renderer(main_renderer);
     BT::save_app_settings_to_disk();
 
     // Show stats prior to cleanup.
-    BT_TRACEF(
+    BT_INFOF(
         "Post-teardown statistics:\n"
         "  Num scenes                        : %i\n"
         "  Num entities                      : %i\n"

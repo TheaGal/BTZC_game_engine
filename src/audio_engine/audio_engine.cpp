@@ -6,7 +6,10 @@
 #include "util.h"
 
 #include <cstdint>
+#include <cstring>
+#include <functional>
 #include <memory>
+#include <stdexcept>
 #include <unordered_map>
 
 
@@ -43,7 +46,7 @@ public:
                 {
                     // Unload sound!!
                     m_pimpl->unload_snd(snd_key);
-                    BT_WARNF("Unloaded sound \"%s\"", snd_name.c_str());
+                    BT_TRACEF("Unloaded sound \"%s\"", snd_name.c_str());
                 }
             }
         }
@@ -51,11 +54,17 @@ public:
         // Update backend.
         m_pimpl->update();
     }
-    
+
     /// Sets global volume.
-    void set_master_db(float_t db)
+    void set_master_db(float_t const db)
     {
         m_pimpl->set_master_db(db);
+    }
+
+    /// Get global volume in dB.
+    float_t get_master_db() const
+    {
+        return m_pimpl->get_master_db();
     }
 
     /// Gets or registers new sound.
@@ -68,7 +77,8 @@ public:
         {   // Get the found sound in cache.
             auto key{ m_snd_name_to_key.at(snd_name) };
             auto const& snd_meta{ m_snd_metadatas.at(key) };
-            assert(snd_meta.snd_name == snd_name);
+            // no snd_name_str comparison bc slow.
+            assert(snd_meta.snd_name_hash == std::hash<std::string>{}(snd_name));
             assert(snd_meta.is_3d == is_3d);
             assert(snd_meta.is_looping == is_looping);
             assert(snd_meta.stream == stream);
@@ -80,12 +90,20 @@ public:
         auto key{ m_next_key++ };
 
         m_snd_name_to_key.emplace(snd_name, key);
-        m_snd_metadatas.emplace(key,
-                                Sound_metadata{ .snd_name = snd_name,
-                                                .is_3d = is_3d,
-                                                .is_looping = is_looping,
-                                                .stream = stream,
-                                                .refcount = 0 });
+
+        Sound_metadata snd_meta{ .snd_name_str = { '\0' },
+                                 .snd_name_hash = std::hash<std::string>{}(snd_name),
+                                 .is_3d = is_3d,
+                                 .is_looping = is_looping,
+                                 .stream = stream,
+                                 .refcount = 0 };
+
+        if (snd_name.length() >= sizeof(snd_meta.snd_name_str))
+            throw std::runtime_error("`snd_name` length is too large.");
+
+        std::strncpy(snd_meta.snd_name_str, snd_name.c_str(), sizeof(snd_meta.snd_name_str));
+
+        m_snd_metadatas.emplace(key, std::move(snd_meta));
 
         return key;
     }
@@ -99,11 +117,11 @@ public:
         if (snd_meta.refcount == 1 && !m_pimpl->is_snd_loaded(key))
         {   // Load sound.
             m_pimpl->load_snd(key,
-                              snd_meta.snd_name,
+                              std::string(snd_meta.snd_name_str),
                               snd_meta.is_3d,
                               snd_meta.is_looping,
                               snd_meta.stream);
-            BT_WARNF("Loaded sound \"%s\"", snd_meta.snd_name.c_str());
+            BT_TRACEF("Loaded sound \"%s\"", snd_meta.snd_name_str);
         }
     }
 
@@ -157,7 +175,8 @@ private:
 
     struct Sound_metadata
     {
-        std::string const& snd_name;
+        char snd_name_str[64];
+        size_t snd_name_hash;
         bool is_3d;
         bool is_looping;
         bool stream;
@@ -182,9 +201,14 @@ void BT::audio::update()
     Audio_engine::instance().update();
 }
 
-void BT::audio::set_master_db(float_t db)
+void BT::audio::set_master_db(float_t const db)
 {
     Audio_engine::instance().set_master_db(db);
+}
+
+float_t BT::audio::get_master_db()
+{
+    return Audio_engine::instance().get_master_db();
 }
 
 snd_key_t BT::audio::mark_snd_required(std::string const& snd_name, bool is_3d, bool is_looping, bool stream)
