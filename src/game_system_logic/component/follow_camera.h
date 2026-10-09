@@ -4,6 +4,8 @@
 #include "btjson.h"
 #include "btuuid.h"
 
+#include <cmath>
+
 
 namespace BT
 {
@@ -16,17 +18,22 @@ struct Follow_camera_follow_ref
 {
     float_t follow_offset_y{ 1.0f };
     float_t orbit_cam_offset_distance{ 2 };
+    float_t orbit_turn_accel{ 10 };
+    float_t max_orbit_turn_speed{ glm_rad(720) };
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
         Follow_camera_follow_ref,
         follow_offset_y,
-        orbit_cam_offset_distance
+        orbit_cam_offset_distance,
+        orbit_turn_accel,
+        max_orbit_turn_speed
     );
 
     struct State
     {
         UUID locked_on_entity;
         float_t locked_on_facing_angle;
+        vec2 orbit_turn_speeds{ 0, 0 };
     } state;
 };
 

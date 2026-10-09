@@ -472,7 +472,7 @@
             - since additive anims arent a thing yet, there needs to be a separate func to read a hit as something to play the hurt sfx and drop health.
         - [ ] hurtcapsules don't appear closer than 10 ticks apart (emma's ashina cross is that fast)
 
-- [ ] make camera not immediately track target
+- [x] make camera not immediately track target
     - this is mostly for making tracking the enemy a little harder, but it also allows for more aesthetic
     - so for the accel speed, there's a signed x velocity to the target, but for decel, it needs to know it's coming in too hot at a certain distance
     - [x] wip implementation
@@ -493,6 +493,8 @@
 - [ ] fix sound playing on bones where the sound position updates to follow the bone every frame.
 
 - @NOTE: for pathfinding, just have to set enemy facing direction to go to next node to go to. pathfinding would happen during the st_runnning anim until enemy is close enough to player to do an attack
+
+- [ ] ahhh frick, there's another audio engine error that pops up sometimes in `_error_check()`
 
 
 ## SOMEDAY

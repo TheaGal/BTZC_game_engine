@@ -13,6 +13,8 @@
 
 #include <cassert>
 #include <cmath>
+#include <limits>
+#include <vector>
 
 
 void BT::system::player_character_lock_onto_target(float_t const delta_time)
@@ -34,6 +36,9 @@ void BT::system::player_character_lock_onto_target(float_t const delta_time)
 
     // Get locked on entity.
     bool found_player_character{ false };
+
+    float_t orbit_turn_accel;
+    float_t max_orbit_turn_speed;
     component::Follow_camera_follow_ref::State* follow_state{ nullptr };
     {
         size_t count{ 0 };
@@ -41,7 +46,11 @@ void BT::system::player_character_lock_onto_target(float_t const delta_time)
             reg.view<component::Follow_camera_follow_ref, component::Transform const>().each())
         {
             found_player_character = true;
+
+            orbit_turn_accel = follow_cam_follow_ref.orbit_turn_accel;
+            max_orbit_turn_speed = follow_cam_follow_ref.max_orbit_turn_speed;
             follow_state = &follow_cam_follow_ref.state;
+
             count++;
         }
         assert(count <= 1);  // Enforce only one iteration (or exit system if no found pointer).
@@ -295,34 +304,146 @@ void BT::system::player_character_lock_onto_target(float_t const delta_time)
     vec2 prev_orbits;
     camera.get_follow_orbit_orbits(prev_orbits);
 
+    // Another helper func.
+    static auto const k_calc_ideal_speed_at_distance =
+        [](float_t const dist, float_t const accel, float_t const max_speed) -> float_t {
+        struct Cache
+        {
+            float_t accel;
+            float_t max_speed;
+
+            std::vector<std::pair<float_t, float_t>> cum_dist_w_speed;
+        };
+        static Cache s_cache;
+
+        if (s_cache.accel != accel || s_cache.max_speed != max_speed)
+        {
+            // Invalidate cache.
+            s_cache.accel = accel;
+            s_cache.max_speed = max_speed;
+
+            s_cache.cum_dist_w_speed.clear();
+        }
+
+        if (s_cache.cum_dist_w_speed.empty())
+        {
+            BT_INFO("Recalc ideal speed at distance lookup table.");
+
+            // Recalc lookup table.
+            s_cache.cum_dist_w_speed.emplace_back(0, 0);
+
+            float_t cum_dist{ 0 };
+            float_t cur_speed{ 0 };
+            while (cur_speed <= s_cache.max_speed)
+            {
+                constexpr float_t k_sample_dt{ 1.0f / 120.0f };
+                cur_speed += s_cache.accel * k_sample_dt;
+                cum_dist += cur_speed * k_sample_dt;
+                s_cache.cum_dist_w_speed.emplace_back(cum_dist, cur_speed);
+            }
+        }
+
+        // Lookup ideal speed.
+        float_t ideal_speed{ std::numeric_limits<float_t>::max() };
+
+        for (size_t i = 1; i < s_cache.cum_dist_w_speed.size(); i++)
+        {
+            auto const& cum_dist_w_speed_0{ s_cache.cum_dist_w_speed[i - 1] };
+            auto const& cum_dist_w_speed_1{ s_cache.cum_dist_w_speed[i] };
+            if (cum_dist_w_speed_1.first > dist)
+            {
+                float_t t{ (dist - cum_dist_w_speed_0.first) /
+                           (cum_dist_w_speed_1.first - cum_dist_w_speed_0.first) };
+                ideal_speed = glm_lerp(cum_dist_w_speed_0.second, cum_dist_w_speed_1.second, t);
+                break;
+            }
+        }
+
+        return glm_min(ideal_speed, max_speed);
+    };
+
+    // Aaaand another helper func.
+    static auto const k_move_towards_vec2 =
+        [](vec2 const cur, vec2 const target, float_t const max_dist_delta, vec2 dest) -> void {
+        assert(max_dist_delta >= 1e-3f);
+
+        vec2 delta;
+        glm_vec2_sub(const_cast<float_t*>(target), const_cast<float_t*>(cur), delta);
+
+        float_t const norm2{ glm_vec2_norm2(delta) };
+        if (norm2 < max_dist_delta * max_dist_delta)
+        {
+            glm_vec2_copy(const_cast<float_t*>(target), dest);
+        }
+        else
+        {
+            glm_vec2_copy(const_cast<float_t*>(cur), dest);
+            glm_vec2_muladds(delta, max_dist_delta / std::sqrtf(norm2), dest);
+        }
+    };
+
     // Helper func.
-    static auto const k_orbit_move_towards = [](vec2 const prev_orbits,
-                                                vec2 const target_orbits,
-                                                float_t const orbit_max_speed,
-                                                float_t const delta_time,
-                                                vec2 dest_orbits) -> void {
+    static auto const k_orbit_move_towards_w_accel = [](vec2 const prev_orbits,
+                                                        vec2 const target_orbits,
+                                                        float_t const vert_orbit_multiplier,
+                                                        vec2 in_out_orbit_turn_speeds,
+                                                        float_t const orbit_turn_accel,
+                                                        float_t const max_orbit_turn_speed,
+                                                        float_t const delta_time,
+                                                        vec2 dest_orbits) -> void {
+        vec2 prev_orbits_scaled{ prev_orbits[0], prev_orbits[1] / vert_orbit_multiplier };
+        vec2 target_orbits_scaled{ target_orbits[0], target_orbits[1] / vert_orbit_multiplier };
+
+        // Calc delta orbits.
         vec2 delta_orbits;
-        glm_vec2_sub(const_cast<float_t*>(target_orbits),
-                     const_cast<float_t*>(prev_orbits),
-                     delta_orbits);
+        glm_vec2_sub(target_orbits_scaled, prev_orbits_scaled, delta_orbits);
 
         while (delta_orbits[0] < glm_rad(-180))
             delta_orbits[0] += glm_rad(360);
         while (delta_orbits[0] >= glm_rad(180))
             delta_orbits[0] -= glm_rad(360);
 
+        // Calc target orbit turn speeds.
         float_t const delta_dist{ glm_vec2_norm(delta_orbits) };
-        float_t delta_orbits_multi{ 1 };
-        if (delta_dist > orbit_max_speed * delta_time)
+
+        vec2 ideal_orbit_turn_speeds = GLM_VEC2_ZERO_INIT;
+
+        if (delta_dist > 1e-3f)
         {
-            delta_orbits_multi = (orbit_max_speed * delta_time / delta_dist);
+            float_t const ideal_orbit_turn_speed{
+                k_calc_ideal_speed_at_distance(delta_dist, orbit_turn_accel, max_orbit_turn_speed)
+            };
+            glm_vec2_scale(delta_orbits,
+                           ideal_orbit_turn_speed / delta_dist,
+                           ideal_orbit_turn_speeds);
         }
 
-        glm_vec2_copy(const_cast<float_t*>(prev_orbits), dest_orbits);
-        glm_vec2_muladds(delta_orbits, delta_orbits_multi, dest_orbits);
+        // Move towards ideal turn speeds (acceleration).
+        k_move_towards_vec2(in_out_orbit_turn_speeds,
+                            ideal_orbit_turn_speeds,
+                            orbit_turn_accel * delta_time,
+                            in_out_orbit_turn_speeds);
+
+        // Move orbits (speed).
+        glm_vec2_copy(prev_orbits_scaled, dest_orbits);
+        glm_vec2_muladds(in_out_orbit_turn_speeds, delta_time, dest_orbits);
+        dest_orbits[1] *= vert_orbit_multiplier;
     };
 
-    k_orbit_move_towards(prev_orbits, new_orbits, glm_rad(360), delta_time, new_orbits);
+    k_orbit_move_towards_w_accel(prev_orbits,
+                                 new_orbits,
+                                 2,
+                                 follow_state->orbit_turn_speeds,
+                                 orbit_turn_accel,
+                                 max_orbit_turn_speed,
+                                 delta_time,
+                                 new_orbits);
+
+    assert(!std::isnan(new_orbits[0]));
+    assert(!std::isnan(new_orbits[1]));
+
+    TXP::debug::emplace_data_point("orbit_turn_speed.x", follow_state->orbit_turn_speeds[0]);
+    TXP::debug::emplace_data_point("orbit_turn_speed.y", follow_state->orbit_turn_speeds[1]);
 
     camera.set_follow_orbit_orbits(new_orbits);
 
