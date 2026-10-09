@@ -472,6 +472,8 @@
             - since additive anims arent a thing yet, there needs to be a separate func to read a hit as something to play the hurt sfx and drop health.
         - [ ] hurtcapsules don't appear closer than 10 ticks apart (emma's ashina cross is that fast)
 
+    - [ ] thing: have some attacks that take advantage of the camera tracking!!
+
 - [x] make camera not immediately track target
     - this is mostly for making tracking the enemy a little harder, but it also allows for more aesthetic
     - so for the accel speed, there's a signed x velocity to the target, but for decel, it needs to know it's coming in too hot at a certain distance
@@ -486,6 +488,10 @@
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
         - so max 3 cascades (both realtime cascades and one static cascade if dir light changes) get updated on one frame
+
+- [ ] add sweep attacks and thrust attacks
+    - hell yeah mikiri
+    - jump goomba stomp
 
 - [ ] create projectile spawning
 - [ ] some fun: energy ball enemy shoots and you have to parry it back to each other until one of you gets hit.
