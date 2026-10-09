@@ -118,6 +118,11 @@
             "anim_name": "Attack_naname_somethingelse"
         },
         {
+            "state_name": "st_attack_4",
+            "state_type": "single_anim",
+            "anim_name": "Attack_side_zoom"
+        },
+        {
             "state_name": "st_jump_back_evade",
             "state_type": "single_anim",
             "anim_name": "Jump_back_evade"

@@ -241,29 +241,20 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
                 using Atk_t =
                         component::Character_mvt_animated_state::Input_mvt_state::CPU_attack_type;
 
-                date_deadline(2026, 10, 15);  // make vv below vv not a hardcoded val.
-                bool const has_available_attacks{ flat_distance_to_target <= 10 };  // @HARDCODE
-
                 switch (action_to_submit)
                 {
-                case k_do_action_atk_by_request:
-                    if (has_available_attacks)
-                    {
-                        char_mvt_anim_state.input_mvt_state.on_exec_attack_combo =
-                            Atk_t::CPU_ATK_TYPE_REQUESTED;
-                        break;
-                    }
-
-                case k_do_action_atk_by_chance:
-                    if (has_available_attacks)
-                    {
-                        char_mvt_anim_state.input_mvt_state.on_exec_attack_combo =
-                            Atk_t::CPU_ATK_TYPE_BY_CHANCE;
-                        break;
-                    }
-
                 case k_do_action_movement:
                     char_mvt_anim_state.input_mvt_state.on_exec_movement = true;
+                    break;
+
+                case k_do_action_atk_by_request:
+                    char_mvt_anim_state.input_mvt_state.on_exec_attack_combo =
+                        Atk_t::CPU_ATK_TYPE_REQUESTED;
+                    break;
+
+                case k_do_action_atk_by_chance:
+                    char_mvt_anim_state.input_mvt_state.on_exec_attack_combo =
+                        Atk_t::CPU_ATK_TYPE_BY_CHANCE;
                     break;
                 }
 
