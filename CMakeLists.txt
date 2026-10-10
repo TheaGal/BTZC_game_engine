@@ -87,6 +87,7 @@ set(DEPENDENCY_INCLUDE_DIRS
 
 add_subdirectory(third_party/fmt)
 set(DOUBLE_PRECISION ON CACHE BOOL "Use double precision math" FORCE)  # Use double precision for large, open world physics.
+set(JPH_USE_DX12 OFF CACHE BOOL "Use DirectX" FORCE)  # Turn off DX12 so that the DX12 SDK isn't required to be installed (using Vulkan anyway).
 add_subdirectory(third_party/JoltPhysics/Build)
 add_subdirectory(third_party/json)
 add_subdirectory(third_party/stduuid)
@@ -310,6 +311,10 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/service_finder/service_finder.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/settings/settings.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/settings/settings.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/btglm_structs.test.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/test_runner.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/test_runner.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/test_types.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/timer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/timer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/watchdog_timer.cpp
