@@ -18,7 +18,7 @@
                 {
                     "type_name": "TXP::component::Entity_metadata",
                     "members_j": {
-                        "name": "My Gay object",
+                        "name": "Player Char",
                         "uuid": "aae5ebfb-7c2b-49a8-bcb9-658fdea987af"
                     }
                 },
@@ -593,6 +593,46 @@
                         "render_layer": 1,
                         "model_name": "material_viewer_ball",
                         "material_palette": "probuilder_material_palette"
+                    }
+                }
+            ]
+        },
+        {
+            "entity_uuid": "2ad6645e-8890-44ac-b5cf-b92d5b39648d",
+            "components": [
+                {
+                    "type_name": "TXP::component::Entity_metadata",
+                    "members_j": {
+                        "name": "Some Logo",
+                        "uuid": "2ad6645e-8890-44ac-b5cf-b92d5b39648d"
+                    }
+                },
+                {
+                    "type_name": "component::Transform",
+                    "members_j": {
+                        "position": {
+                            "x": 20.819479,
+                            "y": 1.695744,
+                            "z": -15.000000
+                        },
+                        "rotation": {
+                            "x": 0.7071068,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 0.7071068
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                },
+                {
+                    "type_name": "TXP::component::Render_object_config",
+                    "members_j": {
+                        "render_layer": 1,
+                        "model_name": "FuckinAround"
                     }
                 }
             ]

@@ -474,6 +474,19 @@
 
     - [x] thing: have some attacks that take advantage of the camera tracking!!
 
+    - playchar atk timing:
+        - if trying to intercept playchar before another attack:
+            - light atk anim hit: frame 5ish, start another light atk: frame 17
+            - release another light atk: frame 10
+            - light atk anim hit: frame 5ish
+            - total: 12 + 10 + 5 = 27 frames of vulnerability
+
+        - if lets playcar get in another attack:
+            - light atk anim hit: frame 5ish, start another light atk: frame 17
+            - release another light atk: frame 10
+            - light atk anim hit: frame 5ish, enter parry: frame 10
+            - total: 12 + 10 + 5 + 5 = 32 frames of vulnerability
+
 - [x] make camera not immediately track target
     - this is mostly for making tracking the enemy a little harder, but it also allows for more aesthetic
     - so for the accel speed, there's a signed x velocity to the target, but for decel, it needs to know it's coming in too hot at a certain distance
