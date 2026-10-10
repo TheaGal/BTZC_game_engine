@@ -30,6 +30,7 @@
 #include "physics_engine/physics_object.h"
 #include "physics_engine/raycast_helper.h"
 #include "settings/settings.h"
+#include "tests/test_runner.h"
 #include "timer/timer.h"
 #include "timer/watchdog_timer.h"
 #include "txp_renderer_public.h"
@@ -52,6 +53,8 @@ int main()
         "================================================================================\n"
         "===-=-=-=-=-=-=-=-=-=-=-=-        BTZC  ENGINE        -=-=-=-=-=-=-=-=-=-=-=-===\n"
         "================================================================================\n");
+
+    BT::tests::run_all_tests();
 
     BT::initialize_app_settings_from_file_or_fallback_to_defaults();
     BT::App_settings const& app_settings{ BT::get_app_settings_read_handle() };

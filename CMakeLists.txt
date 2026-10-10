@@ -307,6 +307,10 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/service_finder/service_finder.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/settings/settings.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/settings/settings.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/btglm_structs.test.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/test_runner.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/test_runner.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/test_types.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/timer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/timer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/watchdog_timer.cpp
