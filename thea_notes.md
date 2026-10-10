@@ -472,7 +472,7 @@
             - since additive anims arent a thing yet, there needs to be a separate func to read a hit as something to play the hurt sfx and drop health.
         - [ ] hurtcapsules don't appear closer than 10 ticks apart (emma's ashina cross is that fast)
 
-    - [ ] thing: have some attacks that take advantage of the camera tracking!!
+    - [x] thing: have some attacks that take advantage of the camera tracking!!
 
 - [x] make camera not immediately track target
     - this is mostly for making tracking the enemy a little harder, but it also allows for more aesthetic

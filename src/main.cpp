@@ -40,6 +40,8 @@
 
 
 
+#define APP_NAME "Untitled Game"
+
 #define IMPLEMENT_THIS 0
 
 
@@ -81,7 +83,8 @@ int main()
 
     TXP::Renderer main_renderer{
         entity_container.get_ecs_registry(),
-        "No Train No Game",
+        APP_NAME " - " BTZC_GAME_ENGINE_VERSION " - " BTZC_GAME_ENGINE_DEV_STAGE
+                 " - " BTZC_GAME_ENGINE_OS_NAME,
         BTZC_GAME_ENGINE_ASSET_TEXTURE_PATH,
         BTZC_GAME_ENGINE_ASSET_SHADER_PATH,
         BTZC_GAME_ENGINE_ASSET_MODEL_PATH,
@@ -128,6 +131,9 @@ int main()
     main_renderer.add_texture("tiles084_physdesc", ".ktx2");
     main_renderer.add_texture("tiles084_normal", ".ktx2");
     main_renderer.add_texture("tiles084_occlusion", ".ktx2");
+    main_renderer.add_texture("FuckinAround_basecolor", ".ktx2");
+    main_renderer.add_texture("FuckinAround_physdesc", ".ktx2");
+    main_renderer.add_texture("FuckinAround_normal", ".ktx2");
     // main_renderer.add_material("default_mat",
     //                            "pbr",
     //                            { { "base_color_factor", "0.75 0.75 0.5 1" },
@@ -143,6 +149,14 @@ int main()
                                  { "physical_descriptor_texture", "tiles084_physdesc" },
                                  { "normal_texture", "tiles084_normal" },
                                  { "occlusion_texture", "tiles084_occlusion" } });
+    main_renderer.add_material("SomethingUnique",
+                               "pbr",
+                               { { "base_color_factor", "1 1 1 1" },
+                                 { "metallic_factor", "1" },
+                                 { "roughness_factor", "1" },
+                                 { "base_color_texture", "FuckinAround_basecolor" },
+                                 { "physical_descriptor_texture", "FuckinAround_physdesc" },
+                                 { "normal_texture", "FuckinAround_normal" } });
     main_renderer.add_material("ProBuilderDefault",
                                "pbr",
                                { { "base_color_factor", "0.25 0.25 0.25 1" },
@@ -176,6 +190,7 @@ int main()
     main_renderer.add_model("rail_line_editor_gizmo", ".wobj", false, false);
     main_renderer.add_model("floor_compass", ".glb", false, false);
     main_renderer.add_model("rails", ".wobj", false, false);
+    main_renderer.add_model("FuckinAround", ".glb", false, false);
 
     main_renderer.build();
 
@@ -190,11 +205,11 @@ int main()
             BT::audio::play_sound_3d(snd_key, pos, BT::audio::volume_to_db(volume));
             BT::audio::unmark_snd_required(snd_key);
 
-            BT_WARNF("Played sfx \"%s\" at (%.3f, %.3f, %.3f)",
-                     snd_name.c_str(),
-                     pos[0],
-                     pos[1],
-                     pos[2]);
+            BT_TRACEF("Played sfx \"%s\" at (%.3f, %.3f, %.3f)",
+                      snd_name.c_str(),
+                      pos[0],
+                      pos[1],
+                      pos[2]);
 
             TXP::debug::emplace_debug_line_based_capsule(pos, pos, 1, vec4{ 1, 0, 0.2, 1 }, 0.25f);
         });

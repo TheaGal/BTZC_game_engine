@@ -8,7 +8,7 @@
                         3.0
                     ],
                     "state_set": "st_attack_0",
-                    "weight": 0.0
+                    "weight": 0.10000000149011612
                 },
                 {
                     "min_max_range": [
@@ -16,7 +16,7 @@
                         10.0
                     ],
                     "state_set": "st_attack_1",
-                    "weight": 0.0
+                    "weight": 0.10000000149011612
                 },
                 {
                     "min_max_range": [
@@ -24,7 +24,7 @@
                         3.0
                     ],
                     "state_set": "st_attack_2",
-                    "weight": 0.0
+                    "weight": 0.10000000149011612
                 },
                 {
                     "min_max_range": [

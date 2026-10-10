@@ -35,3 +35,27 @@ tiles084_occlusion:
     format: ldr_unorm
     mipmapped: true
     source_image: Tiles084_1K-JPG_AmbientOcclusion.jpg
+
+FuckinAround_basecolor:
+  Texture2D:
+    channels: 4
+    format: ldr_srgb
+    mipmapped: true
+    source_image: FuckinAround_Material_BaseColor.png
+
+FuckinAround_physdesc:
+  Texture2D_channelmapped:
+    channels: 4
+    format: ldr_unorm
+    mipmapped: true
+    source_image_r: 0
+    source_image_g: FuckinAround_Material_Roughness.png
+    source_image_b: FuckinAround_Material_Metallic.png
+    source_image_a: 1
+
+FuckinAround_normal:
+  Texture2D:
+    channels: 4
+    format: ldr_unorm
+    mipmapped: true
+    source_image: FuckinAround_Material_Normal.png
