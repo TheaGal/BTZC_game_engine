@@ -87,6 +87,7 @@ set(DEPENDENCY_INCLUDE_DIRS
 
 add_subdirectory(third_party/fmt)
 set(DOUBLE_PRECISION ON CACHE BOOL "Use double precision math" FORCE)  # Use double precision for large, open world physics.
+set(JPH_USE_DX12 OFF CACHE BOOL "Use DirectX" FORCE)  # Turn off DX12 so that the DX12 SDK isn't required to be installed (using Vulkan anyway).
 add_subdirectory(third_party/JoltPhysics/Build)
 add_subdirectory(third_party/json)
 add_subdirectory(third_party/stduuid)
