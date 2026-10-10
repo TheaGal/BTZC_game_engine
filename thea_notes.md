@@ -479,6 +479,9 @@
     - so for the accel speed, there's a signed x velocity to the target, but for decel, it needs to know it's coming in too hot at a certain distance
     - [x] wip implementation
 
+- [x] RQ: add fps cap (default 120? can be changed in the toml)
+    - just added vsync bc that was the easiest thing to do for this
+
 - [ ] add ui health and posture
 
 - [ ] death screen and "ninsatsu" screen

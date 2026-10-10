@@ -28,6 +28,7 @@ void toml_to_app_settings(toml::table const& toml_tbl, App_settings& app_setting
     app_settings.renderer_settings.monitor_idx     = toml_tbl["renderer_settings"]["monitor_idx"].value_or(app_settings.renderer_settings.monitor_idx);
     app_settings.renderer_settings.windowed_width  = toml_tbl["renderer_settings"]["windowed_width"].value_or(app_settings.renderer_settings.windowed_width);
     app_settings.renderer_settings.windowed_height = toml_tbl["renderer_settings"]["windowed_height"].value_or(app_settings.renderer_settings.windowed_height);
+    app_settings.renderer_settings.is_vsync_on     = toml_tbl["renderer_settings"]["is_vsync_on"].value_or(app_settings.renderer_settings.is_vsync_on);
     app_settings.renderer_settings.is_resizable    = toml_tbl["renderer_settings"]["is_resizable"].value_or(app_settings.renderer_settings.is_resizable);
     app_settings.renderer_settings.has_border      = toml_tbl["renderer_settings"]["has_border"].value_or(app_settings.renderer_settings.has_border);
     app_settings.renderer_settings.is_fullscreen   = toml_tbl["renderer_settings"]["is_fullscreen"].value_or(app_settings.renderer_settings.is_fullscreen);
@@ -51,6 +52,7 @@ toml::table app_settings_to_toml(App_settings& app_settings)
                 { "monitor_idx",         app_settings.renderer_settings.monitor_idx     },
                 { "windowed_width",      app_settings.renderer_settings.windowed_width  },
                 { "windowed_height",     app_settings.renderer_settings.windowed_height },
+                { "is_vsync_on",         app_settings.renderer_settings.is_vsync_on     },
                 { "is_resizable",        app_settings.renderer_settings.is_resizable    },
                 { "has_border",          app_settings.renderer_settings.has_border      },
                 { "is_fullscreen",       app_settings.renderer_settings.is_fullscreen   },
