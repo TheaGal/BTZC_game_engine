@@ -28,6 +28,7 @@ namespace
 
 class BTCollector : public JPH::CastRayCollector
 {
+    #warning uses Jolt JPH
 public:
     BTCollector(JPH::PhysicsSystem& in_physics_system,
                 JPH::RRayCast& in_ray)

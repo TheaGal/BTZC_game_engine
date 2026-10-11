@@ -14,6 +14,7 @@ void set_physics_engine(Physics_engine& physics_engine);
 
 struct Raycast_result
 {
+    #warning uses Jolt JPH
     bool success{ false };
     float_t hit_distance;
     JPH::RVec3 hit_point;

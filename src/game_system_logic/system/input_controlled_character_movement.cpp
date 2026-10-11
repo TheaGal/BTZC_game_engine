@@ -28,6 +28,7 @@ using namespace BT;
 /// Struct holding origin offset and input direction.
 struct Origin_offset_and_input_dir
 {
+    #warning uses Jolt JPH
     JPH::Vec3 origin_offset;
     JPH::Vec3 input_dir;
 };
@@ -221,6 +222,7 @@ void apply_grounded_facing_angle(component::Character_mvt_state::Grounded_state&
 /// Result from movement logic.
 struct Char_mvt_logic_results
 {
+    #warning uses Jolt JPH
     bool is_grounded;
     JPH::Quat up_rotation;
     JPH::Vec3 new_velocity;
