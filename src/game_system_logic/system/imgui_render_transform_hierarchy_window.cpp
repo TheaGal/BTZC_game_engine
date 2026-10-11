@@ -262,12 +262,13 @@ void internal_add_transform_to_manip_list(entt::registry& reg,
 
     // Calculate TRS into mat4 transform.
     // @COPYPASTA: This is the same operation as `write_render_transforms.cpp`
+    // @THEA: does the message ^^above^^ mean that the TRS to mat4 operation is the same as `write_render_transforms.cpp`?
     mat4 transform;
     {
-        glm_translate_make(transform,
-                           vec3{ static_cast<float_t>(ent_transform->position.x),
-                                 static_cast<float_t>(ent_transform->position.y),
-                                 static_cast<float_t>(ent_transform->position.z) });
+        vec3 ent_trans_pos_f;
+        btglm_rvec3_to_vec3(ent_transform->position.raw, ent_trans_pos_f);
+
+        glm_translate_make(transform, ent_trans_pos_f);
         glm_quat_rotate(transform, const_cast<float_t*>(ent_transform->rotation.raw), transform);
         glm_scale(transform, const_cast<float_t*>(ent_transform->scale.raw));
     }

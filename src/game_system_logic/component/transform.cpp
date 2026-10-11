@@ -1,5 +1,6 @@
 #include "transform.h"
 
+#include "btglm.h"
 #include "btlogger.h"
 #include "btuuid.h"
 #include "entt/entity/fwd.hpp"
@@ -11,10 +12,8 @@
 
 void BT::component::Transform::calc_mat4_transform(mat4 out_transform) const
 {
-    // @TODO: Conform to `write_render_transforms.cpp`
-    vec3 position_float{ static_cast<float_t>(position.x),
-                         static_cast<float_t>(position.y),
-                         static_cast<float_t>(position.z) };
+    vec3 position_float;
+    btglm_rvec3_to_vec3(position.raw, position_float);
 
     glm_translate_make(out_transform, position_float);
     glm_quat_rotate(out_transform, const_cast<float_t*>(rotation.raw), out_transform);

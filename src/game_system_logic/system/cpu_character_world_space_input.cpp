@@ -18,22 +18,6 @@ namespace
 {
 using namespace BT;
 
-/// Convert rvec3 to vec3.
-void cust_btglm_rvec3_to_vec3(rvec3 const src, vec3 dest)
-{
-    dest[0] = src[0];
-    dest[1] = src[1];
-    dest[2] = src[2];
-}
-
-/// Convert rvec3 to vec3 with custom y value.
-void cust_btglm_rvec3_to_vec3_xz(rvec3 const src, float_t const y, vec3 dest)
-{
-    dest[0] = src[0];
-    dest[1] = y;
-    dest[2] = src[2];
-}
-
 /// Reads and processes broadcasts of actions the enemy is doing.
 void process_broadcasted_enemy_msgs(component::Detectable_character* detect_char,
                                     component::Character_mvt_state const* char_mvt_state,
@@ -181,17 +165,19 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
                 glm_vec3_zero(char_ws_input.delta_to_position_of_interest.raw);
             }
             else
-            {   // Calc desired direction.
-                rvec3 desired_direction{ 0, 0, 0 };
-                btglm_rvec3_sub(cpu_enemy_awareness.runtime_state.position_of_interest,
-                                transform.position.raw,
-                                desired_direction);
+            {   // Calc desired direction. @COPYPASTA
+                vec3 desired_direction;
+                {
+                    rvec3 desired_direction_r;
+                    btglm_rvec3_sub(cpu_enemy_awareness.runtime_state.position_of_interest,
+                                    transform.position.raw,
+                                    desired_direction_r);
+                    btglm_rvec3_to_vec3(desired_direction_r, desired_direction);
+                }
 
-                cust_btglm_rvec3_to_vec3_xz(desired_direction,
-                                            0,
-                                            char_ws_input.ws_flat_clamped_input.raw);
-                cust_btglm_rvec3_to_vec3(desired_direction,
-                                         char_ws_input.delta_to_position_of_interest.raw);
+                glm_vec3_copy(desired_direction, char_ws_input.ws_flat_clamped_input.raw);
+                char_ws_input.ws_flat_clamped_input.y = 0;
+                glm_vec3_copy(desired_direction, char_ws_input.delta_to_position_of_interest.raw);
 
                 constexpr float_t k_close_enough_dist{ 0.1f };
                 constexpr float_t k_close_enough_dist2{ k_close_enough_dist * k_close_enough_dist };
@@ -210,16 +196,18 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
             else
             {
                 // Calc desired direction. (@COPYPASTA, also @TEMP bc this just assumes the attack anim.)
-                rvec3 desired_direction{ 0, 0, 0 };
-                btglm_rvec3_sub(cpu_enemy_awareness.runtime_state.position_of_interest,
-                                transform.position.raw,
-                                desired_direction);
+                vec3 desired_direction;
+                {
+                    rvec3 desired_direction_r;
+                    btglm_rvec3_sub(cpu_enemy_awareness.runtime_state.position_of_interest,
+                                    transform.position.raw,
+                                    desired_direction_r);
+                    btglm_rvec3_to_vec3(desired_direction_r, desired_direction);
+                }
 
-                cust_btglm_rvec3_to_vec3_xz(desired_direction,
-                                            0,
-                                            char_ws_input.ws_flat_clamped_input.raw);
-                cust_btglm_rvec3_to_vec3(desired_direction,
-                                         char_ws_input.delta_to_position_of_interest.raw);
+                glm_vec3_copy(desired_direction, char_ws_input.ws_flat_clamped_input.raw);
+                char_ws_input.ws_flat_clamped_input.y = 0;
+                glm_vec3_copy(desired_direction, char_ws_input.delta_to_position_of_interest.raw);
 
                 // Reads broadcasts of actions the enemy is doing.
                 process_broadcasted_enemy_msgs(
@@ -234,8 +222,7 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
 
                 // Input new movement.
                 float_t const flat_distance_to_target{ glm_vec2_norm(
-                    vec2{ static_cast<float_t>(desired_direction[0]),
-                          static_cast<float_t>(desired_direction[2]) }) };
+                    vec2{ desired_direction[0], desired_direction[2] }) };
                 TXP::debug::emplace_data_point("CPU-dist-to-target", flat_distance_to_target);
 
                 using Atk_t =

@@ -126,12 +126,14 @@ void BT::Phys_obj_impl_tri_mesh::update_debug_mesh()
 {
     auto current_trans{ read_transform() };
 
-    // @TODO: When camera or renderer changes, this needs to change.
-    //        Ensure matching with `write_render_transforms.cpp`.
+    rvec3 cur_pos_r{ current_trans.position.GetX(),
+                     current_trans.position.GetY(),
+                     current_trans.position.GetZ() };
+    vec3 cur_pos_f;
+    btglm_rvec3_to_vec3(cur_pos_r, cur_pos_f);
+
     mat4 graphic_trans;
-    glm_translate_make(graphic_trans, vec3{ static_cast<float_t>(current_trans.position.GetX()),
-                                            static_cast<float_t>(current_trans.position.GetY()),
-                                            static_cast<float_t>(current_trans.position.GetZ()) });
+    glm_translate_make(graphic_trans, cur_pos_f);
     glm_quat_rotate(graphic_trans, versor{ current_trans.rotation.GetX(),
                                            current_trans.rotation.GetY(),
                                            current_trans.rotation.GetZ(),

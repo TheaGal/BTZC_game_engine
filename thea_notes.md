@@ -546,12 +546,17 @@
     - also, have runtime-error exceptions not contain a message, but rather print out the error message so it's viewable in the logging file.
     - also having a crash handler would be great.
 
-- [ ] SOMEDAY: make helper lib to convert rvec3 to vec3 like this:
+- [x] SOMEDAY: make helper lib to convert rvec3 to vec3 like this:
     ```cpp
     void btglm_rvec3_to_vec3(ivec3 const chunk_xyz, rvec3 const src, vec3 dest);
     void btglm_vec3_to_rvec3(ivec3 const chunk_xyz, vec3 const src, rvec3 dest);
     ```
     - uses chunk system to copy things over.
+
+    - NOTE: did partial impl, but later if you decide to do world chunking, the partial impl should get you 90% of the way there.
+        - [x] search to ensure "write_render_transforms.cpp" doesn't show up in any notes.
+            - left an extra "investigate this" note in one place.
+        - [x] figure out what to do with the physics related conversions.
 
 
 ## RENDERER PLAN

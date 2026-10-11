@@ -57,10 +57,7 @@ void fetch_eyesight_data_and_AFA_data(component::CPU_enemy_awareness& in_out_awa
     // Write eyesight data.
     vec3 eyesight_pos;
     glm_mat4_mulv3(eyes_bone_trans, eyes_origin, 1, eyesight_pos);
-
-    out_eyesight_pos[0] = eyesight_pos[0];  // @TODO: Conform to `write_render_transforms.cpp`
-    out_eyesight_pos[1] = eyesight_pos[1];
-    out_eyesight_pos[2] = eyesight_pos[2];
+    btglm_vec3_to_rvec3(eyesight_pos, out_eyesight_pos);
 
     glm_mat4_mulv3(eyes_bone_trans, out_eyesight_forward, 0, out_eyesight_forward);
 }
@@ -167,9 +164,8 @@ void BT::system::cpu_character_enemy_detection()
             cpu_enemy_awareness.runtime_state.enemy_awareness;
 
         // Draw debug view.
-        vec3 eyesight_pos_f{ static_cast<float_t>(eyesight_pos[0]),  // @TODO: Conform to `write_render_transforms.cpp`
-                             static_cast<float_t>(eyesight_pos[1]),
-                             static_cast<float_t>(eyesight_pos[2]), };
+        vec3 eyesight_pos_f;
+        btglm_rvec3_to_vec3(eyesight_pos, eyesight_pos_f);
 
         // Draw debug aware sight zone.
         draw_detection_cone(cpu_enemy_awareness.aware_sdz,
@@ -215,11 +211,9 @@ void BT::system::cpu_character_enemy_detection()
                 rvec3 delta_pos_r;
                 btglm_rvec3_sub(det_trans.position.raw, eyesight_pos, delta_pos_r);
 
-                // @TODO: Conform to `write_render_transforms.cpp`
                 // Now add transform offset too.
-                delta_pos[0] = delta_pos_r[0] + det_char.transform_offset.x;
-                delta_pos[1] = delta_pos_r[1] + det_char.transform_offset.y;
-                delta_pos[2] = delta_pos_r[2] + det_char.transform_offset.z;
+                btglm_rvec3_to_vec3(delta_pos_r, delta_pos);
+                glm_vec3_add(delta_pos, det_char.transform_offset.raw, delta_pos);
 
                 vec3 dpn;
                 glm_vec3_normalize_to(delta_pos, dpn);
@@ -318,14 +312,16 @@ void BT::system::cpu_character_enemy_detection()
             // @DEBUG: Detection line drawing.
             if (draw_detection_zone_debug_line)
             {
-                // @TODO: Conform to `write_render_transforms.cpp`
+                vec3s det_trans_pos_f;
+                btglm_rvec3_to_vec3(det_trans.position.raw, det_trans_pos_f.raw);
+
                 TXP::debug::Debug_line dbg_line{
                     { eyesight_pos_f[0],
                       eyesight_pos_f[1],
                       eyesight_pos_f[2] },
-                    { static_cast<float_t>(det_trans.position.x) + det_char.transform_offset.x,
-                      static_cast<float_t>(det_trans.position.y) + det_char.transform_offset.y,
-                      static_cast<float_t>(det_trans.position.z) + det_char.transform_offset.z }
+                    { det_trans_pos_f.x + det_char.transform_offset.x,
+                      det_trans_pos_f.y + det_char.transform_offset.y,
+                      det_trans_pos_f.z + det_char.transform_offset.z }
                 };
                 glm_vec4_copy(detection_zone_debug_line_color, dbg_line.color1);
                 glm_vec4_copy(detection_zone_debug_line_color, dbg_line.color2);

@@ -105,11 +105,8 @@ void BT::system::player_character_lock_onto_target(float_t const delta_time)
                     entt::exclude<component::Follow_camera_follow_ref>)
                  .each())
         {   // Loop thru to find best entity to focus on.
-            // @TODO: Conform to `write_render_transforms.cpp`
-            vec3 trans_pos{ static_cast<float_t>(transform.position.x),
-                            static_cast<float_t>(transform.position.y) +
-                                cam_lockon_target.follow_offset_y,
-                            static_cast<float_t>(transform.position.z) };
+            vec3 trans_pos;
+            btglm_rvec3_to_vec3(transform.position.raw, trans_pos);
 
             vec3 facing_to_trans;
             glm_vec3_sub(trans_pos, cam_position, facing_to_trans);
@@ -162,12 +159,9 @@ void BT::system::player_character_lock_onto_target(float_t const delta_time)
         auto& cam_lockon_target{ reg.get<component::Follow_camera_lockon_target const>(
             locked_on_ecs_entity) };
 
-        // @TODO: Conform to `write_render_transforms.cpp`
-        vec3 target_locked_on_pos{
-            static_cast<float_t>(transform.position.x),
-            static_cast<float_t>(transform.position.y) + cam_lockon_target.follow_offset_y,
-            static_cast<float_t>(transform.position.z),
-        };
+        vec3 target_locked_on_pos;
+        btglm_rvec3_to_vec3(transform.position.raw, target_locked_on_pos);
+        target_locked_on_pos[1] += cam_lockon_target.follow_offset_y;
 
         // Update lockon reticle UI position.
         {

@@ -20,6 +20,7 @@ using std::string;
 namespace
 {
 
+// @THEA: these are unused???? @UNUSED @CHECK
 JPH::Vec3 json_to_vec3(json& node_ref)
 {
     return JPH::Vec3(node_ref[0], node_ref[1], node_ref[2]);

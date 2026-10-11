@@ -1,5 +1,6 @@
 #include "write_render_transforms.h"
 
+#include "btglm.h"
 #include "entt/entity/registry.hpp"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
@@ -20,11 +21,11 @@ void BT::system::write_render_transforms()
         // @TODO: Include interpolation instead of just straight copying.
 
         // Calculate TRS into mat4 transform.
+        vec3 trans_pos_f;
+        btglm_rvec3_to_vec3(transform.position.raw, trans_pos_f);
+
         auto* rend_trans{ rend_obj_ref.transform.raw };
-        glm_translate_make(rend_trans,
-                           vec3{ static_cast<float_t>(transform.position.x),
-                                 static_cast<float_t>(transform.position.y),
-                                 static_cast<float_t>(transform.position.z) });
+        glm_translate_make(rend_trans, trans_pos_f);
         glm_quat_rotate(rend_trans, const_cast<float_t*>(transform.rotation.raw), rend_trans);
         glm_scale(rend_trans, const_cast<float_t*>(transform.scale.raw));
     }
