@@ -82,3 +82,18 @@
 # learn both unoabara and sanoabara moves from scrolls
 
 - learning sanoabara is something that pc can use while learning and is a nice side quest to go thru, but pc can also learn unoabara from old temples that are more hidden from view. they are secrets that dont get revealed unless player is paying attention to hints from the initial climb of the first mission
+
+
+# abaranuki stigma
+
+- on the way to first mission, somebody freaks out and is in pain bc of their abara, so some ppl talk about how painful and uncomfortable it is to watch. one person says that those ppl need the medical help that society is trying to get rid of, and others are just saying that the police (pc) is gonna help the person.
+- pc gets the signal to brand the person, so they do. then the person is screaming in pain and pulls out a hidden weapon, and pc fights.
+- everybody who was watching the spectacle is now facing away from it, everybody not wanting to stand up or interfere.
+
+- later, when pc is struggling w their own pain of the abara, doc is trying to get rid of their stigma.
+    - "but if i get my abara removed then ill catch Gone!!" (がん)
+    - "no, you'll have the same amount of chance of catching Gone as if you were born with sanoabara"
+
+- pc can choose whether to receive the abaranuki treatment or to describe the meds they were taking before. if pc chooses not to get it, the game "ends" with a 50 yrs later thing, where pc is permanently hooked up to the machine giving antidepressants, and others are trying to cheer them up and keep company. obvi bad ending but pc didnt lose their status, just their dignity.
+
+- maybe having a moment of talking about nyoketsu in your blood vs danketsu? it'll be very on the nose lol
