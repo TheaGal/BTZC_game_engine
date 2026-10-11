@@ -123,10 +123,12 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
         // Get AFA data.
         bool _;
         bool do_attack_by_request{ false };
+        bool do_attack_by_early_request{ false };
         bool afa_data_success = helper::fetch_wanted_afa_data(entity_container,
                                                               char_mvt_anim_state,
                                                               _,
-                                                              do_attack_by_request);
+                                                              do_attack_by_request,
+                                                              do_attack_by_early_request);
         if (!afa_data_success)
             continue;
 
@@ -135,6 +137,12 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
         constexpr uint32_t k_do_action_atk_by_chance{ 2 };
         uint32_t action_to_submit{ do_attack_by_request ? k_do_action_atk_by_request
                                                         : k_do_action_movement };
+        if (do_attack_by_early_request)
+        {
+            // @TODO: logic to see if pressure is enough to warrant actually doing an attack rn.
+            date_deadline(2026, 10, 12);
+            action_to_submit = k_do_action_atk_by_request;
+        }
 
         // World-space movement input.
         bool enter_state{ cpu_enemy_awareness.runtime_state.prev_enemy_awareness !=

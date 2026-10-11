@@ -17,7 +17,8 @@ namespace helper
 bool fetch_wanted_afa_data(Entity_container const& entity_container,
                            component::Character_mvt_animated_state const& char_mvt_anim_state,
                            bool& out_can_move,
-                           bool& out_request_new_attack);
+                           bool& out_request_new_attack,
+                           bool& out_request_new_attack_early);
 
 }  // namespace helper
 }  // namespace system

@@ -486,6 +486,13 @@
             - release another light atk: frame 10
             - light atk anim hit: frame 5ish, enter parry: frame 10
             - total: 12 + 10 + 5 + 5 = 32 frames of vulnerability
+    
+    - [ ] have enemy attacks "answer" by adding to a quicker queue an attack when there's more pressure.
+        - in parry anim there could be "early request attack" and that could cause an attack to get queued up quicker, and this event only comes up if there's a certain amount of pressure built up.
+        - [x] initial
+        - [ ] have enemy also be able to parry the next attack after getting hurt w/ stunning
+            > hurt w/ stunning is when the animation changes instead of it being just an additive anim.
+        - [ ] get pressure logic
 
 - [x] make camera not immediately track target
     - this is mostly for making tracking the enemy a little harder, but it also allows for more aesthetic
