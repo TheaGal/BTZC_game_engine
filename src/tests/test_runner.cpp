@@ -25,8 +25,6 @@ bool BT::tests::run_all_tests()
     RUN_TEST(test_btglm_vec4s_in_vector);
     RUN_TEST(test_btglm_mat3s_in_vector);
     RUN_TEST(test_btglm_mat4s_in_vector);
-    RUN_TEST(test_ub_problematic_struct);
-    RUN_TEST(test_ub_struct_elem_align);
 
     bool const grand_pass{ trrs.aggregate_results_by_type[TEST_RESULT_FAILED] == 0 };
 

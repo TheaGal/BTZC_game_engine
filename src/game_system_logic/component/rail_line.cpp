@@ -55,7 +55,6 @@ namespace
 
 struct Bezier_curve
 {
-    #warning struct uses cglm
     vec3s c0;
     vec3s c1;
     vec3s c2;

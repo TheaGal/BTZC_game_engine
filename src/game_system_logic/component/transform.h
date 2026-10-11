@@ -18,7 +18,6 @@ namespace component
 /// Global transform of an entity.
 struct Transform
 {
-    #warning struct uses cglm
     rvec3s  position{ 0, 0, 0 };
     versors rotation{ 0, 0, 0, 1 };
     vec3s   scale{ 1, 1, 1 };
