@@ -4,6 +4,7 @@
 #include "btglm_structs.test.h"
 #include "btlogger.h"
 #include "test_types.h"
+#include "undefined_behavior.test.h"
 
 
 bool BT::tests::run_all_tests()
@@ -24,6 +25,7 @@ bool BT::tests::run_all_tests()
     RUN_TEST(test_btglm_vec4s_in_vector);
     RUN_TEST(test_btglm_mat3s_in_vector);
     RUN_TEST(test_btglm_mat4s_in_vector);
+    RUN_TEST(test_ub_problematic_struct);
 
     bool const grand_pass{ trrs.aggregate_results_by_type[TEST_RESULT_FAILED] == 0 };
 

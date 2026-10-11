@@ -2,6 +2,7 @@
 
 #include "../btzc_game_engine.h"
 #include "btjson.h"
+#define CGLM_FORCE_DEPTH_ZERO_TO_ONE
 #include "cglm/cglm.h"
 #include "cglm/quat.h"
 #include "cglm/types-struct.h"
