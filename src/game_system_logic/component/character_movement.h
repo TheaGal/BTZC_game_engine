@@ -28,6 +28,7 @@ struct Player_character
 /// NPC AI would output to this struct. Player input would output to this struct.
 struct Character_world_space_input
 {
+    #warning uses cglm
     vec3s ws_flat_clamped_input{ 0, 0, 0 };
     vec3s delta_to_position_of_interest{ 0, 0, 0 };
 

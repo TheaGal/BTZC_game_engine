@@ -25,6 +25,7 @@ namespace detectable_character_type
 /// Status of CPU awareness and list of its enemies.
 struct CPU_enemy_awareness
 {
+    #warning uses cglm
     uint8_t my_enemy_bitmask{ 0 };  // Use `detectable_character_type`.
 
     std::string eyes_bone{ "" };  // Bone from display repr model to base "eyes" off of.
@@ -91,6 +92,7 @@ struct CPU_enemy_awareness
     /// DO NOT SERIALIZE.
     struct State
     {
+        #warning uses cglm
         uint32_t eyes_bone_idx{ (uint32_t)-1 };
 
         enum Awareness : uint32_t
@@ -113,6 +115,7 @@ struct CPU_enemy_awareness
 /// Marks an entity as a possible enemy for the CPU.
 struct Detectable_character
 {
+    #warning uses cglm
     uint8_t type{ detectable_character_type::NEUTRAL };  // Use `detectable_character_type`.
     vec3s transform_offset{ 0, 1, 0 };
 
@@ -128,6 +131,7 @@ struct Detectable_character
         /// (NOTE: Only char types that are enemies are included in the list)
         struct Enemy_atk_msg
         {
+            #warning struct uses cglm
             vec3 other_to_this_delta_pos;
             float_t other_facing_angle;
         };
@@ -137,6 +141,7 @@ struct Detectable_character
         /// (NOTE: Only char types that are enemies are included in the list)
         struct Enemy_heal_msg
         {
+            #warning struct uses cglm
             vec3 other_to_this_delta_pos;
         };
         std::vector<Enemy_heal_msg> broadcasted_enemy_heal_msgs;

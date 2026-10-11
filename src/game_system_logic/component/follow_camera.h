@@ -31,6 +31,7 @@ struct Follow_camera_follow_ref
 
     struct State
     {
+        #warning struct uses cglm
         UUID locked_on_entity;
         float_t locked_on_facing_angle;
         vec2 orbit_turn_speeds{ 0, 0 };

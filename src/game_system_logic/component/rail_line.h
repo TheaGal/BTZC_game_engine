@@ -77,6 +77,7 @@ struct Rail_line
 
         struct Rail_position_transform
         {
+            #warning struct uses cglm
             vec3s position;
             float_t angle_x;
             float_t angle_y;

@@ -3,8 +3,11 @@
 #include "btglm.h"
 #include "entt/entity/registry.hpp"
 #include "test_types.h"
+#include "txp_renderer_public.h"
 
+#include <cstddef>
 #include <cstdint>
+#include <cstring>
 
 
 namespace BT
@@ -17,6 +20,7 @@ Test_result test_ub_problematic_struct()
     // @NOTE: this is just a copy of the problematic type.
     struct Render_object_config
     {
+        #warning struct uses cglm
         enum Render_layer : uint16_t
         {
             RENDER_LAYER_ALL          = 0b1111'1111'1111'1111,
@@ -78,6 +82,48 @@ Test_result test_ub_problematic_struct()
         glm_mat4_identity(identity_mat4.raw);
 
         check_mat4_fn(check_eq, identity_mat4, new_roc.transform);
+    }
+
+    return TEST_RESULT_PASSED;
+}
+
+Test_result test_ub_struct_elem_align()
+{
+    using T = TXP::component::Render_object_config;
+
+    T default_obj{};
+    alignas(alignof(T)) std::array<uint8_t, sizeof(T) + alignof(T) - 1> data_field{};
+
+    for (size_t i = 0; i < alignof(T); i++)
+    {
+        auto& ref_to_data{ *reinterpret_cast<T*>(&data_field[i]) };
+        ref_to_data = {};
+
+        check_eq(ref_to_data.render_layer, default_obj.render_layer);
+        check_eq(ref_to_data.model_name, default_obj.model_name);
+        check_eq(ref_to_data.transform.m00, default_obj.transform.m00);
+        check_eq(ref_to_data.transform.m01, default_obj.transform.m01);
+        check_eq(ref_to_data.transform.m02, default_obj.transform.m02);
+        check_eq(ref_to_data.transform.m03, default_obj.transform.m03);
+        check_eq(ref_to_data.transform.m10, default_obj.transform.m10);
+        check_eq(ref_to_data.transform.m11, default_obj.transform.m11);
+        check_eq(ref_to_data.transform.m12, default_obj.transform.m12);
+        check_eq(ref_to_data.transform.m13, default_obj.transform.m13);
+        check_eq(ref_to_data.transform.m20, default_obj.transform.m20);
+        check_eq(ref_to_data.transform.m21, default_obj.transform.m21);
+        check_eq(ref_to_data.transform.m22, default_obj.transform.m22);
+        check_eq(ref_to_data.transform.m23, default_obj.transform.m23);
+        check_eq(ref_to_data.transform.m30, default_obj.transform.m30);
+        check_eq(ref_to_data.transform.m31, default_obj.transform.m31);
+        check_eq(ref_to_data.transform.m32, default_obj.transform.m32);
+        check_eq(ref_to_data.transform.m33, default_obj.transform.m33);
+        check_eq(ref_to_data.sub_mesh_name, default_obj.sub_mesh_name);
+        check_eq(ref_to_data.sub_mesh_zero_origin_position,
+                 default_obj.sub_mesh_zero_origin_position);
+        check_eq(ref_to_data.material_palette, default_obj.material_palette);
+        check_eq(ref_to_data.is_deformed, default_obj.is_deformed);
+        check_eq(ref_to_data.renderer_owned_data.pool_key,
+                 default_obj.renderer_owned_data.pool_key);
     }
 
     return TEST_RESULT_PASSED;
