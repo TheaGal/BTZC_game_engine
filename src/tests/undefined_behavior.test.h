@@ -17,6 +17,8 @@ namespace tests
 
 Test_result test_ub_problematic_struct()
 {
+    // @THEA: This test didn't work for isolating the problem for me.
+
     // @NOTE: this is just a copy of the problematic type.
     struct Render_object_config
     {
@@ -89,6 +91,8 @@ Test_result test_ub_problematic_struct()
 
 Test_result test_ub_struct_elem_align()
 {
+    // @THEA: This test didn't work for isolating the problem for me.
+
     using T = TXP::component::Render_object_config;
 
     T default_obj{};

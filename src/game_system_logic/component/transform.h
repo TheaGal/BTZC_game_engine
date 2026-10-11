@@ -33,6 +33,7 @@ struct Transform
     /// Helper to make mat4 out of transform.
     void calc_mat4_transform(mat4 out_transform) const;
 };
+static_assert(offsetof(Transform, rotation) % k_vec4_alignment == 0);
 
 /// References to other entities connected to this transform within the transform hierarchy.
 struct Transform_hierarchy
