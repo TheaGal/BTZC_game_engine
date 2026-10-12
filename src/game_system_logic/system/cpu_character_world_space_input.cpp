@@ -41,17 +41,19 @@ void process_broadcasted_enemy_msgs(component::Detectable_character* detect_char
         float_t flat_distance2{ glm_vec2_norm2(  // @NOTE: Ignore Y axis.
             vec2{ msg.other_to_this_delta_pos[0], msg.other_to_this_delta_pos[2] }) };
 
-        // Get similarity of facing angles.
-        auto ang_diff{ std::abs(msg.other_facing_angle - char_facing_angle) };
-        while (ang_diff > glm_rad(180.0f))
-            ang_diff -= glm_rad(360.0f);
-        while (ang_diff <= glm_rad(-180.0f))
-            ang_diff += glm_rad(360.0f);
+        // Get similarity of facing angles in facing each other
+        // (0 means they are facing each other perfectly).
+        auto facing_ang_diff{ std::abs(msg.other_facing_angle + glm_rad(180) - char_facing_angle) };
+        while (facing_ang_diff > glm_rad(180.0f))
+            facing_ang_diff -= glm_rad(360.0f);
+        while (facing_ang_diff <= glm_rad(-180.0f))
+            facing_ang_diff += glm_rad(360.0f);
 
         constexpr float_t k_max_flat_distance{ 7.5f };
-        constexpr float_t k_min_ang_diff{ glm_rad(45.0f) };
+        constexpr float_t k_max_ang_diff{ glm_rad(45.0f) };
 
-        if (flat_distance2 < k_max_flat_distance * k_max_flat_distance && ang_diff > k_min_ang_diff)
+        if (flat_distance2 < k_max_flat_distance * k_max_flat_distance &&
+            std::abs(facing_ang_diff) < k_max_ang_diff)
         {  // Accept msg and input to parry attack.
             char_mvt_anim_state.input_mvt_state.on_guard_press = true;
 
@@ -60,6 +62,9 @@ void process_broadcasted_enemy_msgs(component::Detectable_character* detect_char
     }
     if (!detect_char->state.broadcasted_enemy_atk_msgs.empty())
     {
+        TXP::debug::emplace_data_point("num_atk_accepted_msgs   ", num_atk_accepted_msgs);
+        TXP::debug::emplace_data_point("num_broadcasted_atk_msgs", detect_char->state.broadcasted_enemy_atk_msgs.size());
+
         BT_TRACEF("Used %zu/%zu broadcasted atk msgs.",
                   num_atk_accepted_msgs,
                   detect_char->state.broadcasted_enemy_atk_msgs.size());

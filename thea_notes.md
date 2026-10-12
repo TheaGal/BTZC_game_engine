@@ -490,8 +490,13 @@
     - [ ] have enemy attacks "answer" by adding to a quicker queue an attack when there's more pressure.
         - in parry anim there could be "early request attack" and that could cause an attack to get queued up quicker, and this event only comes up if there's a certain amount of pressure built up.
         - [x] initial
-        - [ ] have enemy also be able to parry the next attack after getting hurt w/ stunning
+        - [x] have enemy also be able to parry the next attack after getting hurt w/ stunning
             > hurt w/ stunning is when the animation changes instead of it being just an additive anim.
+            - for some reason it's only working sometimes???
+            - even just coming up to attack isn't working???
+            - the attack messages are getting broadcasted, but not accepted.
+            - bug fixed: the angle diff calc was bad.
+            - ok, i think i just fixed it, it'll just 
         - [ ] get pressure logic
 
 - [x] make camera not immediately track target

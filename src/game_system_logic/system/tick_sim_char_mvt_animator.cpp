@@ -129,7 +129,7 @@ void BT::system::tick_sim_char_mvt_animator()
                                            { .action_idx = mvt_state.on_hurt });
 
                 if (mvt_state.on_guard_press)
-                    animator.emplace_event("evq_on_guard_press", 0.0f, {});
+                    animator.emplace_event("evq_exec_guard_response", 0.0f, {});
 
                 if (mvt_state.on_exec_movement)
                     animator.emplace_event("evq_exec_mvt_idx",
