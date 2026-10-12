@@ -179,7 +179,7 @@ void process_attack_interaction(Entity_container& entity_container,
 
             // Disabled for ensuring char always face towards where it got attacked.
             //   -Thea 2025/12/23
-            if constexpr(false)
+            if constexpr (false)
             {
                 if (std::abs(delta_angle_2) < std::abs(delta_angle_1))
                 {   // Delta angle 2 is more optimal.

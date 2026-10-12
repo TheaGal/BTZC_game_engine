@@ -221,7 +221,7 @@ void BT::system::cpu_character_enemy_detection()
                 delta_pos_dist2 = glm_vec3_norm2(delta_pos);
 
                 constexpr bool k_draw_line_of_sight_line{ false };
-                if constexpr(k_draw_line_of_sight_line)
+                if constexpr (k_draw_line_of_sight_line)
                 {
                     TXP::debug::Debug_line dbg_line{
                         { eyesight_pos_f[0], eyesight_pos_f[1], eyesight_pos_f[2] },

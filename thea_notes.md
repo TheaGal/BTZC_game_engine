@@ -496,8 +496,11 @@
             - even just coming up to attack isn't working???
             - the attack messages are getting broadcasted, but not accepted.
             - bug fixed: the angle diff calc was bad.
-            - ok, i think i just fixed it, it'll just 
+            - ok, i think i just fixed it, it'll just be that when cpu gets hurt the reaction for parrying happens sooner than playchar
+        - [x] make the camera movement when targeting opponent better
+            - turns out just increasing accel was it
         - [ ] get pressure logic
+        - [ ] make "st_attack_4" face playchar with head during hold moment so that position isn't lost
 
 - [x] make camera not immediately track target
     - this is mostly for making tracking the enemy a little harder, but it also allows for more aesthetic

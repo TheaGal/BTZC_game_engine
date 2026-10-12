@@ -144,7 +144,7 @@
                     "members_j": {
                         "follow_offset_y": 1.875,
                         "orbit_cam_offset_distance": 2.75,
-                        "orbit_turn_accel": 10,
+                        "orbit_turn_accel": 20,
                         "max_orbit_turn_speed": 12.56637
                     }
                 },
