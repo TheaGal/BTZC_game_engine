@@ -500,7 +500,7 @@
         - [x] make the camera movement when targeting opponent better
             - turns out just increasing accel was it
         - [ ] get pressure logic
-        - [ ] make "st_attack_4" face playchar with head during hold moment so that position isn't lost
+        - [x] make "st_attack_4" face playchar with head during hold moment so that position isn't lost
 
 - [x] make camera not immediately track target
     - this is mostly for making tracking the enemy a little harder, but it also allows for more aesthetic
