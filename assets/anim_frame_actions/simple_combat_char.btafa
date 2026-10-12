@@ -2864,7 +2864,7 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "evq_on_guard_press",
+                            "evq_exec_guard_response",
                             "st_ready_parry,st_hold_guard_idle",
                             "1"
                         ],
@@ -2877,12 +2877,25 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "evq_on_guard_press",
+                            "st_ready_parry,st_hold_guard_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 7,
+                    "start_frame": 9
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "request_new_attack_early"
                         ],
                         "cmd_name": "var_mark_reeve"
                     },
                     "end_frame": 11,
-                    "row_idx": 8,
+                    "row_idx": 9,
                     "start_frame": 10
                 },
                 {
@@ -2893,7 +2906,7 @@
                         "cmd_name": "var_mark_reeve"
                     },
                     "end_frame": 57,
-                    "row_idx": 8,
+                    "row_idx": 9,
                     "start_frame": 56
                 },
                 {
@@ -2906,7 +2919,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 15,
-                    "row_idx": 9,
+                    "row_idx": 10,
                     "start_frame": 11
                 },
                 {
@@ -2918,7 +2931,7 @@
                         "cmd_name": "var_wr"
                     },
                     "end_frame": 32,
-                    "row_idx": 11,
+                    "row_idx": 12,
                     "start_frame": 9
                 },
                 {
@@ -2932,7 +2945,7 @@
                         "cmd_name": "play_sfx_oneshot"
                     },
                     "end_frame": 3,
-                    "row_idx": 15,
+                    "row_idx": 16,
                     "start_frame": 2
                 }
             ],
