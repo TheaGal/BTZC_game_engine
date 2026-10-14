@@ -426,7 +426,7 @@
 - [x] made skeleton of some kind of main viewport cam view preview slideshow.
     - i was thinking of having it be a slideshow of a moodboard (probably super far away), what the player sees from each entrance, an overhead view or smth, various views the player will see in funnels etc.
 
-- [ ] improve enemy attacks w readability
+- [REVISIT] improve enemy attacks w readability
     - give enemy 5 different attack combos
     - make sure it's readable to parry all of them
     - it seems like something needs to give in order to have certain moves. ~~maybe there needs to be a distance-correcting anim that plays before each attack? so then the state-set would look like: `st_dist_to_3m,st_attack_2`, and if "st_dist_to_3m" is already around 3m, then it will just cut straight to the next anim, but if not then it will move either forward or backward to that position.~~
@@ -511,10 +511,15 @@
     - just added vsync bc that was the easiest thing to do for this
 
 - [ ] add ui health and posture
+    - umm i think i need a ui editor
 
 - [ ] death screen and "ninsatsu" screen
     - using "will to live" consumables (tier 1 is gotten from "assassin training", but tier 2 is from tutorial end boss (the doctor) and tier 3 is from extra quest from the doctor)
     - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.
+
+- [ ] finish "improve enemy attacks w readability"
+    - pressure response algorithm
+    - more attack anims
 
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
@@ -528,6 +533,7 @@
 - [ ] some fun: energy ball enemy shoots and you have to parry it back to each other until one of you gets hit.
 
 - [ ] fix sound playing on bones where the sound position updates to follow the bone every frame.
+    - just update the sound positions in simulation ticks. that's where the bones and the audio engine update anyway.
 
 - @NOTE: for pathfinding, just have to set enemy facing direction to go to next node to go to. pathfinding would happen during the st_runnning anim until enemy is close enough to player to do an attack
 

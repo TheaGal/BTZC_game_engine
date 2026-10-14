@@ -1,0 +1,40 @@
+{
+    "elements": [
+        {
+            "name": "hp_container",
+            "parent": "",
+            "transform": {
+                "x": -200.0,
+                "y": -50.0,
+                "w": 100.0,
+                "h": 8.0,
+                "rot": 0.0,
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                }
+            },
+            "opacity": 1.0,
+            "image": "test_ktx_tex",
+            "is_nine_slice": false
+        },
+        {
+            "name": "hp_inside",
+            "parent": "hp_container",
+            "transform": {
+                "x": 0.0,
+                "y": 0.0,
+                "w": 0.5,
+                "h": 1.0,
+                "rot": 0.0,
+                "anchor": {
+                    "x": 0.0,
+                    "y": 0.5
+                }
+            },
+            "opacity": 1.0,
+            "image": "test_ktx_tex",
+            "is_nine_slice": false
+        }
+    ]
+}

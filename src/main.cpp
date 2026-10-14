@@ -217,8 +217,12 @@ int main()
             TXP::debug::emplace_debug_line_based_capsule(pos, pos, 1, vec4{ 1, 0, 0.2, 1 }, 0.25f);
         });
 
+    ui_state.canvas("playchar_hp_w_posture.btui");
+    ui_state.canvas("boss_oppo_hp_w_posture.btui");
     ui_state.canvas("target_lockon_reticle.btui");
     ui_state.canvas("debug_player_camera_guide.btui");
+    ui_state.load_persistent_canvas("playchar_hp_w_posture.btui");
+    ui_state.load_persistent_canvas("boss_oppo_hp_w_posture.btui");
     ui_state.load_persistent_canvas("target_lockon_reticle.btui");
 
     constexpr bool k_show_debug_camera_guide{ false };

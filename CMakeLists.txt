@@ -170,7 +170,9 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/tiles084_normal.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/tiles084_occlusion.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/tiles084_physdesc.ktx2
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/boss_oppo_hp_w_posture.btui
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/debug_player_camera_guide.btui
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/playchar_hp_w_posture.btui
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/target_lockon_reticle.btui
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/testo_jojo.btui
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/unnamed.mtl
@@ -315,6 +317,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/test_runner.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/test_runner.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/test_types.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/tests/undefined_behavior.test.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/timer.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/timer.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/timer/watchdog_timer.cpp
