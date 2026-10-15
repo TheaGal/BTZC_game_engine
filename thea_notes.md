@@ -512,6 +512,17 @@
 
 - [ ] add ui health and posture
     - umm i think i need a ui editor
+        - [x] a start
+        - [x] basic hierarchy view.
+        - [x] selecting hierarchy elem shows properties window
+        - [x] can change the texture of the ui elem
+        - [x] set parent
+            - make sure valid name
+        - [x] set name
+            - make sure no name collisions!
+        - [x] save/discard
+        - [ ] create new node
+        - [ ] reorder w/ up/down buttons
 
 - [ ] death screen and "ninsatsu" screen
     - using "will to live" consumables (tier 1 is gotten from "assassin training", but tier 2 is from tutorial end boss (the doctor) and tier 3 is from extra quest from the doctor)
