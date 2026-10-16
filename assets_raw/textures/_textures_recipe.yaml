@@ -1,3 +1,10 @@
+white_1x1:
+  Texture2D:
+    channels: 4
+    format: ldr_unorm
+    mipmapped: false
+    source_image: white_1x1.png
+
 grid_1m:
   Texture2D:
     channels: 4

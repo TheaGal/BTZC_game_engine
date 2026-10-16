@@ -128,6 +128,7 @@ int main()
             entity_container.destroy_entity(entity_container.find_entity_uuid(ent));
         });
 
+    main_renderer.add_texture("white_1x1", ".ktx2");
     main_renderer.add_texture("test_ktx_tex", ".ktx2");
     main_renderer.add_texture("grid_1m", ".ktx2");
     main_renderer.add_texture("tiles084_basecolor", ".ktx2");

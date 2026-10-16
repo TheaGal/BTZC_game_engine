@@ -521,8 +521,20 @@
         - [x] set name
             - make sure no name collisions!
         - [x] save/discard
-        - [ ] create new node
+        - [x] fix opacity blending
+            - copied imgui's style
+        - [x] SIDE QUEST: make burden metrics in performance window
+        - [x] create new node
+        - [x] duplicate node
+            - did it but it doesn't copy children over too
+            - fully capable!
+        - [x] delete node
+            - did it but it doesn't delete children too
+            - fully capable!
         - [ ] reorder w/ up/down buttons
+        - [ ] order checker that automatically checks order and prompts to save as corrected order if open in this editor (must match hierarchy)
+            - also make sure there isn't a circular dependency bc that would be bad!!! (max depth 10000 or smth idk)
+    - [x] make the ui thingies.
 
 - [ ] death screen and "ninsatsu" screen
     - using "will to live" consumables (tier 1 is gotten from "assassin training", but tier 2 is from tutorial end boss (the doctor) and tier 3 is from extra quest from the doctor)

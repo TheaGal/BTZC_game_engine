@@ -16,6 +16,11 @@
             },
             "opacity": 0.25,
             "image": "test_ktx_tex",
+            "color_tint": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
             "is_nine_slice": false
         },
         {
@@ -34,6 +39,11 @@
             },
             "opacity": 0.25,
             "image": "test_ktx_tex",
+            "color_tint": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
             "is_nine_slice": false
         },
         {
@@ -52,6 +62,11 @@
             },
             "opacity": 0.25,
             "image": "test_ktx_tex",
+            "color_tint": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
             "is_nine_slice": false
         },
         {
@@ -70,6 +85,11 @@
             },
             "opacity": 0.25,
             "image": "test_ktx_tex",
+            "color_tint": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
             "is_nine_slice": false
         }
     ]

@@ -1,22 +1,142 @@
 {
     "elements": [
         {
-            "name": "lockon_reticle",
+            "color_tint": {
+                "x": 0.13235294818878174,
+                "y": 0.12197232246398926,
+                "z": 0.12197232246398926
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "hp_container",
+            "opacity": 0.0,
             "parent": "",
             "transform": {
-                "x": 0.0,
-                "y": 0.0,
-                "w": 4.0,
-                "h": 4.0,
+                "anchor": {
+                    "x": 0.0,
+                    "y": 0.5
+                },
+                "h": 1.0,
                 "rot": 0.0,
+                "w": 1.0,
+                "x": -272.0,
+                "y": 164.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.13333334028720856,
+                "y": 0.12156862765550613,
+                "z": 0.12156862765550613
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "hp_back",
+            "opacity": 1.0,
+            "parent": "hp_container",
+            "transform": {
+                "anchor": {
+                    "x": 0.0,
+                    "y": 1.0
+                },
+                "h": 12.0,
+                "rot": 0.0,
+                "w": 104.0,
+                "x": 0.0,
+                "y": 0.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.8725489974021912,
+                "y": 0.2780180871486664,
+                "z": 0.2780180871486664
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "hp_inside",
+            "opacity": 1.0,
+            "parent": "hp_container",
+            "transform": {
+                "anchor": {
+                    "x": 0.0,
+                    "y": 1.0
+                },
+                "h": 8.0,
+                "rot": 0.0,
+                "w": 100.0,
+                "x": 2.0,
+                "y": -2.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.13235294818878174,
+                "y": 0.12197232246398926,
+                "z": 0.12197232246398926
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "posture_container",
+            "opacity": 0.0,
+            "parent": "",
+            "transform": {
                 "anchor": {
                     "x": 0.5,
                     "y": 0.5
-                }
+                },
+                "h": 1.0,
+                "rot": 0.0,
+                "w": 1.0,
+                "x": 0.0,
+                "y": 164.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.13333334028720856,
+                "y": 0.13333334028720856,
+                "z": 0.12156862765550613
             },
-            "opacity": 0.0,
-            "image": "test_ktx_tex",
-            "is_nine_slice": false
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "posture_back",
+            "opacity": 1.0,
+            "parent": "posture_container",
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 1.0
+                },
+                "h": 12.0,
+                "rot": 0.0,
+                "w": 104.0,
+                "x": 0.0,
+                "y": 0.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.8872548937797546,
+                "y": 0.8872548937797546,
+                "z": 0.2348615974187851
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "posture_inside",
+            "opacity": 1.0,
+            "parent": "posture_container",
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 1.0
+                },
+                "h": 8.0,
+                "rot": 0.0,
+                "w": 100.0,
+                "x": 0.0,
+                "y": -2.0
+            }
         }
     ]
 }

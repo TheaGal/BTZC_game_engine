@@ -1,0 +1,464 @@
+{
+    "elements": [
+        {
+            "color_tint": {
+                "x": 0.4226067364215851,
+                "y": 0.9647058844566345,
+                "z": 0.22745105624198914
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "border_16_9_n",
+            "opacity": 1.0,
+            "parent": "border_16_9",
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "h": 1.0,
+                "rot": 0.0,
+                "w": 360.0,
+                "x": 0.0,
+                "y": -180.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.42352941632270813,
+                "y": 0.9647058844566345,
+                "z": 0.22745098173618317
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "border_16_9_s",
+            "opacity": 1.0,
+            "parent": "border_16_9",
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.0
+                },
+                "h": 1.0,
+                "rot": 0.0,
+                "w": 360.0,
+                "x": 0.0,
+                "y": 179.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.42352941632270813,
+                "y": 0.9647058844566345,
+                "z": 0.22745098173618317
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "border_16_9_e",
+            "opacity": 1.0,
+            "parent": "border_16_9",
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "h": 360.0,
+                "rot": 0.0,
+                "w": 1.0,
+                "x": 180.0,
+                "y": 0.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.42352941632270813,
+                "y": 0.9647058844566345,
+                "z": 0.22745098173618317
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "border_16_9_w",
+            "opacity": 1.0,
+            "parent": "border_16_9",
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "h": 360.0,
+                "rot": 0.0,
+                "w": 1.0,
+                "x": -180.0,
+                "y": 0.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "image": "FuckinAround_normal",
+            "is_nine_slice": false,
+            "name": "border_16_9",
+            "opacity": 0.0,
+            "parent": "",
+            "transform": {
+                "anchor": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "h": 0.9800000190734863,
+                "rot": 0.0,
+                "w": 1.7777777910232544,
+                "x": 0.0,
+                "y": 0.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "image": "FuckinAround_normal",
+            "is_nine_slice": false,
+            "name": "border_16_10",
+            "opacity": 0.0,
+            "parent": "",
+            "transform": {
+                "anchor": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "h": 0.9700000286102295,
+                "rot": 0.0,
+                "w": 1.600000023841858,
+                "x": 0.0,
+                "y": 0.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.22745105624198914,
+                "y": 0.8562861084938049,
+                "z": 0.9647058844566345
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "border_16_10_n",
+            "opacity": 1.0,
+            "parent": "border_16_10",
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "h": 1.0,
+                "rot": 0.0,
+                "w": 360.0,
+                "x": 0.0,
+                "y": -180.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.22745098173618317,
+                "y": 0.8549019694328308,
+                "z": 0.9647058844566345
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "border_16_10_s",
+            "opacity": 1.0,
+            "parent": "border_16_10",
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.0
+                },
+                "h": 1.0,
+                "rot": 0.0,
+                "w": 360.0,
+                "x": 0.0,
+                "y": 179.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.22745098173618317,
+                "y": 0.8549019694328308,
+                "z": 0.9647058844566345
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "border_16_10_e",
+            "opacity": 1.0,
+            "parent": "border_16_10",
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "h": 360.0,
+                "rot": 0.0,
+                "w": 1.0,
+                "x": 180.0,
+                "y": 0.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.22745098173618317,
+                "y": 0.8549019694328308,
+                "z": 0.9647058844566345
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "border_16_10_w",
+            "opacity": 1.0,
+            "parent": "border_16_10",
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "h": 360.0,
+                "rot": 0.0,
+                "w": 1.0,
+                "x": -180.0,
+                "y": 0.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "image": "FuckinAround_normal",
+            "is_nine_slice": false,
+            "name": "border_21_9",
+            "opacity": 0.0,
+            "parent": "",
+            "transform": {
+                "anchor": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "h": 0.9900000095367432,
+                "rot": 0.0,
+                "w": 2.3333332538604736,
+                "x": 0.0,
+                "y": 0.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.9656862616539001,
+                "y": 0.7702099680900574,
+                "z": 0.22722028195858002
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "border_21_9_n",
+            "opacity": 1.0,
+            "parent": "border_21_9",
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "h": 1.0,
+                "rot": 0.0,
+                "w": 360.0,
+                "x": 0.0,
+                "y": -180.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.9647058844566345,
+                "y": 0.7686274647712708,
+                "z": 0.22745098173618317
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "border_21_9_s",
+            "opacity": 1.0,
+            "parent": "border_21_9",
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.0
+                },
+                "h": 1.0,
+                "rot": 0.0,
+                "w": 360.0,
+                "x": 0.0,
+                "y": 179.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.9647058844566345,
+                "y": 0.7686274647712708,
+                "z": 0.22745098173618317
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "border_21_9_e",
+            "opacity": 1.0,
+            "parent": "border_21_9",
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "h": 360.0,
+                "rot": 0.0,
+                "w": 1.0,
+                "x": 180.0,
+                "y": 0.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.9647058844566345,
+                "y": 0.7686274647712708,
+                "z": 0.22745098173618317
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "border_21_9_w",
+            "opacity": 1.0,
+            "parent": "border_21_9",
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "h": 360.0,
+                "rot": 0.0,
+                "w": 1.0,
+                "x": -180.0,
+                "y": 0.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "image": "FuckinAround_normal",
+            "is_nine_slice": false,
+            "name": "border_32_9",
+            "opacity": 0.0,
+            "parent": "",
+            "transform": {
+                "anchor": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "h": 1.0,
+                "rot": 0.0,
+                "w": 3.555555582046509,
+                "x": 0.0,
+                "y": 0.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.9656862616539001,
+                "y": 0.31409862637519836,
+                "z": 0.22722028195858002
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "border_32_9_n",
+            "opacity": 1.0,
+            "parent": "border_32_9",
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "h": 1.0,
+                "rot": 0.0,
+                "w": 360.0,
+                "x": 0.0,
+                "y": -180.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.9647058844566345,
+                "y": 0.3137255012989044,
+                "z": 0.22745098173618317
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "border_32_9_s",
+            "opacity": 1.0,
+            "parent": "border_32_9",
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.0
+                },
+                "h": 1.0,
+                "rot": 0.0,
+                "w": 360.0,
+                "x": 0.0,
+                "y": 179.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.9647058844566345,
+                "y": 0.3137255012989044,
+                "z": 0.22745098173618317
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "border_32_9_e",
+            "opacity": 1.0,
+            "parent": "border_32_9",
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "h": 360.0,
+                "rot": 0.0,
+                "w": 1.0,
+                "x": 180.0,
+                "y": 0.0
+            }
+        },
+        {
+            "color_tint": {
+                "x": 0.9647058844566345,
+                "y": 0.3137255012989044,
+                "z": 0.22745098173618317
+            },
+            "image": "white_1x1",
+            "is_nine_slice": false,
+            "name": "border_32_9_w",
+            "opacity": 1.0,
+            "parent": "border_32_9",
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "h": 360.0,
+                "rot": 0.0,
+                "w": 1.0,
+                "x": -180.0,
+                "y": 0.0
+            }
+        }
+    ]
+}

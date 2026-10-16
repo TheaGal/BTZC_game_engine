@@ -1,58 +1,73 @@
 {
     "elements": [
         {
+            "color_tint": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "image": "test_ktx_tex",
+            "is_nine_slice": false,
             "name": "btn_play_game",
+            "opacity": 1.0,
             "parent": "",
             "transform": {
-                "x": 0.0,
-                "y": 0.0,
-                "w": 100.0,
-                "h": 300.0,
-                "rot": 0.3926990817,
                 "anchor": {
                     "x": 1.0,
                     "y": 0.5
-                }
-            },
-            "opacity": 1.0,
-            "image": "test_ktx_tex",
-            "is_nine_slice": false
+                },
+                "h": 300.0,
+                "rot": 0.39269909262657166,
+                "w": 100.0,
+                "x": 138.0,
+                "y": 0.0
+            }
         },
         {
+            "color_tint": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "image": "test_ktx_tex",
+            "is_nine_slice": false,
             "name": "btn_play_game2",
+            "opacity": 0.5,
             "parent": "btn_play_game",
             "transform": {
-                "x": 0.0,
-                "y": 0.0,
-                "w": 2.0,
-                "h": 0.666667,
-                "rot": 0.3926990817,
                 "anchor": {
                     "x": 0.5,
                     "y": 0.0
-                }
-            },
-            "opacity": 0.5,
-            "image": "test_ktx_tex",
-            "is_nine_slice": false
+                },
+                "h": 0.6666669845581055,
+                "rot": 0.39269909262657166,
+                "w": 2.0,
+                "x": 0.0,
+                "y": 0.0
+            }
         },
         {
+            "color_tint": {
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            },
+            "image": "test_ktx_tex",
+            "is_nine_slice": false,
             "name": "btn_play_game3",
+            "opacity": 0.5,
             "parent": "btn_play_game2",
             "transform": {
-                "x": 0.0,
-                "y": 0.0,
-                "w": 2.0,
-                "h": 2.0,
-                "rot": 0.3926990817,
                 "anchor": {
                     "x": 0.5,
                     "y": 0.5
-                }
-            },
-            "opacity": 0.5,
-            "image": "test_ktx_tex",
-            "is_nine_slice": false
+                },
+                "h": 2.0,
+                "rot": 0.39269909262657166,
+                "w": 2.0,
+                "x": 0.0,
+                "y": 0.0
+            }
         }
     ]
 }

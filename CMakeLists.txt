@@ -170,7 +170,9 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/tiles084_normal.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/tiles084_occlusion.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/tiles084_physdesc.ktx2
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/white_1x1.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/boss_oppo_hp_w_posture.btui
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/debug_aspect_ratios_guide.btui
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/debug_player_camera_guide.btui
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/playchar_hp_w_posture.btui
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/target_lockon_reticle.btui
