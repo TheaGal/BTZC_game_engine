@@ -75,6 +75,13 @@ struct CPU_enemy_awareness
     /// @NOTE: Can hear in all directions. However, cannot gain awareness from sound alone.
     float_t suspicion_sound_distance{ 15.0f };
 
+    // Battle pressure.
+    vec2s battle_pressure_range{ 0, 10 };
+    vec2s battle_pressure_to_atk_chance_threshold{ 0.2, 2.0 };
+    float_t battle_pressure_flareup{ 5 };
+    float_t battle_pressure_cooldown{ 2 };
+    float_t battle_pressure_early_atk_threshold{ 4 };
+
     /// Serialization.
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
         CPU_enemy_awareness,
@@ -85,7 +92,11 @@ struct CPU_enemy_awareness
         lose_aware_time,
         suspicion_sdz,
         lose_suspicion_time,
-        suspicion_sound_distance
+        suspicion_sound_distance,
+        battle_pressure_range,
+        battle_pressure_flareup,
+        battle_pressure_cooldown,
+        battle_pressure_early_atk_threshold
     );
 
     /// DO NOT SERIALIZE.
@@ -105,6 +116,7 @@ struct CPU_enemy_awareness
         float_t out_of_detection_timer{ 0 };
 
         rvec3 position_of_interest;  // Last detected position of suspicion or aware-enemy.
+        float_t current_battle_pressure{ 0 };
         // UUID aware_enemy;
         // float_t perceived_aggression{ 0 };
     } runtime_state;

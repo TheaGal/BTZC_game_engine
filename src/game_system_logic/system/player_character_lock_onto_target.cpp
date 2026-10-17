@@ -172,12 +172,9 @@ void BT::system::player_character_lock_onto_target(float_t const delta_time)
             reticle_ui_elem.set_opacity(is_visible ? 1 : 0);
             if (is_visible)
             {
-                // @TODO: add this into its own UI-related function.
-                date_deadline(2026, 10, 15);
-
-                reticle_ui_elem.set_position(ndc_position[0] * 0.5f * 360 *
-                                                 camera.get_aspect_ratio(),
-                                             ndc_position[1] * 0.5f * 360);
+                reticle_ui_elem.set_position_from_ndc_coord(camera.get_aspect_ratio(),
+                                                            ndc_position[0],
+                                                            ndc_position[1]);
             }
         }
 

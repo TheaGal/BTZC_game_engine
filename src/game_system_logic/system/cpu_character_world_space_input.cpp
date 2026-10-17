@@ -110,7 +110,7 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
     auto view{ reg.view<component::Transform const,
-                        component::CPU_enemy_awareness const,
+                        component::CPU_enemy_awareness,
                         component::Character_world_space_input,
                         component::Character_mvt_animated_state>() };
 
@@ -144,9 +144,31 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
                                                         : k_do_action_movement };
         if (do_attack_by_early_request)
         {
-            // @TODO: logic to see if pressure is enough to warrant actually doing an attack rn.
-            date_deadline(2026, 10, 12);
-            action_to_submit = k_do_action_atk_by_request;
+            // Logic to see if pressure is enough to warrant actually doing an attack rn.
+            if (cpu_enemy_awareness.runtime_state.current_battle_pressure >=
+                cpu_enemy_awareness.battle_pressure_early_atk_threshold)
+                action_to_submit = k_do_action_atk_by_request;
+        }
+
+        // Contribute to battle pressure.
+        {
+            // @TODO: i don't think `do_attack_by_early_request` is the best way to increase battle
+            //        pressure. this should be a little more sophisticated.  -Thea 2026/10/17
+            date_deadline(2026, 11, 1);
+
+            cpu_enemy_awareness.runtime_state.current_battle_pressure +=
+                (do_attack_by_early_request
+                     ? cpu_enemy_awareness.battle_pressure_flareup
+                     : -cpu_enemy_awareness.battle_pressure_cooldown * delta_time);
+
+            cpu_enemy_awareness.runtime_state.current_battle_pressure =
+                glm_clamp(cpu_enemy_awareness.runtime_state.current_battle_pressure,
+                          cpu_enemy_awareness.battle_pressure_range.x,
+                          cpu_enemy_awareness.battle_pressure_range.y);
+
+            TXP::debug::emplace_data_point(
+                "current_battle_pressure",
+                cpu_enemy_awareness.runtime_state.current_battle_pressure);
         }
 
         // World-space movement input.
@@ -227,10 +249,26 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
                     reg.try_get<component::Detectable_character>(entity),
                     reg.try_get<component::Character_mvt_state>(entity),
                     char_mvt_anim_state);
+                
+                // Calc attack chance threshold.
+                float_t atk_by_chance_threshold;
+                {
+                    vec2s const& bp_range = cpu_enemy_awareness.battle_pressure_range;
+                    vec2s const& bp_to_atk_chance =
+                        cpu_enemy_awareness.battle_pressure_to_atk_chance_threshold;
+
+                    float_t const t{ (cpu_enemy_awareness.runtime_state.current_battle_pressure -
+                                      bp_range.x) /
+                                     (bp_range.y - bp_range.x) };
+                    atk_by_chance_threshold = glm_lerp(bp_to_atk_chance.x, bp_to_atk_chance.y, t);
+
+                    TXP::debug::emplace_data_point("atk_by_chance_threshold",
+                                                   atk_by_chance_threshold);
+                }
 
                 // Check if should do new attack.
                 if (action_to_submit == k_do_action_movement &&
-                    random::fast_float_01_exclusive() < 0.3f)
+                    random::fast_float_01_exclusive() < atk_by_chance_threshold)
                     action_to_submit = k_do_action_atk_by_chance;
 
                 // Input new movement.

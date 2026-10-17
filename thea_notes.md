@@ -510,7 +510,7 @@
 - [x] RQ: add fps cap (default 120? can be changed in the toml)
     - just added vsync bc that was the easiest thing to do for this
 
-- [ ] add ui health and posture
+- [x] add ui health and posture
     - umm i think i need a ui editor
         - [x] a start
         - [x] basic hierarchy view.
@@ -531,9 +531,9 @@
         - [x] delete node
             - did it but it doesn't delete children too
             - fully capable!
-        - [ ] reorder w/ up/down buttons
-        - [ ] order checker that automatically checks order and prompts to save as corrected order if open in this editor (must match hierarchy)
-            - also make sure there isn't a circular dependency bc that would be bad!!! (max depth 10000 or smth idk)
+        - [x] reorder w/ up/down buttons
+        - [x] order checker that automatically checks order and prompts to save as corrected order if open in this editor (must match hierarchy)
+        - [x] also make sure there isn't a circular dependency bc that would be bad!!! (max depth 10000 or smth idk)
     - [x] make the ui thingies.
 
 - [ ] death screen and "ninsatsu" screen
