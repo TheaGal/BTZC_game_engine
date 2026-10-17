@@ -560,7 +560,8 @@
 
 - @NOTE: for pathfinding, just have to set enemy facing direction to go to next node to go to. pathfinding would happen during the st_runnning anim until enemy is close enough to player to do an attack
 
-- [ ] ahhh frick, there's another audio engine error that pops up sometimes in `_error_check()`
+- [x] ahhh frick, there's another audio engine error that pops up sometimes in `_error_check()`
+    - i think it's fixed now?? if it comes up again, spank me!
 
 
 ## SOMEDAY

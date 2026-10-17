@@ -8,6 +8,7 @@
 #include "util.h"
 
 #include <cassert>
+#include <stdexcept>
 
 #define ERRCHECK(_result) _error_check(_result, __FILE__, __LINE__)
 
@@ -38,6 +39,8 @@ BT::audio::impl::Audio_impl_FMOD::Audio_impl_FMOD()
     }
 
     ERRCHECK(m_system->init(k_max_channels, init_mode, nullptr));
+
+    m_alive_channels.reserve(k_max_channels);
 }
 
 BT::audio::impl::Audio_impl_FMOD::~Audio_impl_FMOD()
@@ -175,6 +178,10 @@ BT::audio::channel_key_t BT::audio::impl::Audio_impl_FMOD::play_snd_paused(snd_k
     ERRCHECK(m_system->playSound(m_loaded_snds.at(key), nullptr, true, &channel));
     assert(channel != nullptr);  // @THEA: hopefully instead of the channel pointer pointing to
                                  // <invalid address> in later errors this will catch it?
+
+    assert(m_alive_channels.bucket_count() == k_max_channels);
+    if (m_alive_channels.size() == m_alive_channels.bucket_count())
+        throw std::runtime_error("Going to emplace another channel when they're already at max!!!");
 
     auto channel_key{ m_next_key++ };
     m_alive_channels.emplace(channel_key,
