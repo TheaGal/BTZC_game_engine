@@ -549,6 +549,10 @@
 
     - [ ] move the impl struct for elements into an impl header instead of having dupe copies.
 
+    - [x] send some posture damage when there's a perfect parry
+
+    - [x] have posture break and health depletion anim events
+
 - [ ] text rendering for the UI
     - have different modes for ui elment:
         - image

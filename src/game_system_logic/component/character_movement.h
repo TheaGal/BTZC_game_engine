@@ -127,6 +127,9 @@ struct Character_mvt_animated_state
             HURT_TYPE_HEAVY_FROM_RIGHT,
         } on_hurt{ -1 };
 
+        bool on_health_depleted{ false };
+        bool on_posture_broken{ false };
+
         // Combat inputs (player char).
         bool on_attack_press{ false };
         bool is_attack_released{ false };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "btjson.h"
+#include "entt/entity/fwd.hpp"
 
 #include <cstdint>
 #include <string>
@@ -15,13 +16,15 @@ namespace component
 struct Health_stats_data
 {
     int32_t max_health_pts{ 100 };
-    int32_t health_pts{ max_health_pts };  // 0 causes death trigger.
+    int32_t health_pts{ max_health_pts };     // 0 causes death trigger.
 
     int32_t max_posture_pts{ 100 };
-    int32_t posture_pts{ 0 };              // `max_posture_pts` causes posture break. Min is 0.
-    float_t posture_pts_regen_rate{ 20 };  // N per sec to decrement `posture_pts`.
+    int32_t posture_pts{ 0 };                 // `max_posture_pts` causes posture break. Min is 0.
+    float_t posture_pts_regen_rate{ 20 };     // N per sec to decrement `posture_pts`.
 
-    bool is_invincible{ false };           // `true` prevents death trigger and decrement of `health_pts`.
+    float_t parry_return_posture_multi{ 1 };  // amount of posture that comes back if defender does a perfect parry
+
+    bool is_invincible{ false };              // `true` prevents death trigger and decrement of `health_pts`.
 
     std::string ui_name;  // empty string just makes a ui health/posture bar above the characters
                           // head. "playchar" makes the bottom screen ui for the player character,
@@ -43,6 +46,8 @@ struct Health_stats_data
     {
         struct Attack_stats
         {
+            entt::entity offender_entity;
+
             enum Atk_type
             {
                 CRUSH,

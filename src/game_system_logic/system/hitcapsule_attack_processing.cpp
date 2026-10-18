@@ -83,6 +83,7 @@ void process_attack_interaction(Entity_container& entity_container,
     //        supposed to carry this information!!  -Thea 2026/10/17
     // @HARDCODE
     defe_health_stats.state.last_received_attack = {
+        .offender_entity = offender_ecs_entity,
         .type = component::Health_stats_data::Runtime_state::Attack_stats::SLICE,
         .damage = 10,
         .is_honed = false,
