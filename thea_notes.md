@@ -547,7 +547,7 @@
             - or for now just update it every frame
         - [x] have there be a tag based system of what kind of ui should be displayed.
 
-    - [ ] move the impl struct for elements into an impl header instead of having dupe copies.
+    - [x] move the impl struct for elements into an impl header instead of having dupe copies.
 
     - [x] send some posture damage when there's a perfect parry
 
