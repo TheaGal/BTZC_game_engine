@@ -536,9 +536,29 @@
         - [x] also make sure there isn't a circular dependency bc that would be bad!!! (max depth 10000 or smth idk)
     - [x] make the ui thingies.
 
+    - [x] ~~create event where character gets hurt~~
+        - no it should be the actual hitcapsule parts that cause the thing to update the health data
+        - [x] do it (well, the mocked version tbh)
+    - [x] use an event to trigger processing the last-received attack
+        - put it in afa
+        - [x] make system that processes it
+    - [x] create system where the health gets affected and updates to the UI.
+        - have it look to see if the update flag is set, and update it!
+            - or for now just update it every frame
+        - [x] have there be a tag based system of what kind of ui should be displayed.
+
+    - [ ] move the impl struct for elements into an impl header instead of having dupe copies.
+
+- [ ] text rendering for the UI
+    - have different modes for ui elment:
+        - image
+        - empty
+        - text
+
 - [ ] death screen and "ninsatsu" screen
     - using "will to live" consumables (tier 1 is gotten from "assassin training", but tier 2 is from tutorial end boss (the doctor) and tier 3 is from extra quest from the doctor)
     - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.
+    - no actually! tier 2 and tier 1 are both from the doctor.
 
 - [ ] finish "improve enemy attacks w readability"
     - pressure response algorithm

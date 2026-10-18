@@ -3,8 +3,7 @@
 #include "btjson.h"
 
 #include <cstdint>
-
-#define OLD_HITCAPSULE_ATK_PROCESS 0
+#include <string>
 
 
 namespace BT
@@ -24,6 +23,10 @@ struct Health_stats_data
 
     bool is_invincible{ false };           // `true` prevents death trigger and decrement of `health_pts`.
 
+    std::string ui_name;  // empty string just makes a ui health/posture bar above the characters
+                          // head. "playchar" makes the bottom screen ui for the player character,
+                          // and anything else creates an enemy boss ui with the ui name.
+
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
         Health_stats_data,
         max_health_pts,
@@ -31,8 +34,30 @@ struct Health_stats_data
         max_posture_pts,
         posture_pts,
         posture_pts_regen_rate,
-        is_invincible
+        is_invincible,
+        ui_name
     );
+
+    // Runtime state.
+    struct Runtime_state
+    {
+        struct Attack_stats
+        {
+            enum Atk_type
+            {
+                CRUSH,
+                SLICE,
+                SPEAR,
+            };
+
+            Atk_type type;
+            int32_t damage;
+
+            bool is_honed;  // can be blocked, but causes chip damage unless parried
+            bool has_fire;  // builds up the fire status meter
+        };
+        Attack_stats last_received_attack;
+    } state;
 };
 
 }  // namespace component

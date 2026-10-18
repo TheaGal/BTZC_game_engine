@@ -20,6 +20,12 @@ bool fetch_wanted_afa_data(Entity_container const& entity_container,
                            bool& out_request_new_attack,
                            bool& out_request_new_attack_early);
 
+bool check_for_receive_atk_afa_events(
+    entt::entity ecs_entity,
+    bool& out_receive_atk_as_hurt,
+    bool& out_receive_atk_as_guard,
+    bool& out_receive_atk_as_parry);
+
 }  // namespace helper
 }  // namespace system
 }  // namespace BT

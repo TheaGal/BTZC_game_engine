@@ -37,3 +37,32 @@ bool BT::system::helper::fetch_wanted_afa_data(
 
     return true;
 }
+
+bool BT::system::helper::check_for_receive_atk_afa_events(
+    entt::entity ecs_entity,
+    bool& out_receive_atk_as_hurt,
+    bool& out_receive_atk_as_guard,
+    bool& out_receive_atk_as_parry)
+{
+    // @COPYPASTA: see func above.
+    auto& renderer{ service_finder::find_service<TXP::Renderer>() };
+    auto animator_optional{ renderer.try_get_skeletal_animator(ecs_entity) };
+
+    if (!animator_optional.has_value())
+    {
+        return false;
+    }
+
+    auto& animator{ animator_optional.value() };
+
+    // Get animator AFA data.
+    auto& afa_data{ animator.get_anim_frame_action_data_handle() };
+
+    // Fill in data.
+    using AFA_ctrl = TXP::anim_frame_action::Controllable_data_label;
+    out_receive_atk_as_hurt  = afa_data.get_reeve_data_handle(AFA_ctrl::CTRL_DATA_LABEL_receive_atk_as_hurt).check_if_rising_edge_occurred();
+    out_receive_atk_as_guard = afa_data.get_reeve_data_handle(AFA_ctrl::CTRL_DATA_LABEL_receive_atk_as_guard).check_if_rising_edge_occurred();
+    out_receive_atk_as_parry = afa_data.get_reeve_data_handle(AFA_ctrl::CTRL_DATA_LABEL_receive_atk_as_parry).check_if_rising_edge_occurred();
+
+    return true;
+}

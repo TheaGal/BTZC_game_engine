@@ -32,9 +32,7 @@ void process_attack_interaction(Entity_container& entity_container,
                                 component::Health_stats_data& offe_health_stats,
 #endif // OLD_HITCAPSULE_ATK_PROCESS
                                 entt::entity defender_ecs_entity,
-#if OLD_HITCAPSULE_ATK_PROCESS
                                 component::Health_stats_data& defe_health_stats,
-#endif // OLD_HITCAPSULE_ATK_PROCESS
                                 double_t const global_attack_timer,
                                 UUID offender_uuid,
                                 UUID defender_uuid)
@@ -80,11 +78,23 @@ void process_attack_interaction(Entity_container& entity_container,
     }
 #endif // OLD_HITCAPSULE_ATK_PROCESS
 
+    // Record sent attack into the defender.
+    // @THEA: this may require a different architecture and connection if the hurtcapsules are
+    //        supposed to carry this information!!  -Thea 2026/10/17
+    // @HARDCODE
+    defe_health_stats.state.last_received_attack = {
+        .type = component::Health_stats_data::Runtime_state::Attack_stats::SLICE,
+        .damage = 10,
+        .is_honed = false,
+        .has_fire = false,
+    };
+
+    // Get sending root motion multiplier from offender.
     auto defender_animator{ renderer.try_get_skeletal_animator(defender_ecs_entity) };
     auto offender_animator{ renderer.try_get_skeletal_animator(offender_ecs_entity) };
 
     if (defender_animator.has_value() && offender_animator.has_value())
-    {   // Get sending root motion multiplier from offender.
+    {
         float_t root_motion_multiplier;
 #if OLD_HITCAPSULE_ATK_PROCESS
         bool can_cancel_attack_w_parry;
@@ -302,9 +312,7 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
                                    offe_health_stats,
 #endif // OLD_HITCAPSULE_ATK_PROCESS
                                    defender_ecs_entity,
-#if OLD_HITCAPSULE_ATK_PROCESS
                                    defe_health_stats,
-#endif // OLD_HITCAPSULE_ATK_PROCESS
                                    s_global_attack_timer,
                                    offender_uuid,
                                    defender_uuid);

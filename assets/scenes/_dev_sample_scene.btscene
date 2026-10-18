@@ -169,7 +169,9 @@
                 },
                 {
                     "type_name": "component::Health_stats_data",
-                    "members_j": {}
+                    "members_j": {
+                        "ui_name": "playchar"
+                    }
                 },
                 {
                     "type_name": "component::Base_combat_stats_data",
@@ -398,7 +400,9 @@
                 },
                 {
                     "type_name": "component::Health_stats_data",
-                    "members_j": {}
+                    "members_j": {
+                        "ui_name": "Test Dummy the First"
+                    }
                 },
                 {
                     "type_name": "component::Base_combat_stats_data",

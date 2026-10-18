@@ -129,11 +129,11 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
         bool _;
         bool do_attack_by_request{ false };
         bool do_attack_by_early_request{ false };
-        bool afa_data_success = helper::fetch_wanted_afa_data(entity_container,
-                                                              char_mvt_anim_state,
-                                                              _,
-                                                              do_attack_by_request,
-                                                              do_attack_by_early_request);
+        bool const afa_data_success = helper::fetch_wanted_afa_data(entity_container,
+                                                                    char_mvt_anim_state,
+                                                                    _,
+                                                                    do_attack_by_request,
+                                                                    do_attack_by_early_request);
         if (!afa_data_success)
             continue;
 

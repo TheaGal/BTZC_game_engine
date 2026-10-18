@@ -17,6 +17,7 @@
 #include "game_system_logic/system/player_character_lock_onto_target.h"
 #include "game_system_logic/system/player_character_world_space_input.h"
 #include "game_system_logic/system/process_physics_object_lifetime.h"
+#include "game_system_logic/system/process_receive_attack_events.h"
 #include "game_system_logic/system/propagate_changed_transforms.h"
 #include "game_system_logic/system/rail_line_editor_update.h"
 #include "game_system_logic/system/rail_line_rider_update.h"
@@ -337,6 +338,7 @@ int main()
 
             BT::system::animator_driven_hitcapsule_sets_update();
             BT::system::hitcapsule_attack_processing(k_sim_delta_time);
+            BT::system::process_receive_attack_events();
 
             // Audio tick.
             {

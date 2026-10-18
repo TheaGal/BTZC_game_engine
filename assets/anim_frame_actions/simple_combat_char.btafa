@@ -2751,6 +2751,17 @@
                     "end_frame": 3,
                     "row_idx": 15,
                     "start_frame": 2
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "receive_atk_as_parry"
+                        ],
+                        "cmd_name": "var_mark_reeve"
+                    },
+                    "end_frame": 3,
+                    "row_idx": 16,
+                    "start_frame": 2
                 }
             ],
             "state_name": "st_hurt_parry"
@@ -2947,6 +2958,17 @@
                     "end_frame": 3,
                     "row_idx": 16,
                     "start_frame": 2
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "receive_atk_as_guard"
+                        ],
+                        "cmd_name": "var_mark_reeve"
+                    },
+                    "end_frame": 3,
+                    "row_idx": 17,
+                    "start_frame": 2
                 }
             ],
             "state_name": "st_hurt_guard"
@@ -3090,6 +3112,17 @@
                     },
                     "end_frame": 2,
                     "row_idx": 14,
+                    "start_frame": 1
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "receive_atk_as_hurt"
+                        ],
+                        "cmd_name": "var_mark_reeve"
+                    },
+                    "end_frame": 2,
+                    "row_idx": 15,
                     "start_frame": 1
                 }
             ],
