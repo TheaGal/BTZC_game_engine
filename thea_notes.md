@@ -554,12 +554,20 @@
     - [x] have posture break and health depletion anim events
 
 - [ ] text rendering for the UI
+    - [x] some way of generating atlas for fonts
+        - use msdf generator (compiled it for macos but can be done for windows too)
+        - maybe in the future have a compiling tool for it??
+    - [x] make shader for rendering sdf
+        - just ubershadered the current sprite          shader!
+    - [ ] make text mesh generators so that the text part of the font can get used
     - have different modes for ui elment:
         - image
         - empty
         - text
 
 - [ ] death screen and "ninsatsu" screen
+    - [ ] make health deplete anim
+    - [ ] make posture break anim too bc why not
     - using "will to live" consumables (tier 1 is gotten from "assassin training", but tier 2 is from tutorial end boss (the doctor) and tier 3 is from extra quest from the doctor)
     - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.
     - no actually! tier 2 and tier 1 are both from the doctor.

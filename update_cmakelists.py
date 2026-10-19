@@ -94,6 +94,7 @@ if __name__ == '__main__':
                              'btanitor',
                              'btafa',
                              'btui',
+                             'btfont',
                              'btscene']
     update_file_entries(['./assets/',],
                         RES_SEARCH_EXTENSIONS,

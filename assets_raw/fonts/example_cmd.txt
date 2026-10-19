@@ -1,0 +1,1 @@
+./msdf-atlas-gen-macos -font ./pitagon_serif/pitagon-serif-fonts/ttf/PitagonSerif-Regular.ttf -pots -imageout ./jojo.png -json ./jojo.json

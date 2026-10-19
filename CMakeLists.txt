@@ -119,6 +119,7 @@ endif()
 set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/anim_frame_actions/simple_combat_char.btafa
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/animator_templates/simple_combat_char.btanitor
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/fonts/pitagon_serif_regular.btfont
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/FuckinAround.glb
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/Leever.glb
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/SlimeGirl.glb
@@ -164,6 +165,7 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/FuckinAround_basecolor.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/FuckinAround_normal.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/FuckinAround_physdesc.ktx2
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/font_msdf_pitagon_serif_regular.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/grid_1m.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/test_ktx_tex.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/tiles084_basecolor.ktx2

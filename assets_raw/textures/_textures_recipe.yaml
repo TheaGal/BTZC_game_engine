@@ -66,3 +66,10 @@ FuckinAround_normal:
     format: ldr_unorm
     mipmapped: true
     source_image: FuckinAround_Material_Normal.png
+
+font_msdf_pitagon_serif_regular:
+  Texture2D:
+    channels: 4
+    format: ldr_unorm
+    mipmapped: false
+    source_image: font_msdf/pitagon_serif_regular.png

@@ -21,7 +21,8 @@
                 "y": 1.0,
                 "z": 1.0
             },
-            "is_nine_slice": false
+            "is_nine_slice": false,
+            "is_msdf": false
         },
         {
             "name": "horizontal_midline",
@@ -44,7 +45,8 @@
                 "y": 1.0,
                 "z": 1.0
             },
-            "is_nine_slice": false
+            "is_nine_slice": false,
+            "is_msdf": false
         },
         {
             "name": "horizontal_bottom_third",
@@ -67,7 +69,8 @@
                 "y": 1.0,
                 "z": 1.0
             },
-            "is_nine_slice": false
+            "is_nine_slice": false,
+            "is_msdf": false
         },
         {
             "name": "vertical_midline",
@@ -90,7 +93,8 @@
                 "y": 1.0,
                 "z": 1.0
             },
-            "is_nine_slice": false
+            "is_nine_slice": false,
+            "is_msdf": false
         }
     ]
 }

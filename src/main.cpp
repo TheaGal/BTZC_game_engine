@@ -139,6 +139,7 @@ int main()
     main_renderer.add_texture("FuckinAround_basecolor", ".ktx2");
     main_renderer.add_texture("FuckinAround_physdesc", ".ktx2");
     main_renderer.add_texture("FuckinAround_normal", ".ktx2");
+    main_renderer.add_texture("font_msdf_pitagon_serif_regular", ".ktx2");
     // main_renderer.add_material("default_mat",
     //                            "pbr",
     //                            { { "base_color_factor", "0.75 0.75 0.5 1" },
