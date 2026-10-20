@@ -21,6 +21,7 @@
 #define BTZC_GAME_ENGINE_ASSET_ANIM_FRAME_ACTIONS_PATH  "assets/anim_frame_actions/"
 #define BTZC_GAME_ENGINE_ASSET_ANIMATOR_TEMPLATES_PATH  "assets/animator_templates/"
 #define BTZC_GAME_ENGINE_ASSET_AUDIO_PATH               "assets/audio/"
+#define BTZC_GAME_ENGINE_ASSET_FONT_PATH                "assets/fonts/"
 #define BTZC_GAME_ENGINE_ASSET_MODEL_PATH               "assets/models/"
 #define BTZC_GAME_ENGINE_ASSET_UI_PATH                  "assets/ui_canvases/"
 #define BTZC_GAME_ENGINE_ASSET_SHADER_PATH              "assets/shaders/"

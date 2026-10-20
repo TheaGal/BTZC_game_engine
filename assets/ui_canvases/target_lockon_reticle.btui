@@ -22,7 +22,7 @@
                 "z": 1.0
             },
             "is_nine_slice": false,
-            "is_msdf": false
+            "render_text": ""
         }
     ]
 }

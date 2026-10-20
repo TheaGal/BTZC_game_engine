@@ -22,7 +22,7 @@
                 "z": 1.0
             },
             "is_nine_slice": false,
-            "is_msdf": false
+            "render_text": ""
         },
         {
             "name": "horizontal_midline",
@@ -46,7 +46,7 @@
                 "z": 1.0
             },
             "is_nine_slice": false,
-            "is_msdf": false
+            "render_text": ""
         },
         {
             "name": "horizontal_bottom_third",
@@ -70,7 +70,7 @@
                 "z": 1.0
             },
             "is_nine_slice": false,
-            "is_msdf": false
+            "render_text": ""
         },
         {
             "name": "vertical_midline",
@@ -94,7 +94,7 @@
                 "z": 1.0
             },
             "is_nine_slice": false,
-            "is_msdf": false
+            "render_text": ""
         }
     ]
 }

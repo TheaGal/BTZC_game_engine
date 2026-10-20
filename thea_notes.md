@@ -559,11 +559,16 @@
         - maybe in the future have a compiling tool for it??
     - [x] make shader for rendering sdf
         - just ubershadered the current sprite          shader!
-    - [ ] make text mesh generators so that the text part of the font can get used
+    - [x] make unit square mesh for sprite shader
+    - [x] make text mesh generators so that the text part of the font can get used
+        - this allows me to just have font rendering be an extension of the sprite shader
+        - i think for nineslicing a similar extension will have to be used.
     - have different modes for ui elment:
         - image
         - empty
+            - this one's super important!!
         - text
+    - default opacity to 1 and anchor to 0.5x0.5 and color tint to white!
 
 - [ ] death screen and "ninsatsu" screen
     - [ ] make health deplete anim
@@ -572,13 +577,14 @@
     - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.
     - no actually! tier 2 and tier 1 are both from the doctor.
 
-- [ ] finish "improve enemy attacks w readability"
-    - pressure response algorithm
-    - more attack anims
-
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
         - so max 3 cascades (both realtime cascades and one static cascade if dir light changes) get updated on one frame
+
+- [ ] finish "improve enemy attacks w readability"
+    - pressure response algorithm
+        - a half-baked one is in, but it could be improved
+    - more attack anims
 
 - [ ] add sweep attacks and thrust attacks
     - hell yeah mikiri
