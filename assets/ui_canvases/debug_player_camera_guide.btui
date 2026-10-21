@@ -15,14 +15,10 @@
                 }
             },
             "opacity": 0.25,
-            "image": "test_ktx_tex",
-            "color_tint": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "is_nine_slice": false,
-            "render_text": ""
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1"
+            }
         },
         {
             "name": "horizontal_midline",
@@ -39,14 +35,10 @@
                 }
             },
             "opacity": 0.25,
-            "image": "test_ktx_tex",
-            "color_tint": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "is_nine_slice": false,
-            "render_text": ""
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1"
+            }
         },
         {
             "name": "horizontal_bottom_third",
@@ -63,14 +55,10 @@
                 }
             },
             "opacity": 0.25,
-            "image": "test_ktx_tex",
-            "color_tint": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "is_nine_slice": false,
-            "render_text": ""
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1"
+            }
         },
         {
             "name": "vertical_midline",
@@ -87,14 +75,10 @@
                 }
             },
             "opacity": 0.25,
-            "image": "test_ktx_tex",
-            "color_tint": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "is_nine_slice": false,
-            "render_text": ""
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1"
+            }
         }
     ]
 }

@@ -1,16 +1,7 @@
 {
     "elements": [
         {
-            "color_tint": {
-                "x": 0.13235294818878174,
-                "y": 0.12197232246398926,
-                "z": 0.12197232246398926
-            },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "hp_container",
-            "opacity": 0.0,
             "parent": "",
             "transform": {
                 "anchor": {
@@ -25,14 +16,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.13333334028720856,
-                "y": 0.12156862765550613,
-                "z": 0.12156862765550613
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.13333334028720856,
+                    "y": 0.12156862765550613,
+                    "z": 0.12156862765550613
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "hp_back",
             "opacity": 1.0,
             "parent": "hp_container",
@@ -49,14 +41,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.8725489974021912,
-                "y": 0.2780180871486664,
-                "z": 0.2780180871486664
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.8725489974021912,
+                    "y": 0.2780180871486664,
+                    "z": 0.2780180871486664
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "hp_inside",
             "opacity": 1.0,
             "parent": "hp_container",
@@ -73,14 +66,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.13235294818878174,
-                "y": 0.12197232246398926,
-                "z": 0.12197232246398926
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.13235294818878174,
+                    "y": 0.12197232246398926,
+                    "z": 0.12197232246398926
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "posture_container",
             "opacity": 0.0,
             "parent": "",
@@ -97,14 +91,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.13333334028720856,
-                "y": 0.13333334028720856,
-                "z": 0.12156862765550613
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.13333334028720856,
+                    "y": 0.13333334028720856,
+                    "z": 0.12156862765550613
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "posture_back",
             "opacity": 1.0,
             "parent": "posture_container",
@@ -121,14 +116,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.8872548937797546,
-                "y": 0.8872548937797546,
-                "z": 0.2348615974187851
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.8872548937797546,
+                    "y": 0.8872548937797546,
+                    "z": 0.2348615974187851
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "posture_inside",
             "opacity": 1.0,
             "parent": "posture_container",

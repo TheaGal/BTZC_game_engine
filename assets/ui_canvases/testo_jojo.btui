@@ -1,14 +1,10 @@
 {
     "elements": [
         {
-            "color_tint": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
+            "render_image": {
+                "enabled": true,
+                "image_name": "test_ktx_tex"
             },
-            "image": "test_ktx_tex",
-            "render_text": "",
-            "is_nine_slice": false,
             "name": "btn_play_game",
             "opacity": 1.0,
             "parent": "",
@@ -25,14 +21,10 @@
             }
         },
         {
-            "color_tint": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
+            "render_image": {
+                "enabled": true,
+                "image_name": "test_ktx_tex"
             },
-            "image": "test_ktx_tex",
-            "render_text": "",
-            "is_nine_slice": false,
             "name": "btn_play_game2",
             "opacity": 0.5,
             "parent": "btn_play_game",
@@ -49,14 +41,10 @@
             }
         },
         {
-            "color_tint": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
+            "render_image": {
+                "enabled": true,
+                "image_name": "test_ktx_tex"
             },
-            "image": "test_ktx_tex",
-            "render_text": "",
-            "is_nine_slice": false,
             "name": "btn_play_game3",
             "opacity": 0.5,
             "parent": "btn_play_game2",
@@ -73,14 +61,10 @@
             }
         },
         {
-            "color_tint": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
+            "render_text": {
+                "enabled": true,
+                "text": "henlo warld!"
             },
-            "image": "font_msdf_pitagon_serif_regular",
-            "render_text": "henlo warld!",
-            "is_nine_slice": false,
             "name": "Font atlas",
             "opacity": 1.0,
             "parent": "",

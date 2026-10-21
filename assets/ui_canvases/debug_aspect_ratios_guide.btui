@@ -1,16 +1,7 @@
 {
     "elements": [
         {
-            "color_tint": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "image": "FuckinAround_normal",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_16_9",
-            "opacity": 0.0,
             "parent": "",
             "transform": {
                 "anchor": {
@@ -25,14 +16,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.4226067364215851,
-                "y": 0.9647058844566345,
-                "z": 0.22745105624198914
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.4226067364215851,
+                    "y": 0.9647058844566345,
+                    "z": 0.22745105624198914
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_16_9_n",
             "opacity": 1.0,
             "parent": "border_16_9",
@@ -49,14 +41,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.42352941632270813,
-                "y": 0.9647058844566345,
-                "z": 0.22745098173618317
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.42352941632270813,
+                    "y": 0.9647058844566345,
+                    "z": 0.22745098173618317
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_16_9_s",
             "opacity": 1.0,
             "parent": "border_16_9",
@@ -73,14 +66,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.42352941632270813,
-                "y": 0.9647058844566345,
-                "z": 0.22745098173618317
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.42352941632270813,
+                    "y": 0.9647058844566345,
+                    "z": 0.22745098173618317
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_16_9_e",
             "opacity": 1.0,
             "parent": "border_16_9",
@@ -97,14 +91,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.42352941632270813,
-                "y": 0.9647058844566345,
-                "z": 0.22745098173618317
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.42352941632270813,
+                    "y": 0.9647058844566345,
+                    "z": 0.22745098173618317
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_16_9_w",
             "opacity": 1.0,
             "parent": "border_16_9",
@@ -121,16 +116,7 @@
             }
         },
         {
-            "color_tint": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "image": "FuckinAround_normal",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_16_10",
-            "opacity": 0.0,
             "parent": "",
             "transform": {
                 "anchor": {
@@ -145,14 +131,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.22745105624198914,
-                "y": 0.8562861084938049,
-                "z": 0.9647058844566345
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.22745105624198914,
+                    "y": 0.8562861084938049,
+                    "z": 0.9647058844566345
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_16_10_n",
             "opacity": 1.0,
             "parent": "border_16_10",
@@ -169,14 +156,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.22745098173618317,
-                "y": 0.8549019694328308,
-                "z": 0.9647058844566345
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.22745098173618317,
+                    "y": 0.8549019694328308,
+                    "z": 0.9647058844566345
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_16_10_s",
             "opacity": 1.0,
             "parent": "border_16_10",
@@ -193,14 +181,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.22745098173618317,
-                "y": 0.8549019694328308,
-                "z": 0.9647058844566345
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.22745098173618317,
+                    "y": 0.8549019694328308,
+                    "z": 0.9647058844566345
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_16_10_e",
             "opacity": 1.0,
             "parent": "border_16_10",
@@ -217,14 +206,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.22745098173618317,
-                "y": 0.8549019694328308,
-                "z": 0.9647058844566345
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.22745098173618317,
+                    "y": 0.8549019694328308,
+                    "z": 0.9647058844566345
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_16_10_w",
             "opacity": 1.0,
             "parent": "border_16_10",
@@ -241,16 +231,7 @@
             }
         },
         {
-            "color_tint": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "image": "FuckinAround_normal",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_21_9",
-            "opacity": 0.0,
             "parent": "",
             "transform": {
                 "anchor": {
@@ -265,14 +246,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.9656862616539001,
-                "y": 0.7702099680900574,
-                "z": 0.22722028195858002
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.9656862616539001,
+                    "y": 0.7702099680900574,
+                    "z": 0.22722028195858002
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_21_9_n",
             "opacity": 1.0,
             "parent": "border_21_9",
@@ -289,14 +271,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.9647058844566345,
-                "y": 0.7686274647712708,
-                "z": 0.22745098173618317
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.9647058844566345,
+                    "y": 0.7686274647712708,
+                    "z": 0.22745098173618317
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_21_9_s",
             "opacity": 1.0,
             "parent": "border_21_9",
@@ -313,14 +296,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.9647058844566345,
-                "y": 0.7686274647712708,
-                "z": 0.22745098173618317
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.9647058844566345,
+                    "y": 0.7686274647712708,
+                    "z": 0.22745098173618317
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_21_9_e",
             "opacity": 1.0,
             "parent": "border_21_9",
@@ -337,14 +321,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.9647058844566345,
-                "y": 0.7686274647712708,
-                "z": 0.22745098173618317
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.9647058844566345,
+                    "y": 0.7686274647712708,
+                    "z": 0.22745098173618317
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_21_9_w",
             "opacity": 1.0,
             "parent": "border_21_9",
@@ -361,16 +346,7 @@
             }
         },
         {
-            "color_tint": {
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            },
-            "image": "FuckinAround_normal",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_32_9",
-            "opacity": 0.0,
             "parent": "",
             "transform": {
                 "anchor": {
@@ -385,14 +361,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.9656862616539001,
-                "y": 0.31409862637519836,
-                "z": 0.22722028195858002
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.9656862616539001,
+                    "y": 0.31409862637519836,
+                    "z": 0.22722028195858002
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_32_9_n",
             "opacity": 1.0,
             "parent": "border_32_9",
@@ -409,14 +386,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.9647058844566345,
-                "y": 0.3137255012989044,
-                "z": 0.22745098173618317
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.9647058844566345,
+                    "y": 0.3137255012989044,
+                    "z": 0.22745098173618317
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_32_9_s",
             "opacity": 1.0,
             "parent": "border_32_9",
@@ -433,14 +411,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.9647058844566345,
-                "y": 0.3137255012989044,
-                "z": 0.22745098173618317
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.9647058844566345,
+                    "y": 0.3137255012989044,
+                    "z": 0.22745098173618317
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_32_9_e",
             "opacity": 1.0,
             "parent": "border_32_9",
@@ -457,14 +436,15 @@
             }
         },
         {
-            "color_tint": {
-                "x": 0.9647058844566345,
-                "y": 0.3137255012989044,
-                "z": 0.22745098173618317
+            "render_image": {
+                "enabled": true,
+                "image_name": "white_1x1",
+                "color_tint": {
+                    "x": 0.9647058844566345,
+                    "y": 0.3137255012989044,
+                    "z": 0.22745098173618317
+                }
             },
-            "image": "white_1x1",
-            "is_nine_slice": false,
-            "render_text": "",
             "name": "border_32_9_w",
             "opacity": 1.0,
             "parent": "border_32_9",
