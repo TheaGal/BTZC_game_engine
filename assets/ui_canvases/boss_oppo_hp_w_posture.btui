@@ -2,7 +2,24 @@
     "elements": [
         {
             "name": "hp_container",
+            "opacity": 0.0,
             "parent": "",
+            "render_image": {
+                "color_tint": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "enabled": false,
+                "image_name": "",
+                "is_nine_slice": false
+            },
+            "render_text": {
+                "enabled": false,
+                "halign": "center",
+                "text": "",
+                "valign": "center"
+            },
             "transform": {
                 "anchor": {
                     "x": 0.0,
@@ -12,26 +29,33 @@
                 "rot": 0.0,
                 "w": 1.0,
                 "x": -272.0,
-                "y": 164.0
+                "y": -150.0
             }
         },
         {
+            "name": "hp_back",
+            "opacity": 1.0,
+            "parent": "hp_container",
             "render_image": {
-                "enabled": true,
-                "image_name": "white_1x1",
                 "color_tint": {
                     "x": 0.13333334028720856,
                     "y": 0.12156862765550613,
                     "z": 0.12156862765550613
-                }
+                },
+                "enabled": true,
+                "image_name": "white_1x1",
+                "is_nine_slice": false
             },
-            "name": "hp_back",
-            "opacity": 1.0,
-            "parent": "hp_container",
+            "render_text": {
+                "enabled": false,
+                "halign": "center",
+                "text": "",
+                "valign": "center"
+            },
             "transform": {
                 "anchor": {
                     "x": 0.0,
-                    "y": 1.0
+                    "y": 0.0
                 },
                 "h": 12.0,
                 "rot": 0.0,
@@ -41,43 +65,57 @@
             }
         },
         {
+            "name": "hp_inside",
+            "opacity": 1.0,
+            "parent": "hp_container",
             "render_image": {
-                "enabled": true,
-                "image_name": "white_1x1",
                 "color_tint": {
                     "x": 0.8725489974021912,
                     "y": 0.2780180871486664,
                     "z": 0.2780180871486664
-                }
+                },
+                "enabled": true,
+                "image_name": "white_1x1",
+                "is_nine_slice": false
             },
-            "name": "hp_inside",
-            "opacity": 1.0,
-            "parent": "hp_container",
+            "render_text": {
+                "enabled": false,
+                "halign": "center",
+                "text": "",
+                "valign": "center"
+            },
             "transform": {
                 "anchor": {
                     "x": 0.0,
-                    "y": 1.0
+                    "y": 0.0
                 },
                 "h": 8.0,
                 "rot": 0.0,
                 "w": 100.0,
                 "x": 2.0,
-                "y": -2.0
+                "y": 2.0
             }
         },
         {
+            "name": "posture_container",
+            "opacity": 0.0,
+            "parent": "",
             "render_image": {
-                "enabled": true,
-                "image_name": "white_1x1",
                 "color_tint": {
                     "x": 0.13235294818878174,
                     "y": 0.12197232246398926,
                     "z": 0.12197232246398926
-                }
+                },
+                "enabled": false,
+                "image_name": "",
+                "is_nine_slice": false
             },
-            "name": "posture_container",
-            "opacity": 0.0,
-            "parent": "",
+            "render_text": {
+                "enabled": false,
+                "halign": "center",
+                "text": "",
+                "valign": "center"
+            },
             "transform": {
                 "anchor": {
                     "x": 0.5,
@@ -87,26 +125,33 @@
                 "rot": 0.0,
                 "w": 1.0,
                 "x": 0.0,
-                "y": 164.0
+                "y": -150.0
             }
         },
         {
+            "name": "posture_back",
+            "opacity": 1.0,
+            "parent": "posture_container",
             "render_image": {
-                "enabled": true,
-                "image_name": "white_1x1",
                 "color_tint": {
                     "x": 0.13333334028720856,
                     "y": 0.13333334028720856,
                     "z": 0.12156862765550613
-                }
+                },
+                "enabled": true,
+                "image_name": "white_1x1",
+                "is_nine_slice": false
             },
-            "name": "posture_back",
-            "opacity": 1.0,
-            "parent": "posture_container",
+            "render_text": {
+                "enabled": false,
+                "halign": "center",
+                "text": "",
+                "valign": "center"
+            },
             "transform": {
                 "anchor": {
                     "x": 0.5,
-                    "y": 1.0
+                    "y": 0.0
                 },
                 "h": 12.0,
                 "rot": 0.0,
@@ -116,28 +161,163 @@
             }
         },
         {
+            "name": "posture_inside",
+            "opacity": 1.0,
+            "parent": "posture_container",
             "render_image": {
-                "enabled": true,
-                "image_name": "white_1x1",
                 "color_tint": {
                     "x": 0.8872548937797546,
                     "y": 0.8872548937797546,
                     "z": 0.2348615974187851
-                }
+                },
+                "enabled": true,
+                "image_name": "white_1x1",
+                "is_nine_slice": false
             },
-            "name": "posture_inside",
-            "opacity": 1.0,
-            "parent": "posture_container",
+            "render_text": {
+                "enabled": false,
+                "halign": "center",
+                "text": "",
+                "valign": "center"
+            },
             "transform": {
                 "anchor": {
                     "x": 0.5,
-                    "y": 1.0
+                    "y": 0.0
                 },
                 "h": 8.0,
                 "rot": 0.0,
                 "w": 100.0,
                 "x": 0.0,
-                "y": -2.0
+                "y": 2.0
+            }
+        },
+        {
+            "name": "will_to_live_1",
+            "opacity": 1.0,
+            "parent": "",
+            "render_image": {
+                "color_tint": {
+                    "x": 0.8676470518112183,
+                    "y": 0.20840539038181305,
+                    "z": 0.7900894284248352
+                },
+                "enabled": true,
+                "image_name": "white_1x1",
+                "is_nine_slice": false
+            },
+            "render_text": {
+                "enabled": false,
+                "halign": "left",
+                "text": "",
+                "valign": "top"
+            },
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "h": 10.0,
+                "rot": 0.0,
+                "w": 10.0,
+                "x": -265.0,
+                "y": -155.0
+            }
+        },
+        {
+            "name": "will_to_live_2",
+            "opacity": 1.0,
+            "parent": "",
+            "render_image": {
+                "color_tint": {
+                    "x": 0.8676470518112183,
+                    "y": 0.20840539038181305,
+                    "z": 0.7900894284248352
+                },
+                "enabled": true,
+                "image_name": "white_1x1",
+                "is_nine_slice": false
+            },
+            "render_text": {
+                "enabled": false,
+                "halign": "left",
+                "text": "",
+                "valign": "top"
+            },
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "h": 10.0,
+                "rot": 0.0,
+                "w": 10.0,
+                "x": -250.0,
+                "y": -155.0
+            }
+        },
+        {
+            "name": "will_to_live_3",
+            "opacity": 1.0,
+            "parent": "",
+            "render_image": {
+                "color_tint": {
+                    "x": 0.8676470518112183,
+                    "y": 0.20840539038181305,
+                    "z": 0.7900894284248352
+                },
+                "enabled": true,
+                "image_name": "white_1x1",
+                "is_nine_slice": false
+            },
+            "render_text": {
+                "enabled": false,
+                "halign": "left",
+                "text": "",
+                "valign": "top"
+            },
+            "transform": {
+                "anchor": {
+                    "x": 0.5,
+                    "y": 0.5
+                },
+                "h": 10.0,
+                "rot": 0.0,
+                "w": 10.0,
+                "x": -235.0,
+                "y": -155.0
+            }
+        },
+        {
+            "name": "boss_name_label",
+            "opacity": 1.0,
+            "parent": "",
+            "render_image": {
+                "color_tint": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "enabled": false,
+                "image_name": "",
+                "is_nine_slice": false
+            },
+            "render_text": {
+                "enabled": true,
+                "halign": "left",
+                "text": "?BOSSNAME?",
+                "valign": "center"
+            },
+            "transform": {
+                "anchor": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "h": 80.0,
+                "rot": 0.0,
+                "w": 80.0,
+                "x": -270.0,
+                "y": -135.0
             }
         }
     ]

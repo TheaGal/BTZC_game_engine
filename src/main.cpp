@@ -223,6 +223,9 @@ int main()
 
     ui_state.canvas("playchar_hp_w_posture.btui");
     ui_state.canvas("boss_oppo_hp_w_posture.btui");
+    ui_state.canvas("you_died.btui");
+    ui_state.canvas("ninsatsu.btui");
+    ui_state.canvas("boss_oppo_hp_w_posture.btui");
     ui_state.canvas("target_lockon_reticle.btui");
     ui_state.canvas("debug_player_camera_guide.btui");
     ui_state.load_persistent_canvas("playchar_hp_w_posture.btui");

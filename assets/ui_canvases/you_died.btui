@@ -1,0 +1,36 @@
+{
+    "elements": [
+        {
+            "name": "message",
+            "opacity": 1.0,
+            "parent": "",
+            "render_image": {
+                "color_tint": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "enabled": false,
+                "image_name": "",
+                "is_nine_slice": false
+            },
+            "render_text": {
+                "enabled": true,
+                "halign": "center",
+                "text": "YOU DIED",
+                "valign": "center"
+            },
+            "transform": {
+                "anchor": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "h": 1154.0,
+                "rot": 0.0,
+                "w": 544.0,
+                "x": 0.0,
+                "y": -44.0
+            }
+        }
+    ]
+}

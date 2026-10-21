@@ -1,13 +1,25 @@
 {
     "elements": [
         {
-            "render_image": {
-                "enabled": true,
-                "image_name": "test_ktx_tex"
-            },
             "name": "btn_play_game",
             "opacity": 1.0,
             "parent": "",
+            "render_image": {
+                "color_tint": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "enabled": true,
+                "image_name": "test_ktx_tex",
+                "is_nine_slice": false
+            },
+            "render_text": {
+                "enabled": false,
+                "halign": "center",
+                "text": "",
+                "valign": "center"
+            },
             "transform": {
                 "anchor": {
                     "x": 1.0,
@@ -21,13 +33,25 @@
             }
         },
         {
-            "render_image": {
-                "enabled": true,
-                "image_name": "test_ktx_tex"
-            },
             "name": "btn_play_game2",
             "opacity": 0.5,
             "parent": "btn_play_game",
+            "render_image": {
+                "color_tint": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "enabled": true,
+                "image_name": "test_ktx_tex",
+                "is_nine_slice": false
+            },
+            "render_text": {
+                "enabled": false,
+                "halign": "center",
+                "text": "",
+                "valign": "center"
+            },
             "transform": {
                 "anchor": {
                     "x": 0.5,
@@ -41,13 +65,25 @@
             }
         },
         {
-            "render_image": {
-                "enabled": true,
-                "image_name": "test_ktx_tex"
-            },
             "name": "btn_play_game3",
             "opacity": 0.5,
             "parent": "btn_play_game2",
+            "render_image": {
+                "color_tint": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "enabled": true,
+                "image_name": "test_ktx_tex",
+                "is_nine_slice": false
+            },
+            "render_text": {
+                "enabled": false,
+                "halign": "center",
+                "text": "",
+                "valign": "center"
+            },
             "transform": {
                 "anchor": {
                     "x": 0.5,
@@ -61,13 +97,25 @@
             }
         },
         {
-            "render_text": {
-                "enabled": true,
-                "text": "henlo warld!"
-            },
             "name": "Font atlas",
             "opacity": 1.0,
             "parent": "",
+            "render_image": {
+                "color_tint": {
+                    "x": 1.0,
+                    "y": 1.0,
+                    "z": 1.0
+                },
+                "enabled": false,
+                "image_name": "",
+                "is_nine_slice": false
+            },
+            "render_text": {
+                "enabled": true,
+                "halign": "right",
+                "text": "henlo warld!",
+                "valign": "top"
+            },
             "transform": {
                 "anchor": {
                     "x": 0.0,
