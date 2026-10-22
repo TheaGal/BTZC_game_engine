@@ -555,6 +555,12 @@ void BT::component::edit::imgui_edit__health_stats_data(entt::registry& reg,
 
     ImGui::Checkbox("is_invincible", &health_stats_data.is_invincible);
 
+    ImGui::InputText("ui_name", &health_stats_data.ui_name);
+    ImGui::TextWrapped(
+        "NOTE: ui_name \"playchar\" is a special keyword that's reserved for the player character. "
+        "also, ensure that for regular enemies this field is blank (only fill if a boss or mini "
+        "boss)");
+
     ImGui::PopItemWidth();
     ImGui::PopID();
 }

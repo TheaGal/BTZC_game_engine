@@ -215,6 +215,16 @@
             ]
         },
         {
+            "state_name": "st_posture_break",
+            "state_type": "single_anim",
+            "anim_name": "Posture_break"
+        },
+        {
+            "state_name": "st_health_depleted",
+            "state_type": "single_anim",
+            "anim_name": "Health_depleted"
+        },
+        {
             "state_name": "_DEBUG_STATE",
             "state_type": "single_anim",
             "anim_name": "0_TPose"

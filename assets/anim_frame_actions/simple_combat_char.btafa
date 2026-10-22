@@ -2748,9 +2748,9 @@
                         ],
                         "cmd_name": "play_sfx_oneshot"
                     },
-                    "end_frame": 3,
+                    "end_frame": 4,
                     "row_idx": 15,
-                    "start_frame": 2
+                    "start_frame": 3
                 },
                 {
                     "ctrl_cmd": {
@@ -2759,9 +2759,22 @@
                         ],
                         "cmd_name": "var_mark_reeve"
                     },
-                    "end_frame": 3,
+                    "end_frame": 2,
                     "row_idx": 16,
-                    "start_frame": 2
+                    "start_frame": 1
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_posture_broken",
+                            "st_posture_break",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 3,
+                    "row_idx": 17,
+                    "start_frame": 1
                 }
             ],
             "state_name": "st_hurt_parry"
@@ -2955,9 +2968,9 @@
                         ],
                         "cmd_name": "play_sfx_oneshot"
                     },
-                    "end_frame": 3,
+                    "end_frame": 4,
                     "row_idx": 16,
-                    "start_frame": 2
+                    "start_frame": 3
                 },
                 {
                     "ctrl_cmd": {
@@ -2966,9 +2979,22 @@
                         ],
                         "cmd_name": "var_mark_reeve"
                     },
-                    "end_frame": 3,
+                    "end_frame": 2,
                     "row_idx": 17,
-                    "start_frame": 2
+                    "start_frame": 1
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_posture_broken",
+                            "st_posture_break",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 3,
+                    "row_idx": 18,
+                    "start_frame": 1
                 }
             ],
             "state_name": "st_hurt_guard"
@@ -3110,9 +3136,9 @@
                         ],
                         "cmd_name": "play_sfx_oneshot"
                     },
-                    "end_frame": 2,
+                    "end_frame": 4,
                     "row_idx": 14,
-                    "start_frame": 1
+                    "start_frame": 3
                 },
                 {
                     "ctrl_cmd": {
@@ -3123,6 +3149,19 @@
                     },
                     "end_frame": 2,
                     "row_idx": 15,
+                    "start_frame": 1
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_posture_broken",
+                            "st_posture_break",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 3,
+                    "row_idx": 16,
                     "start_frame": 1
                 }
             ],
@@ -3509,6 +3548,108 @@
                 }
             ],
             "state_name": "st_hold_guard_walking"
+        },
+        {
+            "regions": [
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_exec_atk_combo_idx",
+                            "ACTION_MAP_attacks",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 161,
+                    "row_idx": 1,
+                    "start_frame": 157
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_exec_mvt_idx",
+                            "ACTION_MAP_movements",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 161,
+                    "row_idx": 2,
+                    "start_frame": 158
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_is_grounded",
+                            "st_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 161,
+                    "row_idx": 3,
+                    "start_frame": 158
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "root_motion_multi",
+                            "1"
+                        ],
+                        "cmd_name": "var_wr"
+                    },
+                    "end_frame": 39,
+                    "row_idx": 10,
+                    "start_frame": 16
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "posture_break.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 5,
+                    "row_idx": 12,
+                    "start_frame": 1
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_health_depleted",
+                            "st_health_depleted",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 124,
+                    "row_idx": 13,
+                    "start_frame": 120
+                }
+            ],
+            "state_name": "st_posture_break"
+        },
+        {
+            "regions": [
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "groan_1.wav",
+                            "0.000000 0.000000 0.000000",
+                            "",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 6,
+                    "row_idx": 9,
+                    "start_frame": 2
+                }
+            ],
+            "state_name": "st_health_depleted"
         }
     ],
     "anim_state_set_event_queues": [
@@ -3550,6 +3691,12 @@
         },
         {
             "name": "evq_exec_guard_response"
+        },
+        {
+            "name": "evq_on_posture_broken"
+        },
+        {
+            "name": "evq_on_health_depleted"
         }
     ],
     "animated_model_name": "simple_combat_char",

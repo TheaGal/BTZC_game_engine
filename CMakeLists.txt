@@ -9,7 +9,7 @@ project(btzc_game_engine
 option(ENABLE_PROFILING "Enable profiling" OFF)
 
 # When turning this option on, the logging version of the FMOD library will be linked.
-option(ENABLE_FMOD_LOGGING "Enable FMOD logging" OFF)
+option(ENABLE_FMOD_LOGGING "Enable FMOD logging" ON)
 
 # Print out all options.
 message(

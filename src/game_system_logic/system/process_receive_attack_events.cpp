@@ -54,15 +54,23 @@ void process_receive_attack(entt::registry& reg,
         return;
 
     // Check for health depletion.
-    if (health_stats_data.health_pts <= 0)
+    if (health_stats_data.health_pts < 0)
     {
         find_char_mvt_anim_state(reg, entity).input_mvt_state.on_health_depleted = true;
+
+        health_stats_data.health_pts = 0;  // to ensure event doesn't come in again
+
+        // Force posture break too!
+        health_stats_data.posture_pts = health_stats_data.max_posture_pts;
     }
 
     // Check for posture break.
     if (health_stats_data.posture_pts >= health_stats_data.max_posture_pts)
     {
         find_char_mvt_anim_state(reg, entity).input_mvt_state.on_posture_broken = true;
+
+        health_stats_data.posture_pts = health_stats_data.max_posture_pts - 1;  // to ensure event doesn't come in again
+        assert(health_stats_data.posture_pts >= 0);
     }
 
     // Check if nothing happened.
@@ -167,16 +175,24 @@ void update_ui(bool const is_playchar_health_stats,
                component::Health_stats_data const& health_stats_data)
 {
     std::string canvas_name = "regular_oppo_hp_w_posture.btui";
+    bool has_boss_name{ false };
+
     if (is_playchar_health_stats)
         canvas_name = "playchar_hp_w_posture.btui";
     else if (!health_stats_data.ui_name.empty())
+    {
         canvas_name = "boss_oppo_hp_w_posture.btui";
+        has_boss_name = true;
+    }
 
     auto& ui_canvas{ service_finder::find_service<TXP::UI_state>().canvas(canvas_name) };
     ui_canvas.elem("hp_back").set_width(health_stats_data.max_health_pts + 4);
     ui_canvas.elem("hp_inside").set_width(health_stats_data.health_pts);
     ui_canvas.elem("posture_back").set_width(health_stats_data.max_posture_pts + 4);
     ui_canvas.elem("posture_inside").set_width(health_stats_data.posture_pts);
+
+    if (has_boss_name)
+        ui_canvas.elem("boss_name_label").set_text(health_stats_data.ui_name);
 }
 
 } // namespace

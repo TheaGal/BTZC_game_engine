@@ -16,7 +16,7 @@ namespace component
 struct Health_stats_data
 {
     int32_t max_health_pts{ 100 };
-    int32_t health_pts{ max_health_pts };     // 0 causes death trigger.
+    int32_t health_pts{ max_health_pts };     // <0 causes death trigger.
 
     int32_t max_posture_pts{ 100 };
     int32_t posture_pts{ 0 };                 // `max_posture_pts` causes posture break. Min is 0.

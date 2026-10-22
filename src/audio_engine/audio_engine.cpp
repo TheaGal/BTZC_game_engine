@@ -31,6 +31,9 @@ public:
     /// Updates impl's audio thread and state.
     void update()
     {
+        // Try doing no garbage collection!! (bc FMOD does garbage collection already)
+        BT::date_deadline(2026, 11, 1);  // if no errors by this date, assume it's fixed
+    #if 0
         // Do garbage collection.
         constexpr uint32_t k_garbage_collect_check_interval{ 1024 };
         static_assert((k_garbage_collect_check_interval & (k_garbage_collect_check_interval - 1)) ==
@@ -50,6 +53,7 @@ public:
                 }
             }
         }
+    #endif // 0
 
         // Update backend.
         m_pimpl->update();

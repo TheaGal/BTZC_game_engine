@@ -571,9 +571,12 @@
     - default opacity to 1 and anchor to 0.5x0.5 and color tint to white!
 
 - [ ] death screen and "ninsatsu" screen
-    - [ ] make health deplete anim
-    - [ ] make posture break anim too bc why not
+    - [x] make health deplete anim
+    - [x] make posture break anim too bc why not
     - [x] make the actual ui screens
+    - [ ] BUGFIX: the `last attack` seems to be one tick behind? if i guard against something then parry it next time it will posture break me
+        - probably related to also not being able to get the dying event to trigger either?
+    - [ ] BUGFIX: anim root motion is bad after player is posture broken
     - using "will to live" consumables (tier 1 is gotten from "assassin training", but tier 2 is from tutorial end boss (the doctor) and tier 3 is from extra quest from the doctor)
     - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.
     - no actually! tier 2 and tier 1 are both from the doctor.
@@ -599,8 +602,11 @@
 
 - @NOTE: for pathfinding, just have to set enemy facing direction to go to next node to go to. pathfinding would happen during the st_runnning anim until enemy is close enough to player to do an attack
 
-- [x] ahhh frick, there's another audio engine error that pops up sometimes in `_error_check()`
+- [ ] ahhh frick, there's another audio engine error that pops up sometimes in `_error_check()`
     - i think it's fixed now?? if it comes up again, spank me!
+    - REOPENING!!!
+    - ok so looking at the fmodL version of the library, it looks like the logs are showing that sounds are actually released, so maybe i dont need to actually do any releasing on my end?
+    - [ ] try seeing if there's any audio related crashes anymore by 2026/11/01
 
 
 ## SOMEDAY
