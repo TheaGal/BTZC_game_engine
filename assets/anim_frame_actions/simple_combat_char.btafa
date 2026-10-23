@@ -3846,6 +3846,18 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "align_self_to_deathblow_other_entity",
+                            "true"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 171,
+                    "row_idx": 0,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "evq_exec_atk_combo_idx",
                             "ACTION_MAP_attacks",
                             "0"
@@ -3943,6 +3955,18 @@
         },
         {
             "regions": [
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "align_self_to_deathblow_other_entity",
+                            "true"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 147,
+                    "row_idx": 0,
+                    "start_frame": 0
+                },
                 {
                     "ctrl_cmd": {
                         "argv": [

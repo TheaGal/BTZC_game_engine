@@ -586,6 +586,8 @@
         - ~~enemy character should have activation distance where if ~~
         - no actually, it should be the deathblow giver (aka playchar) that should be looking for other enemies to deathblow.
             - for flat deathblow, should be within a certain height difference and facing direction vs direction to target similarity.
+        - [x] gets anims playing
+        - [ ] align the anims
 
     - using "will to live" consumables (tier 1 is gotten from "assassin training", but tier 2 is from tutorial end boss (the doctor) and tier 3 is from extra quest from the doctor)
     - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.
