@@ -314,19 +314,63 @@ Char_mvt_logic_results character_controller_movement_logic(
     else assert(false);  // Unsupported movement type.
 
     // Extra input checks.
-    bool on_jump_press{ char_ws_input.jump_pressed && !char_ws_input.prev_jump_pressed };
-    bool on_crouch_press{ char_ws_input.crouch_pressed && !char_ws_input.prev_crouch_pressed };
+    bool const on_jump_press{ char_ws_input.jump_pressed && !char_ws_input.prev_jump_pressed };
+    bool const on_crouch_press{ char_ws_input.crouch_pressed && !char_ws_input.prev_crouch_pressed };
 
     // Find movement state.
     JPH::Vec3 current_vertical_velocity = linear_velocity.Dot(up_direction) * up_direction;
-    bool is_grounded{ ground_state == JPH::CharacterVirtual::EGroundState::OnGround &&
-                      (current_vertical_velocity.GetY() - ground_velocity.GetY()) < 0.1f &&
-                      !char_con_impl->is_cc_slope_too_steep(ground_normal) &&
-                      !(anim_root_motion && anim_root_motion->jump_up) };  // force not-grounded if performing jump_up event.
+    bool const is_grounded{ ground_state == JPH::CharacterVirtual::EGroundState::OnGround &&
+                            (current_vertical_velocity.GetY() - ground_velocity.GetY()) < 0.1f &&
+                            !char_con_impl->is_cc_slope_too_steep(ground_normal) &&
+                            !(anim_root_motion && anim_root_motion->jump_up) };  // force not-grounded if performing jump_up event.
 
     // Calc and apply desired velocity.
     JPH::Vec3 new_velocity;
-    if (is_grounded)
+    if (char_mvt_anim_state && char_mvt_anim_state->input_mvt_state.on_receive_deathblow)
+    {   // Move self to where other is offset by a distance.
+        constexpr float_t k_db_distance{ 2 };
+        UUID const other_phys_obj_uuid{
+            service_finder::find_service<Entity_container>()
+                .get_ecs_registry()
+                .get<component::Created_physics_object_reference>(
+                    char_mvt_anim_state->input_mvt_state.deathblow_other_entity)
+                .physics_obj_uuid_ref
+        };
+        auto& other_phys_obj{ *service_finder::find_service<Physics_engine>()
+                                   .get_physics_object_during_checkout(other_phys_obj_uuid) };
+
+        vec3 delta_pos;
+        {
+            versor _;
+
+            rvec3 phys_pos;
+            phys_obj.get_transform_for_entity(phys_pos, _);
+            rvec3 other_phys_pos;
+            other_phys_obj.get_transform_for_entity(other_phys_pos, _);
+
+            rvec3 delta_pos_r;
+            btglm_rvec3_sub(other_phys_pos, phys_pos, delta_pos_r);
+            btglm_rvec3_to_vec3(delta_pos_r, delta_pos);
+        }
+
+        float_t const actual_distance{ glm_vec3_norm(delta_pos) };
+        vec3 correction_delta_pos;
+        glm_vec3_scale(delta_pos,
+                       (k_db_distance - actual_distance) / actual_distance,
+                       correction_delta_pos);
+
+        vec3 correction_velocity;
+        glm_vec3_scale(correction_delta_pos,
+                       1.0f / Physics_engine::k_simulation_delta_time,
+                       correction_velocity);
+
+        assert(!std::isnan(correction_velocity[0]));
+        assert(!std::isnan(correction_velocity[1]));
+        assert(!std::isnan(correction_velocity[2]));
+
+        new_velocity = { correction_velocity[0], correction_velocity[1], correction_velocity[2] };
+    }
+    else if (is_grounded)
     {   // Grounded.
         new_velocity = ground_velocity;
 
@@ -407,7 +451,36 @@ Char_mvt_logic_results character_controller_movement_logic(
 
     // Desired velocity.
     float_t display_facing_angle;
-    if (mvt_type == MVT_TYPE_ANIM_BASED)
+    if (char_mvt_anim_state && (char_mvt_anim_state->input_mvt_state.on_receive_deathblow ||
+                                char_mvt_anim_state->input_mvt_state.on_give_deathblow))
+    {   // Face self to the other.
+        UUID const other_phys_obj_uuid{
+            service_finder::find_service<Entity_container>()
+                .get_ecs_registry()
+                .get<component::Created_physics_object_reference>(
+                    char_mvt_anim_state->input_mvt_state.deathblow_other_entity)
+                .physics_obj_uuid_ref
+        };
+        auto& other_phys_obj{ *service_finder::find_service<Physics_engine>()
+                                   .get_physics_object_during_checkout(other_phys_obj_uuid) };
+
+        vec3 delta_pos;
+        {
+            versor _;
+
+            rvec3 phys_pos;
+            phys_obj.get_transform_for_entity(phys_pos, _);
+            rvec3 other_phys_pos;
+            other_phys_obj.get_transform_for_entity(other_phys_pos, _);
+
+            rvec3 delta_pos_r;
+            btglm_rvec3_sub(other_phys_pos, phys_pos, delta_pos_r);
+            btglm_rvec3_to_vec3(delta_pos_r, delta_pos);
+        }
+
+        display_facing_angle = std::atan2f(delta_pos[0], delta_pos[2]);
+    }
+    else if (mvt_type == MVT_TYPE_ANIM_BASED)
     {   // Anim-based turn & speed movement.
         auto& grounded_state{ char_mvt_state.grounded_state };
 
@@ -553,7 +626,7 @@ void BT::system::input_controlled_character_movement()
         auto& char_mvt_state{ view.get<component::Character_mvt_state>(entity) };
 
         // Get char anim state.
-        auto char_mvt_anim_state{ reg.try_get<component::Character_mvt_animated_state>(entity) };
+        auto* char_mvt_anim_state{ reg.try_get<component::Character_mvt_animated_state>(entity) };
 
         // Process input into character movement logic.
         auto phys_obj_uuid{

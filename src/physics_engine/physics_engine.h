@@ -42,6 +42,7 @@ public:
     UUID emplace_physics_object(unique_ptr<Physics_object>&& phys_obj);
     void remove_physics_object(UUID key);
     Physics_object* checkout_physics_object(UUID key);
+    Physics_object* get_physics_object_during_checkout(UUID key);
     vector<Physics_object*> checkout_all_physics_objects();
     void return_physics_object(Physics_object* phys_obj);
     void return_physics_objects(vector<Physics_object*>&& phys_objs);
@@ -67,6 +68,7 @@ private:
     atomic_bool m_blocked{ false };
 
     void phys_obj_pool_wait_until_free_then_block();
+    void phys_obj_pool_assert_is_blocked();
     void phys_obj_pool_unblock();
 
     // Jolt physics implementation.

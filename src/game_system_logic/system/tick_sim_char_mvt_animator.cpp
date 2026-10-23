@@ -243,13 +243,14 @@ void BT::system::tick_sim_char_mvt_animator()
                         .get_float_data_handle(AFA_ctrl::CTRL_DATA_LABEL_mvt_input_decel)
                         .get_val();
 
-                // @THEA: NOTE TO SELF FOR NEXT THING TO WORK ON!!!
-                //   get this variable used for a system to align the facing direction and closeness
-                //   of the two characters (make sure 2m apart). youll need to create a new system
-                //   for that btw probably.
-                assert(anim_afa_data_handle
-                        .get_bool_data_handle(AFA_ctrl::CTRL_DATA_LABEL_align_self_to_deathblow_other_entity)
-                        .get_val());
+                // // @THEA: NOTE TO SELF FOR NEXT THING TO WORK ON!!!
+                // //   get this variable used for a system to align the facing direction and closeness
+                // //   of the two characters (make sure 2m apart). youll need to create a new system
+                // //   for that btw probably.
+                // // @THEA: possibly unneeded????
+                // assert(anim_afa_data_handle
+                //         .get_bool_data_handle(AFA_ctrl::CTRL_DATA_LABEL_align_self_to_deathblow_other_entity)
+                //         .get_val());
             }
         }
     }

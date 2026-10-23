@@ -588,6 +588,9 @@
             - for flat deathblow, should be within a certain height difference and facing direction vs direction to target similarity.
         - [x] gets anims playing
         - [ ] align the anims
+            - the alignment and facing dir seem to be getting set in debugger but why isn't it getting to the actual chars?
+            - [ ] figure out why this attempt doesn't work
+            - [ ] delete CTRL_DATA_LABEL_align_self_to_deathblow_other_entity
 
     - using "will to live" consumables (tier 1 is gotten from "assassin training", but tier 2 is from tutorial end boss (the doctor) and tier 3 is from extra quest from the doctor)
     - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.

@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cassert>
 #include <memory>
+#include <stdexcept>
 
 using std::make_unique;
 using std::min;
@@ -150,6 +151,12 @@ BT::Physics_object* BT::Physics_engine::checkout_physics_object(UUID key)
     return m_physics_objects.at(key).get();
 }
 
+BT::Physics_object* BT::Physics_engine::get_physics_object_during_checkout(UUID key)
+{
+    phys_obj_pool_assert_is_blocked();
+    return m_physics_objects.at(key).get();
+}
+
 vector<BT::Physics_object*> BT::Physics_engine::checkout_all_physics_objects()
 {
     phys_obj_pool_wait_until_free_then_block();
@@ -193,6 +200,12 @@ void BT::Physics_engine::phys_obj_pool_wait_until_free_then_block()
             break;
         }
     }
+}
+
+void BT::Physics_engine::phys_obj_pool_assert_is_blocked()
+{
+    if (!m_blocked.load())
+        throw std::runtime_error("Physics: this should have been blocked!!!!");
 }
 
 void BT::Physics_engine::phys_obj_pool_unblock()
