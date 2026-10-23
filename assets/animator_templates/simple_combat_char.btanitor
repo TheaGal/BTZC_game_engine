@@ -225,6 +225,16 @@
             "anim_name": "Health_depleted"
         },
         {
+            "state_name": "st_deathblow_give",
+            "state_type": "single_anim",
+            "anim_name": "Deathblow_give"
+        },
+        {
+            "state_name": "st_deathblow_receive",
+            "state_type": "single_anim",
+            "anim_name": "Deathblow_receive"
+        },
+        {
             "state_name": "_DEBUG_STATE",
             "state_type": "single_anim",
             "anim_name": "0_TPose"

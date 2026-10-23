@@ -577,6 +577,16 @@
     - [ ] BUGFIX: the `last attack` seems to be one tick behind? if i guard against something then parry it next time it will posture break me
         - probably related to also not being able to get the dying event to trigger either?
     - [ ] BUGFIX: anim root motion is bad after player is posture broken
+    - [x] create the deathblow anim
+        - figured out how to get two anims running at the same time!!
+    - [x] make afa entries for deathblow anims
+    - [ ] connect the deathblow anim to the activation
+        - how to space out the two characters?
+        - have cheat menu perhaps?
+        - ~~enemy character should have activation distance where if ~~
+        - no actually, it should be the deathblow giver (aka playchar) that should be looking for other enemies to deathblow.
+            - for flat deathblow, should be within a certain height difference and facing direction vs direction to target similarity.
+
     - using "will to live" consumables (tier 1 is gotten from "assassin training", but tier 2 is from tutorial end boss (the doctor) and tier 3 is from extra quest from the doctor)
     - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.
     - no actually! tier 2 and tier 1 are both from the doctor.
@@ -607,6 +617,29 @@
     - REOPENING!!!
     - ok so looking at the fmodL version of the library, it looks like the logs are showing that sounds are actually released, so maybe i dont need to actually do any releasing on my end?
     - [ ] try seeing if there's any audio related crashes anymore by 2026/11/01
+        - REOPENING!!!
+        - happened again T-T  at 2026/10/22. the errors are below:
+        ```log
+        [LOG] SystemI::createSoundInternal             : Create name='assets/audio/punch_1.wav', mode=0x00000211
+        [LOG] SystemI::createSoundInternal             : Sample 0/0: name='(null)', format=2, channels=2, frequency=48000, lengthbytes=91036, lengthpcm=22759, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.000000.
+        [LOG] SystemI::createSoundInternal             : Create name='assets/audio/bloody_1.wav', mode=0x00000211
+        [LOG] SystemI::createSoundInternal             : Sample 0/0: name='(null)', format=2, channels=2, frequency=48000, lengthbytes=159172, lengthpcm=39793, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.000000.
+        [LOG] SystemI::createSoundInternal             : Create name='assets/audio/bloody_2.wav', mode=0x00000211
+        [LOG] SystemI::createSoundInternal             : Sample 0/0: name='(null)', format=2, channels=2, frequency=48000, lengthbytes=213028, lengthpcm=53257, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.000000.
+        [LOG] SystemI::createSoundInternal             : Create name='assets/audio/blade_pullout.wav', mode=0x00000211
+        [LOG] SystemI::createSoundInternal             : Sample 0/0: name='(null)', format=2, channels=2, frequency=48000, lengthbytes=78064, lengthpcm=19516, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.000000.
+        [LOG] SystemI::createSoundInternal             : Create name='assets/audio/groan_1.wav', mode=0x00000211
+        [LOG] SystemI::createSoundInternal             : Sample 0/0: name='(null)', format=2, channels=2, frequency=48000, lengthbytes=226484, lengthpcm=56621, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.000000.
+        [info ](9484) :: destroy_dangling_child_entities() took 0.002 ms.
+        [info ](9484) :: check_loaded_scenes_integrity() took 0.006 ms.
+        [warn ](9485) :: Nothing is built wtf?!?!?      rail_line_rider_update()
+        [LOG] SystemI::createSoundInternal             : Create name='assets/audio/jump_grunt.wav', mode=0x00000211
+        [LOG] SystemI::createSoundInternal             : Sample 0/0: name='(null)', format=2, channels=2, frequency=48000, lengthbytes=30256, lengthpcm=7564, pcmblocksize=0, loopstart=0, loopend=0, mode=0x00000000, channelmask=0x00000000, channelorder=0, peakvolume=0.000000.
+        [error](10047) :: FMOD :: /Users/thea/repos/BTZC_game_engine/src/audio_engine/audio_impl_fmod.cpp:58
+                                An invalid object handle was used.
+        Assertion failed: (false), function _error_check, file audio_impl_fmod.cpp, line 24.
+        ```
+        - maybe try doing a log when doing the play sound thing??
 
 
 ## SOMEDAY
