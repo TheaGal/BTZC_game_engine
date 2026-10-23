@@ -143,6 +143,19 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "evq_on_give_deathblow",
+                            "st_deathblow_give",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 11,
+                    "row_idx": 1,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "evq_on_guard_press",
                             "st_ready_parry,st_hold_guard_idle",
                             "1"
@@ -150,7 +163,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 11,
-                    "row_idx": 1,
+                    "row_idx": 2,
                     "start_frame": 0
                 },
                 {
@@ -163,7 +176,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 11,
-                    "row_idx": 2,
+                    "row_idx": 3,
                     "start_frame": 0
                 },
                 {
@@ -176,7 +189,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 11,
-                    "row_idx": 3,
+                    "row_idx": 4,
                     "start_frame": 0
                 },
                 {
@@ -189,7 +202,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 11,
-                    "row_idx": 4,
+                    "row_idx": 5,
                     "start_frame": 0
                 },
                 {
@@ -202,7 +215,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 11,
-                    "row_idx": 6,
+                    "row_idx": 7,
                     "start_frame": 0
                 },
                 {
@@ -215,7 +228,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 11,
-                    "row_idx": 8,
+                    "row_idx": 9,
                     "start_frame": 0
                 },
                 {
@@ -227,7 +240,7 @@
                         "cmd_name": "var_ov"
                     },
                     "end_frame": 11,
-                    "row_idx": 10,
+                    "row_idx": 11,
                     "start_frame": 0
                 }
             ],
@@ -251,9 +264,9 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "evq_on_guard_press",
-                            "st_ready_parry,st_hold_guard_idle",
-                            "1"
+                            "evq_on_give_deathblow",
+                            "st_deathblow_give",
+                            "0"
                         ],
                         "cmd_name": "watch_event_queue"
                     },
@@ -264,7 +277,7 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "evq_exec_guard_response",
+                            "evq_on_guard_press",
                             "st_ready_parry,st_hold_guard_idle",
                             "1"
                         ],
@@ -277,6 +290,19 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "evq_exec_guard_response",
+                            "st_ready_parry,st_hold_guard_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 41,
+                    "row_idx": 3,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "evq_on_jump",
                             "st_jump,st_fall",
                             "0"
@@ -284,7 +310,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 41,
-                    "row_idx": 3,
+                    "row_idx": 4,
                     "start_frame": 0
                 },
                 {
@@ -297,7 +323,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 41,
-                    "row_idx": 4,
+                    "row_idx": 5,
                     "start_frame": 0
                 },
                 {
@@ -310,7 +336,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 41,
-                    "row_idx": 5,
+                    "row_idx": 6,
                     "start_frame": 0
                 },
                 {
@@ -323,7 +349,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 41,
-                    "row_idx": 7,
+                    "row_idx": 8,
                     "start_frame": 0
                 },
                 {
@@ -336,7 +362,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 41,
-                    "row_idx": 9,
+                    "row_idx": 10,
                     "start_frame": 38
                 },
                 {
@@ -349,7 +375,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 41,
-                    "row_idx": 10,
+                    "row_idx": 11,
                     "start_frame": 39
                 },
                 {
@@ -361,7 +387,7 @@
                         "cmd_name": "var_ov"
                     },
                     "end_frame": 41,
-                    "row_idx": 12,
+                    "row_idx": 13,
                     "start_frame": 0
                 }
             ],
@@ -787,6 +813,19 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "evq_on_give_deathblow",
+                            "st_deathblow_give",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 25,
+                    "row_idx": 4,
+                    "start_frame": 17
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "hitcapsule_group_1_enabled",
                             "true"
                         ],
@@ -963,6 +1002,19 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "evq_on_give_deathblow",
+                            "st_deathblow_give",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 25,
+                    "row_idx": 4,
+                    "start_frame": 17
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "hitcapsule_group_1_enabled",
                             "true"
                         ],
@@ -1134,6 +1186,19 @@
                     },
                     "end_frame": 41,
                     "row_idx": 3,
+                    "start_frame": 31
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_give_deathblow",
+                            "st_deathblow_give",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 41,
+                    "row_idx": 4,
                     "start_frame": 31
                 },
                 {
@@ -2370,6 +2435,31 @@
                     "end_frame": 61,
                     "row_idx": 8,
                     "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "can_receive_deathblow",
+                            "true"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 13,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_receive_deathblow",
+                            "st_deathblow_receive",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 14,
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_yosumi_shift_left"
@@ -2438,6 +2528,31 @@
                     },
                     "end_frame": 61,
                     "row_idx": 8,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "can_receive_deathblow",
+                            "true"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 14,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_receive_deathblow",
+                            "st_deathblow_receive",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 15,
                     "start_frame": 0
                 }
             ],
@@ -2520,6 +2635,19 @@
                     "end_frame": 61,
                     "row_idx": 13,
                     "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_receive_deathblow",
+                            "st_deathblow_receive",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 14,
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_yosumi_shift_left_close"
@@ -2588,6 +2716,31 @@
                     },
                     "end_frame": 61,
                     "row_idx": 8,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "can_receive_deathblow",
+                            "true"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 14,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_receive_deathblow",
+                            "st_deathblow_receive",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 61,
+                    "row_idx": 15,
                     "start_frame": 0
                 }
             ],
@@ -3617,6 +3770,19 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "evq_on_receive_deathblow",
+                            "st_deathblow_receive",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 130,
+                    "row_idx": 8,
+                    "start_frame": 30
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "root_motion_multi",
                             "1"
                         ],
@@ -3840,6 +4006,12 @@
         },
         {
             "name": "evq_on_health_depleted"
+        },
+        {
+            "name": "evq_on_give_deathblow"
+        },
+        {
+            "name": "evq_on_receive_deathblow"
         }
     ],
     "animated_model_name": "simple_combat_char",

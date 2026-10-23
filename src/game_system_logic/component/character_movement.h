@@ -134,7 +134,7 @@ struct Character_mvt_animated_state
         // Deathblow syncing.
         bool on_give_deathblow{ false };
         bool on_receive_deathblow{ false };
-        entt::entity deathblow_other_entity;
+        entt::entity deathblow_other_entity;  // persistent
 
         // Combat inputs (player char).
         bool on_attack_press{ false };
@@ -160,6 +160,7 @@ struct Character_mvt_animated_state
         void reset_state(bool reset_persist_vals)
         {
             // capture persistent vals here.
+            auto cap0 = deathblow_other_entity;
 
             *this = {
                 .mode = mode,
@@ -168,6 +169,7 @@ struct Character_mvt_animated_state
             if (!reset_persist_vals)
             {
                 // rewrite in persistent vals here.
+                deathblow_other_entity = cap0;
             }
         }
     } input_mvt_state;
