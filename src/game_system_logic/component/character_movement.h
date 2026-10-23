@@ -133,8 +133,8 @@ struct Character_mvt_animated_state
 
         // Deathblow syncing.
         bool on_give_deathblow{ false };
-        entt::entity give_deathblow_to_entity;
         bool on_receive_deathblow{ false };
+        entt::entity deathblow_other_entity;
 
         // Combat inputs (player char).
         bool on_attack_press{ false };

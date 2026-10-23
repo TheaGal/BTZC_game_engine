@@ -176,9 +176,11 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/boss_oppo_hp_w_posture.btui
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/debug_aspect_ratios_guide.btui
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/debug_player_camera_guide.btui
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/ninsatsu.btui
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/playchar_hp_w_posture.btui
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/target_lockon_reticle.btui
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/testo_jojo.btui
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/ui_canvases/you_died.btui
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/unnamed.mtl
 )
 
@@ -237,6 +239,8 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/animator_driven_hitcapsule_sets_update.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/character_broadcast_attack_msg_to_enemies.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/character_broadcast_attack_msg_to_enemies.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/convert_atk_to_deathblow.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/convert_atk_to_deathblow.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/cpu_character_enemy_detection.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/cpu_character_enemy_detection.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/cpu_character_world_space_input.cpp

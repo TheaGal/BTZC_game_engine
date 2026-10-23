@@ -8,6 +8,7 @@
 #include "game_system_logic/entity_container.h"
 #include "game_system_logic/system/animator_driven_hitcapsule_sets_update.h"
 #include "game_system_logic/system/character_broadcast_attack_msg_to_enemies.h"
+#include "game_system_logic/system/convert_atk_to_deathblow.h"
 #include "game_system_logic/system/cpu_character_enemy_detection.h"
 #include "game_system_logic/system/cpu_character_world_space_input.h"
 #include "game_system_logic/system/follow_camera_position_update.h"
@@ -328,8 +329,11 @@ int main()
 
             BT::system::character_broadcast_attack_msg_to_enemies();
             BT::system::cpu_character_enemy_detection();
+
             BT::system::cpu_character_world_space_input(k_sim_delta_time);
             BT::system::player_character_world_space_input();
+            BT::system::convert_atk_input_to_deathblow();
+
             BT::system::input_controlled_character_movement();
 
             // Physics calculations.
