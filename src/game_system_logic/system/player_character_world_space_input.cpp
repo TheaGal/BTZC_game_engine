@@ -117,14 +117,14 @@ void BT::system::player_character_world_space_input()
 
         // On attack trigger.
         {
-            bool attack_pressed{
+            bool const attack_pressed{
+                main_camera.is_follow_orbit() &&
                 input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_LEFT).pressed
             };
-            bool is_attacking{ main_camera.is_follow_orbit() && attack_pressed };
 
             char_mvt_anim_state->input_mvt_state.on_attack_press =
-                (is_attacking && !char_mvt_anim_state->state.prev_attack_pressed);
-            char_mvt_anim_state->input_mvt_state.is_attack_released = !is_attacking;
+                (attack_pressed && !char_mvt_anim_state->state.prev_attack_pressed);
+            char_mvt_anim_state->input_mvt_state.is_attack_released = !attack_pressed;
 
             // @ANIMATOR_REFACTOR if (camera.is_follow_orbit() &&
             // @ANIMATOR_REFACTOR     can_attack_exit &&

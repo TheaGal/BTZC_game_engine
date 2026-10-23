@@ -3,6 +3,7 @@
 #include "btglm.h"
 #include "btjson.h"
 #include "btuuid.h"
+#include "entt/entity/fwd.hpp"
 
 #include <cmath>
 #include <cstdint>
@@ -129,6 +130,11 @@ struct Character_mvt_animated_state
 
         bool on_health_depleted{ false };
         bool on_posture_broken{ false };
+
+        // Deathblow syncing.
+        bool on_give_deathblow{ false };
+        entt::entity give_deathblow_to_entity;
+        bool on_receive_deathblow{ false };
 
         // Combat inputs (player char).
         bool on_attack_press{ false };
