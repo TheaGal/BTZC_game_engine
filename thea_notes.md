@@ -589,8 +589,18 @@
         - [x] gets anims playing
         - [ ] align the anims
             - the alignment and facing dir seem to be getting set in debugger but why isn't it getting to the actual chars?
-            - [ ] figure out why this attempt doesn't work
-            - [ ] delete CTRL_DATA_LABEL_align_self_to_deathblow_other_entity
+            - [x] figure out why this attempt doesn't work
+                - [FIXED] so the correction direction is flipped
+                - [TEMP_FIXED] the inner physics bodies were also colliding with each other. turning them off seems to be working for the moment
+                    - (maybe just turn them off during just the deathblow animation?)
+                - [UNKNOWN] it's not the object position offset (0, 0, 1) that should be where the other char is placed, but rather the root bone position offsets
+                    - this happens to be a nice number (0, 0, 2), but it could be not a nice number in the future
+                    - if there is delta movement that could be it?
+                    - it is the first frame's anim root motion delta pos of the deathblow giver (possibly receiver could have this bug too?)
+                        - so 0.322 offset. offsetting it fixed the offset bug
+            - [x] fixed facing angle not updating
+            - [ ] ~~delete CTRL_DATA_LABEL_align_self_to_deathblow_other_entity~~
+            - [ ] IDEA: just use the animator root bones as positioning, `using set_position()` and just allow velocity
 
     - using "will to live" consumables (tier 1 is gotten from "assassin training", but tier 2 is from tutorial end boss (the doctor) and tier 3 is from extra quest from the doctor)
     - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.
@@ -645,6 +655,9 @@
         Assertion failed: (false), function _error_check, file audio_impl_fmod.cpp, line 24.
         ```
         - maybe try doing a log when doing the play sound thing??
+
+- [ ] BUG: moving the window to a different virtual desktop on macos crashes the program
+    - mayeb it's actualy just when doing discord screenshare on the actual window?
 
 
 ## SOMEDAY

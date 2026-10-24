@@ -3846,12 +3846,12 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "align_self_to_deathblow_other_entity",
+                            "align_self_as_deathblow_giver",
                             "true"
                         ],
                         "cmd_name": "var_ov"
                     },
-                    "end_frame": 171,
+                    "end_frame": 1,
                     "row_idx": 0,
                     "start_frame": 0
                 },
@@ -3958,12 +3958,12 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "align_self_to_deathblow_other_entity",
+                            "align_self_as_deathblow_receiver",
                             "true"
                         ],
                         "cmd_name": "var_ov"
                     },
-                    "end_frame": 147,
+                    "end_frame": 1,
                     "row_idx": 0,
                     "start_frame": 0
                 },

@@ -95,7 +95,7 @@ private:
     static inline bool               s_enable_walk_stairs               = true;
     static inline bool               s_enable_stick_to_floor            = true;
     static inline bool               s_enhanced_internal_edge_removal   = false;
-    static inline bool               s_create_inner_body                = true;
+    static inline bool               s_create_inner_body                = false;  // @THEA: change this!!!!!
     static inline bool               s_player_can_push_other_characters = true;
     static inline bool               s_other_characters_can_push_player = true;
 

@@ -1,5 +1,6 @@
 #include "tick_sim_char_mvt_animator.h"
 
+#include "btdatecheck.h"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
@@ -243,14 +244,22 @@ void BT::system::tick_sim_char_mvt_animator()
                         .get_float_data_handle(AFA_ctrl::CTRL_DATA_LABEL_mvt_input_decel)
                         .get_val();
 
-                // // @THEA: NOTE TO SELF FOR NEXT THING TO WORK ON!!!
-                // //   get this variable used for a system to align the facing direction and closeness
-                // //   of the two characters (make sure 2m apart). youll need to create a new system
-                // //   for that btw probably.
-                // // @THEA: possibly unneeded????
-                // assert(anim_afa_data_handle
-                //         .get_bool_data_handle(AFA_ctrl::CTRL_DATA_LABEL_align_self_to_deathblow_other_entity)
-                //         .get_val());
+                date_deadline(2026, 11, 1);  // @DELETE THIS!!!
+                // @THEA: NOTE TO SELF FOR NEXT THING TO WORK ON!!!
+                //   get this variable used for a system to align the facing direction and closeness
+                //   of the two characters (make sure 2m apart). youll need to create a new system
+                //   for that btw probably.
+                // @THEA: possibly unneeded????
+                char_mvt_anim_state.input_mvt_state.align_self_as_deathblow_giver =
+                    anim_afa_data_handle
+                        .get_bool_data_handle(
+                            AFA_ctrl::CTRL_DATA_LABEL_align_self_as_deathblow_giver)
+                        .get_val();
+                char_mvt_anim_state.input_mvt_state.align_self_as_deathblow_receiver =
+                    anim_afa_data_handle
+                        .get_bool_data_handle(
+                            AFA_ctrl::CTRL_DATA_LABEL_align_self_as_deathblow_receiver)
+                        .get_val();
             }
         }
     }

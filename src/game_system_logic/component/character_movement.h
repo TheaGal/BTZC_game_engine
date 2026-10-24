@@ -3,7 +3,7 @@
 #include "btglm.h"
 #include "btjson.h"
 #include "btuuid.h"
-#include "entt/entity/fwd.hpp"
+#include "entt/entity/entity.hpp"
 
 #include <cmath>
 #include <cstdint>
@@ -133,8 +133,10 @@ struct Character_mvt_animated_state
 
         // Deathblow syncing.
         bool on_give_deathblow{ false };
+        bool align_self_as_deathblow_giver{ false };
         bool on_receive_deathblow{ false };
-        entt::entity deathblow_other_entity;  // persistent
+        bool align_self_as_deathblow_receiver{ false };
+        entt::entity deathblow_other_entity{ entt::null };  // persistent
 
         // Combat inputs (player char).
         bool on_attack_press{ false };
@@ -161,6 +163,11 @@ struct Character_mvt_animated_state
         {
             // capture persistent vals here.
             auto cap0 = deathblow_other_entity;
+        #define JOJOWJJJAJAJAJ 0
+        #if JOJOWJJJAJAJAJ
+            auto cap1 = on_receive_deathblow;  // detfcjtfgcjfc
+            auto cap2 = on_give_deathblow;  // detfcjtfgcjfc
+        #endif // JOJOWJJJAJAJAJ
 
             *this = {
                 .mode = mode,
@@ -170,6 +177,10 @@ struct Character_mvt_animated_state
             {
                 // rewrite in persistent vals here.
                 deathblow_other_entity = cap0;
+        #if JOJOWJJJAJAJAJ
+                on_receive_deathblow = cap1;
+                on_give_deathblow = cap2;
+        #endif // JOJOWJJJAJAJAJ
             }
         }
     } input_mvt_state;

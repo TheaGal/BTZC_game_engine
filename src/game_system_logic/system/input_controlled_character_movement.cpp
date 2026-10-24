@@ -5,6 +5,10 @@
 #include "Jolt/Physics/PhysicsSystem.h"
 #include "Jolt/Math/Vec3.h"
 #include "btglm.h"
+#include "btlogger.h"
+#include "cglm/util.h"
+#include "cglm/vec3.h"
+#include "entt/entity/entity.hpp"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/follow_camera.h"
 #include "game_system_logic/component/physics_object_settings.h"
@@ -18,6 +22,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <cstdint>
 
 
 namespace
@@ -325,10 +330,26 @@ Char_mvt_logic_results character_controller_movement_logic(
                             !(anim_root_motion && anim_root_motion->jump_up) };  // force not-grounded if performing jump_up event.
 
     // Calc and apply desired velocity.
+    static uint32_t s_jojojojoojo{ 0 };
     JPH::Vec3 new_velocity;
-    if (char_mvt_anim_state && char_mvt_anim_state->input_mvt_state.on_receive_deathblow)
+    /*if (char_mvt_anim_state && char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_giver)
+    {   // Keep still so deathblow giver and receiver can sync up positions.
+        BT_INFOF("  DING DONG POOKIE: %.3f, %.3f, %.3f",
+                 anim_root_motion->delta_pos[0],
+                 anim_root_motion->delta_pos[1],
+                 anim_root_motion->delta_pos[2]);
+        new_velocity = JPH::Vec3::sZero();  // @THEA: this is necessary so receiver's alignment step is okay.
+    }
+    else*/ if (char_mvt_anim_state && char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_receiver // && ++s_jojojojoojo % 11 == 0
+    )
     {   // Move self to where other is offset by a distance.
-        constexpr float_t k_db_distance{ 2 };
+        // constexpr float_t k_db_distance{ 2 - .322 };
+        // constexpr float_t k_db_distance{ 2 - .419 };
+        // constexpr float_t k_db_distance{ 2 - .419 - .322 };
+        constexpr float_t k_db_distance{ 2 - .322 - .322 };
+        // constexpr float_t k_db_distance{ 2 - .322 };
+        // constexpr float_t k_db_distance{ 1 };
+
         UUID const other_phys_obj_uuid{
             service_finder::find_service<Entity_container>()
                 .get_ecs_registry()
@@ -340,35 +361,39 @@ Char_mvt_logic_results character_controller_movement_logic(
                                    .get_physics_object_during_checkout(other_phys_obj_uuid) };
 
         vec3 delta_pos;
+        rvec3 other_phys_pos;
         {
             versor _;
 
             rvec3 phys_pos;
             phys_obj.get_transform_for_entity(phys_pos, _);
-            rvec3 other_phys_pos;
             other_phys_obj.get_transform_for_entity(other_phys_pos, _);
 
             rvec3 delta_pos_r;
-            btglm_rvec3_sub(other_phys_pos, phys_pos, delta_pos_r);
+            btglm_rvec3_sub(phys_pos, other_phys_pos, delta_pos_r);
             btglm_rvec3_to_vec3(delta_pos_r, delta_pos);
         }
 
-        float_t const actual_distance{ glm_vec3_norm(delta_pos) };
-        vec3 correction_delta_pos;
-        glm_vec3_scale(delta_pos,
-                       (k_db_distance - actual_distance) / actual_distance,
-                       correction_delta_pos);
+        // float_t const actual_distance{ glm_vec3_norm(delta_pos) };
+        // BT_INFOF("ACTUADDDIIS: %.3f\tCORRECTION: %.3f", actual_distance, k_db_distance - actual_distance);
+        vec3 corrected_delta_pos;
+        glm_vec3_scale_as(delta_pos, k_db_distance, corrected_delta_pos);
 
-        vec3 correction_velocity;
-        glm_vec3_scale(correction_delta_pos,
-                       1.0f / Physics_engine::k_simulation_delta_time,
-                       correction_velocity);
+        // vec3 correction_velocity;
+        // glm_vec3_scale(correction_delta_pos,
+        //                1.0f / Physics_engine::k_simulation_delta_time,
+        //                correction_velocity);
 
-        assert(!std::isnan(correction_velocity[0]));
-        assert(!std::isnan(correction_velocity[1]));
-        assert(!std::isnan(correction_velocity[2]));
+        // assert(!std::isnan(correction_velocity[0]));
+        // assert(!std::isnan(correction_velocity[1]));
+        // assert(!std::isnan(correction_velocity[2]));
 
-        new_velocity = { correction_velocity[0], correction_velocity[1], correction_velocity[2] };
+        // new_velocity = { correction_velocity[0], correction_velocity[1], correction_velocity[2] };
+        char_con_impl->move_kinematic({ JPH::RVec3(other_phys_pos[0] + corrected_delta_pos[0],
+                                                   other_phys_pos[1] + corrected_delta_pos[1],
+                                                   other_phys_pos[2] + corrected_delta_pos[2]),
+                                        char_con_impl->read_transform().rotation });
+        new_velocity = JPH::Vec3::sZero();
     }
     else if (is_grounded)
     {   // Grounded.
@@ -449,10 +474,11 @@ Char_mvt_logic_results character_controller_movement_logic(
             char_mvt_anim_state->write_to_animator_data.mvt_facing_angle = 0;
     }
 
-    // Desired velocity.
+    // Desired facing angle.
     float_t display_facing_angle;
-    if (char_mvt_anim_state && (char_mvt_anim_state->input_mvt_state.on_receive_deathblow ||
-                                char_mvt_anim_state->input_mvt_state.on_give_deathblow))
+    if (char_mvt_anim_state &&
+        (char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_giver ||
+         char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_receiver))
     {   // Face self to the other.
         UUID const other_phys_obj_uuid{
             service_finder::find_service<Entity_container>()
@@ -479,6 +505,10 @@ Char_mvt_logic_results character_controller_movement_logic(
         }
 
         display_facing_angle = std::atan2f(delta_pos[0], delta_pos[2]);
+
+        // So facing angle isn't overwritten.
+        char_mvt_state.grounded_state.facing_angle = display_facing_angle;
+        char_mvt_state.airborne_state.input_facing_angle = display_facing_angle;
     }
     else if (mvt_type == MVT_TYPE_ANIM_BASED)
     {   // Anim-based turn & speed movement.
@@ -641,7 +671,7 @@ void BT::system::input_controlled_character_movement()
                                     : nullptr };
 
         component::Follow_camera_follow_ref::State* follow_cam_state{ nullptr };
-        auto poss_display_repr_ref{ reg.try_get<component::Display_repr_transform_ref>(entity) };
+        auto* poss_display_repr_ref{ reg.try_get<component::Display_repr_transform_ref>(entity) };
         if (poss_display_repr_ref != nullptr)
         {
             auto display_repr_ecs_ent{ entity_container.find_entity(
