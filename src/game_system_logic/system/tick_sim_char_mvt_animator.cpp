@@ -176,8 +176,7 @@ void BT::system::tick_sim_char_mvt_animator()
 
 
             // Update animator.
-            animator.update(TXP::SIMULATION_TIMER_PROFILE,
-                            Physics_engine::k_simulation_delta_time);
+            animator.update_state(TXP::SIMULATION_TIMER_PROFILE);
 
 
             // Read animator root motion AFA data.
@@ -261,6 +260,11 @@ void BT::system::tick_sim_char_mvt_animator()
                             AFA_ctrl::CTRL_DATA_LABEL_align_self_as_deathblow_receiver)
                         .get_val();
             }
+
+
+            // Move animator to next frame.
+            animator.progress_time(TXP::SIMULATION_TIMER_PROFILE,
+                                   Physics_engine::k_simulation_delta_time);
         }
     }
 }

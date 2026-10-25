@@ -587,7 +587,7 @@
         - no actually, it should be the deathblow giver (aka playchar) that should be looking for other enemies to deathblow.
             - for flat deathblow, should be within a certain height difference and facing direction vs direction to target similarity.
         - [x] gets anims playing
-        - [ ] align the anims
+        - [x] align the anims
             - the alignment and facing dir seem to be getting set in debugger but why isn't it getting to the actual chars?
             - [x] figure out why this attempt doesn't work
                 - [FIXED] so the correction direction is flipped
@@ -598,13 +598,32 @@
                     - if there is delta movement that could be it?
                     - it is the first frame's anim root motion delta pos of the deathblow giver (possibly receiver could have this bug too?)
                         - so 0.322 offset. offsetting it fixed the offset bug
+                    - ok so the root motion isn't getting applied for some reason???
+                        - yes it's gone:
+                            ```log
+                            [info ](1075) ::   THEA ZM aZAMn: 0.000, 0.000, 0.000
+                            [info ](1075) ::   DING DONG POOKIE: -0.000, 0.000, 0.322
+                            [info ](1075) ::     SLIMP DOONG JIJI: 0.000, 0.000, 0.000  (magn: 0.000) (magn_dt: 0.000)
+                            [info ](1079) ::   DING DONG POOKI2: -0.000, 0.000, 0.419
+                            [info ](1079) ::     SLIMP DOONG JIJI: -10.810, 0.000, -22.696  (magn: 25.139) (magn_dt: 0.419)
+                            [info ](1083) ::   DING DONG POOKI2: -0.000, 0.000, 0.419
+                            [info ](1083) ::     SLIMP DOONG JIJI: -10.810, 0.000, -22.696  (magn: 25.139) (magn_dt: 0.419)
+                            [info ](1087) ::   DING DONG POOKI2: -0.000, 0.000, 0.150
+                            [info ](1087) ::     SLIMP DOONG JIJI: -3.867, 0.000, -8.119  (magn: 8.993) (magn_dt: 0.150)
+                            ```
             - [x] fixed facing angle not updating
             - [ ] ~~delete CTRL_DATA_LABEL_align_self_to_deathblow_other_entity~~
-            - [ ] IDEA: just use the animator root bones as positioning, `using set_position()` and just allow velocity
+            - [x] IDEA: just use the animator root bones as positioning, `using set_position()` and just allow velocity
+                - it didn't fix it
+            - [x] FIXED IT!!
+                - it turns out that the animator for renderer time profile was rendering one frame ahead, and the renderer for simulation time profile was updating then ticking one frame ahead before anim root motion gets calculated, so root motion was also one frame ahead. fixing these issues fixes the bug.
 
     - using "will to live" consumables (tier 1 is gotten from "assassin training", but tier 2 is from tutorial end boss (the doctor) and tier 3 is from extra quest from the doctor)
     - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.
     - no actually! tier 2 and tier 1 are both from the doctor.
+
+- [ ] NEED: console view inside of engine
+    - just have a giant paged char buffer and encode stuff yknow
 
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
