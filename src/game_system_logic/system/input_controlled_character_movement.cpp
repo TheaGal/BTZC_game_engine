@@ -449,7 +449,7 @@ Char_mvt_logic_results character_controller_movement_logic(
             char_mvt_anim_state->write_to_animator_data.mvt_facing_angle = 0;
     }
 
-    // Desired facing angle.
+    // Force facing angle for deathblow.
     float_t display_facing_angle;
     if (char_mvt_anim_state &&
         (char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_giver ||
@@ -481,21 +481,13 @@ Char_mvt_logic_results character_controller_movement_logic(
 
         display_facing_angle = std::atan2f(delta_pos[0], delta_pos[2]);
 
-        // So facing angle isn't overwritten.
+        // So facing angle isn't overwritten later.
         char_mvt_state.grounded_state.facing_angle = display_facing_angle;
         char_mvt_state.airborne_state.input_facing_angle = display_facing_angle;
-
-        // @THEA: this recovers ONE `.322` tick that was lost. the `desired_velocity` from anim_root_motion still needs to get run at some point, but where???
-        // @COPYPASTA: see below
-        assert(false);  // @TODO: do a refactor for this part!!
-        auto& grounded_state{ char_mvt_state.grounded_state };
-
-        grounded_state.allow_grounded_sliding = (desired_velocity.LengthSq() > 1e-6f * 1e-6f);
-
-        new_velocity += (JPH::Quat::sEulerAngles(JPH::Vec3Arg(0, grounded_state.facing_angle, 0)) *
-                         desired_velocity);
     }
-    else if (mvt_type == MVT_TYPE_ANIM_BASED)
+
+    // Desired facing angle and incorporate desired velocity into velocity.
+    if (mvt_type == MVT_TYPE_ANIM_BASED)
     {   // Anim-based turn & speed movement.
         auto& grounded_state{ char_mvt_state.grounded_state };
 
