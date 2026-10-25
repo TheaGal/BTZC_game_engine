@@ -618,6 +618,10 @@
             - [x] FIXED IT!!
                 - it turns out that the animator for renderer time profile was rendering one frame ahead, and the renderer for simulation time profile was updating then ticking one frame ahead before anim root motion gets calculated, so root motion was also one frame ahead. fixing these issues fixes the bug.
 
+        - [x] clean up all the debug code from trying to fix the bug of anims not matching up.
+    - [ ] deactivate the inner shape while doing deathblow (of both chars doing the deathblow).
+        - turn back on `s_create_inner_body`
+
     - using "will to live" consumables (tier 1 is gotten from "assassin training", but tier 2 is from tutorial end boss (the doctor) and tier 3 is from extra quest from the doctor)
     - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.
     - no actually! tier 2 and tier 1 are both from the doctor.

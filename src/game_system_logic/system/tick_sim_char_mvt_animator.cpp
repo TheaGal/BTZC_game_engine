@@ -175,7 +175,7 @@ void BT::system::tick_sim_char_mvt_animator()
             animator.cache_simulation_transform(entity_transform);
 
 
-            // Update animator.
+            // Update animator state.
             animator.update_state(TXP::SIMULATION_TIMER_PROFILE);
 
 
@@ -243,12 +243,6 @@ void BT::system::tick_sim_char_mvt_animator()
                         .get_float_data_handle(AFA_ctrl::CTRL_DATA_LABEL_mvt_input_decel)
                         .get_val();
 
-                date_deadline(2026, 11, 1);  // @DELETE THIS!!!
-                // @THEA: NOTE TO SELF FOR NEXT THING TO WORK ON!!!
-                //   get this variable used for a system to align the facing direction and closeness
-                //   of the two characters (make sure 2m apart). youll need to create a new system
-                //   for that btw probably.
-                // @THEA: possibly unneeded????
                 char_mvt_anim_state.input_mvt_state.align_self_as_deathblow_giver =
                     anim_afa_data_handle
                         .get_bool_data_handle(

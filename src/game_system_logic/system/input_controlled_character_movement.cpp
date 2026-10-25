@@ -6,9 +6,6 @@
 #include "Jolt/Math/Vec3.h"
 #include "btglm.h"
 #include "btlogger.h"
-#include "cglm/util.h"
-#include "cglm/vec3.h"
-#include "entt/entity/entity.hpp"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/follow_camera.h"
 #include "game_system_logic/component/physics_object_settings.h"
@@ -329,48 +326,10 @@ Char_mvt_logic_results character_controller_movement_logic(
                             !char_con_impl->is_cc_slope_too_steep(ground_normal) &&
                             !(anim_root_motion && anim_root_motion->jump_up) };  // force not-grounded if performing jump_up event.
 
-    // Calc and apply desired velocity.
-    static uint32_t s_jojojojoojo{ 0 };
-    JPH::Vec3 new_velocity;
-    static int s_jojojojasdofijasdf{ 0 };
-    static void* s_jojojojasdofijasdf_ref;
-    if (char_mvt_anim_state && char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_giver)  // @TODO: move this into own section above "Calc and apply desired velocity"
-    // if (char_mvt_anim_state && char_mvt_anim_state->input_mvt_state.on_give_deathblow)  // @TODO: move this into own section above "Calc and apply desired velocity"
-    {   // Keep still so deathblow giver and receiver can sync up positions.
-        BT_INFOF("  DING DONG POOKIE: %.3f, %.3f, %.3f",
-                 anim_root_motion->delta_pos[0],
-                 anim_root_motion->delta_pos[1],
-                 anim_root_motion->delta_pos[2]);
-        BT_INFOF("  SLIM DUMMYPYYYYY: %.3f, %.3f, %.3f",
-                 desired_velocity[0],
-                 desired_velocity[1],
-                 desired_velocity[2]);
-        s_jojojojasdofijasdf = 4;
-        s_jojojojasdofijasdf_ref = anim_root_motion;
-        // new_velocity = JPH::Vec3::sZero();  // @THEA: this is necessary so receiver's alignment step is okay.
-    }
-    else if (s_jojojojasdofijasdf > 0 && s_jojojojasdofijasdf_ref == anim_root_motion)
-        BT_INFOF("  DING DONG POOKI2: %.3f, %.3f, %.3f",
-                 anim_root_motion->delta_pos[0],
-                 anim_root_motion->delta_pos[1],
-                 anim_root_motion->delta_pos[2]);
-
-    if (char_mvt_anim_state && char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_receiver // && ++s_jojojojoojo % 11 == 0
-    // if (char_mvt_anim_state && char_mvt_anim_state->input_mvt_state.on_receive_deathblow // && ++s_jojojojoojo % 11 == 0
-    )
+    // Distance self as deathblow receiver.
+    if (char_mvt_anim_state && char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_receiver)
     {   // Move self to where other is offset by a distance.
-        // constexpr float_t k_db_distance{ 2 - .322 };
-        // constexpr float_t k_db_distance{ 2 - .419 };
-        // constexpr float_t k_db_distance{ 2 - .419 - .322 };
-        // constexpr float_t k_db_distance{ 2 - .322 - .322 };
-        // constexpr float_t k_db_distance{ 2 - .322 };
-        // constexpr float_t k_db_distance{ 1 };
-        constexpr float_t k_db_distance{ 2 };  // FUCK YES
-
-        BT_INFOF("  THEA ZM aZAMn: %.3f, %.3f, %.3f",
-                 anim_root_motion->delta_pos[0],
-                 anim_root_motion->delta_pos[1],
-                 anim_root_motion->delta_pos[2]);
+        constexpr float_t k_db_distance{ 2 };  // @HARDCODE
 
         UUID const other_phys_obj_uuid{
             service_finder::find_service<Entity_container>()
@@ -396,28 +355,21 @@ Char_mvt_logic_results character_controller_movement_logic(
             btglm_rvec3_to_vec3(delta_pos_r, delta_pos);
         }
 
-        // float_t const actual_distance{ glm_vec3_norm(delta_pos) };
-        // BT_INFOF("ACTUADDDIIS: %.3f\tCORRECTION: %.3f", actual_distance, k_db_distance - actual_distance);
         vec3 corrected_delta_pos;
         glm_vec3_scale_as(delta_pos, k_db_distance, corrected_delta_pos);
 
-        // vec3 correction_velocity;
-        // glm_vec3_scale(correction_delta_pos,
-        //                1.0f / Physics_engine::k_simulation_delta_time,
-        //                correction_velocity);
+        assert(!std::isnan(corrected_delta_pos[0]));
+        assert(!std::isnan(corrected_delta_pos[1]));
+        assert(!std::isnan(corrected_delta_pos[2]));
 
-        // assert(!std::isnan(correction_velocity[0]));
-        // assert(!std::isnan(correction_velocity[1]));
-        // assert(!std::isnan(correction_velocity[2]));
-
-        // new_velocity = { correction_velocity[0], correction_velocity[1], correction_velocity[2] };
         char_con_impl->move_kinematic({ JPH::RVec3(other_phys_pos[0] + corrected_delta_pos[0],
                                                    other_phys_pos[1] + corrected_delta_pos[1],
                                                    other_phys_pos[2] + corrected_delta_pos[2]),
                                         char_con_impl->read_transform().rotation });
-        // new_velocity = JPH::Vec3::sZero();
     }
 
+    // Calc and apply desired velocity.
+    JPH::Vec3 new_velocity;
     if (is_grounded)
     {   // Grounded.
         new_velocity = ground_velocity;
@@ -501,9 +453,7 @@ Char_mvt_logic_results character_controller_movement_logic(
     float_t display_facing_angle;
     if (char_mvt_anim_state &&
         (char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_giver ||
-        // (char_mvt_anim_state->input_mvt_state.on_give_deathblow ||
          char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_receiver))
-        //  char_mvt_anim_state->input_mvt_state.on_receive_deathblow))
     {   // Face self to the other.
         UUID const other_phys_obj_uuid{
             service_finder::find_service<Entity_container>()
@@ -537,6 +487,7 @@ Char_mvt_logic_results character_controller_movement_logic(
 
         // @THEA: this recovers ONE `.322` tick that was lost. the `desired_velocity` from anim_root_motion still needs to get run at some point, but where???
         // @COPYPASTA: see below
+        assert(false);  // @TODO: do a refactor for this part!!
         auto& grounded_state{ char_mvt_state.grounded_state };
 
         grounded_state.allow_grounded_sliding = (desired_velocity.LengthSq() > 1e-6f * 1e-6f);
@@ -640,17 +591,6 @@ Char_mvt_logic_results character_controller_movement_logic(
                             new_velocity.GetY(),
                             char_mvt_state.prev_velocity[2]);   
         }
-    }
-
-    if (s_jojojojasdofijasdf > 0 && s_jojojojasdofijasdf_ref == anim_root_motion)
-    {
-        s_jojojojasdofijasdf--;
-        BT_INFOF("    SLIMP DOONG JIJI: %.3f, %.3f, %.3f  (magn: %.3f) (magn_dt: %.3f)",
-                 new_velocity[0],
-                 new_velocity[1],
-                 new_velocity[2],
-                 new_velocity.Length(),
-                 new_velocity.Length() * TXP::k_simulation_delta_time);
     }
 
     // Log previous velocity.

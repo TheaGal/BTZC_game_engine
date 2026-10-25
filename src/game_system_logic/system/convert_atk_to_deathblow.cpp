@@ -9,8 +9,6 @@
 
 #include <cassert>
 
-#define REAL_DEATHBLOW_CHECKS 0
-
 
 void BT::system::convert_atk_input_to_deathblow()
 {
@@ -47,10 +45,8 @@ void BT::system::convert_atk_input_to_deathblow()
                         TXP::anim_frame_action::CTRL_DATA_LABEL_can_receive_deathblow)
                     .get_val()
             };
-        #if REAL_DEATHBLOW_CHECKS
             if (!can_receive_deathblow)
                 continue;
-        #endif // REAL_DEATHBLOW_CHECKS
 
             // Is the positioning of the character and other character optimal for the deathblow?
             constexpr float_t k_db_activate_cylinder_radius{ 2.5 };
@@ -64,21 +60,17 @@ void BT::system::convert_atk_input_to_deathblow()
                 btglm_rvec3_to_vec3(delta_pos_r, delta_pos);
             }
 
-        #if REAL_DEATHBLOW_CHECKS
             if (std::abs(delta_pos[1]) > k_db_activate_cylinder_height)
                 continue;
-        #endif // REAL_DEATHBLOW_CHECKS
 
             vec2 flat_delta_pos{
                 delta_pos[0],
                 delta_pos[2],
             };
 
-        #if REAL_DEATHBLOW_CHECKS
             if (glm_vec2_norm2(flat_delta_pos) >
                 k_db_activate_cylinder_radius * k_db_activate_cylinder_radius)
                 continue;
-        #endif // REAL_DEATHBLOW_CHECKS
 
             vec2 flat_facing_dir_n;
             {
@@ -99,10 +91,8 @@ void BT::system::convert_atk_input_to_deathblow()
             glm_vec2_copy(flat_delta_pos, flat_delta_pos_n);
             glm_vec2_normalize(flat_delta_pos_n);
 
-        #if REAL_DEATHBLOW_CHECKS
             if (glm_vec2_dot(flat_facing_dir_n, flat_delta_pos_n) > k_db_activate_facing_dir_cos)
                 continue;
-        #endif // REAL_DEATHBLOW_CHECKS
 
             // This is a winner!!!! Convert the attack to a deathblow.
             auto& my_input_mvt_state{ char_mvt_anim_state.input_mvt_state };

@@ -163,11 +163,6 @@ struct Character_mvt_animated_state
         {
             // capture persistent vals here.
             auto cap0 = deathblow_other_entity;
-        #define JOJOWJJJAJAJAJ 0
-        #if JOJOWJJJAJAJAJ
-            auto cap1 = on_receive_deathblow;  // detfcjtfgcjfc
-            auto cap2 = on_give_deathblow;  // detfcjtfgcjfc
-        #endif // JOJOWJJJAJAJAJ
 
             *this = {
                 .mode = mode,
@@ -177,10 +172,6 @@ struct Character_mvt_animated_state
             {
                 // rewrite in persistent vals here.
                 deathblow_other_entity = cap0;
-        #if JOJOWJJJAJAJAJ
-                on_receive_deathblow = cap1;
-                on_give_deathblow = cap2;
-        #endif // JOJOWJJJAJAJAJ
             }
         }
     } input_mvt_state;
