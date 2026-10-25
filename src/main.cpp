@@ -13,6 +13,7 @@
 #include "game_system_logic/system/cpu_character_world_space_input.h"
 #include "game_system_logic/system/follow_camera_position_update.h"
 #include "game_system_logic/system/hitcapsule_attack_processing.h"
+#include "game_system_logic/system/imgui_render_console_window.h"
 #include "game_system_logic/system/imgui_render_transform_hierarchy_window.h"
 #include "game_system_logic/system/input_controlled_character_movement.h"
 #include "game_system_logic/system/player_character_lock_onto_target.h"
@@ -205,6 +206,7 @@ int main()
     BT::get_app_settings_read_handle().send_settings_to_renderer(main_renderer);
 
     main_renderer.set_imgui_build_contents_callback([]() {
+        BT::system::imgui_render_console_window();
         BT::system::imgui_render_transform_hierarchy_window(false);
     });
     TXP::Skeletal_animator::set_play_audio_at_pos_oneshot_fn_callback(
