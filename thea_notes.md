@@ -576,7 +576,7 @@
     - [x] make the actual ui screens
     - [ ] BUGFIX: the `last attack` seems to be one tick behind? if i guard against something then parry it next time it will posture break me
         - probably related to also not being able to get the dying event to trigger either?
-    - [ ] BUGFIX: anim root motion is bad after player is posture broken
+    - [ ] BUGFIX: anim root motion multiplier/speed is bad after player is posture broken
     - [x] create the deathblow anim
         - figured out how to get two anims running at the same time!!
     - [x] make afa entries for deathblow anims
@@ -622,8 +622,12 @@
     - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.
     - no actually! tier 2 and tier 1 are both from the doctor.
 
+- [x] BUGFIX: turns out that `inherit_prev_velocity` reeve wasn't needed now that the root motion and one-frame-ahead combo bug was fixed!!
+
 - [ ] NEED: console view inside of engine
     - just have a giant paged char buffer and encode stuff yknow
+
+- [ ] finish prev task: death screen and "ninsatsu" screen
 
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
