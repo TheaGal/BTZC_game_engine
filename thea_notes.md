@@ -580,7 +580,7 @@
     - [x] create the deathblow anim
         - figured out how to get two anims running at the same time!!
     - [x] make afa entries for deathblow anims
-    - [ ] connect the deathblow anim to the activation
+    - [x] connect the deathblow anim to the activation
         - how to space out the two characters?
         - have cheat menu perhaps?
         - ~~enemy character should have activation distance where if ~~
