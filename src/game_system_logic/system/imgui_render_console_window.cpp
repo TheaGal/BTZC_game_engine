@@ -45,25 +45,39 @@ std::pair<ImVec4, char const*> get_log_type_repr(BT::logger::Log_type const type
 
 void BT::system::imgui_render_console_window()
 {
+    static bool s_enable_scroll_to_bottom{ true };
+
     ImGui::SetNextWindowSize(ImVec2(300, 300), ImGuiCond_FirstUseEver);
     ImGui::Begin("Console viewer");
     {
-        uint32_t start_row_idx;
-        auto const log_entries = logger::read_all_log_entries(start_row_idx);
+        ImGui::Checkbox("scroll to bottom", &s_enable_scroll_to_bottom);
 
-        for (uint32_t i = start_row_idx; i < log_entries.size(); i++)
+        // Draw log items.
+        ImGui::BeginChild("Console viewer child window log items");
         {
-            auto const [log_type, mainloop_iteration, entry] = log_entries[i];
-            std::string entry_as_str(entry);
+            uint32_t start_row_idx;
+            auto const log_entries = logger::read_all_log_entries(start_row_idx);
 
-            auto const [log_type_color, log_type_str] = get_log_type_repr(log_type);
+            for (uint32_t i = start_row_idx; i < log_entries.size(); i++)
+            {
+                auto const [log_type, mainloop_iteration, entry] = log_entries[i];
+                std::string entry_as_str(entry);
 
-            ImGui::TextColored(log_type_color, "%s (%llu)", log_type_str, mainloop_iteration);
-            ImGui::SameLine();
-            ImGui::TextColored(ImVec4(1, 1, 1, 0.5), "%s", "::");
-            ImGui::SameLine();
-            ImGui::TextWrapped("%s", entry_as_str.c_str());
+                auto const [log_type_color, log_type_str] = get_log_type_repr(log_type);
+
+                ImGui::TextColored(log_type_color, "%s (%llu)", log_type_str, mainloop_iteration);
+                ImGui::SameLine();
+                ImGui::TextColored(ImVec4(1, 1, 1, 0.5), "%s", "::");
+                ImGui::SameLine();
+                ImGui::TextWrapped("%s", entry_as_str.c_str());
+            }
+
+            if (s_enable_scroll_to_bottom)
+            {
+                ImGui::SetScrollHereY(1);
+            }
         }
+        ImGui::EndChild();
     }
     ImGui::End();
 }

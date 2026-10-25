@@ -630,6 +630,16 @@
 
 - [ ] NEED: console view inside of engine
     - just have a giant paged char buffer and encode stuff yknow
+    - [x] basic
+    - [x] scroll to bottom
+    - [ ] filter by text
+    - [ ] filter by type
+    - [ ] clear console
+    - [ ] BUG: during simulation mode, eventually the console will poop its pants? freezes
+
+- [ ] MAYBE BUT WANT: pull up console with a keyboard shortcut
+    - maybe have this be its own dockspace rather than the console itself?
+    - or have the console be assigned this dockspace permanently but other things can be dragged into that dockspace?
 
 - [ ] finish prev task: death screen and "ninsatsu" screen
 
