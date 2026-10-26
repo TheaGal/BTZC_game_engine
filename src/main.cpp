@@ -414,7 +414,7 @@ int main()
             // Turn off TRACE logging to the console.
             BT_TRACE("Setting logger to not print TRACE to console.");
             BT::logger::set_logging_print_mask(  // @TODO: @FIXME: Make bitmask support better. This sucks ass.  -Thea 2025/11/23
-                (BT::logger::Log_type)((uint32_t)BT::logger::ALL ^ (uint32_t)BT::logger::TRACE));
+                BT::logger::Log_type((uint32_t)BT::logger::ALL ^ (uint32_t)BT::logger::TRACE));
 
             BT_INFO("==== ENTERING RUNNING ==========================================");
             iter_type = Iteration_type::RUNNING_ITERATION;

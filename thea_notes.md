@@ -636,8 +636,10 @@
     - [x] filter by type
     - [x] clear console
     - [x] BUG: during simulation mode, eventually the console will poop its pants? freezes
-    - [ ] BUG: if log loops around, the head-tail is messed up
+    - [x] BUG: if log loops around, the head-tail is messed up
         - i would like to have old logs not disappear
+            - this is kinda impossible
+        - uses uint64 and use boundary char to separate log entries and modulo stuff
 
 - [ ] MAYBE BUT WANT: pull up console with a keyboard shortcut
     - maybe have this be its own dockspace rather than the console itself?
