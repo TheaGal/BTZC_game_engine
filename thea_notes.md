@@ -628,7 +628,7 @@
 
 - [x] BUGFIX: turns out that `inherit_prev_velocity` reeve wasn't needed now that the root motion and one-frame-ahead combo bug was fixed!!
 
-- [ ] NEED: console view inside of engine
+- [x] NEED: console view inside of engine
     - just have a giant paged char buffer and encode stuff yknow
     - [x] basic
     - [x] scroll to bottom
@@ -646,6 +646,8 @@
     - or have the console be assigned this dockspace permanently but other things can be dragged into that dockspace?
 
 - [ ] finish prev task: death screen and "ninsatsu" screen
+
+- [ ] in level editor view, have scene and 
 
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
