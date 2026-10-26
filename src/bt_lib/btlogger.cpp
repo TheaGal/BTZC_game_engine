@@ -5,11 +5,13 @@
 #include <atomic>
 #include <cassert>
 #include <cstdarg>
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <iostream>  // @NOTE: @TEMP: See `printe()`
 #include <mutex>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -27,18 +29,26 @@ namespace BT::logger
 
 static atomic_uint64_t s_mainloop_iteration{ 0 };
 
-constexpr uint32_t k_num_columns{ 120 };
+constexpr uint32_t k_num_columns{ 128 };
 constexpr uint32_t k_num_columns_w_encoding{ k_num_columns + sizeof("\e[9;99x") * 4 };
-constexpr uint32_t k_num_rows{ 16384 };  // @NOTE: Must be a power of 2.
-static atomic_uint32_t s_next_entry{ 0 };
-static atomic_uint32_t s_recording_head_entry{ 0 };  // For keeping track of log entries.
 
-struct Row_entry
-{
-    Log_type log_type;
-    char char_columns[k_num_columns_w_encoding];
-};
-static array<Row_entry, k_num_rows> s_all_entry_data;
+constexpr uint32_t k_log_buffer_size{ k_num_columns * k_num_rows };
+static_assert((k_log_buffer_size & (k_log_buffer_size - 1)) == 0, "ensure log buffer size is pow2");
+
+static array<char, k_log_buffer_size> s_log_buffer{};  // zerod out by default
+
+constexpr char k_reserved_etx_char{ 3 };
+constexpr char k_reserved_empty_buffer_char{ 127 };
+
+static atomic_uint64_t s_next_head{ 0 };
+static atomic_uint64_t s_log_base_head{ 0 };  // For keeping track of logs.
+
+// struct Row_entry
+// {
+//     Log_type log_type;
+//     char char_columns[k_num_columns_w_encoding];
+// };
+// static array<Row_entry, k_num_rows> s_all_entry_data;
 
 static atomic_uint32_t s_print_mask{ ALL };
 
@@ -69,9 +79,11 @@ static atomic_uint32_t s_print_mask{ ALL };
 #define PREFIX_STRING_PART2(__ansi_color_reset) ") :: " __ansi_color_reset
 
 // Helper functions.
-string get_type_prefix_str(Log_type type, bool ansi_colored, uint32_t& out_prefix_length)
+string get_type_prefix_str(Log_type type,
+                           string const& iter_str,
+                           bool ansi_colored,
+                           uint32_t& out_prefix_length)
 {
-    string iter_str{ to_string(s_mainloop_iteration.load()) };
     switch (type)
     {
         case TRACE:
@@ -170,9 +182,46 @@ bool check_show_type(Log_type type)
     return (s_print_mask & type);
 }
 
-uint32_t reserve_rows(uint32_t num_rows)
+char& log_buffer_at(uint64_t const pos)
 {
-    return ((s_next_entry += num_rows) - num_rows);
+    uint32_t idx = (pos & (k_log_buffer_size - 1));
+    return s_log_buffer[idx];
+}
+
+uint64_t reserve_bytes(uint32_t const num_bytes)
+{
+    assert(num_bytes > 0);
+    assert(num_bytes < k_log_buffer_size);
+
+    // Find new head.
+    uint64_t original_head = s_next_head.load();
+    uint64_t real_head;
+    uint64_t next_head;
+    do
+    {
+        real_head = original_head;
+        next_head = (real_head + num_bytes);
+
+        if ((real_head & (k_log_buffer_size - 1)) >= (next_head & (k_log_buffer_size - 1)))
+        {
+            // Wrap around.
+            real_head += (k_log_buffer_size - (real_head & (k_log_buffer_size - 1)));
+            next_head = (real_head + num_bytes);
+            assert((real_head & (k_log_buffer_size - 1)) == 0);  // ensure modulos to 0
+        }
+
+        if (real_head < original_head)
+            throw std::runtime_error(
+                "wraparound. did you run this program for over 20k years?? holy shit");
+    } while (!s_next_head.compare_exchange_weak(original_head, next_head));
+
+    // Fill in difference of original and real head.
+    for (uint64_t i = original_head; i != real_head; i++)
+    {
+        log_buffer_at(i) = k_reserved_empty_buffer_char;
+    }
+
+    return real_head;
 }
 
 }  // namespace BT::logger
@@ -203,56 +252,86 @@ void BT::logger::printef(Log_type type, string format_str, ...)
 
 void BT::logger::printe(Log_type type, string entry)
 {
-    uint32_t prefix_length;
-    string prefix{ get_type_prefix_str(type, true, prefix_length) };
+#define DO_RESERVED_CHAR_SANITY_CHECK 1
+#if DO_RESERVED_CHAR_SANITY_CHECK
+    // Sanity check to make sure entry doesn't contain reserved char.
+    for (char c : entry)
+        if (c == k_reserved_empty_buffer_char)
+            throw std::runtime_error("entry cannot have reserved char ASCII 127 (DELETE char)");
+#endif // DO_RESERVED_CHAR_SANITY_CHECK
 
-    // Cut up entry into column width.
-    vector<string> rows;
-    size_t i{ 0 };
-    do
+    uint64_t const mainloop_iteration{ s_mainloop_iteration.load() };
+
+    // Copy data into buffer.
     {
-        uint32_t remaining_columns{ k_num_columns };
-        stringstream row;
+        uint64_t write_pos{ reserve_bytes(sizeof(uint32_t) + sizeof(uint64_t) + entry.length() +
+                                          sizeof(uint32_t) + 1) };
 
-        // Add prefix.
-        row << (i == 0 ? prefix : std::string(prefix_length, ' '));
-        remaining_columns -= prefix_length;
+        // Log type.
+        reinterpret_cast<uint32_t&>(log_buffer_at(write_pos)) = type;
+        write_pos += sizeof(uint32_t);
 
-        // Insert as much as possible.
-        uint32_t insert_amount{ min(static_cast<uint32_t>(entry.size() - i),
-                                    remaining_columns) };
+        // Mainloop iteration.
+        reinterpret_cast<uint64_t&>(log_buffer_at(write_pos)) = mainloop_iteration;
+        write_pos += sizeof(uint64_t);
 
-        // Check for newline chars.
-        bool has_newline_char{ false };
-        if (size_t newline_pos = entry.find('\n', i); newline_pos != std::string::npos)
-        {   // End early at the newline char.
-            insert_amount = min(insert_amount, static_cast<uint32_t>(newline_pos - i));
-            has_newline_char = true;
-        }
+        // Actual string.
+        strncpy(&log_buffer_at(write_pos), entry.c_str(), entry.length());
+        write_pos += entry.length();
 
-        // Add requested substring amount.
-        row << entry.substr(i, insert_amount);
-        i += insert_amount + (has_newline_char ? 1 : 0);
+        // String length again (for reading backwards).
+        reinterpret_cast<uint32_t&>(log_buffer_at(write_pos)) = entry.length();
+        write_pos += sizeof(uint32_t);
 
-        // Assert that somehow we didn't accidentally make too long of a string.
-        // @NOTE: Use the length w/ encoding since we're comparing the string length w/ encoding.
-        assert(row.str().size() <= k_num_columns_w_encoding);
-
-        rows.emplace_back(row.str());
-    } while (i < entry.size());
-
-    // Copy strings into rows.
-    uint32_t head_row{ reserve_rows(rows.size()) };
-    for (auto& row : rows)
-    {
-        uint32_t current_row{ head_row % k_num_rows };
-        s_all_entry_data[current_row].log_type = type;
-        strncpy(s_all_entry_data[current_row].char_columns, row.c_str(), row.size());
-        head_row++;
+        // Add reserved ETX.
+        log_buffer_at(write_pos) = k_reserved_etx_char;
+        write_pos++;
     }
 
+    // Print to stdout console.
     if (check_show_type(type))
     {
+        uint32_t prefix_length;
+        string const prefix{
+            get_type_prefix_str(type, to_string(mainloop_iteration), true, prefix_length)
+        };
+
+        // Cut up entry into column width.
+        vector<string> rows;
+        size_t i{ 0 };
+        do
+        {
+            uint32_t remaining_columns{ k_num_columns };
+            stringstream row;
+
+            // Add prefix.
+            row << (i == 0 ? prefix : std::string(prefix_length, ' '));
+            remaining_columns -= prefix_length;
+
+            // Insert as much as possible.
+            uint32_t insert_amount{ min(static_cast<uint32_t>(entry.size() - i),
+                                        remaining_columns) };
+
+            // Check for newline chars.
+            bool has_newline_char{ false };
+            if (size_t newline_pos = entry.find('\n', i); newline_pos != std::string::npos)
+            {   // End early at the newline char.
+                insert_amount = min(insert_amount, static_cast<uint32_t>(newline_pos - i));
+                has_newline_char = true;
+            }
+
+            // Add requested substring amount.
+            row << entry.substr(i, insert_amount);
+            i += insert_amount + (has_newline_char ? 1 : 0);
+
+            // Assert that somehow we didn't accidentally make too long of a string.
+            // @NOTE: Use the length w/ encoding since we're comparing the string length w/
+            // encoding.
+            assert(row.str().size() <= k_num_columns_w_encoding);
+
+            rows.emplace_back(row.str());
+        } while (i < entry.size());
+
         // Print out to stdout.
         static std::mutex s_print_mutex;
         std::lock_guard<std::mutex> lock{ s_print_mutex };
@@ -271,19 +350,65 @@ void BT::logger::printe(Log_type type, string entry)
     }
 }
 
-tuple<uint32_t, uint32_t> BT::logger::get_head_and_tail()
+auto BT::logger::read_all_log_entries(uint32_t& out_start_row_idx)
+    -> array<tuple<Log_type, uint64_t, string_view>, k_num_rows>
 {
-    return { s_recording_head_entry.load(), s_next_entry.load() };
-}
+    array<tuple<Log_type, uint64_t, string_view>, k_num_rows> all_logs;
 
-tuple<BT::logger::Log_type, char const*> BT::logger::read_log_entry(uint32_t row_idx)
-{
-    uint32_t actual_row_idx{ row_idx % k_num_rows };
-    return { s_all_entry_data[actual_row_idx].log_type,
-             s_all_entry_data[actual_row_idx].char_columns };
+    uint64_t read_pos{ s_next_head.load() };
+
+    uint64_t const read_head{ [read_pos]() {
+        uint64_t head{ s_log_base_head.load() };
+        if (read_pos >= k_log_buffer_size)
+        {
+            head = std::max(head, read_pos - (k_log_buffer_size - 2));
+            while (log_buffer_at(head - 1) != k_reserved_etx_char)
+                head++;
+        }
+        return head;
+    }() };
+
+    int32_t idx;
+    for (idx = static_cast<int32_t>(k_num_rows) - 1; idx >= 0; idx--)
+    {
+        // Check whether finished reading all available logs.
+        if (read_head == read_pos)
+            break;
+
+        // Check for wraparound.
+        while (log_buffer_at(read_pos - 1) == k_reserved_empty_buffer_char)
+            read_pos--;
+
+        // Ensure there is ETX.
+        read_pos--;
+        char const jojojojojo{ log_buffer_at(read_pos) };
+        assert(jojojojojo == k_reserved_etx_char);
+
+        // Read str length.
+        read_pos -= sizeof(uint32_t);
+        uint32_t const str_length = reinterpret_cast<uint32_t&>(log_buffer_at(read_pos));
+
+        // Read string.
+        read_pos -= str_length;
+        string_view const str_slice(&log_buffer_at(read_pos), static_cast<size_t>(str_length));
+
+        // Read mainloop iteration.
+        read_pos -= sizeof(uint64_t);
+        uint64_t const mainloop_iteration = reinterpret_cast<uint64_t&>(log_buffer_at(read_pos));
+
+        // Read log type.
+        read_pos -= sizeof(uint32_t);
+        Log_type type{ reinterpret_cast<uint32_t&>(log_buffer_at(read_pos)) };
+
+        // Record entry.
+        all_logs[idx] = { type, mainloop_iteration, str_slice };
+    }
+
+    out_start_row_idx = idx + 1;
+    return all_logs;
 }
 
 void BT::logger::clear_log_entries()
 {
-    s_recording_head_entry = s_next_entry.load();
+    s_log_base_head.store(s_next_head.load());
 }

@@ -628,10 +628,30 @@
 
 - [x] BUGFIX: turns out that `inherit_prev_velocity` reeve wasn't needed now that the root motion and one-frame-ahead combo bug was fixed!!
 
-- [ ] NEED: console view inside of engine
+- [x] NEED: console view inside of engine
     - just have a giant paged char buffer and encode stuff yknow
+    - [x] basic
+    - [x] scroll to bottom
+    - [x] filter by text
+    - [x] filter by type
+    - [x] clear console
+    - [x] BUG: during simulation mode, eventually the console will poop its pants? freezes
+    - [x] BUG: if log loops around, the head-tail is messed up
+        - i would like to have old logs not disappear
+            - this is kinda impossible
+        - uses uint64 and use boundary char to separate log entries and modulo stuff
+
+- [x] MAYBE BUT WANT: pull up console with a keyboard shortcut
+    - maybe have this be its own dockspace rather than the console itself?
+    - or have the console be assigned this dockspace permanently but other things can be dragged into that dockspace?
+    - [x] got basic working
+    - i do think that having another dockspace would be really good. how tho?
+        - i ended up just doing an overlay dockspace that shwoops in from the bottom
+    - shortcut is: ctrl + `
 
 - [ ] finish prev task: death screen and "ninsatsu" screen
+
+- [ ] in level editor view, have scene and main viewport camera sync if a checkbox is checked.
 
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
