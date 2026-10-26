@@ -647,7 +647,7 @@
 
 - [ ] finish prev task: death screen and "ninsatsu" screen
 
-- [ ] in level editor view, have scene and 
+- [ ] in level editor view, have scene and main viewport camera sync if a checkbox is checked.
 
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
