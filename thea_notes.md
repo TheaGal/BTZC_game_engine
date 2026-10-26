@@ -641,9 +641,13 @@
             - this is kinda impossible
         - uses uint64 and use boundary char to separate log entries and modulo stuff
 
-- [ ] MAYBE BUT WANT: pull up console with a keyboard shortcut
+- [x] MAYBE BUT WANT: pull up console with a keyboard shortcut
     - maybe have this be its own dockspace rather than the console itself?
     - or have the console be assigned this dockspace permanently but other things can be dragged into that dockspace?
+    - [x] got basic working
+    - i do think that having another dockspace would be really good. how tho?
+        - i ended up just doing an overlay dockspace that shwoops in from the bottom
+    - shortcut is: ctrl + `
 
 - [ ] finish prev task: death screen and "ninsatsu" screen
 
