@@ -632,10 +632,12 @@
     - just have a giant paged char buffer and encode stuff yknow
     - [x] basic
     - [x] scroll to bottom
-    - [ ] filter by text
-    - [ ] filter by type
-    - [ ] clear console
-    - [ ] BUG: during simulation mode, eventually the console will poop its pants? freezes
+    - [x] filter by text
+    - [x] filter by type
+    - [x] clear console
+    - [x] BUG: during simulation mode, eventually the console will poop its pants? freezes
+    - [ ] BUG: if log loops around, the head-tail is messed up
+        - i would like to have old logs not disappear
 
 - [ ] MAYBE BUT WANT: pull up console with a keyboard shortcut
     - maybe have this be its own dockspace rather than the console itself?
