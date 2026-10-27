@@ -637,6 +637,12 @@
     - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.
     - no actually! tier 2 and tier 1 are both from the doctor.
 
+    - [ ] add in you died ui screen
+        - use "will to live" consumables here.
+
+    - [ ] add in ninsatu ui screen
+        - [ ] add "enemy_drops" section in enemy prefab. add "ninsatu screen" as a drop for the ui screen anim to show up, and then after that other things show up ig
+
 - [x] BUGFIX: turns out that `inherit_prev_velocity` reeve wasn't needed now that the root motion and one-frame-ahead combo bug was fixed!!
 
 - [x] NEED: console view inside of engine
@@ -664,7 +670,9 @@
 
 
 - [ ] in level editor view, have scene and main viewport camera sync if a checkbox is checked.
+    - and have this checkbox checked by default
     - [ ] get the capsule collider actually looking correct (two cap models and a hollow cylinder model)
+    - [ ] save the editor camera transform from last time the game was opened
 
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
@@ -682,6 +690,9 @@
 
 - [ ] create projectile spawning
 - [ ] some fun: energy ball enemy shoots and you have to parry it back to each other until one of you gets hit.
+
+- [ ] require "--kaihatu" flag to open the application w the editor.
+    - have application draw ldr image to swapchain instead of imgui if no "--kaihatu" flag
 
 - [ ] fix sound playing on bones where the sound position updates to follow the bone every frame.
     - just update the sound positions in simulation ticks. that's where the bones and the audio engine update anyway.
