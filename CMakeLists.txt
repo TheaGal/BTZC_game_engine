@@ -215,6 +215,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btrandom.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btuuid.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btuuid.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/btzc_game_engine.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/btzc_game_engine.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/anim_frame_action_controller.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/character_movement.cpp
@@ -404,6 +405,18 @@ endif()
 
 message("FMOD lib path: ${FMOD_LIBRARIES}")
 
+# Add git commit hash to a macro.
+execute_process(
+    COMMAND git describe --always --abbrev=40 --dirty
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    OUTPUT_VARIABLE GIT_COMMIT_HASH
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+target_compile_definitions(${PROJECT_NAME}
+    PRIVATE "GIT_COMMIT_HASH=\"${GIT_COMMIT_HASH}\""
+)
+
+# Link libraries.
 target_link_libraries(${PROJECT_NAME}
     txp_renderer
     ${FMOD_LIBRARIES}

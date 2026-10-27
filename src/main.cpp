@@ -43,9 +43,6 @@
 #include <thread>
 
 
-
-#define APP_NAME "Untitled Game"
-
 #define IMPLEMENT_THIS 0
 
 
@@ -89,8 +86,7 @@ int main()
 
     TXP::Renderer main_renderer{
         entity_container.get_ecs_registry(),
-        APP_NAME " - " BTZC_GAME_ENGINE_VERSION " - " BTZC_GAME_ENGINE_DEV_STAGE
-                 " - " BTZC_GAME_ENGINE_OS_NAME,
+        k_application_title_str,
         BTZC_GAME_ENGINE_ASSET_TEXTURE_PATH,
         BTZC_GAME_ENGINE_ASSET_SHADER_PATH,
         BTZC_GAME_ENGINE_ASSET_FONT_PATH,

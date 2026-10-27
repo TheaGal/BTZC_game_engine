@@ -628,6 +628,11 @@
         - [x] for loser, turn off physics completely (well, switch out to ragdoll but there is none)
         - hey, so there's no way to check this, so add a check for this in the future
 
+    - [x] BUG: for some reason the deathblow receiver's phys obj isn't getting deleted actually??
+        - the phys obj was getting created again. had to remove the phys obj settings and char con settings too
+
+    - [x] CHECK: make sure that the inner body of the deathblow giver comes back after giving a deathblow
+
     - using "will to live" consumables (tier 1 is gotten from "assassin training", but tier 2 is from tutorial end boss (the doctor) and tier 3 is from extra quest from the doctor)
     - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.
     - no actually! tier 2 and tier 1 are both from the doctor.
@@ -657,7 +662,6 @@
 
 - [ ] finish prev task: death screen and "ninsatsu" screen
 
-- [ ] CHECK: make sure that the inner body of the deathblow giver comes back after giving a deathblow
 
 - [ ] in level editor view, have scene and main viewport camera sync if a checkbox is checked.
     - [ ] get the capsule collider actually looking correct (two cap models and a hollow cylinder model)

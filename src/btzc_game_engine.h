@@ -37,3 +37,6 @@
 #else
 #define BTZC_GAME_ENGINE_SETTING_REAL_TYPE_USES_DBL_PRECISION 0
 #endif 
+
+// Other.
+extern char const k_application_title_str[];

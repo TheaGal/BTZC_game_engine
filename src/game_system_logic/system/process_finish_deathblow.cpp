@@ -6,6 +6,7 @@
 #include "game_system_logic/component/physics_object_settings.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
+#include "game_system_logic/world/world_properties.h"
 #include "physics_engine/physics_engine.h"
 #include "service_finder/service_finder.h"
 
@@ -13,7 +14,12 @@
 
 
 void BT::system::process_finish_deathblow()
-{
+{   // Exit early if simulation not running.
+    if (!service_finder::find_service<world::World_properties_container>()
+             .get_data_handle()
+             .is_simulation_running)
+        return;
+
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
     auto view{ reg.view<component::Transform const, component::Character_mvt_animated_state>() };
@@ -43,6 +49,8 @@ void BT::system::process_finish_deathblow()
         else if (char_mvt_anim_state.input_mvt_state.on_finish_deathblow_receive)
         {
             // Remove physics object.
+            reg.remove<component::Physics_object_settings>(entity);
+            reg.remove<component::Physics_obj_type_char_con_settings>(entity);
             reg.remove<component::Created_physics_object_reference>(entity);
 
             // @TODO: change the model into a ragdoll.
