@@ -62,6 +62,7 @@ public:
     virtual void set_cc_allow_sliding(bool allow) { assert(false); }
     virtual void set_cc_velocity(JPH::Vec3Arg velocity) { assert(false); }
     virtual bool set_cc_stance(bool is_crouching) { assert(false); return false; }
+    virtual void set_cc_use_inner_body(bool use_inner_body) { assert(false); }
     virtual bool get_cc_stance() { assert(false); return false; }
     virtual bool has_cc_wall_contact() { assert(false); return false; }
     virtual float_t get_cc_radius() { assert(false); return 0.0f; }

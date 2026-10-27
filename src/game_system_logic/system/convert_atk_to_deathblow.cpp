@@ -1,13 +1,17 @@
 #include "convert_atk_to_deathblow.h"
 
 #include "btglm.h"
+#include "btuuid.h"
 #include "game_system_logic/component/character_movement.h"
+#include "game_system_logic/component/physics_object_settings.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
+#include "physics_engine/physics_engine.h"
 #include "service_finder/service_finder.h"
 #include "txp_renderer_public.h"
 
 #include <cassert>
+#include <vector>
 
 
 void BT::system::convert_atk_input_to_deathblow()
@@ -103,6 +107,23 @@ void BT::system::convert_atk_input_to_deathblow()
             auto& other_input_mvt_state{ other_char_mvt_anim_state.input_mvt_state };
             other_input_mvt_state.on_receive_deathblow = true;
             other_input_mvt_state.deathblow_other_entity = entity;
+
+            // Also deactivate physics inner bodies so they can go thru each other.
+            auto& phys_engine{ service_finder::find_service<Physics_engine>() };
+            for (auto ecs_ent : { entity, other_entity })
+            {
+                if (auto* poss_ref =
+                        reg.try_get<component::Created_physics_object_reference>(ecs_ent);
+                    poss_ref != nullptr)
+                {
+                    auto& phys_obj{ *phys_engine.checkout_physics_object(
+                        poss_ref->physics_obj_uuid_ref) };
+
+                    phys_obj.get_impl()->set_cc_use_inner_body(false);
+
+                    phys_engine.return_physics_object(&phys_obj);
+                }
+            }
             break;
         }
     }

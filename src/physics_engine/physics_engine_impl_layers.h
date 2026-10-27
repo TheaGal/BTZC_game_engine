@@ -15,7 +15,8 @@ namespace Layers
     static constexpr JPH::ObjectLayer NON_MOVING   = 0;
     static constexpr JPH::ObjectLayer MOVING       = 1;
     static constexpr JPH::ObjectLayer HIT_HURT_BOX = 2;
-    static constexpr JPH::ObjectLayer NUM_LAYERS   = 3;
+    static constexpr JPH::ObjectLayer NO_COLLIDE   = 3;
+    static constexpr JPH::ObjectLayer NUM_LAYERS   = 4;
 };
 
 /// Class that determines if two object layers can collide
@@ -27,15 +28,14 @@ public:
         switch (in_object1)
         {
         case Layers::NON_MOVING:
-            return
-                in_object2 == Layers::MOVING &&  // Non moving only collides with moving.
-                in_object2 != Layers::HIT_HURT_BOX;
+            return in_object2 == Layers::MOVING;  // non moving only collides with moving
         case Layers::MOVING:
-            return
-                true && // Moving collides with everything (except hit hurt box).
-                in_object2 != Layers::HIT_HURT_BOX;
+            return in_object2 == Layers::NON_MOVING ||
+                   in_object2 == Layers::MOVING;  // moving collides with moving and non-moving
         case Layers::HIT_HURT_BOX:
             return false;  // Hit/hurt boxes only do scene queries, so no collision.
+        case Layers::NO_COLLIDE:
+            return false;  // no collision at all
         default:
             JPH_ASSERT(false);
             return false;
@@ -55,7 +55,8 @@ namespace Broad_phase_layers
     static constexpr JPH::BroadPhaseLayer NON_MOVING(0);
     static constexpr JPH::BroadPhaseLayer MOVING(1);
     static constexpr JPH::BroadPhaseLayer HIT_HURT_BOX(2);
-    static constexpr uint32_t NUM_LAYERS(3);
+    static constexpr JPH::BroadPhaseLayer NO_COLLIDE(3);
+    static constexpr uint32_t NUM_LAYERS(4);
 };
 
 // BroadPhaseLayerInterface implementation
@@ -69,6 +70,7 @@ public:
         m_object_to_broad_phase[Layers::NON_MOVING]   = Broad_phase_layers::NON_MOVING;
         m_object_to_broad_phase[Layers::MOVING]       = Broad_phase_layers::MOVING;
         m_object_to_broad_phase[Layers::HIT_HURT_BOX] = Broad_phase_layers::HIT_HURT_BOX;
+        m_object_to_broad_phase[Layers::NO_COLLIDE]   = Broad_phase_layers::NO_COLLIDE;
     }
 
     virtual uint32_t GetNumBroadPhaseLayers() const override
@@ -90,6 +92,7 @@ public:
         case (JPH::BroadPhaseLayer::Type)Broad_phase_layers::NON_MOVING:    return "NON_MOVING";
         case (JPH::BroadPhaseLayer::Type)Broad_phase_layers::MOVING:        return "MOVING";
         case (JPH::BroadPhaseLayer::Type)Broad_phase_layers::HIT_HURT_BOX:  return "HIT_HURT_BOX";
+        case (JPH::BroadPhaseLayer::Type)Broad_phase_layers::NO_COLLIDE:    return "NO_COLLIDE";
         default:                                                            JPH_ASSERT(false); return "INVALID";
         }
     }

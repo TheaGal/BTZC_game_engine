@@ -14,14 +14,13 @@ public:
         switch (in_layer1)
         {
         case Layers::NON_MOVING:
-            return
-                in_layer2 == Broad_phase_layers::MOVING &&
-                in_layer2 != Broad_phase_layers::HIT_HURT_BOX;
+            return in_layer2 == Broad_phase_layers::MOVING;
         case Layers::MOVING:
-            return
-                true &&
-                in_layer2 != Broad_phase_layers::HIT_HURT_BOX;
+            return in_layer2 == Broad_phase_layers::NON_MOVING ||
+                   in_layer2 == Broad_phase_layers::MOVING;
         case Layers::HIT_HURT_BOX:
+            return false;
+        case Layers::NO_COLLIDE:
             return false;
         default:
             JPH_ASSERT(false);

@@ -621,6 +621,11 @@
         - [x] clean up all the debug code from trying to fix the bug of anims not matching up.
     - [ ] deactivate the inner shape while doing deathblow (of both chars doing the deathblow).
         - turn back on `s_create_inner_body`
+        - turns it off, but it's not as simple as setting innershape to nullptr
+        - [x] try setting the collisionlayers so it doesn't collide w anything?
+            - this works!!! there's now a `NO_COLLIDE` layer.
+        - [ ] at the end, turn back on the inner body for winner
+        - [ ] for loser, turn off physics completely (well, switch out to ragdoll but there is none)
 
     - using "will to live" consumables (tier 1 is gotten from "assassin training", but tier 2 is from tutorial end boss (the doctor) and tier 3 is from extra quest from the doctor)
     - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.
@@ -652,10 +657,12 @@
 - [ ] finish prev task: death screen and "ninsatsu" screen
 
 - [ ] in level editor view, have scene and main viewport camera sync if a checkbox is checked.
+    - [ ] get the capsule collider actually looking correct (two cap models and a hollow cylinder model)
 
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
         - so max 3 cascades (both realtime cascades and one static cascade if dir light changes) get updated on one frame
+    - look into this tech: https://discord.com/channels/1563075165473083402/1564514891862114314
 
 - [ ] finish "improve enemy attacks w readability"
     - pressure response algorithm

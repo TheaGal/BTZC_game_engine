@@ -43,6 +43,7 @@ public:
     void set_cc_allow_sliding(bool allow) override;
     void set_cc_velocity(JPH::Vec3Arg velocity) override;
     bool set_cc_stance(bool is_crouching) override;
+    void set_cc_use_inner_body(bool use_inner_body) override;
     bool get_cc_stance() override;
     bool has_cc_wall_contact() override;
     float_t get_cc_radius() override;
@@ -95,7 +96,7 @@ private:
     static inline bool               s_enable_walk_stairs               = true;
     static inline bool               s_enable_stick_to_floor            = true;
     static inline bool               s_enhanced_internal_edge_removal   = false;
-    static inline bool               s_create_inner_body                = false;  // @THEA: change this!!!!!
+    static inline bool               s_create_inner_body                = true;
     static inline bool               s_player_can_push_other_characters = true;
     static inline bool               s_other_characters_can_push_player = true;
 

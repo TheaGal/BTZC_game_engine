@@ -197,6 +197,21 @@ bool BT::Phys_obj_impl_char_controller::set_cc_stance(bool is_crouching)
     return success;
 }
 
+void BT::Phys_obj_impl_char_controller::set_cc_use_inner_body(bool use_inner_body)
+{
+    if (!s_create_inner_body)
+    {
+        BT_ERRORF("Nothing is done for %s() since there was never an inner body created.",
+                  __func__);
+        assert(false);
+        return;
+    }
+
+    m_phys_system.GetBodyInterface().SetObjectLayer(m_character->GetInnerBodyID(),
+                                                    use_inner_body ? Layers::MOVING
+                                                                   : Layers::NO_COLLIDE);
+}
+
 bool BT::Phys_obj_impl_char_controller::get_cc_stance()
 {
     bool is_crouching{ m_character->GetShape() == m_crouching_shape };
