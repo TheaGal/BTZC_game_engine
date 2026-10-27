@@ -619,13 +619,14 @@
                 - it turns out that the animator for renderer time profile was rendering one frame ahead, and the renderer for simulation time profile was updating then ticking one frame ahead before anim root motion gets calculated, so root motion was also one frame ahead. fixing these issues fixes the bug.
 
         - [x] clean up all the debug code from trying to fix the bug of anims not matching up.
-    - [ ] deactivate the inner shape while doing deathblow (of both chars doing the deathblow).
+    - [x] deactivate the inner shape while doing deathblow (of both chars doing the deathblow).
         - turn back on `s_create_inner_body`
         - turns it off, but it's not as simple as setting innershape to nullptr
         - [x] try setting the collisionlayers so it doesn't collide w anything?
             - this works!!! there's now a `NO_COLLIDE` layer.
-        - [ ] at the end, turn back on the inner body for winner
-        - [ ] for loser, turn off physics completely (well, switch out to ragdoll but there is none)
+        - [x] at the end, turn back on the inner body for winner
+        - [x] for loser, turn off physics completely (well, switch out to ragdoll but there is none)
+        - hey, so there's no way to check this, so add a check for this in the future
 
     - using "will to live" consumables (tier 1 is gotten from "assassin training", but tier 2 is from tutorial end boss (the doctor) and tier 3 is from extra quest from the doctor)
     - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.
@@ -655,6 +656,8 @@
     - shortcut is: ctrl + `
 
 - [ ] finish prev task: death screen and "ninsatsu" screen
+
+- [ ] CHECK: make sure that the inner body of the deathblow giver comes back after giving a deathblow
 
 - [ ] in level editor view, have scene and main viewport camera sync if a checkbox is checked.
     - [ ] get the capsule collider actually looking correct (two cap models and a hollow cylinder model)
@@ -721,6 +724,8 @@
 - [ ] SOMEDAY: move actual movement to after afa regions are processed to remove one-tick lag from certain things (like jump_up reeve, or just reeves in general i think)
     - well, it looks like it's not just reeves, it's just random stuff. ig the is_grounded event put in the event queue, but that's not quite this issue being pointed out.
     - well, just do an investigation at the very least.
+
+- [ ] SOMEDAY: get the animator unit tested so that regressions like the one i had to spend 4 days on dont happen again
 
 - [ ] SOMEDAY: change the hitbox to one single hitcapsule group.
 - [ ] SOMEDAY: change the hurtboxes to an afa function region instead of a hitcapsule group that gets enabled/disabled.

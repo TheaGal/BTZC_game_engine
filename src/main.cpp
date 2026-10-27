@@ -17,6 +17,7 @@
 #include "game_system_logic/system/input_controlled_character_movement.h"
 #include "game_system_logic/system/player_character_lock_onto_target.h"
 #include "game_system_logic/system/player_character_world_space_input.h"
+#include "game_system_logic/system/process_finish_deathblow.h"
 #include "game_system_logic/system/process_physics_object_lifetime.h"
 #include "game_system_logic/system/process_receive_attack_events.h"
 #include "game_system_logic/system/propagate_changed_transforms.h"
@@ -332,7 +333,9 @@ int main()
 
             BT::system::cpu_character_world_space_input(k_sim_delta_time);
             BT::system::player_character_world_space_input();
+
             BT::system::convert_atk_input_to_deathblow();
+            BT::system::process_finish_deathblow();
 
             BT::system::input_controlled_character_movement();
 

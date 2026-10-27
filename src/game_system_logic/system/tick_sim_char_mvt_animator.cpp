@@ -253,6 +253,17 @@ void BT::system::tick_sim_char_mvt_animator()
                         .get_bool_data_handle(
                             AFA_ctrl::CTRL_DATA_LABEL_align_self_as_deathblow_receiver)
                         .get_val();
+
+                char_mvt_anim_state.input_mvt_state.on_finish_deathblow_give =
+                    anim_afa_data_handle
+                        .get_bool_data_handle(
+                            AFA_ctrl::CTRL_DATA_LABEL_finish_deathblow_give)
+                        .get_val();
+                char_mvt_anim_state.input_mvt_state.on_finish_deathblow_receive =
+                    anim_afa_data_handle
+                        .get_bool_data_handle(
+                            AFA_ctrl::CTRL_DATA_LABEL_finish_deathblow_receive)
+                        .get_val();
             }
 
 

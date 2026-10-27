@@ -134,8 +134,12 @@ struct Character_mvt_animated_state
         // Deathblow syncing.
         bool on_give_deathblow{ false };
         bool align_self_as_deathblow_giver{ false };
+        bool on_finish_deathblow_give{ false };
+
         bool on_receive_deathblow{ false };
         bool align_self_as_deathblow_receiver{ false };
+        bool on_finish_deathblow_receive{ false };
+
         entt::entity deathblow_other_entity{ entt::null };  // persistent
 
         // Combat inputs (player char).
