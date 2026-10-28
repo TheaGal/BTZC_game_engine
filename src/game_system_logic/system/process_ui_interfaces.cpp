@@ -63,12 +63,16 @@ void process_ui_hp_w_posture(Process_method const method,
 
     for (auto&& [entity, health_stats_data] : reg.view<component::Health_stats_data>().each())
     {
+        ui_ifc::Hp_w_posture::Canvas_name canvas_name;
+
         if (health_stats_data.ui_name == "playchar")
         {
+            canvas_name = ui.CANVAS_PLAYCHAR;
             found_playchar = true;
         }
         else if (!health_stats_data.ui_name.empty())
         {
+            canvas_name = ui.CANVAS_BOSS_OPPO;
             found_boss_oppo = true;
             ui.set_boss_oppo_name(health_stats_data.ui_name);
         }
@@ -76,6 +80,11 @@ void process_ui_hp_w_posture(Process_method const method,
         {
             throw std::runtime_error("whoopsie not implemente dyet!!");
         }
+
+        ui.set_hp_bar(canvas_name, health_stats_data.health_pts, health_stats_data.max_health_pts);
+        ui.set_posture_bar(canvas_name,
+                           health_stats_data.posture_pts,
+                           health_stats_data.max_posture_pts);
     }
 
     ui.set_visible(ui.CANVAS_PLAYCHAR, found_playchar);

@@ -55,7 +55,8 @@ void BT::system::process_finish_deathblow()
             reg.remove<component::Created_physics_object_reference>(entity);
 
             // Remove health component to ensure this isn't alive anymore.
-            reg.remove<component::Health_stats_data>(entity);
+            reg.remove<component::Health_stats_data>(
+                entity_container.find_entity(char_mvt_anim_state.affecting_animator_uuid));
 
             // @TODO: change the model into a ragdoll.
             date_deadline(2026, 12, 1);

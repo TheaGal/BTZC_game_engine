@@ -637,6 +637,9 @@
     - you refill thru resting ofc, but how else do you reclaim "will to live"?? killing ppl isn't really the best thing, but it would match the sekiro way.
     - no actually! tier 2 and tier 1 are both from the doctor.
 
+    - [x] update existing ui systems to new ui interface way
+        - now it's rly easy for the boss oppo health to just disappear when they die
+
     - [ ] add in you died ui screen
         - use "will to live" consumables here.
 
@@ -676,6 +679,8 @@
 
 - [ ] BUG: for some reason renderer updates slower when changing the timescale?
     - i think it's not actually running at 120fps if this is the case. investigate it
+
+- [ ] IMPROVE: for all ecs `.remove()` calls, check to make sure that the 1 elem gets removed using some kind of thingy that emits a warning if not everything is removed.
 
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).

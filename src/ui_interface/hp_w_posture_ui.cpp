@@ -76,6 +76,9 @@ void Hp_w_posture::set_hp_bar(Canvas_name const canvas_name,
                               int32_t const max_health_pts)
 {
     auto& ui_canvas{ m_ui_state.canvas(canvas_name_to_str(canvas_name)) };
+    if (!ui_canvas.is_loaded())
+        return;
+
     ui_canvas.elem("hp_back").set_width(max_health_pts + 4);
     ui_canvas.elem("hp_inside").set_width(health_pts);
 }
@@ -85,6 +88,9 @@ void Hp_w_posture::set_posture_bar(Canvas_name const canvas_name,
                                    int32_t const max_posture_pts)
 {
     auto& ui_canvas{ m_ui_state.canvas(canvas_name_to_str(canvas_name)) };
+    if (!ui_canvas.is_loaded())
+        return;
+
     ui_canvas.elem("posture_back").set_width(max_posture_pts + 4);
     ui_canvas.elem("posture_inside").set_width(posture_pts);
 }
