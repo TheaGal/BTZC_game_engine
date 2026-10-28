@@ -3,6 +3,7 @@
 #include "btglm.h"
 #include "btuuid.h"
 #include "game_system_logic/component/character_movement.h"
+#include "game_system_logic/component/follow_camera.h"
 #include "game_system_logic/component/physics_object_settings.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
@@ -12,6 +13,7 @@
 #include "txp_renderer_public.h"
 
 #include <cassert>
+#include <stdexcept>
 
 
 void BT::system::convert_atk_input_to_deathblow()
@@ -117,18 +119,27 @@ void BT::system::convert_atk_input_to_deathblow()
             auto& phys_engine{ service_finder::find_service<Physics_engine>() };
             for (auto ecs_ent : { entity, other_entity })
             {
-                if (auto* poss_ref =
-                        reg.try_get<component::Created_physics_object_reference>(ecs_ent);
-                    poss_ref != nullptr)
-                {
-                    auto& phys_obj{ *phys_engine.checkout_physics_object(
-                        poss_ref->physics_obj_uuid_ref) };
+                if (!reg.any_of<component::Created_physics_object_reference>(ecs_ent))
+                    throw std::runtime_error(
+                        "component::Created_physics_object_reference should have existed but does "
+                        "not");
 
-                    phys_obj.get_impl()->set_cc_use_inner_body(false);
+                auto& phys_obj_ref{ reg.get<component::Created_physics_object_reference>(ecs_ent) };
 
-                    phys_engine.return_physics_object(&phys_obj);
-                }
+                auto& phys_obj{ *phys_engine.checkout_physics_object(
+                    phys_obj_ref.physics_obj_uuid_ref) };
+
+                phys_obj.get_impl()->set_cc_use_inner_body(false);
+
+                phys_engine.return_physics_object(&phys_obj);
             }
+
+            // Also remove receiver as lockon target.
+            if (reg.any_of<component::Follow_camera_lockon_target>(other_char_animator_ecs_entity))
+                reg.erase<component::Follow_camera_lockon_target>(other_char_animator_ecs_entity);
+            else
+                throw std::runtime_error(
+                    "component::Follow_camera_lockon_target should have existed but does not");
             break;
         }
     }

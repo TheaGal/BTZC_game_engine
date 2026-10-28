@@ -75,11 +75,14 @@ void BT::system::player_character_lock_onto_target(float_t const delta_time)
     // Hold prev state.
     bool const prev_locked_onto_entity{ !follow_state->locked_on_entity.is_nil() };
 
-    // Remove other character reference if (1) clicked lock off or (2) reference is broken.
+    // Remove other character reference if (1) clicked lock off or (2) entity was deleted or (3)
+    // component reference is broken.
     if (!follow_state->locked_on_entity.is_nil())
     {
         if (on_lockon_press ||
-            !entity_container.entity_exists(follow_state->locked_on_entity))
+            !entity_container.entity_exists(follow_state->locked_on_entity) ||
+            !reg.any_of<component::Follow_camera_lockon_target>(
+                entity_container.find_entity(follow_state->locked_on_entity)))
         {   // Remove character reference.
             follow_state->locked_on_entity = UUID();
         }
