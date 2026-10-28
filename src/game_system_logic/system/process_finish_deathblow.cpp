@@ -3,6 +3,7 @@
 #include "btdatecheck.h"
 #include "btuuid.h"
 #include "game_system_logic/component/character_movement.h"
+#include "game_system_logic/component/health_stats.h"
 #include "game_system_logic/component/physics_object_settings.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
@@ -52,6 +53,9 @@ void BT::system::process_finish_deathblow()
             reg.remove<component::Physics_object_settings>(entity);
             reg.remove<component::Physics_obj_type_char_con_settings>(entity);
             reg.remove<component::Created_physics_object_reference>(entity);
+
+            // Remove health component to ensure this isn't alive anymore.
+            reg.remove<component::Health_stats_data>(entity);
 
             // @TODO: change the model into a ragdoll.
             date_deadline(2026, 12, 1);

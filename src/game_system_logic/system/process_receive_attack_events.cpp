@@ -40,8 +40,7 @@ inline component::Character_mvt_animated_state& find_char_mvt_anim_state(entt::r
 /// Process receiving attack.
 void process_receive_attack(entt::registry& reg,
                             entt::entity entity,
-                            component::Health_stats_data& health_stats_data,
-                            bool const is_playchar)
+                            component::Health_stats_data& health_stats_data)
 {
     bool receive_atk_as_hurt, receive_atk_as_guard, receive_atk_as_parry;
 
@@ -144,7 +143,7 @@ void process_receive_attack(entt::registry& reg,
     health_stats_data.posture_pts += real_posture;
 
     // Cap posture if player char and parrying.
-    if (receive_atk_as_parry && is_playchar)
+    if (receive_atk_as_parry && is_playchar_health_stats(health_stats_data))
     {
         health_stats_data.posture_pts =
             std::min(health_stats_data.posture_pts, health_stats_data.max_posture_pts - 1);
@@ -170,31 +169,6 @@ void process_receive_attack(entt::registry& reg,
     }
 }
 
-/// Updates UI to current health amounts.
-void update_ui(bool const is_playchar_health_stats,
-               component::Health_stats_data const& health_stats_data)
-{
-    std::string canvas_name = "regular_oppo_hp_w_posture.btui";
-    bool has_boss_name{ false };
-
-    if (is_playchar_health_stats)
-        canvas_name = "playchar_hp_w_posture.btui";
-    else if (!health_stats_data.ui_name.empty())
-    {
-        canvas_name = "boss_oppo_hp_w_posture.btui";
-        has_boss_name = true;
-    }
-
-    auto& ui_canvas{ service_finder::find_service<TXP::UI_state>().canvas(canvas_name) };
-    ui_canvas.elem("hp_back").set_width(health_stats_data.max_health_pts + 4);
-    ui_canvas.elem("hp_inside").set_width(health_stats_data.health_pts);
-    ui_canvas.elem("posture_back").set_width(health_stats_data.max_posture_pts + 4);
-    ui_canvas.elem("posture_inside").set_width(health_stats_data.posture_pts);
-
-    if (has_boss_name)
-        ui_canvas.elem("boss_name_label").set_text(health_stats_data.ui_name);
-}
-
 } // namespace
 
 
@@ -210,8 +184,6 @@ void BT::system::process_receive_attack_events()
 
     for (auto&& [entity, health_stats_data] : view.each())
     {
-        bool const is_playchar{ is_playchar_health_stats(health_stats_data) };
-        process_receive_attack(reg, entity, health_stats_data, is_playchar);
-        update_ui(is_playchar, health_stats_data);
+        process_receive_attack(reg, entity, health_stats_data);
     }
 }

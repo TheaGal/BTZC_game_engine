@@ -5,9 +5,7 @@
 
 namespace TXP
 {
-
 class UI_state;  // forward decl
-
 } // namespace TXP
 
 
