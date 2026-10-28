@@ -1,12 +1,16 @@
 #include "process_ui_interfaces.h"
 
 #include "entt/entity/fwd.hpp"
+#include "game_system_logic/component/follow_camera.h"
 #include "game_system_logic/component/health_stats.h"
+#include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
 #include "game_system_logic/world/world_properties.h"
 #include "service_finder/service_finder.h"
-#include "ui_interface/hp_w_posture_ui.h"
+#include "txp_renderer/renderer.h"
 #include "txp_renderer_public.h"
+#include "ui_interface/hp_w_posture_ui.h"
+#include "ui_interface/target_lockon_reticle_ui.h"
 
 #include <cassert>
 #include <stdexcept>
@@ -78,6 +82,48 @@ void process_ui_hp_w_posture(Process_method const method,
     ui.set_visible(ui.CANVAS_BOSS_OPPO, found_boss_oppo);
 }
 
+void process_ui_target_lockon_reticle(Process_method const method,
+                                      TXP::UI_state& ui_state,
+                                      Entity_container const& entity_container,
+                                      entt::registry& reg,
+                                      float_t const delta_time)
+{
+    auto& ui{ service_finder::find_service<ui_ifc::Target_lockon_reticle_ui>() };
+
+    bool found_locked_on_entity{ false };
+
+    for (auto&& [entity, follow_cam_follow_ref] :
+         reg.view<component::Follow_camera_follow_ref>().each())
+    {
+        if (!follow_cam_follow_ref.state.locked_on_entity.is_nil() &&
+            entity_container.entity_exists(follow_cam_follow_ref.state.locked_on_entity))
+        {
+            entt::entity locked_on_entity{ entity_container.find_entity(
+                follow_cam_follow_ref.state.locked_on_entity) };
+            if (reg.all_of<component::Transform, component::Follow_camera_lockon_target>(
+                    locked_on_entity))
+            {
+                auto& transform{ reg.get<component::Transform const>(locked_on_entity) };
+                auto& cam_lockon_target{ reg.get<component::Follow_camera_lockon_target const>(
+                    locked_on_entity) };
+
+                vec3 target_locked_on_pos;
+                btglm_rvec3_to_vec3(transform.position.raw, target_locked_on_pos);
+                target_locked_on_pos[1] += cam_lockon_target.follow_offset_y;
+
+                // Record locked on position.
+                found_locked_on_entity = true;
+                ui.set_reticle_pos_world(
+                    service_finder::find_service<TXP::Renderer>().get_main_camera(),
+                    target_locked_on_pos);
+                break;
+            }
+        }
+    }
+
+    ui.set_visible(found_locked_on_entity);
+}
+
 void process_ui_ninsatu(Process_method const method,
                         TXP::UI_state& ui_state,
                         float_t const delta_time)
@@ -110,9 +156,11 @@ void BT::system::process_ui_interfaces(TXP::UI_state& ui_state, float_t const de
         s_prev_sim_running = is_sim_running;
     }
 
-    auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
+    auto& entity_container{ service_finder::find_service<Entity_container>() };
+    auto& reg{ entity_container.get_ecs_registry() };
 
     process_ui_hp_w_posture(method, ui_state, reg, delta_time);
+    process_ui_target_lockon_reticle(method, ui_state, entity_container, reg, delta_time);
     process_ui_ninsatu(method, ui_state, delta_time);
     process_ui_you_died(method, ui_state, delta_time);
 }

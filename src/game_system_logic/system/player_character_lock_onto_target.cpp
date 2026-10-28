@@ -129,17 +129,6 @@ void BT::system::player_character_lock_onto_target(float_t const delta_time)
         }
     }
 
-    // Hide lockon reticle UI if state changed to be no more lockon.
-    auto& reticle_ui_elem{ service_finder::find_service<TXP::UI_state>()
-                               .canvas("target_lockon_reticle.btui")
-                               .elem("lockon_reticle") };
-
-    bool const cur_locked_onto_entity{ !follow_state->locked_on_entity.is_nil() };
-    if (cur_locked_onto_entity != prev_locked_onto_entity && !cur_locked_onto_entity)
-    {
-        reticle_ui_elem.set_opacity(0);
-    }
-
     // Exit early if no locked on entity.
     if (follow_state->locked_on_entity.is_nil())
         return;
@@ -165,19 +154,6 @@ void BT::system::player_character_lock_onto_target(float_t const delta_time)
         vec3 target_locked_on_pos;
         btglm_rvec3_to_vec3(transform.position.raw, target_locked_on_pos);
         target_locked_on_pos[1] += cam_lockon_target.follow_offset_y;
-
-        // Update lockon reticle UI position.
-        {
-            vec2 ui_position;
-            bool const is_visible = TXP::convert_world_position_to_ui_position(camera,
-                                                                               target_locked_on_pos,
-                                                                               ui_position);
-            reticle_ui_elem.set_opacity(is_visible ? 1 : 0);
-            if (is_visible)
-            {
-                reticle_ui_elem.set_position(ui_position[0], ui_position[1]);
-            }
-        }
 
         // Check to limit camera angle tilt.
         constexpr float_t k_y_val_similarity_value{ 1.5f };  // @HARDCODE: y-axis similarity to limit cam angle tilt.  @NOTE: `follow_pos` could be focusing on a point above the player's body, whereas `target_locked_on_pos` will be where the target focus position always is.

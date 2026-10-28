@@ -340,6 +340,8 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/txp_renderer_callback_impls.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ui_interface/hp_w_posture_ui.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ui_interface/hp_w_posture_ui.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ui_interface/target_lockon_reticle_ui.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ui_interface/target_lockon_reticle_ui.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/uuid/uuid_ifc.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/uuid/uuid_ifc.h
 )

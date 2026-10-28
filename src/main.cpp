@@ -39,6 +39,7 @@
 #include "timer/watchdog_timer.h"
 #include "txp_renderer_public.h"
 #include "ui_interface/hp_w_posture_ui.h"
+#include "ui_interface/target_lockon_reticle_ui.h"
 
 #include <chrono>
 #include <cstdint>
@@ -222,11 +223,10 @@ int main()
         });
 
     BT::ui_ifc::Hp_w_posture hp_w_posture_ui{ ui_state };
+    BT::ui_ifc::Target_lockon_reticle_ui target_lockon_reticle_ui{ ui_state };
     ui_state.canvas("you_died.btui");
     ui_state.canvas("ninsatsu.btui");
-    ui_state.canvas("target_lockon_reticle.btui");
     ui_state.canvas("debug_player_camera_guide.btui");
-    ui_state.load_persistent_canvas("target_lockon_reticle.btui");
 
     constexpr bool k_show_debug_camera_guide{ false };
     if constexpr (k_show_debug_camera_guide)
