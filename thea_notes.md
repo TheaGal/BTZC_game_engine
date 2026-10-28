@@ -674,6 +674,9 @@
     - [ ] get the capsule collider actually looking correct (two cap models and a hollow cylinder model)
     - [ ] save the editor camera transform from last time the game was opened
 
+- [ ] BUG: for some reason renderer updates slower when changing the timescale?
+    - i think it's not actually running at 120fps if this is the case. investigate it
+
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
         - so max 3 cascades (both realtime cascades and one static cascade if dir light changes) get updated on one frame

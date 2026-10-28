@@ -266,6 +266,8 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_physics_object_lifetime.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_receive_attack_events.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_receive_attack_events.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_ui_interfaces.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_ui_interfaces.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/propagate_changed_transforms.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/propagate_changed_transforms.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/rail_line_editor_update.cpp

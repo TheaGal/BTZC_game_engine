@@ -20,6 +20,7 @@
 #include "game_system_logic/system/process_finish_deathblow.h"
 #include "game_system_logic/system/process_physics_object_lifetime.h"
 #include "game_system_logic/system/process_receive_attack_events.h"
+#include "game_system_logic/system/process_ui_interfaces.h"
 #include "game_system_logic/system/propagate_changed_transforms.h"
 #include "game_system_logic/system/rail_line_editor_update.h"
 #include "game_system_logic/system/rail_line_rider_update.h"
@@ -277,12 +278,12 @@ int main()
             };
 
             bool changed{ false };
-            if (s_prev_ts_decr_pressed != ts_decr_pressed)
+            if (!s_prev_ts_decr_pressed && ts_decr_pressed)
             {
                 time_scale *= 0.5f;
                 changed = true;
             }
-            if (s_prev_ts_incr_pressed != ts_incr_pressed)
+            if (!s_prev_ts_incr_pressed && ts_incr_pressed)
             {
                 time_scale *= 2;
                 changed = true;
@@ -295,8 +296,9 @@ int main()
             s_prev_ts_incr_pressed = ts_incr_pressed;
         }
 
-        float_t delta_time =
-            main_physics_engine.limit_delta_time(main_timer.calc_delta_time() * time_scale);
+        float_t const delta_time{
+            main_physics_engine.limit_delta_time(main_timer.calc_delta_time()) * time_scale
+        };
 
         // @NOCHECKIN: @DEBUG: Fun little sfx for audio engine.
         if (iter_type == Iteration_type::FIRST_RUNNING_ITERATION)
@@ -387,6 +389,8 @@ int main()
 #if IMPLEMENT_THIS
             BT::system::update_selected_entity_debug_render_transform();
 #endif // IMPLEMENT_THIS
+
+            BT::system::process_ui_interfaces(ui_state, delta_time);
 
             ui_state.tick();
 
