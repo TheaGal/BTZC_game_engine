@@ -227,6 +227,8 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/component_registry.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/cpu_enemy_awareness.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/follow_camera.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/game_interrupt_event_queue.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/game_interrupt_event_queue.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/health_stats.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/physics_object_settings.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/physics_object_settings.h
@@ -340,6 +342,8 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/txp_renderer_callback_impls.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ui_interface/hp_w_posture_ui.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ui_interface/hp_w_posture_ui.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ui_interface/ninsatsu.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ui_interface/ninsatsu.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ui_interface/target_lockon_reticle_ui.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ui_interface/target_lockon_reticle_ui.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/uuid/uuid_ifc.cpp

@@ -640,11 +640,12 @@
     - [x] update existing ui systems to new ui interface way
         - now it's rly easy for the boss oppo health to just disappear when they die
 
+    - [x] add in ninsatu ui screen
+        - [x] add "enemy_drops" section in enemy prefab. add "ninsatu screen" as a drop for the ui screen anim to show up, and then after that other things show up ig
+            - it's at `component::Game_interrupt_event_queue::Interrupt_event`
+
     - [ ] add in you died ui screen
         - use "will to live" consumables here.
-
-    - [ ] add in ninsatu ui screen
-        - [ ] add "enemy_drops" section in enemy prefab. add "ninsatu screen" as a drop for the ui screen anim to show up, and then after that other things show up ig
 
 - [x] BUGFIX: turns out that `inherit_prev_velocity` reeve wasn't needed now that the root motion and one-frame-ahead combo bug was fixed!!
 

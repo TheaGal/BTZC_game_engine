@@ -2,6 +2,7 @@
 
 #include "entt/entity/fwd.hpp"
 #include "game_system_logic/component/follow_camera.h"
+#include "game_system_logic/component/game_interrupt_event_queue.h"
 #include "game_system_logic/component/health_stats.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
@@ -10,6 +11,7 @@
 #include "txp_renderer/renderer.h"
 #include "txp_renderer_public.h"
 #include "ui_interface/hp_w_posture_ui.h"
+#include "ui_interface/ninsatsu.h"
 #include "ui_interface/target_lockon_reticle_ui.h"
 
 #include <cassert>
@@ -133,10 +135,26 @@ void process_ui_target_lockon_reticle(Process_method const method,
     ui.set_visible(found_locked_on_entity);
 }
 
-void process_ui_ninsatu(Process_method const method,
-                        TXP::UI_state& ui_state,
-                        float_t const delta_time)
-{}
+void process_ui_ninsatsu(Process_method const method,
+                         TXP::UI_state& ui_state,
+                         float_t const delta_time)
+{
+    auto* gieq{ component::Game_interrupt_event_queue::comp_inst() };
+    if (gieq == nullptr)
+        return;
+
+    auto& ui{ service_finder::find_service<ui_ifc::Ninsatsu>() };
+
+    if (!ui.is_playing() &&
+        gieq->peek_event_has(
+            component::Game_interrupt_event_queue::Interrupt_event::EVE_TYPE_NINSATSU_SCREEN))
+    {
+        ui.play_screen(
+            []() { component::Game_interrupt_event_queue::comp_inst()->pop_event(); });
+    }
+
+    ui.update(delta_time);
+}
 
 void process_ui_you_died(Process_method const method,
                          TXP::UI_state& ui_state,
@@ -170,6 +188,6 @@ void BT::system::process_ui_interfaces(TXP::UI_state& ui_state, float_t const de
 
     process_ui_hp_w_posture(method, ui_state, reg, delta_time);
     process_ui_target_lockon_reticle(method, ui_state, entity_container, reg, delta_time);
-    process_ui_ninsatu(method, ui_state, delta_time);
+    process_ui_ninsatsu(method, ui_state, delta_time);
     process_ui_you_died(method, ui_state, delta_time);
 }

@@ -98,6 +98,10 @@
                         "type": 1,
                         "transform_offset": { "x": 0, "y": 1.68, "z": 0 }
                     }
+                },
+                {
+                    "type_name": "component::Game_interrupt_event_queue",
+                    "members_j": {}
                 }
             ]
         },
