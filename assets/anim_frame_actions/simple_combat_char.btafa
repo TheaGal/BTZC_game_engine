@@ -1389,19 +1389,27 @@
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "evq_on_posture_broken",
+                            "st_posture_break",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 22,
+                    "end_frame": 25,
                     "row_idx": 7,
                     "start_frame": 14
                 },
                 {
                     "ctrl_cmd": {
-                        "argv": [],
-                        "cmd_name": "nop"
+                        "argv": [
+                            "evq_on_posture_broken",
+                            "st_posture_break",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 54,
+                    "end_frame": 57,
                     "row_idx": 7,
                     "start_frame": 47
                 },
@@ -1639,6 +1647,19 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "evq_on_posture_broken",
+                            "st_posture_break",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 46,
+                    "row_idx": 7,
+                    "start_frame": 35
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "use_pos_of_interest_root_motion_multi",
                             "true"
                         ],
@@ -1848,6 +1869,32 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "evq_on_posture_broken",
+                            "st_posture_break",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 81,
+                    "row_idx": 9,
+                    "start_frame": 63
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_posture_broken",
+                            "st_posture_break",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 108,
+                    "row_idx": 9,
+                    "start_frame": 92
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "evq_on_hurt",
                             "ACTION_MAP_hurt",
                             "0"
@@ -2018,6 +2065,19 @@
                     },
                     "end_frame": 63,
                     "row_idx": 8,
+                    "start_frame": 55
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_posture_broken",
+                            "st_posture_break",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 64,
+                    "row_idx": 9,
                     "start_frame": 55
                 },
                 {
@@ -2230,6 +2290,19 @@
                     },
                     "end_frame": 61,
                     "row_idx": 8,
+                    "start_frame": 49
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_posture_broken",
+                            "st_posture_break",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 64,
+                    "row_idx": 9,
                     "start_frame": 49
                 },
                 {
@@ -2815,8 +2888,21 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 3,
+                    "end_frame": 4,
                     "row_idx": 17,
+                    "start_frame": 1
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_health_depleted",
+                            "st_health_depleted",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 4,
+                    "row_idx": 18,
                     "start_frame": 1
                 }
             ],
@@ -3035,8 +3121,21 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 3,
+                    "end_frame": 4,
                     "row_idx": 18,
+                    "start_frame": 1
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_health_depleted",
+                            "st_health_depleted",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 4,
+                    "row_idx": 19,
                     "start_frame": 1
                 }
             ],
@@ -3203,8 +3302,21 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 3,
+                    "end_frame": 4,
                     "row_idx": 16,
+                    "start_frame": 1
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_health_depleted",
+                            "st_health_depleted",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 4,
+                    "row_idx": 17,
                     "start_frame": 1
                 }
             ],
@@ -3610,6 +3722,18 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "turn_speed",
+                            "1000000"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 5,
+                    "row_idx": 2,
+                    "start_frame": 1
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "evq_exec_mvt_idx",
                             "ACTION_MAP_movements",
                             "0"
@@ -3683,19 +3807,6 @@
                     "end_frame": 5,
                     "row_idx": 12,
                     "start_frame": 1
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "evq_on_health_depleted",
-                            "st_health_depleted",
-                            "0"
-                        ],
-                        "cmd_name": "watch_event_queue"
-                    },
-                    "end_frame": 124,
-                    "row_idx": 13,
-                    "start_frame": 120
                 }
             ],
             "state_name": "st_posture_break"

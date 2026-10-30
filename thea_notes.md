@@ -671,9 +671,17 @@
 
 - [x] finish prev task: death screen and "ninsatsu" screen
 
-- [ ] BUGFIX: the `last attack` seems to be one tick behind? if i guard against something then parry it next time it will posture break me
+- [x] BUGFIX: the `last attack` seems to be one tick behind? if i guard against something then parry it next time it will posture break me
     - probably related to also not being able to get the dying event to trigger either?
+    - so it looks like the btafa wasn't catching the event that posture was broken or health depleted.
+    - also, there should rly be some kind of flag of how to handle the health depletion
+        - player: just straight to dying
+        - boss or miniboss (anything with the deathblow dots): do posture break
+        - zako enemy: have last breath 1-3sec window where can get deathblown, but if missed will just die
+        - [x] done'd
 - [ ] BUGFIX: anim root motion multiplier/speed is bad after player is posture broken
+    - ok it still be happening
+- [ ] FEATURE: have posture recover over time (except when attacking), and holding up guard speeds up recovery
 
 - [ ] in level editor view, have scene and main viewport camera sync if a checkbox is checked.
     - and have this checkbox checked by default

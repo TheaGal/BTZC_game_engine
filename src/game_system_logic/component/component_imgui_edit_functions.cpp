@@ -551,6 +551,10 @@ void BT::component::edit::imgui_edit__health_stats_data(entt::registry& reg,
     ImGui::InputInt("posture_pts", &health_stats_data.posture_pts);
     ImGui::DragFloat("posture_pts_regen_rate", &health_stats_data.posture_pts_regen_rate, 0.1f);
 
+    ImGui::SeparatorText("Deathblows");
+    ImGui::InputInt("max_num_deathblows", &health_stats_data.max_num_deathblows);
+    ImGui::InputInt("num_deathblows", &health_stats_data.num_deathblows);
+
     ImGui::SeparatorText("Other");
 
     ImGui::Checkbox("is_invincible", &health_stats_data.is_invincible);

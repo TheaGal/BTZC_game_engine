@@ -174,7 +174,8 @@
                 {
                     "type_name": "component::Health_stats_data",
                     "members_j": {
-                        "ui_name": "playchar"
+                        "ui_name": "playchar",
+                        "max_health_pts": 10
                     }
                 },
                 {
@@ -406,7 +407,8 @@
                     "type_name": "component::Health_stats_data",
                     "members_j": {
                         "ui_name": "Test Dummy the First (@TODO remove the tiny max_posture_pts)",
-                        "max_posture_pts": 10
+                        "max_posture_pts": 10,
+                        "max_num_deathblows": 3
                     }
                 },
                 {

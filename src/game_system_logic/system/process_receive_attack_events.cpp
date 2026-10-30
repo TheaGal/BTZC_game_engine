@@ -52,6 +52,14 @@ void process_receive_attack(entt::registry& reg,
     if (!afa_check_success)
         return;
 
+    // First ensure that points are <= max.
+    health_stats_data.health_pts =
+        std::min(health_stats_data.health_pts, health_stats_data.max_health_pts);
+    health_stats_data.posture_pts =
+        std::min(health_stats_data.posture_pts, health_stats_data.max_posture_pts);
+    health_stats_data.num_deathblows =
+        std::min(health_stats_data.num_deathblows, health_stats_data.max_num_deathblows);
+
     // Check for health depletion.
     if (health_stats_data.health_pts < 0)
     {
@@ -59,8 +67,12 @@ void process_receive_attack(entt::registry& reg,
 
         health_stats_data.health_pts = 0;  // to ensure event doesn't come in again
 
-        // Force posture break too!
-        health_stats_data.posture_pts = health_stats_data.max_posture_pts;
+        // Check whether this is a miniboss/boss cpu char.
+        if (!is_playchar_health_stats(health_stats_data) && health_stats_data.num_deathblows > 0)
+        {
+            // Force posture break too! (since that's the only way this guy dies)
+            health_stats_data.posture_pts = health_stats_data.max_posture_pts;
+        }
     }
 
     // Check for posture break.
@@ -68,8 +80,12 @@ void process_receive_attack(entt::registry& reg,
     {
         find_char_mvt_anim_state(reg, entity).input_mvt_state.on_posture_broken = true;
 
-        health_stats_data.posture_pts = health_stats_data.max_posture_pts - 1;  // to ensure event doesn't come in again
-        assert(health_stats_data.posture_pts >= 0);
+        // To ensure event posture break doesn't come in again and posture is partially recovered in
+        // case doesn't get deathblown.
+        constexpr float_t k_post_posture_break_posture_amt{ 0.8 };
+
+        health_stats_data.posture_pts =
+            health_stats_data.max_posture_pts * k_post_posture_break_posture_amt;
     }
 
     // Check if nothing happened.
