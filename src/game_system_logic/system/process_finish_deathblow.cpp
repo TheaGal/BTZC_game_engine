@@ -47,36 +47,38 @@ void BT::system::process_finish_deathblow()
 
             BT_TRACEF("Finished deathblow give (entity: %u)", entity);
         }
-        // Finishing step for deathblow receiver.
-        else if (char_mvt_anim_state.input_mvt_state.on_finish_deathblow_receive)
-        {
-            // Remove physics object.
-            reg.remove<component::Physics_object_settings>(entity);
-            reg.remove<component::Physics_obj_type_char_con_settings>(entity);
-            reg.remove<component::Created_physics_object_reference>(entity);
+        date_deadline(2026, 11, 1);
+        // @TODO: delete this!!!
+        // // Finishing step for deathblow receiver.
+        // else if (char_mvt_anim_state.input_mvt_state.on_finish_deathblow_receive)
+        // {
+        //     // Remove physics object.
+        //     reg.remove<component::Physics_object_settings>(entity);
+        //     reg.remove<component::Physics_obj_type_char_con_settings>(entity);
+        //     reg.remove<component::Created_physics_object_reference>(entity);
 
-            // Remove health component to ensure this isn't alive anymore.
-            auto const inner_entity{ entity_container.find_entity(
-                char_mvt_anim_state.affecting_animator_uuid) };
+        //     // Remove health component to ensure this isn't alive anymore.
+        //     auto const inner_entity{ entity_container.find_entity(
+        //         char_mvt_anim_state.affecting_animator_uuid) };
 
-            auto const& health_stats_data{ reg.get<component::Health_stats_data>(inner_entity) };
-            bool const is_boss_oppo{ !health_stats_data.ui_name.empty() &&
-                                     health_stats_data.ui_name != "playchar" };
+        //     auto const& health_stats_data{ reg.get<component::Health_stats_data>(inner_entity) };
+        //     bool const is_boss_oppo{ !health_stats_data.ui_name.empty() &&
+        //                              health_stats_data.ui_name != "playchar" };
 
-            reg.remove<component::Health_stats_data>(inner_entity);
+        //     reg.remove<component::Health_stats_data>(inner_entity);
 
-            // Add ninsatsu interrupt.
-            if (is_boss_oppo)
-            {
-                component::Game_interrupt_event_queue::comp_inst()->push_event(
-                    { .event_type = component::Game_interrupt_event_queue::Interrupt_event::
-                          EVE_TYPE_NINSATSU_SCREEN });
-            }
+        //     // Add ninsatsu interrupt.
+        //     if (is_boss_oppo)
+        //     {
+        //         component::Game_interrupt_event_queue::instance()->push_event(
+        //             { .event_type = component::Game_interrupt_event_queue::Interrupt_event::
+        //                   EVE_TYPE_NINSATSU_SCREEN });
+        //     }
 
-            // @TODO: change the model into a ragdoll.
-            date_deadline(2026, 12, 1);
+        //     // @TODO: change the model into a ragdoll.
+        //     date_deadline(2026, 12, 1);
 
-            BT_TRACEF("Finished deathblow receive (entity: %u)", entity);
-        }
+        //     BT_TRACEF("Finished deathblow receive (entity: %u)", entity);
+        // }
     }
 }

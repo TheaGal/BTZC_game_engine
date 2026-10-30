@@ -1,6 +1,8 @@
 #include "process_ui_interfaces.h"
 
+#include "btlogger.h"
 #include "entt/entity/fwd.hpp"
+#include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/follow_camera.h"
 #include "game_system_logic/component/game_interrupt_event_queue.h"
 #include "game_system_logic/component/health_stats.h"
@@ -13,6 +15,7 @@
 #include "ui_interface/hp_w_posture_ui.h"
 #include "ui_interface/ninsatsu.h"
 #include "ui_interface/target_lockon_reticle_ui.h"
+#include "ui_interface/you_died.h"
 
 #include <cassert>
 #include <stdexcept>
@@ -22,6 +25,8 @@ namespace
 {
 
 using namespace BT;
+
+using Interrupt_event = component::Game_interrupt_event_queue::Interrupt_event;
 
 enum Process_method  // is this needed?
 {
@@ -139,18 +144,15 @@ void process_ui_ninsatsu(Process_method const method,
                          TXP::UI_state& ui_state,
                          float_t const delta_time)
 {
-    auto* gieq{ component::Game_interrupt_event_queue::comp_inst() };
+    auto* gieq{ component::Game_interrupt_event_queue::instance() };
     if (gieq == nullptr)
         return;
 
     auto& ui{ service_finder::find_service<ui_ifc::Ninsatsu>() };
 
-    if (!ui.is_playing() &&
-        gieq->peek_event_has(
-            component::Game_interrupt_event_queue::Interrupt_event::EVE_TYPE_NINSATSU_SCREEN))
+    if (!ui.is_playing() && gieq->peek_event_has(Interrupt_event::EVE_TYPE_NINSATSU_SCREEN))
     {
-        ui.play_screen(
-            []() { component::Game_interrupt_event_queue::comp_inst()->pop_event(); });
+        ui.play_screen([]() { component::Game_interrupt_event_queue::instance()->pop_event(); });
     }
 
     ui.update(delta_time);
@@ -158,8 +160,54 @@ void process_ui_ninsatsu(Process_method const method,
 
 void process_ui_you_died(Process_method const method,
                          TXP::UI_state& ui_state,
+                         Entity_container const& entity_container,
+                         entt::registry& reg,
                          float_t const delta_time)
-{}
+{
+    auto* gieq{ component::Game_interrupt_event_queue::instance() };
+    if (gieq == nullptr)
+        return;
+
+    auto& ui{ service_finder::find_service<ui_ifc::You_died>() };
+
+    if (!ui.is_playing() && gieq->peek_event_has(Interrupt_event::EVE_TYPE_YOU_DIED_SCREEN))
+    {
+        // Open you died screen.
+        ui.play_screen([]() { component::Game_interrupt_event_queue::instance()->pop_event(); },
+                       []() { BT_ERROR("YOU DIED"); });
+    }
+
+    if (ui.is_playing())
+    {
+        // Look for signal of either choose to live or die.
+        for (auto&& [entity, char_mvt_anim_state] :
+             reg.view<component::Character_mvt_animated_state>().each())
+        {
+            auto* poss_health_stats_data{ reg.try_get<component::Health_stats_data>(
+                entity_container.find_entity(char_mvt_anim_state.affecting_animator_uuid)) };
+
+            if (poss_health_stats_data == nullptr || poss_health_stats_data->ui_name != "playchar")
+                continue;
+
+            // Look to see if playchar is alive or chose to die.
+            if (char_mvt_anim_state.input_mvt_state.choose_to_die)
+            {
+                // Died. Show real dying ui
+                // @TODO
+            }
+            else if (char_mvt_anim_state.input_mvt_state.is_alive)
+            {
+                // Resurrected!!
+                assert(gieq->peek_event_has(Interrupt_event::EVE_TYPE_YOU_DIED_SCREEN));
+                gieq->pop_event();
+
+                ui.stop_screen();
+            }
+        }
+    }
+
+    ui.update(delta_time);
+}
 
 } // namespace
 
@@ -189,5 +237,5 @@ void BT::system::process_ui_interfaces(TXP::UI_state& ui_state, float_t const de
     process_ui_hp_w_posture(method, ui_state, reg, delta_time);
     process_ui_target_lockon_reticle(method, ui_state, entity_container, reg, delta_time);
     process_ui_ninsatsu(method, ui_state, delta_time);
-    process_ui_you_died(method, ui_state, delta_time);
+    process_ui_you_died(method, ui_state, entity_container, reg, delta_time);
 }

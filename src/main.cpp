@@ -17,6 +17,7 @@
 #include "game_system_logic/system/input_controlled_character_movement.h"
 #include "game_system_logic/system/player_character_lock_onto_target.h"
 #include "game_system_logic/system/player_character_world_space_input.h"
+#include "game_system_logic/system/process_character_has_died.h"
 #include "game_system_logic/system/process_finish_deathblow.h"
 #include "game_system_logic/system/process_physics_object_lifetime.h"
 #include "game_system_logic/system/process_receive_attack_events.h"
@@ -41,6 +42,7 @@
 #include "ui_interface/hp_w_posture_ui.h"
 #include "ui_interface/ninsatsu.h"
 #include "ui_interface/target_lockon_reticle_ui.h"
+#include "ui_interface/you_died.h"
 
 #include <chrono>
 #include <cstdint>
@@ -226,7 +228,7 @@ int main()
     BT::ui_ifc::Hp_w_posture hp_w_posture_ui{ ui_state };
     BT::ui_ifc::Target_lockon_reticle_ui target_lockon_reticle_ui{ ui_state };
     BT::ui_ifc::Ninsatsu ninsatsu_ui{ ui_state };
-    ui_state.canvas("you_died.btui");
+    BT::ui_ifc::You_died you_died_ui{ ui_state };
     ui_state.canvas("debug_player_camera_guide.btui");
 
     constexpr bool k_show_debug_camera_guide{ false };
@@ -333,6 +335,8 @@ int main()
             BT::system::convert_atk_input_to_deathblow();
             BT::system::process_finish_deathblow();
 
+            BT::system::process_character_has_died(k_sim_delta_time);
+
             BT::system::input_controlled_character_movement();
 
             // Physics calculations.
@@ -419,7 +423,7 @@ int main()
             iter_type = Iteration_type::RUNNING_ITERATION;
 
             BT_INFOF("Startup (program start to RUNNING state) took %.2fms",
-                     startup_timer.calc_delta_time() * 1024.0);
+                     startup_timer.calc_delta_time() * 1000.0);
             break;
 
         case Iteration_type::RUNNING_ITERATION:

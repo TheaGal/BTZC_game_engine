@@ -12,7 +12,7 @@ namespace BT
 namespace component
 {
 
-/*static*/ Game_interrupt_event_queue* Game_interrupt_event_queue::comp_inst()
+/*static*/ Game_interrupt_event_queue* Game_interrupt_event_queue::instance()
 {
     auto view{ service_finder::find_service<Entity_container>()
                    .get_ecs_registry()

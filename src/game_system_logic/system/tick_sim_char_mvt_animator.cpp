@@ -121,6 +121,9 @@ void BT::system::tick_sim_char_mvt_animator()
                     animator.emplace_event("evq_on_guard_press", 0.5f, {});
                 if (mvt_state.is_guard_released)
                     animator.emplace_event("evq_is_guard_released", 0.0f, {});
+
+                if (mvt_state.choose_to_resurrect)
+                    animator.emplace_event("evq_do_resurrect", 1000000, {});
                 break;
 
             case mvt_state_mode_t::MODE_CPU_CHAR:
@@ -241,6 +244,10 @@ void BT::system::tick_sim_char_mvt_animator()
                 anim_root_motion.mvt_input.decel =
                     anim_afa_data_handle
                         .get_float_data_handle(AFA_ctrl::CTRL_DATA_LABEL_mvt_input_decel)
+                        .get_val();
+
+                char_mvt_anim_state.input_mvt_state.is_alive =
+                    anim_afa_data_handle.get_bool_data_handle(AFA_ctrl::CTRL_DATA_LABEL_is_alive)
                         .get_val();
 
                 char_mvt_anim_state.input_mvt_state.align_self_as_deathblow_giver =

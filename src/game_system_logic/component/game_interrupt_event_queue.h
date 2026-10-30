@@ -26,6 +26,7 @@ struct Game_interrupt_event_queue
             EVE_TYPE_INVALID = 0,
             EVE_TYPE_OPEN_PAUSE_MENU,
             EVE_TYPE_NINSATSU_SCREEN,
+            EVE_TYPE_YOU_DIED_SCREEN,
         } event_type{ 0 };
 
         int32_t argv0;
@@ -38,7 +39,7 @@ struct Game_interrupt_event_queue
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Game_interrupt_event_queue, _);
 
     // Helper funcs.
-    static Game_interrupt_event_queue* comp_inst();
+    static Game_interrupt_event_queue* instance();
 
     void push_event(Interrupt_event&& event);
     void pop_event();

@@ -131,6 +131,11 @@ struct Character_mvt_animated_state
         bool on_health_depleted{ false };
         bool on_posture_broken{ false };
 
+        bool is_alive{ true };
+        bool choose_to_resurrect{ false };
+        bool choose_to_die{ false };
+        float_t resurrect_make_choice_timer{ 0 };
+
         // Deathblow syncing.
         bool on_give_deathblow{ false };
         bool align_self_as_deathblow_giver{ false };

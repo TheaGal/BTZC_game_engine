@@ -570,13 +570,10 @@
         - text
     - default opacity to 1 and anchor to 0.5x0.5 and color tint to white!
 
-- [ ] death screen and "ninsatsu" screen
+- [x] death screen and "ninsatsu" screen
     - [x] make health deplete anim
     - [x] make posture break anim too bc why not
     - [x] make the actual ui screens
-    - [ ] BUGFIX: the `last attack` seems to be one tick behind? if i guard against something then parry it next time it will posture break me
-        - probably related to also not being able to get the dying event to trigger either?
-    - [ ] BUGFIX: anim root motion multiplier/speed is bad after player is posture broken
     - [x] create the deathblow anim
         - figured out how to get two anims running at the same time!!
     - [x] make afa entries for deathblow anims
@@ -644,8 +641,10 @@
         - [x] add "enemy_drops" section in enemy prefab. add "ninsatu screen" as a drop for the ui screen anim to show up, and then after that other things show up ig
             - it's at `component::Game_interrupt_event_queue::Interrupt_event`
 
-    - [ ] add in you died ui screen
+    - [x] add in you died ui screen
         - use "will to live" consumables here.
+        - resurrect video example in kusr: https://youtu.be/GrJXcNRIPxk?t=3978
+        - for now, just going to leave it as able to infinitely resurrect
 
 - [x] BUGFIX: turns out that `inherit_prev_velocity` reeve wasn't needed now that the root motion and one-frame-ahead combo bug was fixed!!
 
@@ -670,8 +669,11 @@
         - i ended up just doing an overlay dockspace that shwoops in from the bottom
     - shortcut is: ctrl + `
 
-- [ ] finish prev task: death screen and "ninsatsu" screen
+- [x] finish prev task: death screen and "ninsatsu" screen
 
+- [ ] BUGFIX: the `last attack` seems to be one tick behind? if i guard against something then parry it next time it will posture break me
+    - probably related to also not being able to get the dying event to trigger either?
+- [ ] BUGFIX: anim root motion multiplier/speed is bad after player is posture broken
 
 - [ ] in level editor view, have scene and main viewport camera sync if a checkbox is checked.
     - and have this checkbox checked by default
@@ -682,6 +684,9 @@
     - i think it's not actually running at 120fps if this is the case. investigate it
 
 - [ ] IMPROVE: for all ecs `.remove()` calls, check to make sure that the 1 elem gets removed using some kind of thingy that emits a warning if not everything is removed.
+- [ ] IMPROVE: unify the way to tell if a character is the playchar. here are a couple ways:
+    - `health_stats_data.ui_name == "playchar"`
+    - `mvt_state_mode_t::MODE_PLAYER_CHAR`
 
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).

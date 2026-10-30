@@ -262,6 +262,8 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/player_character_lock_onto_target.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/player_character_world_space_input.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/player_character_world_space_input.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_character_has_died.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_character_has_died.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_finish_deathblow.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_finish_deathblow.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/process_physics_object_lifetime.cpp
@@ -346,6 +348,8 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ui_interface/ninsatsu.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ui_interface/target_lockon_reticle_ui.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/ui_interface/target_lockon_reticle_ui.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ui_interface/you_died.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/ui_interface/you_died.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/uuid/uuid_ifc.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/uuid/uuid_ifc.h
 )
