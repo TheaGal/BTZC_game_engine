@@ -743,6 +743,18 @@
                     "end_frame": 61,
                     "row_idx": 9,
                     "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "posture_pts_regen_multi",
+                            "0"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 69,
+                    "row_idx": 11,
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_pc_attack_1cha"
@@ -863,6 +875,18 @@
                     "end_frame": 25,
                     "row_idx": 11,
                     "start_frame": 23
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "posture_pts_regen_multi",
+                            "0"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 69,
+                    "row_idx": 13,
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_pc_attack_1rel"
@@ -931,6 +955,18 @@
                     },
                     "end_frame": 61,
                     "row_idx": 9,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "posture_pts_regen_multi",
+                            "0"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 69,
+                    "row_idx": 11,
                     "start_frame": 0
                 }
             ],
@@ -1052,6 +1088,18 @@
                     "end_frame": 25,
                     "row_idx": 11,
                     "start_frame": 23
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "posture_pts_regen_multi",
+                            "0"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 69,
+                    "row_idx": 13,
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_pc_attack_2rel"
@@ -1120,6 +1168,18 @@
                     },
                     "end_frame": 61,
                     "row_idx": 9,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "posture_pts_regen_multi",
+                            "0"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 69,
+                    "row_idx": 11,
                     "start_frame": 0
                 }
             ],
@@ -1241,6 +1301,18 @@
                     "end_frame": 41,
                     "row_idx": 11,
                     "start_frame": 35
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "posture_pts_regen_multi",
+                            "0"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 69,
+                    "row_idx": 13,
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_pc_attack_3rel"
@@ -1465,6 +1537,18 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "posture_pts_regen_multi",
+                            "0"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 69,
+                    "row_idx": 14,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "broadcast_attack_to_enemies"
                         ],
                         "cmd_name": "var_mark_reeve"
@@ -1680,6 +1764,18 @@
                     },
                     "end_frame": 49,
                     "row_idx": 12,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "posture_pts_regen_multi",
+                            "0"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 69,
+                    "row_idx": 14,
                     "start_frame": 0
                 },
                 {
@@ -1908,6 +2004,18 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "posture_pts_regen_multi",
+                            "0"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 125,
+                    "row_idx": 14,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "ready_grunt3.wav",
                             "0.000000 0.000000 0.000000",
                             "",
@@ -2091,6 +2199,18 @@
                     },
                     "end_frame": 49,
                     "row_idx": 12,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "posture_pts_regen_multi",
+                            "0"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 141,
+                    "row_idx": 14,
                     "start_frame": 0
                 },
                 {
@@ -2316,6 +2436,18 @@
                     },
                     "end_frame": 81,
                     "row_idx": 12,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "posture_pts_regen_multi",
+                            "0"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 81,
+                    "row_idx": 14,
                     "start_frame": 0
                 },
                 {
@@ -3662,6 +3794,18 @@
                     "end_frame": 11,
                     "row_idx": 7,
                     "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "posture_pts_regen_multi",
+                            "2"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 69,
+                    "row_idx": 9,
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_hold_guard_idle"
@@ -3735,6 +3879,18 @@
                     },
                     "end_frame": 21,
                     "row_idx": 10,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "posture_pts_regen_multi",
+                            "2"
+                        ],
+                        "cmd_name": "var_ov"
+                    },
+                    "end_frame": 69,
+                    "row_idx": 12,
                     "start_frame": 0
                 }
             ],

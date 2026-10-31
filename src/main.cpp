@@ -350,7 +350,7 @@ int main()
 
             BT::system::animator_driven_hitcapsule_sets_update();
             BT::system::hitcapsule_attack_processing(k_sim_delta_time);
-            BT::system::process_receive_attack_events();
+            BT::system::process_receive_attack_events(k_sim_delta_time);
 
             // Audio tick.
             {

@@ -20,8 +20,10 @@ struct Health_stats_data
     int32_t health_pts{ std::numeric_limits<int32_t>::max() };     // <0 causes death trigger.
 
     int32_t max_posture_pts{ 100 };
-    int32_t posture_pts{ 0 };                 // `max_posture_pts` causes posture break. Min is 0.
-    float_t posture_pts_regen_rate{ 20 };     // N per sec to decrement `posture_pts`.
+    int32_t posture_pts{ 0 };                   // `max_posture_pts` causes posture break. Min is 0
+    float_t posture_pts_regen_rate{ 10 };       // setting for N per sec to decrement `posture_pts`
+    float_t posture_pts_regen_wait_time{ 2 };   // N seconds before starting posture pts regen
+    float_t posture_pts_regen_rate_multi{ 1 };  // animator controlled extra multiplier (@TODO: put into `Runtime_state`)
 
     float_t parry_return_posture_multi{ 1 };  // amount of posture that comes back if defender does a perfect parry
 
@@ -65,6 +67,9 @@ struct Health_stats_data
             bool has_fire;  // builds up the fire status meter
         };
         Attack_stats last_received_attack;
+
+        float_t posture_pts_regen_wait_timer{ 0 };
+        float_t posture_pts_regen_remainder{ 0 };
     } state;
 };
 

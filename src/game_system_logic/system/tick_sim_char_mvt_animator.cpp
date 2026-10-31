@@ -2,6 +2,7 @@
 
 #include "btdatecheck.h"
 #include "game_system_logic/component/character_movement.h"
+#include "game_system_logic/component/health_stats.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
 #include "physics_engine/physics_engine.h"  // for `k_simulation_delta_time`
@@ -34,6 +35,9 @@ void BT::system::tick_sim_char_mvt_animator()
                 continue;  // Cancel bc animator doesn't exist.
 
             auto& animator{ animator_optional.value() };
+
+            auto* poss_health_stats_data{ reg.try_get<component::Health_stats_data>(
+                affecting_rend_obj_ecs_entity) };
 
             // Write animator vars.
             #define SET_ANIMATOR_BOOL_VAR(_var)                                                     \
@@ -250,6 +254,13 @@ void BT::system::tick_sim_char_mvt_animator()
                     anim_afa_data_handle
                         .get_float_data_handle(AFA_ctrl::CTRL_DATA_LABEL_mvt_input_decel)
                         .get_val();
+
+                if (poss_health_stats_data)
+                    poss_health_stats_data->posture_pts_regen_rate_multi =
+                        anim_afa_data_handle
+                            .get_float_data_handle(
+                                AFA_ctrl::CTRL_DATA_LABEL_posture_pts_regen_multi)
+                            .get_val();
 
                 char_mvt_anim_state.input_mvt_state.is_alive =
                     anim_afa_data_handle.get_bool_data_handle(AFA_ctrl::CTRL_DATA_LABEL_is_alive)

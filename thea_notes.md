@@ -687,7 +687,7 @@
         - i think it might just be best to have it be its own function in the afa so that no systems have to pick up the afa and write stuff in
         - [x] do it
     - [x] fix deathblow receive anim not playing (just make sure that the deathblow anim event queue watch is 2 frames after can_deathblow is on)
-- [ ] FEATURE: have posture recover over time (except when attacking), and holding up guard speeds up recovery
+- [x] FEATURE: have posture recover over time (except when attacking), and holding up guard speeds up recovery
 
 - [ ] in level editor view, have scene and main viewport camera sync if a checkbox is checked.
     - and have this checkbox checked by default
@@ -701,6 +701,7 @@
 - [ ] BUG: for some reason renderer updates slower when changing the timescale?
     - i think it's not actually running at 120fps if this is the case. investigate it
 
+- [ ] IMPROVE: move the mutable parts of the `Health_stats_data` component to the runtime-state
 - [ ] IMPROVE: for all ecs `.remove()` calls, check to make sure that the 1 elem gets removed using some kind of thingy that emits a warning if not everything is removed.
 - [ ] IMPROVE: unify the way to tell if a character is the playchar. here are a couple ways:
     - `health_stats_data.ui_name == "playchar"`

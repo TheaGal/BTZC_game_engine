@@ -158,6 +158,12 @@ void process_receive_attack(entt::registry& reg,
         health_stats_data.health_pts -= real_damage;
     health_stats_data.posture_pts += real_posture;
 
+    if (real_posture > 1e-3)
+    {   // Reset posture regen state on receiving posture dmg.
+        health_stats_data.state.posture_pts_regen_wait_timer = 0;
+        health_stats_data.state.posture_pts_regen_remainder = 0;
+    }
+
     // Cap posture if player char and parrying.
     if (receive_atk_as_parry && is_playchar_health_stats(health_stats_data))
     {
@@ -185,10 +191,33 @@ void process_receive_attack(entt::registry& reg,
     }
 }
 
+void process_posture_pts_regeneration(component::Health_stats_data& health_stats_data,
+                                      float_t const delta_time)
+{
+    if (health_stats_data.state.posture_pts_regen_wait_timer < health_stats_data.posture_pts_regen_wait_time)
+    {
+        health_stats_data.state.posture_pts_regen_wait_timer += delta_time;
+        return;
+    }
+
+    health_stats_data.state.posture_pts_regen_remainder +=
+        (health_stats_data.posture_pts_regen_rate * health_stats_data.posture_pts_regen_rate_multi *
+         delta_time);
+
+    while (health_stats_data.state.posture_pts_regen_remainder >= 1)
+    {
+        health_stats_data.posture_pts--;
+        health_stats_data.state.posture_pts_regen_remainder -= 1;
+    }
+
+    if (health_stats_data.posture_pts < 0)
+        health_stats_data.posture_pts = 0;
+}
+
 } // namespace
 
 
-void BT::system::process_receive_attack_events()
+void BT::system::process_receive_attack_events(float_t const delta_time)
 {   // Exit early if simulation not running.
     if (!service_finder::find_service<world::World_properties_container>()
              .get_data_handle()
@@ -201,5 +230,6 @@ void BT::system::process_receive_attack_events()
     for (auto&& [entity, health_stats_data] : view.each())
     {
         process_receive_attack(reg, entity, health_stats_data);
+        process_posture_pts_regeneration(health_stats_data, delta_time);
     }
 }
