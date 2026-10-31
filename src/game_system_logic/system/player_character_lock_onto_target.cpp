@@ -97,7 +97,9 @@ void BT::system::player_character_lock_onto_target(float_t const delta_time)
         vec3 cam_position;
         vec3 cam_facing_dir;
         {
-            camera.get_position(cam_position);
+            rvec3 cam_position_r;
+            camera.get_position(cam_position_r);
+            btglm_rvec3_to_vec3(cam_position_r, cam_position);
             camera.get_view_direction(cam_facing_dir);
 
             assert(glm_eq(glm_vec3_norm2(cam_facing_dir), 1.0f));

@@ -360,8 +360,13 @@ int main()
 
                 vec3 cam_position;
                 vec3 cam_forward;
+
                 auto const& main_camera{ main_renderer.get_main_camera() };
-                main_camera.get_position(cam_position);
+
+                rvec3 cam_position_r;
+                main_camera.get_position(cam_position_r);
+                btglm_rvec3_to_vec3(cam_position_r, cam_position);
+
                 main_camera.get_view_direction(cam_forward);
 
                 BT::audio::set_3d_listener_trans(cam_position, cam_forward);

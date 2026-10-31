@@ -123,8 +123,8 @@ void process_ui_target_lockon_reticle(Process_method const method,
                 auto& cam_lockon_target{ reg.get<component::Follow_camera_lockon_target const>(
                     locked_on_entity) };
 
-                vec3 target_locked_on_pos;
-                btglm_rvec3_to_vec3(transform.position.raw, target_locked_on_pos);
+                rvec3 target_locked_on_pos;
+                btglm_rvec3_copy(transform.position.raw, target_locked_on_pos);
                 target_locked_on_pos[1] += cam_lockon_target.follow_offset_y;
 
                 // Record locked on position.

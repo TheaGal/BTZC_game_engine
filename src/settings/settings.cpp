@@ -11,6 +11,7 @@
 #include <cassert>
 #include <filesystem>
 #include <fstream>
+#include <string>
 
 
 namespace
@@ -38,6 +39,40 @@ void toml_to_app_settings(toml::table const& toml_tbl, App_settings& app_setting
     {
         app_settings.renderer_settings.open_scene_view_ids.emplace_back(elem.value_or("unknown"));
     }
+
+    app_settings.renderer_settings.main_viewport_cam_orient = TXP::Renderer_settings::Camera_orientation{
+        .position =
+            rvec3s{
+                .x = toml_tbl["renderer_settings"]["main_viewport_cam_orient"]["position"]["x"].value_or(0.0),
+                .y = toml_tbl["renderer_settings"]["main_viewport_cam_orient"]["position"]["y"].value_or(1.0),
+                .z = toml_tbl["renderer_settings"]["main_viewport_cam_orient"]["position"]["z"].value_or(-10.0),
+            },
+        .facing_dir =
+            vec3s{
+                .x = toml_tbl["renderer_settings"]["main_viewport_cam_orient"]["facing_dir"]["x"].value_or(0.0f),
+                .y = toml_tbl["renderer_settings"]["main_viewport_cam_orient"]["facing_dir"]["y"].value_or(0.0f),
+                .z = toml_tbl["renderer_settings"]["main_viewport_cam_orient"]["facing_dir"]["z"].value_or(1.0f),
+            },
+    };
+
+    app_settings.renderer_settings.open_scene_view_cam_orients.clear();
+    for (size_t i = 0; i < app_settings.renderer_settings.open_scene_view_ids.size(); i++)
+    {
+        app_settings.renderer_settings.open_scene_view_cam_orients.emplace_back(TXP::Renderer_settings::Camera_orientation{
+            .position =
+                rvec3s{
+                    .x = toml_tbl["renderer_settings"]["open_scene_view_cam_orients"][std::to_string(i)]["position"]["x"].value_or(0.0),
+                    .y = toml_tbl["renderer_settings"]["open_scene_view_cam_orients"][std::to_string(i)]["position"]["y"].value_or(1.0),
+                    .z = toml_tbl["renderer_settings"]["open_scene_view_cam_orients"][std::to_string(i)]["position"]["z"].value_or(-10.0),
+                },
+            .facing_dir =
+                vec3s{
+                    .x = toml_tbl["renderer_settings"]["open_scene_view_cam_orients"][std::to_string(i)]["facing_dir"]["x"].value_or(0.0f),
+                    .y = toml_tbl["renderer_settings"]["open_scene_view_cam_orients"][std::to_string(i)]["facing_dir"]["y"].value_or(0.0f),
+                    .z = toml_tbl["renderer_settings"]["open_scene_view_cam_orients"][std::to_string(i)]["facing_dir"]["z"].value_or(1.0f),
+                },
+        });
+    }
 }
 
 /// Converts app settings into TOML file, including all fields. Returns the TOML file.
@@ -47,17 +82,66 @@ toml::table app_settings_to_toml(App_settings& app_settings)
     for (auto const& elem : app_settings.renderer_settings.open_scene_view_ids)
         open_scene_view_ids_arr.emplace_back(elem);
 
+    toml::table open_scene_view_cam_orients_tbl;
+    for (auto const& elem : app_settings.renderer_settings.open_scene_view_cam_orients)
+    {
+        open_scene_view_cam_orients_tbl.emplace(
+            std::to_string(open_scene_view_cam_orients_tbl.size()),
+            toml::table{
+                {
+                    "position",
+                    toml::table{
+                        { "x", elem.position.x },
+                        { "y", elem.position.y },
+                        { "z", elem.position.z },
+                    },
+                },
+                {
+                    "facing_dir",
+                    toml::table{
+                        { "x", elem.facing_dir.x },
+                        { "y", elem.facing_dir.y },
+                        { "z", elem.facing_dir.z },
+                    },
+                },
+            });
+    }
+
     return toml::table{
-        { "renderer_settings", toml::table{
-                { "monitor_idx",         app_settings.renderer_settings.monitor_idx     },
-                { "windowed_width",      app_settings.renderer_settings.windowed_width  },
-                { "windowed_height",     app_settings.renderer_settings.windowed_height },
-                { "is_vsync_on",         app_settings.renderer_settings.is_vsync_on     },
-                { "is_resizable",        app_settings.renderer_settings.is_resizable    },
-                { "has_border",          app_settings.renderer_settings.has_border      },
-                { "is_fullscreen",       app_settings.renderer_settings.is_fullscreen   },
-                { "open_scene_view_ids", open_scene_view_ids_arr                        },
-            }
+        {
+            "renderer_settings",
+            toml::table{
+                { "monitor_idx", app_settings.renderer_settings.monitor_idx },
+                { "windowed_width", app_settings.renderer_settings.windowed_width },
+                { "windowed_height", app_settings.renderer_settings.windowed_height },
+                { "is_vsync_on", app_settings.renderer_settings.is_vsync_on },
+                { "is_resizable", app_settings.renderer_settings.is_resizable },
+                { "has_border", app_settings.renderer_settings.has_border },
+                { "is_fullscreen", app_settings.renderer_settings.is_fullscreen },
+                { "open_scene_view_ids", open_scene_view_ids_arr },
+                {
+                    "main_viewport_cam_orient",
+                    toml::table{
+                        {
+                            "position",
+                            toml::table{
+                                { "x", app_settings.renderer_settings.main_viewport_cam_orient.position.x },
+                                { "y", app_settings.renderer_settings.main_viewport_cam_orient.position.y },
+                                { "z", app_settings.renderer_settings.main_viewport_cam_orient.position.z },
+                            },
+                        },
+                        {
+                            "facing_dir",
+                            toml::table{
+                                { "x", app_settings.renderer_settings.main_viewport_cam_orient.facing_dir.x },
+                                { "y", app_settings.renderer_settings.main_viewport_cam_orient.facing_dir.y },
+                                { "z", app_settings.renderer_settings.main_viewport_cam_orient.facing_dir.z },
+                            },
+                        },
+                    },
+                },
+                { "open_scene_view_cam_orients", open_scene_view_cam_orients_tbl },
+            },
         },
     };
 }

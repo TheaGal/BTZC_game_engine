@@ -692,7 +692,10 @@
 - [ ] in level editor view, have scene and main viewport camera sync if a checkbox is checked.
     - and have this checkbox checked by default
     - [x] get the capsule collider actually looking correct (two cap models and a hollow cylinder model)
-    - [ ] save the editor camera transform from last time the game was opened
+    - [ ] save/load the editor camera transform from last time the game was opened
+        - [x] have each camera be one entry in the settings toml
+        - [x] capture the camera orientations into the app settings
+        - [ ] load in the cam orientations
 
 - [ ] add clouds for renderer
     - ig I REALLY WANT CLOUDS but also it would be good to incorporate a simple algorithm now so that there's a baseline system that can be integrated into the renderer as other things are made
@@ -701,6 +704,7 @@
 - [ ] BUG: for some reason renderer updates slower when changing the timescale?
     - i think it's not actually running at 120fps if this is the case. investigate it
 
+- [ ] IMPROVE: make serialization/deserialization for settings.cpp's toml easier/better (write helper funcs)
 - [ ] IMPROVE: move the mutable parts of the `Health_stats_data` component to the runtime-state
 - [ ] IMPROVE: for all ecs `.remove()` calls, check to make sure that the 1 elem gets removed using some kind of thingy that emits a warning if not everything is removed.
 - [ ] IMPROVE: unify the way to tell if a character is the playchar. here are a couple ways:

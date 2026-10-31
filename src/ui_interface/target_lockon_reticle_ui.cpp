@@ -35,7 +35,7 @@ void Target_lockon_reticle_ui::set_visible(bool const flag)
     m_prev_visible = flag;
 }
 
-void Target_lockon_reticle_ui::set_reticle_pos_world(TXP::Camera const& camera, vec3 world_pos)
+void Target_lockon_reticle_ui::set_reticle_pos_world(TXP::Camera const& camera, rvec3 world_pos)
 {
     auto& ui_canvas{ m_ui_state.canvas(k_target_lockon_reticle_fname) };
     if (!ui_canvas.is_loaded())
