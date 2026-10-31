@@ -679,14 +679,24 @@
         - boss or miniboss (anything with the deathblow dots): do posture break
         - zako enemy: have last breath 1-3sec window where can get deathblown, but if missed will just die
         - [x] done'd
-- [ ] BUGFIX: anim root motion multiplier/speed is bad after player is posture broken
+- [x] BUGFIX: anim root motion multiplier/speed is bad after player is posture broken
     - ok it still be happening
+    - for some reason at the end of the posture break anim, the root motion multiplier is written back to be 2
+        - it's when enemy attacks playchar again while posture broken  //< this is root cause i think
+    - i think the root cause's solution is to store the sent root motion and then have a separate afa that receives the sent root motion value
+        - i think it might just be best to have it be its own function in the afa so that no systems have to pick up the afa and write stuff in
+        - [x] do it
+    - [x] fix deathblow receive anim not playing (just make sure that the deathblow anim event queue watch is 2 frames after can_deathblow is on)
 - [ ] FEATURE: have posture recover over time (except when attacking), and holding up guard speeds up recovery
 
 - [ ] in level editor view, have scene and main viewport camera sync if a checkbox is checked.
     - and have this checkbox checked by default
     - [ ] get the capsule collider actually looking correct (two cap models and a hollow cylinder model)
     - [ ] save the editor camera transform from last time the game was opened
+
+- [ ] add clouds for renderer
+    - ig I REALLY WANT CLOUDS but also it would be good to incorporate a simple algorithm now so that there's a baseline system that can be integrated into the renderer as other things are made
+    - see here for more details: https://discord.com/channels/1563075165473083402/1565873391360155648
 
 - [ ] BUG: for some reason renderer updates slower when changing the timescale?
     - i think it's not actually running at 120fps if this is the case. investigate it
@@ -761,6 +771,8 @@
 - [ ] SOMEDAY: move actual movement to after afa regions are processed to remove one-tick lag from certain things (like jump_up reeve, or just reeves in general i think)
     - well, it looks like it's not just reeves, it's just random stuff. ig the is_grounded event put in the event queue, but that's not quite this issue being pointed out.
     - well, just do an investigation at the very least.
+
+- [ ] SOMEDAY: add afa checks, like how `can_receive_deathblow` must be 2 frames shorter than watch `evq_on_receive_deathblow`
 
 - [ ] SOMEDAY: get the animator unit tested so that regressions like the one i had to spend 4 days on dont happen again
 

@@ -10,6 +10,7 @@
 
 #include <cassert>
 #include <stdexcept>
+#include <string>
 
 
 void BT::system::tick_sim_char_mvt_animator()
@@ -195,6 +196,10 @@ void BT::system::tick_sim_char_mvt_animator()
                     anim_afa_data_handle
                         .get_float_data_handle(AFA_ctrl::CTRL_DATA_LABEL_root_motion_multi)
                         .get_val();
+
+                TXP::debug::emplace_data_point("arm[" + std::to_string((uint32_t)entity) +
+                                                   "].root_motion_multiplier",
+                                               anim_root_motion.root_motion_multiplier);
 
                 animator.get_anim_root_motion_delta_pos(TXP::SIMULATION_TIMER_PROFILE,
                                                         anim_root_motion.delta_pos);

@@ -2846,6 +2846,18 @@
                     "ctrl_cmd": {
                         "argv": [
                             "root_motion_multi",
+                            "receive_staged_root_motion_multi"
+                        ],
+                        "cmd_name": "var_wr"
+                    },
+                    "end_frame": 1,
+                    "row_idx": 13,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "root_motion_multi",
                             "1"
                         ],
                         "cmd_name": "var_wr"
@@ -3079,11 +3091,23 @@
                     "ctrl_cmd": {
                         "argv": [
                             "root_motion_multi",
+                            "receive_staged_root_motion_multi"
+                        ],
+                        "cmd_name": "var_wr"
+                    },
+                    "end_frame": 1,
+                    "row_idx": 11,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "root_motion_multi",
                             "1"
                         ],
                         "cmd_name": "var_wr"
                     },
-                    "end_frame": 32,
+                    "end_frame": 23,
                     "row_idx": 12,
                     "start_frame": 9
                 },
@@ -3255,6 +3279,18 @@
                     "end_frame": 35,
                     "row_idx": 10,
                     "start_frame": 31
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "root_motion_multi",
+                            "receive_staged_root_motion_multi"
+                        ],
+                        "cmd_name": "var_wr"
+                    },
+                    "end_frame": 1,
+                    "row_idx": 11,
+                    "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
@@ -3765,7 +3801,7 @@
                         ],
                         "cmd_name": "var_ov"
                     },
-                    "end_frame": 130,
+                    "end_frame": 128,
                     "row_idx": 7,
                     "start_frame": 30
                 },
@@ -3781,6 +3817,18 @@
                     "end_frame": 130,
                     "row_idx": 8,
                     "start_frame": 30
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "root_motion_multi",
+                            "receive_staged_root_motion_multi"
+                        ],
+                        "cmd_name": "var_wr"
+                    },
+                    "end_frame": 1,
+                    "row_idx": 9,
+                    "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
@@ -3837,6 +3885,18 @@
                     "end_frame": 153,
                     "row_idx": 1,
                     "start_frame": 30
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "root_motion_multi",
+                            "1"
+                        ],
+                        "cmd_name": "var_wr"
+                    },
+                    "end_frame": 23,
+                    "row_idx": 6,
+                    "start_frame": 10
                 },
                 {
                     "ctrl_cmd": {

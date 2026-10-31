@@ -96,7 +96,7 @@ void process_attack_interaction(Entity_container& entity_container,
 
     if (defender_animator.has_value() && offender_animator.has_value())
     {
-        float_t root_motion_multiplier;
+        float_t received_root_motion_multiplier;
 #if OLD_HITCAPSULE_ATK_PROCESS
         bool can_cancel_attack_w_parry;
 #endif // OLD_HITCAPSULE_ATK_PROCESS
@@ -104,7 +104,7 @@ void process_attack_interaction(Entity_container& entity_container,
             auto& animator{ offender_animator.value() };
 
             auto& afa_data_handle{ animator.get_anim_frame_action_data_handle() };
-            root_motion_multiplier =
+            received_root_motion_multiplier =
                 afa_data_handle
                     .get_float_data_handle(
                         TXP::anim_frame_action::CTRL_DATA_LABEL_attack_send_root_motion_multi)
@@ -139,10 +139,11 @@ void process_attack_interaction(Entity_container& entity_container,
                     .get_val();
 #endif // OLD_HITCAPSULE_ATK_PROCESS
 
-            // Write root motion multiplier from offender to AFA data.
+            // Write root motion multiplier from offender to defender AFA data.
             afa_data_handle
-                .get_float_data_handle(TXP::anim_frame_action::CTRL_DATA_LABEL_root_motion_multi)
-                .write_val(root_motion_multiplier);
+                .get_float_data_handle(
+                    TXP::anim_frame_action::CTRL_DATA_LABEL_receive_staged_root_motion_multi)
+                .write_val(received_root_motion_multiplier);
         }
 
 #if OLD_HITCAPSULE_ATK_PROCESS
