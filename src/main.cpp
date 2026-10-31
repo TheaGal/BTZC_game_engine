@@ -195,6 +195,7 @@ int main()
     main_renderer.add_material_palette("large_grid_material_palette", { "large_grid_mat" });
     main_renderer.add_model("unit_box", ".wobj", false, false);
     main_renderer.add_model("unit_plane", ".glb", false, false);
+    main_renderer.add_model("unit_capsule_parts", ".glb", false, false);
     main_renderer.add_model("material_viewer_ball", ".glb", false, false);
     main_renderer.add_model("probuilder_example", ".wobj", false, false);
     main_renderer.add_model("simple_combat_char", ".glb", true, true);

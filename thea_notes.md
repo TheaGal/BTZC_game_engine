@@ -691,7 +691,7 @@
 
 - [ ] in level editor view, have scene and main viewport camera sync if a checkbox is checked.
     - and have this checkbox checked by default
-    - [ ] get the capsule collider actually looking correct (two cap models and a hollow cylinder model)
+    - [x] get the capsule collider actually looking correct (two cap models and a hollow cylinder model)
     - [ ] save the editor camera transform from last time the game was opened
 
 - [ ] add clouds for renderer

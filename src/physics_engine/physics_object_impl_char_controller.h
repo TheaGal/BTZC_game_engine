@@ -9,6 +9,7 @@
 #include "physics_object.h"
 #include "txp_renderer_public.h"
 
+#include <array>
 #include <vector>
 
 using std::vector;
@@ -112,7 +113,7 @@ private:
     bool m_is_crouched;
     bool m_allow_sliding{ false };  // True when want to move.
 
-    TXP::debug::debug_model_id_t m_debug_mesh_id;
+    std::array<TXP::debug::debug_model_id_t, 3> m_debug_mesh_ids;
 };
 
 }  // namespace BT

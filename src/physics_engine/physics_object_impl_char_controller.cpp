@@ -123,12 +123,22 @@ BT::Phys_obj_impl_char_controller::Phys_obj_impl_char_controller(float_t radius,
     m_character->SetListener(this);
 
     // Create debug render job.
-    m_debug_mesh_id = TXP::debug::emplace_debug_model("unit_box", TXP::debug::PHYSICS_WIREFRAME);
+    m_debug_mesh_ids[0] = TXP::debug::emplace_debug_model_submesh("unit_capsule_parts",
+                                                                  "Capsule_cap_top",
+                                                                  TXP::debug::PHYSICS_WIREFRAME);
+    m_debug_mesh_ids[1] = TXP::debug::emplace_debug_model_submesh("unit_capsule_parts",
+                                                                  "Capsule_midsection",
+                                                                  TXP::debug::PHYSICS_WIREFRAME);
+    m_debug_mesh_ids[2] = TXP::debug::emplace_debug_model_submesh("unit_capsule_parts",
+                                                                  "Capsule_cap_bottom",
+                                                                  TXP::debug::PHYSICS_WIREFRAME);
 }
 
 BT::Phys_obj_impl_char_controller::~Phys_obj_impl_char_controller()
 {
-    TXP::debug::remove_debug_model(m_debug_mesh_id);
+    TXP::debug::remove_debug_model(m_debug_mesh_ids[0]);
+    TXP::debug::remove_debug_model(m_debug_mesh_ids[1]);
+    TXP::debug::remove_debug_model(m_debug_mesh_ids[2]);
 }
 
 // Phys obj impl ifc.
@@ -307,16 +317,34 @@ void BT::Phys_obj_impl_char_controller::update_debug_mesh()
     vec3 cur_pos_f;
     btglm_rvec3_to_vec3(cur_pos_r, cur_pos_f);
 
-    mat4 graphic_trans;
-    glm_translate_make(graphic_trans, cur_pos_f);
-    glm_quat_rotate(graphic_trans, versor{ current_trans.rotation.GetX(),
-                                           current_trans.rotation.GetY(),
-                                           current_trans.rotation.GetZ(),
-                                           current_trans.rotation.GetW() }, graphic_trans);
-    glm_scale(graphic_trans, vec3{ m_radius,
-                                   0.5f * height + m_radius,
-                                   m_radius });
-    TXP::debug::update_debug_model_transform(m_debug_mesh_id, graphic_trans);
+    versor cur_rot{ current_trans.rotation.GetX(),
+                    current_trans.rotation.GetY(),
+                    current_trans.rotation.GetZ(),
+                    current_trans.rotation.GetW() };
+
+    {
+        mat4 graphic_trans;
+        glm_translate_make(graphic_trans,
+                           vec3{ cur_pos_f[0], cur_pos_f[1] + 0.5f * height, cur_pos_f[2] });
+        glm_quat_rotate(graphic_trans, cur_rot, graphic_trans);
+        glm_scale(graphic_trans, vec3{ m_radius, m_radius, m_radius });
+        TXP::debug::update_debug_model_transform(m_debug_mesh_ids[0], graphic_trans);
+    }
+    {
+        mat4 graphic_trans;
+        glm_translate_make(graphic_trans, cur_pos_f);
+        glm_quat_rotate(graphic_trans, cur_rot, graphic_trans);
+        glm_scale(graphic_trans, vec3{ m_radius, height, m_radius });
+        TXP::debug::update_debug_model_transform(m_debug_mesh_ids[1], graphic_trans);
+    }
+    {
+        mat4 graphic_trans;
+        glm_translate_make(graphic_trans,
+                           vec3{ cur_pos_f[0], cur_pos_f[1] - 0.5f * height, cur_pos_f[2] });
+        glm_quat_rotate(graphic_trans, cur_rot, graphic_trans);
+        glm_scale(graphic_trans, vec3{ m_radius, m_radius, m_radius });
+        TXP::debug::update_debug_model_transform(m_debug_mesh_ids[2], graphic_trans);
+    }
 }
 
 // Character contact listener.
