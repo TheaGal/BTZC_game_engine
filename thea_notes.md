@@ -692,10 +692,10 @@
 - [ ] in level editor view, have scene and main viewport camera sync if a checkbox is checked.
     - and have this checkbox checked by default
     - [x] get the capsule collider actually looking correct (two cap models and a hollow cylinder model)
-    - [ ] save/load the editor camera transform from last time the game was opened
+    - [x] save/load the editor camera transform from last time the game was opened
         - [x] have each camera be one entry in the settings toml
         - [x] capture the camera orientations into the app settings
-        - [ ] load in the cam orientations
+        - [x] load in the cam orientations
 
 - [ ] add clouds for renderer
     - ig I REALLY WANT CLOUDS but also it would be good to incorporate a simple algorithm now so that there's a baseline system that can be integrated into the renderer as other things are made
