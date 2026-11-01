@@ -230,11 +230,13 @@ int main()
     BT::ui_ifc::Target_lockon_reticle_ui target_lockon_reticle_ui{ ui_state };
     BT::ui_ifc::Ninsatsu ninsatsu_ui{ ui_state };
     BT::ui_ifc::You_died you_died_ui{ ui_state };
-    ui_state.canvas("debug_player_camera_guide.btui");
 
     constexpr bool k_show_debug_camera_guide{ false };
     if constexpr (k_show_debug_camera_guide)
+    {
+        ui_state.canvas("debug_player_camera_guide.btui");
         ui_state.load_persistent_canvas("debug_player_camera_guide.btui");
+    }
 
     // Setup physics engine.
     BT::Physics_engine main_physics_engine;

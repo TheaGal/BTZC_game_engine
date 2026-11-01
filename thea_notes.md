@@ -689,7 +689,7 @@
     - [x] fix deathblow receive anim not playing (just make sure that the deathblow anim event queue watch is 2 frames after can_deathblow is on)
 - [x] FEATURE: have posture recover over time (except when attacking), and holding up guard speeds up recovery
 
-- [ ] in level editor view, have scene and main viewport camera sync if a checkbox is checked.
+- [x] in level editor view, have scene and main viewport camera sync if a checkbox is checked.
     - and have this checkbox checked by default
     - [x] get the capsule collider actually looking correct (two cap models and a hollow cylinder model)
     - [x] save/load the editor camera transform from last time the game was opened
