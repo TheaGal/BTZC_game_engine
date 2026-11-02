@@ -22,7 +22,7 @@ You_died::You_died(TXP::UI_state& ui_state)
 {
     BT_SERVICE_FINDER_ADD_SERVICE(You_died, this);
 
-    date_deadline(2026, 11, 1);  // is it necessary to preregister still?
+    // Preregister.
     ui_state.canvas(k_you_died_fname);
 }
 

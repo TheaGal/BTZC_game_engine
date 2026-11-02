@@ -6,4 +6,5 @@
 char const k_application_title_str[]{ APP_NAME " - " BTZC_GAME_ENGINE_OS_NAME
                                                " - " BTZC_GAME_ENGINE_DEV_STAGE
                                                " - " BTZC_GAME_ENGINE_VERSION
+                                               " - compiled on " __DATE__
                                                " - commit " GIT_COMMIT_HASH };

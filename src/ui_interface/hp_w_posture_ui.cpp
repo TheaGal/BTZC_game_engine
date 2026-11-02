@@ -37,7 +37,7 @@ Hp_w_posture::Hp_w_posture(TXP::UI_state& ui_state)
 {
     BT_SERVICE_FINDER_ADD_SERVICE(Hp_w_posture, this);
 
-    date_deadline(2026, 11, 1);  // is it necessary to preregister still?
+    // Preregister.
     ui_state.canvas(k_playchar_hp_w_posture_fname);
     ui_state.canvas(k_boss_oppo_hp_w_posture_fname);
     ui_state.canvas(k_reg_oppo_hp_w_posture_fname);

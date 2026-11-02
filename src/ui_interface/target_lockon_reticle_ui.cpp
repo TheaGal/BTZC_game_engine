@@ -18,7 +18,7 @@ Target_lockon_reticle_ui::Target_lockon_reticle_ui(TXP::UI_state& ui_state)
 {
     BT_SERVICE_FINDER_ADD_SERVICE(Target_lockon_reticle_ui, this);
 
-    date_deadline(2026, 11, 1);  // is it necessary to preregister still?
+    // Preregister.
     ui_state.canvas(k_target_lockon_reticle_fname);
 }
 

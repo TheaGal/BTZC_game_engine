@@ -647,6 +647,46 @@
                     }
                 }
             ]
+        },
+        {
+            "entity_uuid": "cf1c06ab-f5cd-4d09-9344-53d08043e5a3",
+            "components": [
+                {
+                    "type_name": "TXP::component::Entity_metadata",
+                    "members_j": {
+                        "name": "Cloud voxel sizing",
+                        "uuid": "cf1c06ab-f5cd-4d09-9344-53d08043e5a3"
+                    }
+                },
+                {
+                    "type_name": "component::Transform",
+                    "members_j": {
+                        "position": {
+                            "x": 20.0,
+                            "y": 4.0,
+                            "z": -15.000000
+                        },
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "scale": {
+                            "x": 4.0,
+                            "y": 4.0,
+                            "z": 4.0
+                        }
+                    }
+                },
+                {
+                    "type_name": "TXP::component::Render_object_config",
+                    "members_j": {
+                        "render_layer": 1,
+                        "model_name": "unit_box"
+                    }
+                }
+            ]
         }
     ]
 }

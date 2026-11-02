@@ -700,6 +700,17 @@
 - [ ] add clouds for renderer
     - ig I REALLY WANT CLOUDS but also it would be good to incorporate a simple algorithm now so that there's a baseline system that can be integrated into the renderer as other things are made
     - see here for more details: https://discord.com/channels/1563075165473083402/1565873391360155648
+    - [x] create 256x256x32 texture for voxel grid (uncompressed for now)
+        - have the voxel size be either 8 (to make 2km x 2km x 0.25 km) or 16 for twice the size (tho it may be a bit too grand???)
+        - idk if i could even create a world that's going to fill the 2km squared space (^-^;)
+        - the fortnite island is essentially 1km squared (for just the land), so i think it would be beyond my ambitions to try to make something bigger
+        - hyrule in totk is around 8km squared, and that's due to it being mostly procgen'd. (ref: https://www.reddit.com/r/zelda/comments/1kfkz77/totk_revisiting_hyrule_death_mountains_height_and/)
+    - [x] create simple dummy shader that gets ray marching started.
+        - sooo many validation errors wtf!!
+    - [ ] ~~create half res depth image with MAX filter using compute shader~~
+        - perhaps look at amd single pass downfilter?
+        - defer this to the future when occlusion culling is getting created and stuff too!
+    - [ ] delete commented out code in clouds shader .h/.cpp
 
 - [ ] BUG: for some reason renderer updates slower when changing the timescale?
     - i think it's not actually running at 120fps if this is the case. investigate it

@@ -154,7 +154,7 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
         {
             // @TODO: i don't think `do_attack_by_early_request` is the best way to increase battle
             //        pressure. this should be a little more sophisticated.  -Thea 2026/10/17
-            date_deadline(2026, 11, 1);
+            date_deadline(2026, 11, 5);
 
             cpu_enemy_awareness.runtime_state.current_battle_pressure +=
                 (do_attack_by_early_request
