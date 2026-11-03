@@ -717,7 +717,7 @@
     - i think it's not actually running at 120fps if this is the case. investigate it
     - it turns out the `interp_t` wasn't getting calculated correctly (was supposed to be multi instead of divide).
 
-- [ ] IMPROVE: make serialization/deserialization for settings.cpp's toml easier/better (write helper funcs)
+- [x] IMPROVE: make serialization/deserialization for settings.cpp's toml easier/better (write helper funcs)
 - [ ] IMPROVE: move the mutable parts of the `Health_stats_data` component to the runtime-state
 - [ ] IMPROVE: for all ecs `.remove()` calls, check to make sure that the 1 elem gets removed using some kind of thingy that emits a warning if not everything is removed.
 - [ ] IMPROVE: unify the way to tell if a character is the playchar. here are a couple ways:
