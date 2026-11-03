@@ -697,7 +697,7 @@
         - [x] capture the camera orientations into the app settings
         - [x] load in the cam orientations
 
-- [ ] add clouds for renderer
+- [x] add clouds for renderer
     - ig I REALLY WANT CLOUDS but also it would be good to incorporate a simple algorithm now so that there's a baseline system that can be integrated into the renderer as other things are made
     - see here for more details: https://discord.com/channels/1563075165473083402/1565873391360155648
     - [x] create 256x256x32 texture for voxel grid (uncompressed for now)
@@ -710,7 +710,8 @@
     - [ ] ~~create half res depth image with MAX filter using compute shader~~
         - perhaps look at amd single pass downfilter?
         - defer this to the future when occlusion culling is getting created and stuff too!
-    - [ ] delete commented out code in clouds shader .h/.cpp
+    - [x] simple green grinch transmittance fluffy ball out of the voxels
+    - [x] delete commented out code in clouds shader .h/.cpp
 
 - [ ] BUG: for some reason renderer updates slower when changing the timescale?
     - i think it's not actually running at 120fps if this is the case. investigate it
