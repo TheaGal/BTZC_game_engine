@@ -713,8 +713,9 @@
     - [x] simple green grinch transmittance fluffy ball out of the voxels
     - [x] delete commented out code in clouds shader .h/.cpp
 
-- [ ] BUG: for some reason renderer updates slower when changing the timescale?
+- [x] BUG: for some reason renderer updates slower when changing the timescale?
     - i think it's not actually running at 120fps if this is the case. investigate it
+    - it turns out the `interp_t` wasn't getting calculated correctly (was supposed to be multi instead of divide).
 
 - [ ] IMPROVE: make serialization/deserialization for settings.cpp's toml easier/better (write helper funcs)
 - [ ] IMPROVE: move the mutable parts of the `Health_stats_data` component to the runtime-state
