@@ -28,8 +28,7 @@ struct Health_stats_data
     bool is_invincible{ false };  // `true` prevents death trigger and decrement of `health_pts`.
 
     std::string ui_name;  // empty string just makes a ui health/posture bar above the characters
-                          // head. "playchar" makes the bottom screen ui for the player character,
-                          // and anything else creates an enemy boss ui with the ui name.
+                          // head. anything else creates an enemy boss ui with the ui name.
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
         Health_stats_data,

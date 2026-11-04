@@ -29,11 +29,9 @@ void iter_and_asdfasdfasdf()
 void BT::system::character_broadcast_attack_msg_to_enemies()
 {
     auto& renderer{ service_finder::find_service<TXP::Renderer>() };
-    auto& entity_container{ service_finder::find_service<Entity_container>() };
-    auto& reg{ entity_container.get_ecs_registry() };
+    auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
 
     auto view{ reg.view<component::Transform const,
-                        component::Display_repr_transform_ref const,
                         component::Character_mvt_state const,
                         component::Detectable_character const>() };
 
@@ -41,10 +39,9 @@ void BT::system::character_broadcast_attack_msg_to_enemies()
                          component::CPU_enemy_awareness const,  // These 2 are on the same layer (NTD).
                          component::Detectable_character>() };  // These 2 are on the same layer (NTD).
 
-    for (auto&& [ecs_entity, transform, disp_repr_ref, char_mvt_st, detect_char] : view.each())
+    for (auto&& [ecs_entity, transform, char_mvt_st, detect_char] : view.each())
     {   // Check if event to do broadcasts exists.
-        auto animator{ renderer.try_get_skeletal_animator(
-            entity_container.find_entity(disp_repr_ref.display_repr_uuid)) };
+        auto animator{ renderer.try_get_skeletal_animator(ecs_entity) };
 
         if (!animator)
         {  // Cancel bc animator doesn't exist.

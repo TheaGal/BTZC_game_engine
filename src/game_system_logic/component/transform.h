@@ -77,6 +77,11 @@ void submit_transform_change_no_scale_helper(entt::registry& reg,
                                              rvec3s pos,
                                              versors rot);
 
+/// Helper function for submitting new transform change (does not change rotation nor scale).
+void submit_transform_change_only_translation_helper(entt::registry& reg,
+                                                     entt::entity entity,
+                                                     rvec3s pos);
+
 /// Helper function for submitting new transform change (does not change position nor scale).
 void submit_transform_change_only_rotation_helper(entt::registry& reg,
                                                   entt::entity entity,

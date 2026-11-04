@@ -619,8 +619,7 @@ void apply_velocity_to_char_con(
 
 void BT::system::input_controlled_character_movement()
 {
-    auto& entity_container{ service_finder::find_service<Entity_container>() };
-    auto& reg{ entity_container.get_ecs_registry() };
+    auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
     auto view{ reg.view<component::Character_world_space_input const,
                         component::Character_mvt_state,
                         component::Created_physics_object_reference const>() };
@@ -642,23 +641,14 @@ void BT::system::input_controlled_character_movement()
         auto& phys_obj{ *phys_engine.checkout_physics_object(phys_obj_uuid) };
 
         auto* anim_root_motion{ char_mvt_anim_state
-                                    ? reg.try_get<TXP::component::Animator_root_motion>(
-                                          entity_container.find_entity(
-                                              char_mvt_anim_state->affecting_animator_uuid))
+                                    ? reg.try_get<TXP::component::Animator_root_motion>(entity)
                                     : nullptr };
 
         component::Follow_camera_follow_ref::State* follow_cam_state{ nullptr };
-        auto* poss_display_repr_ref{ reg.try_get<component::Display_repr_transform_ref>(entity) };
-        if (poss_display_repr_ref != nullptr)
+        if (auto follow_cam_follow_ref{ reg.try_get<component::Follow_camera_follow_ref>(entity) };
+            follow_cam_follow_ref != nullptr)
         {
-            auto display_repr_ecs_ent{ entity_container.find_entity(
-                poss_display_repr_ref->display_repr_uuid) };
-
-            auto follow_cam_follow_ref{ reg.try_get<component::Follow_camera_follow_ref>(
-                display_repr_ecs_ent) };
-
-            if (follow_cam_follow_ref != nullptr)
-                follow_cam_state = &follow_cam_follow_ref->state;
+            follow_cam_state = &follow_cam_follow_ref->state;
         }
 
         auto mvt_logic_result = character_controller_movement_logic(char_ws_input,
@@ -684,15 +674,11 @@ void BT::system::input_controlled_character_movement()
         phys_engine.return_physics_object(&phys_obj);
 
         // Try writing a new facing direction.
-        if (poss_display_repr_ref != nullptr)
-        {   // Calculate rotation.
+        {
             versors rot;
             glm_quat(rot.raw, mvt_logic_result.display_facing_angle, 0.0f, 1.0f, 0.0f);
 
-            // Write to display repr entity transform.
-            auto display_repr_ecs_ent{ entity_container.find_entity(
-                poss_display_repr_ref->display_repr_uuid) };
-            component::submit_transform_change_only_rotation_helper(reg, display_repr_ecs_ent, rot);
+            component::submit_transform_change_only_rotation_helper(reg, entity, rot);
         }
     }
 }

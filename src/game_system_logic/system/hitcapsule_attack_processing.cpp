@@ -164,14 +164,9 @@ void process_attack_interaction(Entity_container& entity_container,
         }
 #endif // OLD_HITCAPSULE_ATK_PROCESS
 
-        // Get parent of defender.
-        auto defender_parent_ecs_entity{ entity_container.find_entity(
-            reg.get<component::Transform_hierarchy>(defender_ecs_entity).parent_entity) };
-
         // Try to align defender to offender (facing towards or away).
         bool turn_to_face_away{ false };
-        if (auto char_mvt_state{
-                reg.try_get<component::Character_mvt_state>(defender_parent_ecs_entity) };
+        if (auto char_mvt_state{ reg.try_get<component::Character_mvt_state>(defender_ecs_entity) };
             char_mvt_state)
         {
             rvec3s delta_pos;
@@ -209,8 +204,8 @@ void process_attack_interaction(Entity_container& entity_container,
         }
 
         // Try to apply some kind of hurt anim.
-        if (auto char_mvt_anim_state{ reg.try_get<component::Character_mvt_animated_state>(
-                defender_parent_ecs_entity) };
+        if (auto char_mvt_anim_state{
+                reg.try_get<component::Character_mvt_animated_state>(defender_ecs_entity) };
             char_mvt_anim_state)
         {
 #if OLD_HITCAPSULE_ATK_PROCESS

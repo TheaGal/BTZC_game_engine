@@ -1,12 +1,14 @@
 #include "process_receive_attack_events.h"
 
 #include "entt/entity/fwd.hpp"
+#include "entt/entity/registry.hpp"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/health_stats.h"
+#include "game_system_logic/entity_container.h"
 #include "game_system_logic/system/helper_funcs.h"
 #include "game_system_logic/world/world_properties.h"
 #include "service_finder/service_finder.h"
-#include "txp_renderer/ui/ui_state.h"
+#include "txp_renderer_public.h"
 
 #include <cmath>
 #include <stdexcept>
@@ -15,28 +17,6 @@
 namespace
 {
 using namespace BT;
-
-inline bool is_playchar_health_stats(component::Health_stats_data const& health_stats_data)
-{
-    return (health_stats_data.ui_name == "playchar");
-}
-
-inline component::Character_mvt_animated_state& find_char_mvt_anim_state(entt::registry& reg,
-                                                                         entt::entity entity)
-{
-    UUID entity_uuid{ service_finder::find_service<Entity_container>().find_entity_uuid(entity) };
-
-    for (auto&& [_, char_mvt_anim_state] :
-         reg.view<component::Character_mvt_animated_state>().each())
-    {
-        if (char_mvt_anim_state.affecting_animator_uuid == entity_uuid)
-        {
-            return char_mvt_anim_state;
-        }
-    }
-
-    throw std::runtime_error("Whoopsie! could not find one heheh");
-}
 
 /// Process receiving attack.
 void process_receive_attack(entt::registry& reg,
@@ -61,15 +41,18 @@ void process_receive_attack(entt::registry& reg,
     health_stats_data.state.num_deathblows =
         std::min(health_stats_data.state.num_deathblows, health_stats_data.max_num_deathblows);
 
+    auto& char_mvt_anim_state{ reg.get<component::Character_mvt_animated_state>(entity) };
+
     // Check for health depletion.
     if (health_stats_data.state.health_pts < 0)
     {
-        find_char_mvt_anim_state(reg, entity).input_mvt_state.on_health_depleted = true;
+        char_mvt_anim_state.input_mvt_state.on_health_depleted = true;
 
         health_stats_data.state.health_pts = 0;  // to ensure event doesn't come in again
 
         // Check whether this is a miniboss/boss cpu char.
-        if (!is_playchar_health_stats(health_stats_data) && health_stats_data.state.num_deathblows > 0)
+        if (!char_mvt_anim_state.input_mvt_state.is_player_char_mode() &&
+            health_stats_data.state.num_deathblows > 0)
         {
             // Force posture break too! (since that's the only way this guy dies)
             health_stats_data.state.posture_pts = health_stats_data.max_posture_pts;
@@ -79,7 +62,7 @@ void process_receive_attack(entt::registry& reg,
     // Check for posture break.
     if (health_stats_data.state.posture_pts >= health_stats_data.max_posture_pts)
     {
-        find_char_mvt_anim_state(reg, entity).input_mvt_state.on_posture_broken = true;
+        char_mvt_anim_state.input_mvt_state.on_posture_broken = true;
 
         // To ensure event posture break doesn't come in again and posture is partially recovered in
         // case doesn't get deathblown.
@@ -166,7 +149,7 @@ void process_receive_attack(entt::registry& reg,
     }
 
     // Cap posture if player char and parrying.
-    if (receive_atk_as_parry && is_playchar_health_stats(health_stats_data))
+    if (receive_atk_as_parry && char_mvt_anim_state.input_mvt_state.is_player_char_mode())
     {
         health_stats_data.state.posture_pts =
             std::min(health_stats_data.state.posture_pts, health_stats_data.max_posture_pts - 1);
@@ -192,7 +175,10 @@ void process_receive_attack(entt::registry& reg,
             }
 
             // Cap posture if player.
-            if (is_playchar_health_stats(*offe_hp_stats_data))
+            if (auto* offe_char_mvt_anim_state =
+                    reg.try_get<component::Character_mvt_animated_state>(proc_atk.offender_entity);
+                offe_char_mvt_anim_state != nullptr &&
+                offe_char_mvt_anim_state->input_mvt_state.is_player_char_mode())
             {
                 offe_hp_stats_data->state.posture_pts =
                     std::min(offe_hp_stats_data->state.posture_pts,

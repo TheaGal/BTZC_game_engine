@@ -722,12 +722,14 @@
     - [x] fix parrys not resetting the posture regen timer
 - [x] IMPROVE: for all ecs `.remove()` calls, check to make sure that the 1 elem gets removed using some kind of thingy that emits a warning if not everything is removed.
     - having a macro helper in btlogger would be nice
-- [ ] IMPROVE: make the characters be one entity so that there's no "find the affecting entity"-like components
+- [x] IMPROVE: make the characters be one entity so that there's no "find the affecting entity"-like components
     - this is a bigger refactor.
-- [ ] IMPROVE: unify the way to tell if a character is the playchar. here are a couple ways:
+    - this also will require a way to change the facing direction of just the render model and not the transform
+- [x] IMPROVE: unify the way to tell if a character is the playchar. here are a couple ways:
     - `health_stats_data.ui_name == "playchar"`
     - `mvt_state_mode_t::MODE_PLAYER_CHAR`
     - the entity unifying task could solve this too (the IMPROVE before this)
+        - ok, DECISION: only use `mvt_state_mode_t::MODE_PLAYER_CHAR`. also made a helper func `.is_player_char_mode()`
 
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).

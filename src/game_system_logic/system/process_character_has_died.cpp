@@ -33,18 +33,14 @@ void BT::system::process_character_has_died(float_t const delta_time)
 
     auto& gieq{ *poss_gieq };
 
-    auto& entity_container{ service_finder::find_service<Entity_container>() };
-    auto& reg{ entity_container.get_ecs_registry() };
+    auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
     auto view{ reg.view<component::Transform const, component::Character_mvt_animated_state>() };
 
     for (auto&& [entity, transform, char_mvt_anim_state] : view.each())
     {
         if (!char_mvt_anim_state.input_mvt_state.is_alive)
         {
-            auto const inner_entity{ entity_container.find_entity(
-                char_mvt_anim_state.affecting_animator_uuid) };
-
-            auto* poss_health_stats_data{ reg.try_get<component::Health_stats_data>(inner_entity) };
+            auto* poss_health_stats_data{ reg.try_get<component::Health_stats_data>(entity) };
 
             if (poss_health_stats_data == nullptr)
                 continue;
@@ -52,7 +48,7 @@ void BT::system::process_character_has_died(float_t const delta_time)
             auto& health_stats_data{ *poss_health_stats_data };
 
             // Have resurrect screen for playchar death.
-            if (health_stats_data.ui_name == "playchar")
+            if (char_mvt_anim_state.input_mvt_state.is_player_char_mode())
             {
                 if (!gieq.peek_event_has(Interrupt_event::EVE_TYPE_YOU_DIED_SCREEN))
                 {
@@ -105,10 +101,9 @@ void BT::system::process_character_has_died(float_t const delta_time)
 
                 // Remove health component to ensure this isn't alive anymore.
 
-                bool const is_boss_oppo{ !health_stats_data.ui_name.empty() &&
-                                         health_stats_data.ui_name != "playchar" };
+                bool const is_boss_oppo{ !health_stats_data.ui_name.empty() };
 
-                BT_CHK_RETVAL(reg.remove<component::Health_stats_data>(inner_entity), 1);
+                BT_CHK_RETVAL(reg.remove<component::Health_stats_data>(entity), 1);
 
                 // Add ninsatsu interrupt.
                 if (is_boss_oppo)

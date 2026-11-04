@@ -47,9 +47,7 @@
                     "type_name": "component::Transform_hierarchy",
                     "members_j": {
                         "parent_entity": null,
-                        "children_entities": [
-                            "d33f01dc-b0b5-4954-9771-71a1c42e5209"
-                        ]
+                        "children_entities": []
                     }
                 },
                 {
@@ -67,16 +65,8 @@
                     "members_j": {}
                 },
                 {
-                    "type_name": "component::Display_repr_transform_ref",
-                    "members_j": {
-                        "display_repr_uuid": "d33f01dc-b0b5-4954-9771-71a1c42e5209"
-                    }
-                },
-                {
                     "type_name": "component::Character_mvt_animated_state",
-                    "members_j": {
-                        "affecting_animator_uuid": "d33f01dc-b0b5-4954-9771-71a1c42e5209"
-                    }
+                    "members_j": {}
                 },
                 {
                     "type_name": "component::Physics_object_settings",
@@ -97,50 +87,6 @@
                     "members_j": {
                         "type": 1,
                         "transform_offset": { "x": 0, "y": 1.68, "z": 0 }
-                    }
-                },
-                {
-                    "type_name": "component::Game_interrupt_event_queue",
-                    "members_j": {}
-                }
-            ]
-        },
-        {
-            "entity_uuid": "d33f01dc-b0b5-4954-9771-71a1c42e5209",
-            "components": [
-                {
-                    "type_name": "TXP::component::Entity_metadata",
-                    "members_j": {
-                        "name": "Character repr",
-                        "uuid": "d33f01dc-b0b5-4954-9771-71a1c42e5209"
-                    }
-                },
-                {
-                    "type_name": "component::Transform",
-                    "members_j": {
-                        "position": {
-                            "x": 0.0,
-                            "y": 5.0,
-                            "z": 0.0
-                        },
-                        "rotation": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0,
-                            "w": 1.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
-                        }
-                    }
-                },
-                {
-                    "type_name": "component::Transform_hierarchy",
-                    "members_j": {
-                        "parent_entity": "aae5ebfb-7c2b-49a8-bcb9-658fdea987af",
-                        "children_entities": []
                     }
                 },
                 {
@@ -174,7 +120,6 @@
                 {
                     "type_name": "component::Health_stats_data",
                     "members_j": {
-                        "ui_name": "playchar",
                         "max_health_pts": 10
                     }
                 },
@@ -184,6 +129,10 @@
                         "dmg_pts": 2,
                         "posture_dmg_pts": 2
                     }
+                },
+                {
+                    "type_name": "component::Game_interrupt_event_queue",
+                    "members_j": {}
                 }
             ]
         },
@@ -284,9 +233,7 @@
                     "type_name": "component::Transform_hierarchy",
                     "members_j": {
                         "parent_entity": null,
-                        "children_entities": [
-                            "019a9613-1fee-731d-b9e4-1fcaad20f791"
-                        ]
+                        "children_entities": []
                     }
                 },
                 {
@@ -298,16 +245,8 @@
                     "members_j": {}
                 },
                 {
-                    "type_name": "component::Display_repr_transform_ref",
-                    "members_j": {
-                        "display_repr_uuid": "019a9613-1fee-731d-b9e4-1fcaad20f791"
-                    }
-                },
-                {
                     "type_name": "component::Character_mvt_animated_state",
-                    "members_j": {
-                        "affecting_animator_uuid": "019a9613-1fee-731d-b9e4-1fcaad20f791"
-                    }
+                    "members_j": {}
                 },
                 {
                     "type_name": "component::Physics_object_settings",
@@ -336,46 +275,6 @@
                     "members_j": {
                         "type": 4,
                         "transform_offset": { "x": 0, "y": 1.68, "z": 0 }
-                    }
-                }
-            ]
-        },
-        {
-            "entity_uuid": "019a9613-1fee-731d-b9e4-1fcaad20f791",
-            "components": [
-                {
-                    "type_name": "TXP::component::Entity_metadata",
-                    "members_j": {
-                        "name": "Character repr",
-                        "uuid": "019a9613-1fee-731d-b9e4-1fcaad20f791"
-                    }
-                },
-                {
-                    "type_name": "component::Transform",
-                    "members_j": {
-                        "position": {
-                            "x": -10.0,
-                            "y": 5.0,
-                            "z": 10.0
-                        },
-                        "rotation": {
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0,
-                            "w": 1.0
-                        },
-                        "scale": {
-                            "x": 1.0,
-                            "y": 1.0,
-                            "z": 1.0
-                        }
-                    }
-                },
-                {
-                    "type_name": "component::Transform_hierarchy",
-                    "members_j": {
-                        "parent_entity": "019a9611-b980-7378-aea7-17deb7f1b3db",
-                        "children_entities": []
                     }
                 },
                 {

@@ -107,8 +107,7 @@ void process_broadcasted_enemy_msgs(component::Detectable_character* detect_char
 
 void BT::system::cpu_character_world_space_input(float_t const delta_time)
 {
-    auto& entity_container{ service_finder::find_service<Entity_container>() };
-    auto& reg{ entity_container.get_ecs_registry() };
+    auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
     auto view{ reg.view<component::Transform const,
                         component::CPU_enemy_awareness,
                         component::Character_world_space_input,
@@ -129,8 +128,7 @@ void BT::system::cpu_character_world_space_input(float_t const delta_time)
         bool _;
         bool do_attack_by_request{ false };
         bool do_attack_by_early_request{ false };
-        bool const afa_data_success = helper::fetch_wanted_afa_data(entity_container,
-                                                                    char_mvt_anim_state,
+        bool const afa_data_success = helper::fetch_wanted_afa_data(entity,
                                                                     _,
                                                                     do_attack_by_request,
                                                                     do_attack_by_early_request);

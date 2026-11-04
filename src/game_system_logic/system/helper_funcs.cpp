@@ -2,22 +2,18 @@
 
 #include "btrandom.h"
 #include "entt/entity/fwd.hpp"
-#include "game_system_logic/entity_container.h"
-#include "game_system_logic/component/character_movement.h"
 #include "service_finder/service_finder.h"
 #include "txp_renderer_public.h"
 
 
 bool BT::system::helper::fetch_wanted_afa_data(
-    Entity_container const& entity_container,
-    component::Character_mvt_animated_state const& char_mvt_anim_state,
+    entt::entity const ecs_entity,
     bool& out_can_move,
     bool& out_request_new_attack,
     bool& out_request_new_attack_early)
 {
     auto& renderer{ service_finder::find_service<TXP::Renderer>() };
-    auto animator_optional{ renderer.try_get_skeletal_animator(
-        entity_container.find_entity(char_mvt_anim_state.affecting_animator_uuid)) };
+    auto animator_optional{ renderer.try_get_skeletal_animator(ecs_entity) };
 
     if (!animator_optional.has_value())
     {

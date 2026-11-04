@@ -35,6 +35,9 @@ void BT::system::write_entity_transforms_from_physics()
         phys_engine.return_physics_object(&phys_obj);
 
         // Submit new transform.
-        component::submit_transform_change_no_scale_helper(reg, entity, new_pos, new_rot);
+        if (phys_obj.get_impl()->get_type() == PHYSICS_OBJECT_TYPE_CHARACTER_CONTROLLER)
+            component::submit_transform_change_only_translation_helper(reg, entity, new_pos);
+        else
+            component::submit_transform_change_no_scale_helper(reg, entity, new_pos, new_rot);
     }
 }

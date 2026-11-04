@@ -75,25 +75,9 @@ struct Character_mvt_state
     float_t get_facing_angle() const;
 };
 
-/// Stores the reference to the entity with the transform of the display representation. This is
-/// used in the case of a character, where the character controller physics object does not rotate
-/// at all.
-struct Display_repr_transform_ref
-{
-    UUID display_repr_uuid;
-
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
-        Display_repr_transform_ref,
-        display_repr_uuid
-    );
-};
-
 /// Communicates state of the animated model from the `input_controlled_character_movement` system.
 struct Character_mvt_animated_state
 {
-    /// UUID that contains the animator to affect.
-    UUID affecting_animator_uuid;
-
     /// For tracking input data from character.
     struct Input_mvt_state
     {   // Mode.
@@ -183,6 +167,11 @@ struct Character_mvt_animated_state
                 deathblow_other_entity = cap0;
             }
         }
+
+        inline bool is_player_char_mode() const
+        {
+            return (mode == MODE_PLAYER_CHAR);
+        }
     } input_mvt_state;
 
     struct Write_to_animator_data
@@ -217,10 +206,9 @@ struct Character_mvt_animated_state
         bool prev_guard_pressed{ false };
     } state;
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
-        Character_mvt_animated_state,
-        affecting_animator_uuid
-    );
+    char _;
+
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Character_mvt_animated_state, _);
 };
 
 }  // namespace component
