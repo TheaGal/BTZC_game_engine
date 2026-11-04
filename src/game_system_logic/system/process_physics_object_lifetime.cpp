@@ -84,7 +84,9 @@ void destroy_physics_objects(entt::registry& reg,
             phys_engine.remove_physics_object(it.first);
 
             if (it.second.ecs_entity != entt::null)
-                reg.remove<component::Created_physics_object_reference>(it.second.ecs_entity);
+                BT_CHK_RETVAL(
+                    reg.remove<component::Created_physics_object_reference>(it.second.ecs_entity),
+                    1);
 
             BT_TRACEF("Destroyed and removed \"%s\" from physics object pool.",
                       UUID_helper::to_pretty_repr(it.first).c_str());

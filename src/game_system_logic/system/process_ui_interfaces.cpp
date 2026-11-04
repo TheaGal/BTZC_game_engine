@@ -88,9 +88,11 @@ void process_ui_hp_w_posture(Process_method const method,
             throw std::runtime_error("whoopsie not implemente dyet!!");
         }
 
-        ui.set_hp_bar(canvas_name, health_stats_data.health_pts, health_stats_data.max_health_pts);
+        ui.set_hp_bar(canvas_name,
+                      health_stats_data.state.health_pts,
+                      health_stats_data.max_health_pts);
         ui.set_posture_bar(canvas_name,
-                           health_stats_data.posture_pts,
+                           health_stats_data.state.posture_pts,
                            health_stats_data.max_posture_pts);
     }
 

@@ -256,7 +256,7 @@ void BT::system::tick_sim_char_mvt_animator()
                         .get_val();
 
                 if (poss_health_stats_data)
-                    poss_health_stats_data->posture_pts_regen_rate_multi =
+                    poss_health_stats_data->state.posture_pts_regen_rate_multi =
                         anim_afa_data_handle
                             .get_float_data_handle(
                                 AFA_ctrl::CTRL_DATA_LABEL_posture_pts_regen_multi)

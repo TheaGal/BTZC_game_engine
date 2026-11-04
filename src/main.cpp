@@ -52,7 +52,7 @@
 #define IMPLEMENT_THIS 0
 
 
-int main()
+int main(int argc, char* argv[])
 {
     BT::Timer startup_timer;
     startup_timer.start_timer();

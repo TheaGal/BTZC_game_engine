@@ -1,6 +1,7 @@
 #include "process_character_has_died.h"
 
 #include "btdatecheck.h"
+#include "btlogger.h"
 #include "btuuid.h"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/game_interrupt_event_queue.h"
@@ -88,8 +89,8 @@ void BT::system::process_character_has_died(float_t const delta_time)
                     char_mvt_anim_state.input_mvt_state.choose_to_resurrect = true;
 
                     date_deadline(2026, 12, 1);
-                    health_stats_data.health_pts = (health_stats_data.max_health_pts / 2);  // @TODO: replace this with a health stats driver like `.do_heal(.max_health() * 0.5);`
-                    health_stats_data.posture_pts = 0;  // @TODO: ditto above `.zero_out_posture()`
+                    health_stats_data.state.health_pts = (health_stats_data.max_health_pts / 2);  // @TODO: replace this with a health stats driver like `.do_heal(.max_health() * 0.5);`
+                    health_stats_data.state.posture_pts = 0;  // @TODO: ditto above `.zero_out_posture()`
                 }
 
                 char_mvt_anim_state.input_mvt_state.resurrect_make_choice_timer += delta_time;
@@ -98,16 +99,16 @@ void BT::system::process_character_has_died(float_t const delta_time)
             else
             {
                 // Remove physics object.
-                reg.remove<component::Physics_object_settings>(entity);
-                reg.remove<component::Physics_obj_type_char_con_settings>(entity);
-                reg.remove<component::Created_physics_object_reference>(entity);
+                BT_CHK_RETVAL(reg.remove<component::Physics_object_settings>(entity), 1);
+                BT_CHK_RETVAL(reg.remove<component::Physics_obj_type_char_con_settings>(entity), 1);
+                BT_CHK_RETVAL(reg.remove<component::Created_physics_object_reference>(entity), 1);
 
                 // Remove health component to ensure this isn't alive anymore.
 
                 bool const is_boss_oppo{ !health_stats_data.ui_name.empty() &&
                                          health_stats_data.ui_name != "playchar" };
 
-                reg.remove<component::Health_stats_data>(inner_entity);
+                BT_CHK_RETVAL(reg.remove<component::Health_stats_data>(inner_entity), 1);
 
                 // Add ninsatsu interrupt.
                 if (is_boss_oppo)

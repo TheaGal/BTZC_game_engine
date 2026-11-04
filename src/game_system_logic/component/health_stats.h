@@ -17,20 +17,15 @@ namespace component
 struct Health_stats_data
 {
     int32_t max_health_pts{ 100 };
-    int32_t health_pts{ std::numeric_limits<int32_t>::max() };     // <0 causes death trigger.
 
     int32_t max_posture_pts{ 100 };
-    int32_t posture_pts{ 0 };                   // `max_posture_pts` causes posture break. Min is 0
-    float_t posture_pts_regen_rate{ 10 };       // setting for N per sec to decrement `posture_pts`
-    float_t posture_pts_regen_wait_time{ 2 };   // N seconds before starting posture pts regen
-    float_t posture_pts_regen_rate_multi{ 1 };  // animator controlled extra multiplier (@TODO: put into `Runtime_state`)
-
-    float_t parry_return_posture_multi{ 1 };  // amount of posture that comes back if defender does a perfect parry
+    float_t posture_pts_regen_rate{ 10 };      // setting for N per sec to decrement `posture_pts`
+    float_t posture_pts_regen_wait_time{ 2 };  // N seconds before starting posture pts regen
+    float_t parry_return_posture_multi{ 1 };   // amount of posture that comes back if defender does a perfect parry
 
     int32_t max_num_deathblows{ 0 };
-    int32_t num_deathblows{ std::numeric_limits<int32_t>::max() };
 
-    bool is_invincible{ false };              // `true` prevents death trigger and decrement of `health_pts`.
+    bool is_invincible{ false };  // `true` prevents death trigger and decrement of `health_pts`.
 
     std::string ui_name;  // empty string just makes a ui health/posture bar above the characters
                           // head. "playchar" makes the bottom screen ui for the player character,
@@ -41,6 +36,8 @@ struct Health_stats_data
         max_health_pts,
         max_posture_pts,
         posture_pts_regen_rate,
+        posture_pts_regen_wait_time,
+        parry_return_posture_multi,
         max_num_deathblows,
         is_invincible,
         ui_name
@@ -68,8 +65,15 @@ struct Health_stats_data
         };
         Attack_stats last_received_attack;
 
+        int32_t health_pts{ std::numeric_limits<int32_t>::max() };  // <0 causes death trigger.
+
+        int32_t posture_pts{ 0 };                   // `max_posture_pts` causes posture break. Min is 0
+        float_t posture_pts_regen_rate_multi{ 1 };  // animator controlled extra multiplier (@TODO: put into `Runtime_state`)
+
         float_t posture_pts_regen_wait_timer{ 0 };
         float_t posture_pts_regen_remainder{ 0 };
+
+        int32_t num_deathblows{ std::numeric_limits<int32_t>::max() };
     } state;
 };
 

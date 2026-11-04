@@ -718,11 +718,16 @@
     - it turns out the `interp_t` wasn't getting calculated correctly (was supposed to be multi instead of divide).
 
 - [x] IMPROVE: make serialization/deserialization for settings.cpp's toml easier/better (write helper funcs)
-- [ ] IMPROVE: move the mutable parts of the `Health_stats_data` component to the runtime-state
-- [ ] IMPROVE: for all ecs `.remove()` calls, check to make sure that the 1 elem gets removed using some kind of thingy that emits a warning if not everything is removed.
+- [x] IMPROVE: move the mutable parts of the `Health_stats_data` component to the runtime-state
+    - [x] fix parrys not resetting the posture regen timer
+- [x] IMPROVE: for all ecs `.remove()` calls, check to make sure that the 1 elem gets removed using some kind of thingy that emits a warning if not everything is removed.
+    - having a macro helper in btlogger would be nice
+- [ ] IMPROVE: make the characters be one entity so that there's no "find the affecting entity"-like components
+    - this is a bigger refactor.
 - [ ] IMPROVE: unify the way to tell if a character is the playchar. here are a couple ways:
     - `health_stats_data.ui_name == "playchar"`
     - `mvt_state_mode_t::MODE_PLAYER_CHAR`
+    - the entity unifying task could solve this too (the IMPROVE before this)
 
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
