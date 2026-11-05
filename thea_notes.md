@@ -748,7 +748,7 @@
     - ~~more attack anims~~
         - defer
 
-- [ ] IMPROVE: fix the shader text mesh deletion code
+- [x] IMPROVE: fix the shader text mesh deletion code
 
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
