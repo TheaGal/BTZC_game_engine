@@ -305,8 +305,7 @@
                 {
                     "type_name": "component::Health_stats_data",
                     "members_j": {
-                        "ui_name": "Test Dummy the First (@TODO remove the tiny max_posture_pts)",
-                        "max_posture_pts": 10,
+                        "ui_name": "Test Dummy the First",
                         "max_num_deathblows": 3
                     }
                 },

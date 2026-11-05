@@ -77,10 +77,11 @@ struct CPU_enemy_awareness
 
     // Battle pressure.
     vec2s battle_pressure_range{ 0, 10 };
-    vec2s battle_pressure_to_atk_chance_threshold{ 0.2, 2.0 };
-    float_t battle_pressure_flareup{ 5 };
-    float_t battle_pressure_cooldown{ 2 };
-    float_t battle_pressure_early_atk_threshold{ 4 };
+    float_t base_atk_by_chance_chance{ 0.2 };
+    float_t battle_pressure_get_attacked_flareup{ 4 };
+    float_t battle_pressure_enter_aggression_radius_flareup{ 4 };
+    float_t battle_pressure_early_atk_threshold{ 5 };
+    float_t battle_pressure_always_atk_by_chance_threshold{ 5 };
 
     /// Serialization.
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
@@ -94,10 +95,21 @@ struct CPU_enemy_awareness
         lose_suspicion_time,
         suspicion_sound_distance,
         battle_pressure_range,
-        battle_pressure_flareup,
-        battle_pressure_cooldown,
-        battle_pressure_early_atk_threshold
+        base_atk_by_chance_chance,
+        battle_pressure_get_attacked_flareup,
+        battle_pressure_enter_aggression_radius_flareup,
+        battle_pressure_early_atk_threshold,
+        battle_pressure_always_atk_by_chance_threshold
     );
+
+    /// Helper func.
+    inline void add_to_runtime_battle_pressure(float_t const amt)
+    {
+        runtime_state.current_battle_pressure =
+            glm_clamp(runtime_state.current_battle_pressure + amt,
+                      battle_pressure_range.x,
+                      battle_pressure_range.y);
+    }
 
     /// DO NOT SERIALIZE.
     struct State

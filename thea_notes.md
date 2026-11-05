@@ -731,15 +731,29 @@
     - the entity unifying task could solve this too (the IMPROVE before this)
         - ok, DECISION: only use `mvt_state_mode_t::MODE_PLAYER_CHAR`. also made a helper func `.is_player_char_mode()`
 
+- [x] finish "improve enemy attacks w readability"
+    - pressure response algorithm
+        - a half-baked one is in, but it could be improved
+        - ~~have the enemy add more pressure if it sees~~ ok maybe it should just be event based??
+            - have an event for:
+                - when entering the aggression radius (guarantee an attack)
+                - when sprinting towards oppo
+                - when attack
+                - when heal
+            - [x] change the early attack request to be just a solid timer
+                - have there be a time buildup threshold and for sample enemy have it be one sec below the threshold
+                    - so that the second time the timer comes in the 
+            - [x] add to the timer more than the threshold for entering aggression radius
+            > there's no sprinting or healing yet so defer those.
+    - ~~more attack anims~~
+        - defer
+
+- [ ] IMPROVE: fix the shader text mesh deletion code
+
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
         - so max 3 cascades (both realtime cascades and one static cascade if dir light changes) get updated on one frame
     - look into this tech: https://discord.com/channels/1563075165473083402/1564514891862114314
-
-- [ ] finish "improve enemy attacks w readability"
-    - pressure response algorithm
-        - a half-baked one is in, but it could be improved
-    - more attack anims
 
 - [ ] add sweep attacks and thrust attacks
     - hell yeah mikiri
