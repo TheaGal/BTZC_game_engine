@@ -759,8 +759,9 @@
     - [ ] PREREQUISITE: do these SOMEDAYs:
         - [ ] SOMEDAY: create tool for easy placement of hitcapsules, hurtcapsules, and sfx emission.
 
-        - [ ] SOMEDAY: change the hitbox to one single hitcapsule group.
+        - [x] SOMEDAY: change the hitbox to one single hitcapsule group.
             - actually no. it should be two, so that the legs can get masked away during a jump
+            - [x] mask away the legs during jump and fall
         - [ ] SOMEDAY: change the hurtboxes to an afa function region instead of a hitcapsule group that gets enabled/disabled.
             - the dynamic hurtcapsule should have:
                 - the damage to deal
