@@ -144,6 +144,7 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/scenes/_dev_animation_editor_view.btscene
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/scenes/_dev_animation_editor_view_OLD_COPY.btscene
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/scenes/_dev_sample_scene.btscene
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/scenes/_dev_sample_scene_BACKUP.btscene
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/scenes/_dev_sample_scene_OLD_COPY.btscene
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/__debug_color_grad_line.shader
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/__debug_color_grad_line.shadrefl

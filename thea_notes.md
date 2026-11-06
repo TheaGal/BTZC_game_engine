@@ -750,14 +750,35 @@
 
 - [x] IMPROVE: fix the shader text mesh deletion code
 
-- [ ] add shadows for pbr renderer
-    - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
-        - so max 3 cascades (both realtime cascades and one static cascade if dir light changes) get updated on one frame
-    - look into this tech: https://discord.com/channels/1563075165473083402/1564514891862114314
+- [x] BUG: fix last voxel traversal overstepping limit 
 
 - [ ] add sweep attacks and thrust attacks
     - hell yeah mikiri
     - jump goomba stomp
+
+    - [ ] PREREQUISITE: do these SOMEDAYs:
+        - [ ] SOMEDAY: create tool for easy placement of hitcapsules, hurtcapsules, and sfx emission.
+
+        - [ ] SOMEDAY: change the hitbox to one single hitcapsule group.
+            - actually no. it should be two, so that the legs can get masked away during a jump
+        - [ ] SOMEDAY: change the hurtboxes to an afa function region instead of a hitcapsule group that gets enabled/disabled.
+            - the dynamic hurtcapsule should have:
+                - the damage to deal
+                - the knockback multiplier
+                - what kind of parry opponent should do (parry-left, parry-right, or parry-strong)
+                - whether perilous attack
+
+    - [ ] add perilous indicator
+    - [ ] add one sweep attack anim
+    - [ ] create stomp anim
+    - [ ] add dodge anim
+        - 8 directions (or just 4 and blendtree it) to keep consistency when doing it on gamepad
+    - [ ] create mikiri give/receive anims
+
+- [ ] add shadows for pbr renderer
+    - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
+        - so max 3 cascades (both realtime cascades and one static cascade if dir light changes) get updated on one frame
+    - look into this tech: https://discord.com/channels/1563075165473083402/1564514891862114314
 
 - [ ] create projectile spawning
 - [ ] some fun: energy ball enemy shoots and you have to parry it back to each other until one of you gets hit.
@@ -805,8 +826,6 @@
 
 ## SOMEDAY
 
-- [ ] SOMEDAY: create tool for easy placement of hitcapsules, hurtcapsules, and sfx emission.
-
 - [ ] SOMEDAY: move actual movement to after afa regions are processed to remove one-tick lag from certain things (like jump_up reeve, or just reeves in general i think)
     - well, it looks like it's not just reeves, it's just random stuff. ig the is_grounded event put in the event queue, but that's not quite this issue being pointed out.
     - well, just do an investigation at the very least.
@@ -814,14 +833,6 @@
 - [ ] SOMEDAY: add afa checks, like how `can_receive_deathblow` must be 2 frames shorter than watch `evq_on_receive_deathblow`
 
 - [ ] SOMEDAY: get the animator unit tested so that regressions like the one i had to spend 4 days on dont happen again
-
-- [ ] SOMEDAY: change the hitbox to one single hitcapsule group.
-- [ ] SOMEDAY: change the hurtboxes to an afa function region instead of a hitcapsule group that gets enabled/disabled.
-    - the dynamic hurtcapsule should have:
-        - the damage to deal
-        - the knockback multiplier
-        - what kind of parry opponent should do (parry-left, parry-right, or parry-strong)
-        - whether perilous attack
 
 - [ ] SOMEDAY: get picking and the selected entity wireframe model back in.
 
