@@ -840,10 +840,21 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "hitcapsule_group_2_enabled",
-                            "true"
+                            "0",
+                            "0",
+                            "0",
+                            "0",
+                            "10",
+                            "0",
+                            "0",
+                            "1.000000",
+                            "-0.6620000004768372 1.3880000114440918 1.0499999523162842",
+                            "-0.7250000238418579 1.3880000114440918 0.07500000298023224",
+                            "0.25",
+                            "Sword attachment",
+                            ""
                         ],
-                        "cmd_name": "var_ov"
+                        "cmd_name": "hurtcapsule_attack"
                     },
                     "end_frame": 9,
                     "row_idx": 5,
@@ -1053,10 +1064,21 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "hitcapsule_group_2_enabled",
-                            "true"
+                            "0",
+                            "0",
+                            "0",
+                            "0",
+                            "10",
+                            "0",
+                            "0",
+                            "1.000000",
+                            "-0.6620000004768372 1.3880000114440918 1.0499999523162842",
+                            "-0.7250000238418579 1.3880000114440918 0.07500000298023224",
+                            "0.25",
+                            "Sword attachment",
+                            ""
                         ],
-                        "cmd_name": "var_ov"
+                        "cmd_name": "hurtcapsule_attack"
                     },
                     "end_frame": 9,
                     "row_idx": 5,
@@ -1266,10 +1288,21 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "hitcapsule_group_2_enabled",
-                            "true"
+                            "0",
+                            "0",
+                            "0",
+                            "0",
+                            "10",
+                            "0",
+                            "0",
+                            "1.000000",
+                            "-0.6620000004768372 1.3880000114440918 1.0499999523162842",
+                            "-0.7250000238418579 1.3880000114440918 0.07500000298023224",
+                            "0.25",
+                            "Sword attachment",
+                            ""
                         ],
-                        "cmd_name": "var_ov"
+                        "cmd_name": "hurtcapsule_attack"
                     },
                     "end_frame": 14,
                     "row_idx": 5,
@@ -1438,50 +1471,48 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "hitcapsule_group_2_enabled",
-                            "true"
+                            "0",
+                            "0",
+                            "0",
+                            "0",
+                            "10",
+                            "0",
+                            "0",
+                            "1.000000",
+                            "-0.6620000004768372 1.3880000114440918 1.0499999523162842",
+                            "-0.7250000238418579 1.3880000114440918 0.07500000298023224",
+                            "0.25",
+                            "Sword attachment",
+                            ""
                         ],
-                        "cmd_name": "var_ov"
+                        "cmd_name": "hurtcapsule_attack"
                     },
                     "end_frame": 22,
-                    "row_idx": 5,
+                    "row_idx": 6,
                     "start_frame": 15
                 },
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "hitcapsule_group_2_enabled",
-                            "true"
+                            "0",
+                            "0",
+                            "0",
+                            "0",
+                            "10",
+                            "0",
+                            "0",
+                            "2.000000",
+                            "-0.6620000004768372 1.3880000114440918 1.0499999523162842",
+                            "-0.7250000238418579 1.3880000114440918 0.07500000298023224",
+                            "0.25",
+                            "Sword attachment",
+                            ""
                         ],
-                        "cmd_name": "var_ov"
+                        "cmd_name": "hurtcapsule_attack"
                     },
                     "end_frame": 54,
-                    "row_idx": 5,
+                    "row_idx": 6,
                     "start_frame": 48
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "attack_send_root_motion_multi",
-                            "1"
-                        ],
-                        "cmd_name": "var_wr"
-                    },
-                    "end_frame": 22,
-                    "row_idx": 6,
-                    "start_frame": 14
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "attack_send_root_motion_multi",
-                            "2"
-                        ],
-                        "cmd_name": "var_wr"
-                    },
-                    "end_frame": 54,
-                    "row_idx": 6,
-                    "start_frame": 47
                 },
                 {
                     "ctrl_cmd": {
@@ -1720,26 +1751,25 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "hitcapsule_group_2_enabled",
-                            "true"
+                            "0",
+                            "0",
+                            "0",
+                            "0",
+                            "10",
+                            "0",
+                            "0",
+                            "20.000000",
+                            "-0.6620000004768372 1.3880000114440918 1.0499999523162842",
+                            "-0.7250000238418579 1.3880000114440918 0.07500000298023224",
+                            "0.25",
+                            "Sword attachment",
+                            ""
                         ],
-                        "cmd_name": "var_ov"
-                    },
-                    "end_frame": 43,
-                    "row_idx": 5,
-                    "start_frame": 36
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "attack_send_root_motion_multi",
-                            "2"
-                        ],
-                        "cmd_name": "var_wr"
+                        "cmd_name": "hurtcapsule_attack"
                     },
                     "end_frame": 43,
                     "row_idx": 6,
-                    "start_frame": 35
+                    "start_frame": 36
                 },
                 {
                     "ctrl_cmd": {
@@ -1941,50 +1971,48 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "hitcapsule_group_2_enabled",
-                            "true"
+                            "0",
+                            "0",
+                            "0",
+                            "0",
+                            "10",
+                            "0",
+                            "0",
+                            "2.000000",
+                            "-0.6620000004768372 1.3880000114440918 1.0499999523162842",
+                            "-0.7250000238418579 1.3880000114440918 0.07500000298023224",
+                            "0.25",
+                            "Sword attachment",
+                            ""
                         ],
-                        "cmd_name": "var_ov"
+                        "cmd_name": "hurtcapsule_attack"
                     },
                     "end_frame": 78,
-                    "row_idx": 7,
+                    "row_idx": 8,
                     "start_frame": 64
                 },
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "hitcapsule_group_2_enabled",
-                            "true"
+                            "0",
+                            "0",
+                            "0",
+                            "0",
+                            "10",
+                            "0",
+                            "0",
+                            "2.000000",
+                            "-0.6620000004768372 1.3880000114440918 1.0499999523162842",
+                            "-0.7250000238418579 1.3880000114440918 0.07500000298023224",
+                            "0.25",
+                            "Sword attachment",
+                            ""
                         ],
-                        "cmd_name": "var_ov"
+                        "cmd_name": "hurtcapsule_attack"
                     },
                     "end_frame": 105,
-                    "row_idx": 7,
+                    "row_idx": 8,
                     "start_frame": 93
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "attack_send_root_motion_multi",
-                            "2"
-                        ],
-                        "cmd_name": "var_wr"
-                    },
-                    "end_frame": 78,
-                    "row_idx": 8,
-                    "start_frame": 63
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "attack_send_root_motion_multi",
-                            "2"
-                        ],
-                        "cmd_name": "var_wr"
-                    },
-                    "end_frame": 105,
-                    "row_idx": 8,
-                    "start_frame": 92
                 },
                 {
                     "ctrl_cmd": {
@@ -2178,26 +2206,25 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "hitcapsule_group_2_enabled",
-                            "true"
+                            "0",
+                            "0",
+                            "0",
+                            "0",
+                            "10",
+                            "0",
+                            "0",
+                            "2.000000",
+                            "-0.6620000004768372 1.3880000114440918 1.0499999523162842",
+                            "-0.7250000238418579 1.3880000114440918 0.07500000298023224",
+                            "0.25",
+                            "Sword attachment",
+                            ""
                         ],
-                        "cmd_name": "var_ov"
-                    },
-                    "end_frame": 63,
-                    "row_idx": 7,
-                    "start_frame": 56
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "attack_send_root_motion_multi",
-                            "2"
-                        ],
-                        "cmd_name": "var_wr"
+                        "cmd_name": "hurtcapsule_attack"
                     },
                     "end_frame": 63,
                     "row_idx": 8,
-                    "start_frame": 55
+                    "start_frame": 56
                 },
                 {
                     "ctrl_cmd": {
@@ -2415,26 +2442,25 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "hitcapsule_group_2_enabled",
-                            "true"
+                            "0",
+                            "0",
+                            "0",
+                            "0",
+                            "10",
+                            "0",
+                            "0",
+                            "2.000000",
+                            "-0.6620000004768372 1.3880000114440918 1.0499999523162842",
+                            "-0.7250000238418579 1.3880000114440918 0.07500000298023224",
+                            "0.25",
+                            "Sword attachment",
+                            ""
                         ],
-                        "cmd_name": "var_ov"
-                    },
-                    "end_frame": 61,
-                    "row_idx": 7,
-                    "start_frame": 50
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "attack_send_root_motion_multi",
-                            "2"
-                        ],
-                        "cmd_name": "var_wr"
+                        "cmd_name": "hurtcapsule_attack"
                     },
                     "end_frame": 61,
                     "row_idx": 8,
-                    "start_frame": 49
+                    "start_frame": 50
                 },
                 {
                     "ctrl_cmd": {
@@ -4539,24 +4565,8 @@
                 "m_type": 0
             },
             {
-                "m_capsules": [
-                    {
-                        "connecting_bone_name": "Sword attachment",
-                        "connecting_bone_name_2": "",
-                        "origin_a": {
-                            "x": -0.6620000004768372,
-                            "y": 1.3880000114440918,
-                            "z": 1.0499999523162842
-                        },
-                        "origin_b": {
-                            "x": -0.7250000238418579,
-                            "y": 1.3880000114440918,
-                            "z": 0.07500000298023224
-                        },
-                        "radius": 0.25
-                    }
-                ],
-                "m_enabled": false,
+                "m_capsules": [],
+                "m_enabled": true,
                 "m_type": 1
             }
         ]

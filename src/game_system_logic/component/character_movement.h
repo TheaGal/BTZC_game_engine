@@ -94,23 +94,15 @@ struct Character_mvt_animated_state
         bool is_grounded{ false };
 
         // Combat reactions.
-        enum Hurt_type : int32_t
+        enum Hurt_type : uint32_t
         {
-            HURT_TYPE_NONE = -1,
+            HURT_TYPE_NONE = 0b0,
 
-            HURT_TYPE_LIGHT_FROM_FRONT,
-            HURT_TYPE_HEAVY_FROM_FRONT,
-            HURT_TYPE_LIGHT_FROM_BEHIND,
-            HURT_TYPE_HEAVY_FROM_BEHIND,
-            HURT_TYPE_LIGHT_FROM_ABOVE,
-            HURT_TYPE_HEAVY_FROM_ABOVE,
-            HURT_TYPE_LIGHT_FROM_BELOW,
-            HURT_TYPE_HEAVY_FROM_BELOW,
-            HURT_TYPE_LIGHT_FROM_LEFT,
-            HURT_TYPE_HEAVY_FROM_LEFT,
-            HURT_TYPE_LIGHT_FROM_RIGHT,
-            HURT_TYPE_HEAVY_FROM_RIGHT,
-        } on_hurt{ -1 };
+            HURT_TYPE_REGULAR     = 0b0000'0001,
+            HURT_TYPE_UNPARRYABLE = 0b0000'0010,
+            HURT_TYPE_UNGUARDABLE = 0b0000'0100,
+            HURT_TYPE_MIKIRIABLE  = 0b0000'1000,
+        } on_hurt{ HURT_TYPE_NONE };
 
         bool on_health_depleted{ false };
         bool on_posture_broken{ false };

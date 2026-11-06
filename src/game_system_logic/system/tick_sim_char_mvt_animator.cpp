@@ -108,11 +108,6 @@ void BT::system::tick_sim_char_mvt_animator()
                 else
                     animator.emplace_event("evq_is_midair", 0.0f, {});
 
-                if (mvt_state.on_hurt > hurt_type_t::HURT_TYPE_NONE)
-                    animator.emplace_event("evq_on_hurt",
-                                           0.0f,
-                                           { .action_idx = mvt_state.on_hurt });
-
                 if (mvt_state.on_attack_press)
                     animator.emplace_event("evq_on_attack_press", 1.0f, {});
                 if (mvt_state.is_attack_released)
@@ -127,11 +122,6 @@ void BT::system::tick_sim_char_mvt_animator()
                 break;
 
             case mvt_state_mode_t::MODE_CPU_CHAR:
-                if (mvt_state.on_hurt > hurt_type_t::HURT_TYPE_NONE)
-                    animator.emplace_event("evq_on_hurt",
-                                           0.0f,
-                                           { .action_idx = mvt_state.on_hurt });
-
                 if (mvt_state.on_guard_press)
                     animator.emplace_event("evq_exec_guard_response", 0.0f, {});
 
@@ -152,6 +142,31 @@ void BT::system::tick_sim_char_mvt_animator()
 
             default:
                 throw std::runtime_error("Cannot have invalid input mvt state mode.");
+            }
+
+            if ((mvt_state.on_hurt & hurt_type_t::HURT_TYPE_REGULAR) != 0)
+            {
+                int32_t action_idx{ 0 };
+
+                if (poss_health_stats_data)
+                    action_idx = static_cast<int32_t>(
+                        poss_health_stats_data->state.last_received_attack.direction_type);
+
+                animator.emplace_event("evq_on_hurt", 0.0f, { .action_idx = action_idx });
+
+                // Extra events for if AFA is listening for these.
+                if ((mvt_state.on_hurt & hurt_type_t::HURT_TYPE_UNPARRYABLE) != 0)
+                    animator.emplace_event("evq_on_hurt_unparryable",
+                                           0.0f,
+                                           { .action_idx = action_idx });
+                if ((mvt_state.on_hurt & hurt_type_t::HURT_TYPE_UNGUARDABLE) != 0)
+                    animator.emplace_event("evq_on_hurt_unguardable",
+                                           0.0f,
+                                           { .action_idx = action_idx });
+                if ((mvt_state.on_hurt & hurt_type_t::HURT_TYPE_MIKIRIABLE) != 0)
+                    animator.emplace_event("evq_on_hurt_mikiriable",
+                                           0.0f,
+                                           { .action_idx = action_idx });
             }
 
             if (mvt_state.on_posture_broken)

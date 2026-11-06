@@ -103,9 +103,9 @@ void process_receive_attack(entt::registry& reg,
     float_t atk_type_posture_mult;
 
     using Atk_type = component::Health_stats_data::Runtime_state::Attack_stats::Atk_type;
-    switch (proc_atk.type)
+    switch (proc_atk.physical_type)
     {
-    case Atk_type::CRUSH:
+    case Atk_type::METALBLADE:
         atk_type_dmg_mult = 1;
         atk_type_posture_mult = 1;
         if (!receive_atk_as_hurt)
@@ -114,7 +114,7 @@ void process_receive_attack(entt::registry& reg,
         }
         break;
 
-    case Atk_type::SLICE:
+    case Atk_type::METALBLADEMASTER:
         atk_type_dmg_mult = 1;
         atk_type_posture_mult = 1;
         if (!receive_atk_as_hurt)
@@ -123,13 +123,26 @@ void process_receive_attack(entt::registry& reg,
         }
         break;
 
-    case Atk_type::SPEAR:
+    case Atk_type::WOODCLUB:
         atk_type_dmg_mult = 1;
         atk_type_posture_mult = 1;
         if (!receive_atk_as_hurt)
         {
             BT_WARN("TODO: implement playing sfx for attack type.");
         }
+        break;
+
+    case Atk_type::FIST:
+        atk_type_dmg_mult = 1;
+        atk_type_posture_mult = 1;
+        if (!receive_atk_as_hurt)
+        {
+            BT_WARN("TODO: implement playing sfx for attack type.");
+        }
+        break;
+
+    default:
+        assert(false);
         break;
     }
 

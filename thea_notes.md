@@ -762,12 +762,14 @@
         - [x] SOMEDAY: change the hitbox to one single hitcapsule group.
             - actually no. it should be two, so that the legs can get masked away during a jump
             - [x] mask away the legs during jump and fall
-        - [ ] SOMEDAY: change the hurtboxes to an afa function region instead of a hitcapsule group that gets enabled/disabled.
+        - [x] SOMEDAY: change the hurtboxes to an afa function region instead of a hitcapsule group that gets enabled/disabled.
             - the dynamic hurtcapsule should have:
                 - the damage to deal
                 - the knockback multiplier
                 - what kind of parry opponent should do (parry-left, parry-right, or parry-strong)
                 - whether perilous attack
+
+    - @NOTE: to create a sweep attack or mikiri attack, use the chkboxes in AFA editor, and then add in watches for the event queues for unguardable, unparryable, and mikiriable attacks in guard, dodge, parry anims (AND make sure they're higher priority than the regular on_hurt event)
 
     - [ ] add perilous indicator
     - [ ] add one sweep attack anim
@@ -775,6 +777,10 @@
     - [ ] add dodge anim
         - 8 directions (or just 4 and blendtree it) to keep consistency when doing it on gamepad
     - [ ] create mikiri give/receive anims
+
+- [ ] fill in different parry and hurt types
+    - will need 2 action maps, one for getting hurt a certain way and another for parrying a certain way (guard will just be same awkward anim)
+    - the action maps will have the same indexes as `enum class Atk_dir` since the `.action_idx` that comes in will be that number
 
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).

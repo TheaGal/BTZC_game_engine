@@ -27,6 +27,7 @@ void process_attack_interaction(Entity_container& entity_container,
                                 entt::registry& reg,
                                 TXP::Renderer& renderer,
                                 entt::entity offender_ecs_entity,
+                                TXP::Hurtcapsule_info const& hurt_info,
 #if OLD_HITCAPSULE_ATK_PROCESS
                                 component::Base_combat_stats_data const& offe_combat_stats,
                                 component::Health_stats_data& offe_health_stats,
@@ -79,16 +80,16 @@ void process_attack_interaction(Entity_container& entity_container,
 #endif // OLD_HITCAPSULE_ATK_PROCESS
 
     // Record sent attack into the defender.
-    // @THEA: this may require a different architecture and connection if the hurtcapsules are
-    //        supposed to carry this information!!  -Thea 2026/10/17
-    // @HARDCODE
+    using Attack_stats = component::Health_stats_data::Runtime_state::Attack_stats;
     defe_health_stats.state.last_received_attack = {
         .offender_entity = offender_ecs_entity,
-        .type = component::Health_stats_data::Runtime_state::Attack_stats::SLICE,
-        .damage = 10,
-        .is_honed = false,
-        .has_fire = false,
+        .physical_type = Attack_stats::Atk_type(hurt_info.attack_physical_type),
+        .direction_type = Attack_stats::Atk_dir(hurt_info.attack_direction_type),
+        .damage = hurt_info.attack_damage,
+        .is_honed = hurt_info.attack_is_honed,
+        .has_fire = false,  // @UNUSED?
     };
+    date_deadline(2027, 1, 1);  // @TODO: make the Atk_type and Atk_dir not copypasta anymore!!
 
     // Get sending root motion multiplier from offender.
     auto defender_animator{ renderer.try_get_skeletal_animator(defender_ecs_entity) };
@@ -96,11 +97,14 @@ void process_attack_interaction(Entity_container& entity_container,
 
     if (defender_animator.has_value() && offender_animator.has_value())
     {
+#if 0
         float_t received_root_motion_multiplier;
+#endif // 0
 #if OLD_HITCAPSULE_ATK_PROCESS
         bool can_cancel_attack_w_parry;
 #endif // OLD_HITCAPSULE_ATK_PROCESS
         {
+#if 0
             auto& animator{ offender_animator.value() };
 
             auto& afa_data_handle{ animator.get_anim_frame_action_data_handle() };
@@ -109,6 +113,7 @@ void process_attack_interaction(Entity_container& entity_container,
                     .get_float_data_handle(
                         TXP::anim_frame_action::CTRL_DATA_LABEL_attack_send_root_motion_multi)
                     .get_val();
+#endif // 0
 #if OLD_HITCAPSULE_ATK_PROCESS
             can_cancel_attack_w_parry =
                 afa_data_handle
@@ -125,6 +130,8 @@ void process_attack_interaction(Entity_container& entity_container,
 #endif // OLD_HITCAPSULE_ATK_PROCESS
         // Write root motion multiplier from offender to defender.
         {
+            date_deadline(2026, 12, 1);  // @TODO: delete all this fuckass dead code
+
             auto& animator{ defender_animator.value() };
 
             auto& afa_data_handle{ animator.get_anim_frame_action_data_handle() };
@@ -143,7 +150,7 @@ void process_attack_interaction(Entity_container& entity_container,
             afa_data_handle
                 .get_float_data_handle(
                     TXP::anim_frame_action::CTRL_DATA_LABEL_receive_staged_root_motion_multi)
-                .write_val(received_root_motion_multiplier);
+                .write_val(hurt_info.attack_send_root_motion_multi);
         }
 
 #if OLD_HITCAPSULE_ATK_PROCESS
@@ -222,7 +229,15 @@ void process_attack_interaction(Entity_container& entity_container,
 #endif // OLD_HITCAPSULE_ATK_PROCESS
 
             using hurt_type_t = component::Character_mvt_animated_state::Input_mvt_state::Hurt_type;
-            char_mvt_anim_state->input_mvt_state.on_hurt = hurt_type_t::HURT_TYPE_LIGHT_FROM_FRONT;
+            uint32_t on_hurt_flags{ hurt_type_t::HURT_TYPE_REGULAR };
+            if (hurt_info.attack_is_unparryable)
+                on_hurt_flags |= hurt_type_t::HURT_TYPE_UNPARRYABLE;
+            if (hurt_info.attack_is_unguardable)
+                on_hurt_flags |= hurt_type_t::HURT_TYPE_UNGUARDABLE;
+            if (hurt_info.attack_is_mikiriable)
+                on_hurt_flags |= hurt_type_t::HURT_TYPE_MIKIRIABLE;
+
+            char_mvt_anim_state->input_mvt_state.on_hurt = static_cast<hurt_type_t>(on_hurt_flags);
         }
     }
 
@@ -278,7 +293,7 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
     };
     auto defender_view{ reg.view<component::Health_stats_data>() };  // `Base_combat_stats_data` is optional.
 
-    for (auto&& [offender_uuid, defender_uuid] :
+    for (auto&& [offender_uuid, defender_uuid, hurt_info] :
          s_overlap_pairs_buffer[s_cur_ovrl_pir_buf % k_ovrl_pir_buf_size].give_rece_hurt_pairs)
     {
         if (!entity_container.entity_exists(offender_uuid) ||
@@ -304,6 +319,7 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
                                    reg,
                                    renderer,
                                    offender_ecs_entity,
+                                   hurt_info,
 #if OLD_HITCAPSULE_ATK_PROCESS
                                    offe_combat_stats,
                                    offe_health_stats,
