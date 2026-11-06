@@ -142,21 +142,15 @@ void BT::system::cpu_character_enemy_detection()
 
         if (!cpu_enemy_awareness.eyes_bone.empty())
         {
-            if (auto disp_repr{ reg.try_get<component::Display_repr_transform_ref const>(entity) };
-                disp_repr != nullptr)
-            {
-                auto rend_obj_ent = entity_container.find_entity(disp_repr->display_repr_uuid);
-                if (auto animator{ renderer.try_get_skeletal_animator(rend_obj_ent) };
-                    animator.has_value())
-                    fetch_eyesight_data_and_AFA_data(
-                        cpu_enemy_awareness,
-                        animator.value(),
-                        reg.get<TXP::component::Render_object_config>(rend_obj_ent).transform.raw,
-                        cpu_enemy_awareness.eyes_origin.raw,
-                        eyesight_pos,
-                        eyesight_forward,
-                        req_to_chg_state_sus_to_unaware);
-            }
+            if (auto animator{ renderer.try_get_skeletal_animator(entity) }; animator.has_value())
+                fetch_eyesight_data_and_AFA_data(
+                    cpu_enemy_awareness,
+                    animator.value(),
+                    reg.get<TXP::component::Render_object_config>(entity).transform.raw,
+                    cpu_enemy_awareness.eyes_origin.raw,
+                    eyesight_pos,
+                    eyesight_forward,
+                    req_to_chg_state_sus_to_unaware);
         }
 
         // Awareness detection (prev state).

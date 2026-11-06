@@ -75,25 +75,9 @@ struct Character_mvt_state
     float_t get_facing_angle() const;
 };
 
-/// Stores the reference to the entity with the transform of the display representation. This is
-/// used in the case of a character, where the character controller physics object does not rotate
-/// at all.
-struct Display_repr_transform_ref
-{
-    UUID display_repr_uuid;
-
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
-        Display_repr_transform_ref,
-        display_repr_uuid
-    );
-};
-
 /// Communicates state of the animated model from the `input_controlled_character_movement` system.
 struct Character_mvt_animated_state
 {
-    /// UUID that contains the animator to affect.
-    UUID affecting_animator_uuid;
-
     /// For tracking input data from character.
     struct Input_mvt_state
     {   // Mode.
@@ -102,7 +86,7 @@ struct Character_mvt_animated_state
             MODE_INVALID = -1,
             MODE_PLAYER_CHAR,
             MODE_CPU_CHAR
-        } mode{ -1 };  // @TODO: make configurable seting.
+        } mode{ -1 };  // @NOTE: this is a seting
 
         // Movement inputs.
         bool is_moving{ false };
@@ -166,22 +150,31 @@ struct Character_mvt_animated_state
             CPU_ATK_TYPE_BY_CHANCE,
         } on_exec_attack_combo{ 0 };
 
-        float_t distance_to_target{ 0 };
+        float_t distance_to_target{ 0 };  // this is persistent
+        float_t aggression_radius{ 10 };  // @NOTE: this is a setting  @THEA: is this the best place for this?
 
         void reset_state(bool reset_persist_vals)
         {
             // capture persistent vals here.
             auto cap0 = deathblow_other_entity;
+            auto cap1 = distance_to_target;
 
             *this = {
                 .mode = mode,
+                .aggression_radius = aggression_radius,
             };
 
             if (!reset_persist_vals)
             {
                 // rewrite in persistent vals here.
                 deathblow_other_entity = cap0;
+                distance_to_target = cap1;
             }
+        }
+
+        inline bool is_player_char_mode() const
+        {
+            return (mode == MODE_PLAYER_CHAR);
         }
     } input_mvt_state;
 
@@ -217,10 +210,9 @@ struct Character_mvt_animated_state
         bool prev_guard_pressed{ false };
     } state;
 
-    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
-        Character_mvt_animated_state,
-        affecting_animator_uuid
-    );
+    char _;
+
+    NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Character_mvt_animated_state, _);
 };
 
 }  // namespace component

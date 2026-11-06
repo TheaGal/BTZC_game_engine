@@ -697,33 +697,88 @@
         - [x] capture the camera orientations into the app settings
         - [x] load in the cam orientations
 
-- [ ] add clouds for renderer
+- [x] add clouds for renderer
     - ig I REALLY WANT CLOUDS but also it would be good to incorporate a simple algorithm now so that there's a baseline system that can be integrated into the renderer as other things are made
     - see here for more details: https://discord.com/channels/1563075165473083402/1565873391360155648
+    - [x] create 256x256x32 texture for voxel grid (uncompressed for now)
+        - have the voxel size be either 8 (to make 2km x 2km x 0.25 km) or 16 for twice the size (tho it may be a bit too grand???)
+        - idk if i could even create a world that's going to fill the 2km squared space (^-^;)
+        - the fortnite island is essentially 1km squared (for just the land), so i think it would be beyond my ambitions to try to make something bigger
+        - hyrule in totk is around 8km squared, and that's due to it being mostly procgen'd. (ref: https://www.reddit.com/r/zelda/comments/1kfkz77/totk_revisiting_hyrule_death_mountains_height_and/)
+    - [x] create simple dummy shader that gets ray marching started.
+        - sooo many validation errors wtf!!
+    - [ ] ~~create half res depth image with MAX filter using compute shader~~
+        - perhaps look at amd single pass downfilter?
+        - defer this to the future when occlusion culling is getting created and stuff too!
+    - [x] simple green grinch transmittance fluffy ball out of the voxels
+    - [x] delete commented out code in clouds shader .h/.cpp
 
-- [ ] BUG: for some reason renderer updates slower when changing the timescale?
+- [x] BUG: for some reason renderer updates slower when changing the timescale?
     - i think it's not actually running at 120fps if this is the case. investigate it
+    - it turns out the `interp_t` wasn't getting calculated correctly (was supposed to be multi instead of divide).
 
-- [ ] IMPROVE: make serialization/deserialization for settings.cpp's toml easier/better (write helper funcs)
-- [ ] IMPROVE: move the mutable parts of the `Health_stats_data` component to the runtime-state
-- [ ] IMPROVE: for all ecs `.remove()` calls, check to make sure that the 1 elem gets removed using some kind of thingy that emits a warning if not everything is removed.
-- [ ] IMPROVE: unify the way to tell if a character is the playchar. here are a couple ways:
+- [x] IMPROVE: make serialization/deserialization for settings.cpp's toml easier/better (write helper funcs)
+- [x] IMPROVE: move the mutable parts of the `Health_stats_data` component to the runtime-state
+    - [x] fix parrys not resetting the posture regen timer
+- [x] IMPROVE: for all ecs `.remove()` calls, check to make sure that the 1 elem gets removed using some kind of thingy that emits a warning if not everything is removed.
+    - having a macro helper in btlogger would be nice
+- [x] IMPROVE: make the characters be one entity so that there's no "find the affecting entity"-like components
+    - this is a bigger refactor.
+    - this also will require a way to change the facing direction of just the render model and not the transform
+- [x] IMPROVE: unify the way to tell if a character is the playchar. here are a couple ways:
     - `health_stats_data.ui_name == "playchar"`
     - `mvt_state_mode_t::MODE_PLAYER_CHAR`
+    - the entity unifying task could solve this too (the IMPROVE before this)
+        - ok, DECISION: only use `mvt_state_mode_t::MODE_PLAYER_CHAR`. also made a helper func `.is_player_char_mode()`
+
+- [x] finish "improve enemy attacks w readability"
+    - pressure response algorithm
+        - a half-baked one is in, but it could be improved
+        - ~~have the enemy add more pressure if it sees~~ ok maybe it should just be event based??
+            - have an event for:
+                - when entering the aggression radius (guarantee an attack)
+                - when sprinting towards oppo
+                - when attack
+                - when heal
+            - [x] change the early attack request to be just a solid timer
+                - have there be a time buildup threshold and for sample enemy have it be one sec below the threshold
+                    - so that the second time the timer comes in the 
+            - [x] add to the timer more than the threshold for entering aggression radius
+            > there's no sprinting or healing yet so defer those.
+    - ~~more attack anims~~
+        - defer
+
+- [x] IMPROVE: fix the shader text mesh deletion code
+
+- [x] BUG: fix last voxel traversal overstepping limit 
+
+- [ ] add sweep attacks and thrust attacks
+    - hell yeah mikiri
+    - jump goomba stomp
+
+    - [ ] PREREQUISITE: do these SOMEDAYs:
+        - [ ] SOMEDAY: create tool for easy placement of hitcapsules, hurtcapsules, and sfx emission.
+
+        - [ ] SOMEDAY: change the hitbox to one single hitcapsule group.
+            - actually no. it should be two, so that the legs can get masked away during a jump
+        - [ ] SOMEDAY: change the hurtboxes to an afa function region instead of a hitcapsule group that gets enabled/disabled.
+            - the dynamic hurtcapsule should have:
+                - the damage to deal
+                - the knockback multiplier
+                - what kind of parry opponent should do (parry-left, parry-right, or parry-strong)
+                - whether perilous attack
+
+    - [ ] add perilous indicator
+    - [ ] add one sweep attack anim
+    - [ ] create stomp anim
+    - [ ] add dodge anim
+        - 8 directions (or just 4 and blendtree it) to keep consistency when doing it on gamepad
+    - [ ] create mikiri give/receive anims
 
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
         - so max 3 cascades (both realtime cascades and one static cascade if dir light changes) get updated on one frame
     - look into this tech: https://discord.com/channels/1563075165473083402/1564514891862114314
-
-- [ ] finish "improve enemy attacks w readability"
-    - pressure response algorithm
-        - a half-baked one is in, but it could be improved
-    - more attack anims
-
-- [ ] add sweep attacks and thrust attacks
-    - hell yeah mikiri
-    - jump goomba stomp
 
 - [ ] create projectile spawning
 - [ ] some fun: energy ball enemy shoots and you have to parry it back to each other until one of you gets hit.
@@ -771,8 +826,6 @@
 
 ## SOMEDAY
 
-- [ ] SOMEDAY: create tool for easy placement of hitcapsules, hurtcapsules, and sfx emission.
-
 - [ ] SOMEDAY: move actual movement to after afa regions are processed to remove one-tick lag from certain things (like jump_up reeve, or just reeves in general i think)
     - well, it looks like it's not just reeves, it's just random stuff. ig the is_grounded event put in the event queue, but that's not quite this issue being pointed out.
     - well, just do an investigation at the very least.
@@ -780,14 +833,6 @@
 - [ ] SOMEDAY: add afa checks, like how `can_receive_deathblow` must be 2 frames shorter than watch `evq_on_receive_deathblow`
 
 - [ ] SOMEDAY: get the animator unit tested so that regressions like the one i had to spend 4 days on dont happen again
-
-- [ ] SOMEDAY: change the hitbox to one single hitcapsule group.
-- [ ] SOMEDAY: change the hurtboxes to an afa function region instead of a hitcapsule group that gets enabled/disabled.
-    - the dynamic hurtcapsule should have:
-        - the damage to deal
-        - the knockback multiplier
-        - what kind of parry opponent should do (parry-left, parry-right, or parry-strong)
-        - whether perilous attack
 
 - [ ] SOMEDAY: get picking and the selected entity wireframe model back in.
 

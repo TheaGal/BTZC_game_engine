@@ -544,16 +544,21 @@ void BT::component::edit::imgui_edit__health_stats_data(entt::registry& reg,
 
     ImGui::SeparatorText("Health");
     ImGui::InputInt("max_health_pts", &health_stats_data.max_health_pts);
-    ImGui::InputInt("health_pts", &health_stats_data.health_pts);
+    ImGui::InputInt("state.health_pts", &health_stats_data.state.health_pts);
 
     ImGui::SeparatorText("Posture");
     ImGui::InputInt("max_posture_pts", &health_stats_data.max_posture_pts);
-    ImGui::InputInt("posture_pts", &health_stats_data.posture_pts);
+    ImGui::InputInt("state.posture_pts", &health_stats_data.state.posture_pts);
     ImGui::DragFloat("posture_pts_regen_rate", &health_stats_data.posture_pts_regen_rate, 0.1f);
+    ImGui::DragFloat("posture_pts_regen_wait_time", &health_stats_data.posture_pts_regen_wait_time, 0.1f);
+    ImGui::DragFloat("state.posture_pts_regen_rate_multi", &health_stats_data.state.posture_pts_regen_rate_multi, 0.1f);
+    ImGui::DragFloat("parry_return_posture_multi", &health_stats_data.parry_return_posture_multi, 0.1f);
+    ImGui::DragFloat("state.posture_pts_regen_wait_timer", &health_stats_data.state.posture_pts_regen_wait_timer, 0.1f);
+    ImGui::DragFloat("state.posture_pts_regen_remainder", &health_stats_data.state.posture_pts_regen_remainder, 0.1f);
 
     ImGui::SeparatorText("Deathblows");
     ImGui::InputInt("max_num_deathblows", &health_stats_data.max_num_deathblows);
-    ImGui::InputInt("num_deathblows", &health_stats_data.num_deathblows);
+    ImGui::InputInt("state.num_deathblows", &health_stats_data.state.num_deathblows);
 
     ImGui::SeparatorText("Other");
 

@@ -24,7 +24,7 @@ Ninsatsu::Ninsatsu(TXP::UI_state& ui_state)
 {
     BT_SERVICE_FINDER_ADD_SERVICE(Ninsatsu, this);
 
-    date_deadline(2026, 11, 1);  // is it necessary to preregister still?
+    // Preregister.
     ui_state.canvas(k_ninsatsu_fname);
 }
 

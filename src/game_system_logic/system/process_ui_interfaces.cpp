@@ -1,5 +1,6 @@
 #include "process_ui_interfaces.h"
 
+#include "btdatecheck.h"
 #include "btlogger.h"
 #include "entt/entity/fwd.hpp"
 #include "game_system_logic/component/character_movement.h"
@@ -72,7 +73,9 @@ void process_ui_hp_w_posture(Process_method const method,
     {
         ui_ifc::Hp_w_posture::Canvas_name canvas_name;
 
-        if (health_stats_data.ui_name == "playchar")
+        if (auto* char_mvt_anim_state =
+                reg.try_get<component::Character_mvt_animated_state>(entity);
+            char_mvt_anim_state->input_mvt_state.is_player_char_mode())
         {
             canvas_name = ui.CANVAS_PLAYCHAR;
             found_playchar = true;
@@ -85,12 +88,20 @@ void process_ui_hp_w_posture(Process_method const method,
         }
         else
         {
-            throw std::runtime_error("whoopsie not implemente dyet!!");
+            BT_ERROR("whoopsie not implemente dyet!!");
+            date_deadline(2026, 12, 1);  // @TODO: make this not have to use the error counter
+            static uint32_t s_error_times{ 0 };
+            if (s_error_times++ > 5)
+            {
+                throw std::runtime_error("asdflkjasdlkfjalskdjf");
+            }
         }
 
-        ui.set_hp_bar(canvas_name, health_stats_data.health_pts, health_stats_data.max_health_pts);
+        ui.set_hp_bar(canvas_name,
+                      health_stats_data.state.health_pts,
+                      health_stats_data.max_health_pts);
         ui.set_posture_bar(canvas_name,
-                           health_stats_data.posture_pts,
+                           health_stats_data.state.posture_pts,
                            health_stats_data.max_posture_pts);
     }
 
@@ -160,7 +171,6 @@ void process_ui_ninsatsu(Process_method const method,
 
 void process_ui_you_died(Process_method const method,
                          TXP::UI_state& ui_state,
-                         Entity_container const& entity_container,
                          entt::registry& reg,
                          float_t const delta_time)
 {
@@ -183,10 +193,7 @@ void process_ui_you_died(Process_method const method,
         for (auto&& [entity, char_mvt_anim_state] :
              reg.view<component::Character_mvt_animated_state>().each())
         {
-            auto* poss_health_stats_data{ reg.try_get<component::Health_stats_data>(
-                entity_container.find_entity(char_mvt_anim_state.affecting_animator_uuid)) };
-
-            if (poss_health_stats_data == nullptr || poss_health_stats_data->ui_name != "playchar")
+            if (!char_mvt_anim_state.input_mvt_state.is_player_char_mode())
                 continue;
 
             // Look to see if playchar is alive or chose to die.
@@ -237,5 +244,5 @@ void BT::system::process_ui_interfaces(TXP::UI_state& ui_state, float_t const de
     process_ui_hp_w_posture(method, ui_state, reg, delta_time);
     process_ui_target_lockon_reticle(method, ui_state, entity_container, reg, delta_time);
     process_ui_ninsatsu(method, ui_state, delta_time);
-    process_ui_you_died(method, ui_state, entity_container, reg, delta_time);
+    process_ui_you_died(method, ui_state, reg, delta_time);
 }

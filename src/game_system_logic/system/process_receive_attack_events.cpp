@@ -1,41 +1,22 @@
 #include "process_receive_attack_events.h"
 
 #include "entt/entity/fwd.hpp"
+#include "entt/entity/registry.hpp"
 #include "game_system_logic/component/character_movement.h"
 #include "game_system_logic/component/health_stats.h"
+#include "game_system_logic/entity_container.h"
 #include "game_system_logic/system/helper_funcs.h"
 #include "game_system_logic/world/world_properties.h"
 #include "service_finder/service_finder.h"
-#include "txp_renderer/ui/ui_state.h"
+#include "txp_renderer_public.h"
 
+#include <cmath>
 #include <stdexcept>
 
 
 namespace
 {
 using namespace BT;
-
-inline bool is_playchar_health_stats(component::Health_stats_data const& health_stats_data)
-{
-    return (health_stats_data.ui_name == "playchar");
-}
-
-inline component::Character_mvt_animated_state& find_char_mvt_anim_state(entt::registry& reg,
-                                                                         entt::entity entity)
-{
-    UUID entity_uuid{ service_finder::find_service<Entity_container>().find_entity_uuid(entity) };
-
-    for (auto&& [_, char_mvt_anim_state] :
-         reg.view<component::Character_mvt_animated_state>().each())
-    {
-        if (char_mvt_anim_state.affecting_animator_uuid == entity_uuid)
-        {
-            return char_mvt_anim_state;
-        }
-    }
-
-    throw std::runtime_error("Whoopsie! could not find one heheh");
-}
 
 /// Process receiving attack.
 void process_receive_attack(entt::registry& reg,
@@ -53,38 +34,41 @@ void process_receive_attack(entt::registry& reg,
         return;
 
     // First ensure that points are <= max.
-    health_stats_data.health_pts =
-        std::min(health_stats_data.health_pts, health_stats_data.max_health_pts);
-    health_stats_data.posture_pts =
-        std::min(health_stats_data.posture_pts, health_stats_data.max_posture_pts);
-    health_stats_data.num_deathblows =
-        std::min(health_stats_data.num_deathblows, health_stats_data.max_num_deathblows);
+    health_stats_data.state.health_pts =
+        std::min(health_stats_data.state.health_pts, health_stats_data.max_health_pts);
+    health_stats_data.state.posture_pts =
+        std::min(health_stats_data.state.posture_pts, health_stats_data.max_posture_pts);
+    health_stats_data.state.num_deathblows =
+        std::min(health_stats_data.state.num_deathblows, health_stats_data.max_num_deathblows);
+
+    auto& char_mvt_anim_state{ reg.get<component::Character_mvt_animated_state>(entity) };
 
     // Check for health depletion.
-    if (health_stats_data.health_pts < 0)
+    if (health_stats_data.state.health_pts < 0)
     {
-        find_char_mvt_anim_state(reg, entity).input_mvt_state.on_health_depleted = true;
+        char_mvt_anim_state.input_mvt_state.on_health_depleted = true;
 
-        health_stats_data.health_pts = 0;  // to ensure event doesn't come in again
+        health_stats_data.state.health_pts = 0;  // to ensure event doesn't come in again
 
         // Check whether this is a miniboss/boss cpu char.
-        if (!is_playchar_health_stats(health_stats_data) && health_stats_data.num_deathblows > 0)
+        if (!char_mvt_anim_state.input_mvt_state.is_player_char_mode() &&
+            health_stats_data.state.num_deathblows > 0)
         {
             // Force posture break too! (since that's the only way this guy dies)
-            health_stats_data.posture_pts = health_stats_data.max_posture_pts;
+            health_stats_data.state.posture_pts = health_stats_data.max_posture_pts;
         }
     }
 
     // Check for posture break.
-    if (health_stats_data.posture_pts >= health_stats_data.max_posture_pts)
+    if (health_stats_data.state.posture_pts >= health_stats_data.max_posture_pts)
     {
-        find_char_mvt_anim_state(reg, entity).input_mvt_state.on_posture_broken = true;
+        char_mvt_anim_state.input_mvt_state.on_posture_broken = true;
 
         // To ensure event posture break doesn't come in again and posture is partially recovered in
         // case doesn't get deathblown.
         constexpr float_t k_post_posture_break_posture_amt{ 0.8 };
 
-        health_stats_data.posture_pts =
+        health_stats_data.state.posture_pts =
             health_stats_data.max_posture_pts * k_post_posture_break_posture_amt;
     }
 
@@ -155,8 +139,8 @@ void process_receive_attack(entt::registry& reg,
 
     // Apply damage.
     if (!health_stats_data.is_invincible)
-        health_stats_data.health_pts -= real_damage;
-    health_stats_data.posture_pts += real_posture;
+        health_stats_data.state.health_pts -= real_damage;
+    health_stats_data.state.posture_pts += real_posture;
 
     if (real_posture > 1e-3)
     {   // Reset posture regen state on receiving posture dmg.
@@ -165,10 +149,10 @@ void process_receive_attack(entt::registry& reg,
     }
 
     // Cap posture if player char and parrying.
-    if (receive_atk_as_parry && is_playchar_health_stats(health_stats_data))
+    if (receive_atk_as_parry && char_mvt_anim_state.input_mvt_state.is_player_char_mode())
     {
-        health_stats_data.posture_pts =
-            std::min(health_stats_data.posture_pts, health_stats_data.max_posture_pts - 1);
+        health_stats_data.state.posture_pts =
+            std::min(health_stats_data.state.posture_pts, health_stats_data.max_posture_pts - 1);
     }
 
     // Return posture damage to other entity.
@@ -178,14 +162,27 @@ void process_receive_attack(entt::registry& reg,
                 reg.try_get<component::Health_stats_data>(proc_atk.offender_entity);
             offe_hp_stats_data != nullptr)
         {
-            offe_hp_stats_data->posture_pts +=
-                (offe_hp_stats_data->parry_return_posture_multi * real_posture);
+            float_t const parry_return_real_posture{
+                offe_hp_stats_data->parry_return_posture_multi * real_posture
+            };
+
+            offe_hp_stats_data->state.posture_pts += parry_return_real_posture;
+
+            if (parry_return_real_posture > 1e-3)
+            {   // Reset posture regen state on receiving posture dmg.
+                offe_hp_stats_data->state.posture_pts_regen_wait_timer = 0;
+                offe_hp_stats_data->state.posture_pts_regen_remainder = 0;
+            }
 
             // Cap posture if player.
-            if (is_playchar_health_stats(*offe_hp_stats_data))
+            if (auto* offe_char_mvt_anim_state =
+                    reg.try_get<component::Character_mvt_animated_state>(proc_atk.offender_entity);
+                offe_char_mvt_anim_state != nullptr &&
+                offe_char_mvt_anim_state->input_mvt_state.is_player_char_mode())
             {
-                offe_hp_stats_data->posture_pts = std::min(offe_hp_stats_data->posture_pts,
-                                                           offe_hp_stats_data->max_posture_pts - 1);
+                offe_hp_stats_data->state.posture_pts =
+                    std::min(offe_hp_stats_data->state.posture_pts,
+                             offe_hp_stats_data->max_posture_pts - 1);
             }
         }
     }
@@ -201,17 +198,17 @@ void process_posture_pts_regeneration(component::Health_stats_data& health_stats
     }
 
     health_stats_data.state.posture_pts_regen_remainder +=
-        (health_stats_data.posture_pts_regen_rate * health_stats_data.posture_pts_regen_rate_multi *
+        (health_stats_data.posture_pts_regen_rate * health_stats_data.state.posture_pts_regen_rate_multi *
          delta_time);
 
     while (health_stats_data.state.posture_pts_regen_remainder >= 1)
     {
-        health_stats_data.posture_pts--;
+        health_stats_data.state.posture_pts--;
         health_stats_data.state.posture_pts_regen_remainder -= 1;
     }
 
-    if (health_stats_data.posture_pts < 0)
-        health_stats_data.posture_pts = 0;
+    if (health_stats_data.state.posture_pts < 0)
+        health_stats_data.state.posture_pts = 0;
 }
 
 } // namespace

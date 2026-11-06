@@ -17,8 +17,7 @@
 void BT::system::tick_sim_char_mvt_animator()
 {
     auto& renderer{ service_finder::find_service<TXP::Renderer>() };
-    auto& entity_container{ service_finder::find_service<Entity_container>() };
-    auto& reg{ entity_container.get_ecs_registry() };
+    auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
 
     {   // Character mvt animators.
         auto view{ reg.view<component::Character_mvt_animated_state>() };
@@ -26,18 +25,14 @@ void BT::system::tick_sim_char_mvt_animator()
         {   // Get animator.
             auto& char_mvt_anim_state{ view.get<component::Character_mvt_animated_state>(entity) };
 
-            auto affecting_rend_obj_ecs_entity{ entity_container.find_entity(
-                char_mvt_anim_state.affecting_animator_uuid) };
-            auto animator_optional{ renderer.try_get_skeletal_animator(
-                affecting_rend_obj_ecs_entity) };
+            auto animator_optional{ renderer.try_get_skeletal_animator(entity) };
 
             if (!animator_optional.has_value())
                 continue;  // Cancel bc animator doesn't exist.
 
             auto& animator{ animator_optional.value() };
 
-            auto* poss_health_stats_data{ reg.try_get<component::Health_stats_data>(
-                affecting_rend_obj_ecs_entity) };
+            auto* poss_health_stats_data{ reg.try_get<component::Health_stats_data>(entity) };
 
             // Write animator vars.
             #define SET_ANIMATOR_BOOL_VAR(_var)                                                     \
@@ -177,8 +172,7 @@ void BT::system::tick_sim_char_mvt_animator()
 
             // Give animator transform information for update.
             mat4 entity_transform;
-            reg.get<component::Transform const>(affecting_rend_obj_ecs_entity)
-                .calc_mat4_transform(entity_transform);
+            reg.get<component::Transform const>(entity).calc_mat4_transform(entity_transform);
 
             animator.cache_simulation_transform(entity_transform);
 
@@ -190,8 +184,7 @@ void BT::system::tick_sim_char_mvt_animator()
             // Read animator root motion AFA data.
             if (animator.get_is_using_root_motion())
             {
-                auto& anim_root_motion{ reg.get<TXP::component::Animator_root_motion>(
-                    affecting_rend_obj_ecs_entity) };
+                auto& anim_root_motion{ reg.get<TXP::component::Animator_root_motion>(entity) };
                 auto& anim_afa_data_handle{ animator.get_anim_frame_action_data_handle() };
 
                 using AFA_ctrl = TXP::anim_frame_action::Controllable_data_label;
@@ -256,7 +249,7 @@ void BT::system::tick_sim_char_mvt_animator()
                         .get_val();
 
                 if (poss_health_stats_data)
-                    poss_health_stats_data->posture_pts_regen_rate_multi =
+                    poss_health_stats_data->state.posture_pts_regen_rate_multi =
                         anim_afa_data_handle
                             .get_float_data_handle(
                                 AFA_ctrl::CTRL_DATA_LABEL_posture_pts_regen_multi)

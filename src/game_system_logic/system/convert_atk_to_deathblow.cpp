@@ -23,8 +23,7 @@ void BT::system::convert_atk_input_to_deathblow()
              .is_simulation_running)
         return;
 
-    auto& entity_container{ service_finder::find_service<Entity_container>() };
-    auto& reg{ entity_container.get_ecs_registry() };
+    auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
     auto view{ reg.view<component::Transform const, component::Character_mvt_animated_state>() };
 
     auto& renderer{ service_finder::find_service<TXP::Renderer>() };
@@ -42,10 +41,7 @@ void BT::system::convert_atk_input_to_deathblow()
                 continue;  // don't compare to self
 
             // Is the opponent in a deathblow receiving state?
-            auto const other_char_animator_ecs_entity{ entity_container.find_entity(
-                other_char_mvt_anim_state.affecting_animator_uuid) };
-            
-            auto opt_animator = renderer.try_get_skeletal_animator(other_char_animator_ecs_entity);
+            auto opt_animator = renderer.try_get_skeletal_animator(other_entity);
             if (!opt_animator.has_value())
                 continue;
 
@@ -135,8 +131,8 @@ void BT::system::convert_atk_input_to_deathblow()
             }
 
             // Also remove receiver as lockon target.
-            if (reg.any_of<component::Follow_camera_lockon_target>(other_char_animator_ecs_entity))
-                reg.erase<component::Follow_camera_lockon_target>(other_char_animator_ecs_entity);
+            if (reg.any_of<component::Follow_camera_lockon_target>(other_entity))
+                reg.erase<component::Follow_camera_lockon_target>(other_entity);
             else
                 throw std::runtime_error(
                     "component::Follow_camera_lockon_target should have existed but does not");
