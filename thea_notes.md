@@ -763,6 +763,10 @@
             - [x] have some way to represent a bone and vertex in an afa arg
                 - string 
             - [x] migrate afa file to the new way w `bone_vec3`
+            - [x] basic vec3 editing
+            - [x] have bone transform-based editing
+            - [ ] make it so that the 2nd bone name cannot be left blank to inherit the 1st bone name
+                - remove any mention of it in the docs too
 
         - [x] SOMEDAY: change the hitbox to one single hitcapsule group.
             - actually no. it should be two, so that the legs can get masked away during a jump
@@ -774,7 +778,9 @@
                 - what kind of parry opponent should do (parry-left, parry-right, or parry-strong)
                 - whether perilous attack
         
-        - [ ] BUG? when pressing discard changes in AFA editor, it looks like there are uninitialized hitcapsules???
+        - [ ] BUG: when pressing discard changes in AFA editor, it looks like there are uninitialized hitcapsules???
+            - it probably needs a flush or smth when that happens
+        - [ ] BUG: fix being able to leave while afa is dirty and while command modal is open
 
     - @NOTE: to create a sweep attack or mikiri attack, use the chkboxes in AFA editor, and then add in watches for the event queues for unguardable, unparryable, and mikiriable attacks in guard, dodge, parry anims (AND make sure they're higher priority than the regular on_hurt event)
 
