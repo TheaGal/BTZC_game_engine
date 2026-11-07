@@ -757,7 +757,7 @@
     - jump goomba stomp
 
     - [ ] PREREQUISITE: do these SOMEDAYs:
-        - [ ] SOMEDAY: create tool for easy placement of hitcapsules, hurtcapsules, and sfx emission.
+        - [x] SOMEDAY: create tool for easy placement of hitcapsules, hurtcapsules, and sfx emission.
             - add imguizmo to a random thing in afa editor
             - ok turns out i cant have two gizmos on at the same time
             - [x] have some way to represent a bone and vertex in an afa arg
@@ -765,7 +765,7 @@
             - [x] migrate afa file to the new way w `bone_vec3`
             - [x] basic vec3 editing
             - [x] have bone transform-based editing
-            - [ ] make it so that the 2nd bone name cannot be left blank to inherit the 1st bone name
+            - [x] make it so that leaving the 2nd bone name blank wont inherit the 1st bone name
                 - remove any mention of it in the docs too
 
         - [x] SOMEDAY: change the hitbox to one single hitcapsule group.
