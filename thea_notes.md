@@ -762,6 +762,7 @@
             - ok turns out i cant have two gizmos on at the same time
             - [x] have some way to represent a bone and vertex in an afa arg
                 - string 
+            - [x] migrate afa file to the new way w `bone_vec3`
 
         - [x] SOMEDAY: change the hitbox to one single hitcapsule group.
             - actually no. it should be two, so that the legs can get masked away during a jump
