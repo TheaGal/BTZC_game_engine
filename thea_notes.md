@@ -758,6 +758,10 @@
 
     - [ ] PREREQUISITE: do these SOMEDAYs:
         - [ ] SOMEDAY: create tool for easy placement of hitcapsules, hurtcapsules, and sfx emission.
+            - add imguizmo to a random thing in afa editor
+            - ok turns out i cant have two gizmos on at the same time
+            - [x] have some way to represent a bone and vertex in an afa arg
+                - string 
 
         - [x] SOMEDAY: change the hitbox to one single hitcapsule group.
             - actually no. it should be two, so that the legs can get masked away during a jump
@@ -768,6 +772,8 @@
                 - the knockback multiplier
                 - what kind of parry opponent should do (parry-left, parry-right, or parry-strong)
                 - whether perilous attack
+        
+        - [ ] BUG? when pressing discard changes in AFA editor, it looks like there are uninitialized hitcapsules???
 
     - @NOTE: to create a sweep attack or mikiri attack, use the chkboxes in AFA editor, and then add in watches for the event queues for unguardable, unparryable, and mikiriable attacks in guard, dodge, parry anims (AND make sure they're higher priority than the regular on_hurt event)
 
