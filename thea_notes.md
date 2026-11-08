@@ -756,7 +756,7 @@
     - hell yeah mikiri
     - jump goomba stomp
 
-    - [ ] PREREQUISITE: do these SOMEDAYs:
+    - [x] PREREQUISITE: do these SOMEDAYs:
         - [x] SOMEDAY: create tool for easy placement of hitcapsules, hurtcapsules, and sfx emission.
             - add imguizmo to a random thing in afa editor
             - ok turns out i cant have two gizmos on at the same time
@@ -778,9 +778,11 @@
                 - what kind of parry opponent should do (parry-left, parry-right, or parry-strong)
                 - whether perilous attack
         
-        - [ ] BUG: when pressing discard changes in AFA editor, it looks like there are uninitialized hitcapsules???
+        - [x] BUG: when pressing discard changes in AFA editor, it looks like there are uninitialized hitcapsules???
             - it probably needs a flush or smth when that happens
-        - [ ] BUG: fix being able to leave while afa is dirty and while command modal is open
+        - [x] BUG: fix being able to leave while afa is dirty and while command modal is open
+            - leaving while modal is open is fine if its just not open when reloading (just make it part of editor state struct)
+            - [x] fixed modal staying open when reopening afa editor
 
     - @NOTE: to create a sweep attack or mikiri attack, use the chkboxes in AFA editor, and then add in watches for the event queues for unguardable, unparryable, and mikiriable attacks in guard, dodge, parry anims (AND make sure they're higher priority than the regular on_hurt event)
 

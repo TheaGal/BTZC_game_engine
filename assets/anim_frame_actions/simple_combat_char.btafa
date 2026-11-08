@@ -4362,7 +4362,7 @@
                 "m_capsules": [
                     {
                         "connecting_bone_name": "Head",
-                        "connecting_bone_name_2": "",
+                        "connecting_bone_name_2": "Head",
                         "origin_a": {
                             "x": 0.0,
                             "y": 1.625,
@@ -4377,7 +4377,7 @@
                     },
                     {
                         "connecting_bone_name": "Upper back",
-                        "connecting_bone_name_2": "",
+                        "connecting_bone_name_2": "Upper back",
                         "origin_a": {
                             "x": -0.08699999749660492,
                             "y": 1.375,
@@ -4392,7 +4392,7 @@
                     },
                     {
                         "connecting_bone_name": "Upper back",
-                        "connecting_bone_name_2": "",
+                        "connecting_bone_name_2": "Upper back",
                         "origin_a": {
                             "x": -0.024000000208616257,
                             "y": 1.225000023841858,
@@ -4443,7 +4443,7 @@
                 "m_capsules": [
                     {
                         "connecting_bone_name": "Lower back",
-                        "connecting_bone_name_2": "",
+                        "connecting_bone_name_2": "Lower back",
                         "origin_a": {
                             "x": -0.024000000208616257,
                             "y": 1.0759999752044678,
@@ -4458,7 +4458,7 @@
                     },
                     {
                         "connecting_bone_name": "Lower back",
-                        "connecting_bone_name_2": "",
+                        "connecting_bone_name_2": "Lower back",
                         "origin_a": {
                             "x": -0.06199999898672104,
                             "y": 0.9120000004768372,
