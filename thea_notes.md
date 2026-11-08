@@ -792,6 +792,7 @@
         - [x] update cpp shader containers to use the new buffer
         - [x] yay it works!
         - in the future there would be a lighting manager that would gather all the visible light sources and include them in the render
+        - [x] only show dir light in scene view (enshittification lol)
 
     - @NOTE: to create a sweep attack or mikiri attack, use the chkboxes in AFA editor, and then add in watches for the event queues for unguardable, unparryable, and mikiriable attacks in guard, dodge, parry anims (AND make sure they're higher priority than the regular on_hurt event)
 
