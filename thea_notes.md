@@ -784,6 +784,15 @@
             - leaving while modal is open is fine if its just not open when reloading (just make it part of editor state struct)
             - [x] fixed modal staying open when reopening afa editor
 
+    - [ ] DETOUR: i wanna just make some point lights in the engine for fun
+        - it looks like point lights will have to be on its own buffer, since the numerous amounts of point lights cannot be in a vertex output/fragment input.
+        - [x] POC for one point light success!
+        - [x] move lighting information out of environment data buffer/struct
+        - [x] create lighting information struct and buffer
+        - [x] update cpp shader containers to use the new buffer
+        - [x] yay it works!
+        - in the future there would be a lighting manager that would gather all the visible light sources and include them in the render
+
     - @NOTE: to create a sweep attack or mikiri attack, use the chkboxes in AFA editor, and then add in watches for the event queues for unguardable, unparryable, and mikiriable attacks in guard, dodge, parry anims (AND make sure they're higher priority than the regular on_hurt event)
 
     - [ ] add perilous indicator
