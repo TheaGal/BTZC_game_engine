@@ -236,6 +236,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/game_interrupt_event_queue.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/game_interrupt_event_queue.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/health_stats.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/perilous_signal_receiver.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/physics_object_settings.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/physics_object_settings.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/rail_line.cpp
@@ -264,6 +265,8 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/imgui_render_transform_hierarchy_window.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/input_controlled_character_movement.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/input_controlled_character_movement.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/perilous_signal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/perilous_signal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/player_character_lock_onto_target.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/player_character_lock_onto_target.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/player_character_world_space_input.cpp

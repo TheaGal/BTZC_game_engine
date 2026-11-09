@@ -15,6 +15,7 @@
 #include "game_system_logic/system/hitcapsule_attack_processing.h"
 #include "game_system_logic/system/imgui_render_transform_hierarchy_window.h"
 #include "game_system_logic/system/input_controlled_character_movement.h"
+#include "game_system_logic/system/perilous_signal.h"
 #include "game_system_logic/system/player_character_lock_onto_target.h"
 #include "game_system_logic/system/player_character_world_space_input.h"
 #include "game_system_logic/system/process_character_has_died.h"
@@ -220,7 +221,7 @@ int main(int argc, char* argv[])
     main_renderer.set_imgui_build_contents_callback([]() {
         BT::system::imgui_render_transform_hierarchy_window(false);
     });
-    TXP::Skeletal_animator::set_play_audio_fn_callbacks(
+    TXP::Skeletal_animator::set_func_callbacks(
         [](std::string const& snd_name, vec3 const pos, float_t volume) {
             auto snd_key{ BT::audio::mark_snd_required(snd_name, true, false, false) };
             BT::audio::play_sound_3d(snd_key, pos, BT::audio::volume_to_db(volume));
@@ -240,6 +241,9 @@ int main(int argc, char* argv[])
             BT::audio::unmark_snd_required(snd_key);
 
             BT_TRACEF("Played sfx \"%s\" as 2d", snd_name.c_str());
+        },
+        []() {
+            BT::system::signal_perilous();
         });
 
     BT::ui_ifc::Hp_w_posture hp_w_posture_ui{ ui_state };
@@ -421,6 +425,7 @@ int main(int argc, char* argv[])
             ui_state.tick();
 
             BT::system::update_camera_billboards();
+            BT::system::update_perilous_signal(delta_time);
 
             if (iter_type < Iteration_type::TEARDOWN_ITERATION)
             {

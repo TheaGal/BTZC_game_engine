@@ -796,10 +796,10 @@
 
     - @NOTE: to create a sweep attack or mikiri attack, use the chkboxes in AFA editor, and then add in watches for the event queues for unguardable, unparryable, and mikiriable attacks in guard, dodge, parry anims (AND make sure they're higher priority than the regular on_hurt event)
 
-    - [ ] add perilous indicator
+    - [x] add perilous indicator
         - ~~there probably needs to be a new shader for this~~
         - [x] billboard thingy
-        - [ ] make activate on there being a perilous message.
+        - [x] make activate on there being a perilous message.
     - [ ] add one sweep attack anim
     - [ ] create stomp anim
     - [ ] add dodge anim

@@ -161,9 +161,9 @@
                             "w": 1.0
                         },
                         "scale": {
-                            "x": 0.5,
-                            "y": 0.5,
-                            "z": 0.5
+                            "x": 0.25,
+                            "y": 0.25,
+                            "z": 0.25
                         }
                     }
                 },
@@ -189,6 +189,10 @@
                             "z": 0.0
                         }
                     }
+                },
+                {
+                    "type_name": "component::Perilous_signal_receiver",
+                    "members_j": {}
                 },
                 {
                     "type_name": "TXP::component::Render_object_config",
