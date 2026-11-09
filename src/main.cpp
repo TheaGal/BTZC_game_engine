@@ -26,6 +26,7 @@
 #include "game_system_logic/system/rail_line_editor_update.h"
 #include "game_system_logic/system/rail_line_rider_update.h"
 #include "game_system_logic/system/tick_sim_char_mvt_animator.h"
+#include "game_system_logic/system/update_camera_billboards.h"
 #include "game_system_logic/system/write_entity_transforms_from_physics.h"
 #include "game_system_logic/system/write_render_transforms.h"
 #include "game_system_logic/world/scene_loader.h"
@@ -411,6 +412,8 @@ int main(int argc, char* argv[])
             BT::system::process_ui_interfaces(ui_state, delta_time);
 
             ui_state.tick();
+
+            BT::system::update_camera_billboards();
 
             if (iter_type < Iteration_type::TEARDOWN_ITERATION)
             {

@@ -47,7 +47,7 @@
                     "type_name": "component::Transform_hierarchy",
                     "members_j": {
                         "parent_entity": null,
-                        "children_entities": ["c153d5c1-9558-4077-b8fb-ae8917d96eda"]
+                        "children_entities": []
                     }
                 },
                 {
@@ -170,8 +170,24 @@
                 {
                     "type_name": "component::Transform_hierarchy",
                     "members_j": {
-                        "parent_entity": "aae5ebfb-7c2b-49a8-bcb9-658fdea987af",
+                        "parent_entity": null,
                         "children_entities": []
+                    }
+                },
+                {
+                    "type_name": "component::Billboard_to_camera",
+                    "members_j": {
+                        "rotation_euler": {
+                            "x": 1.5707963268,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "copy_position_entity": "aae5ebfb-7c2b-49a8-bcb9-658fdea987af",
+                        "copy_position_offset": {
+                            "x": 0.0,
+                            "y": 2.25,
+                            "z": 0.0
+                        }
                     }
                 },
                 {

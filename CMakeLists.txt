@@ -223,6 +223,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/btzc_game_engine.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/btzc_game_engine.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/anim_frame_action_controller.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/billboard_to_camera.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/character_movement.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/character_movement.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/combat_stats.h
@@ -285,6 +286,8 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/rail_line_rider_update.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/tick_sim_char_mvt_animator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/tick_sim_char_mvt_animator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/update_camera_billboards.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/update_camera_billboards.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/write_entity_transforms_from_physics.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/write_entity_transforms_from_physics.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/write_render_transforms.cpp

@@ -12,6 +12,7 @@
 #include "entt/core/type_info.hpp"
 #include "entt/entity/registry.hpp"
 #include "follow_camera.h"
+#include "game_system_logic/component/billboard_to_camera.h"
 #include "game_system_logic/component/game_interrupt_event_queue.h"
 #include "game_system_logic/component/rail_line.h"
 #include "game_system_logic/entity_container.h"
@@ -110,6 +111,7 @@ void BT::component::register_all_components()
     REGISTER_COMPONENT__YES_SERIALIZE(component::Player_character,                                 edit::imgui_edit__sample);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Character_world_space_input,                      edit::imgui_edit__character_world_space_input);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Character_mvt_state,                              edit::imgui_edit__sample);
+    REGISTER_COMPONENT__YES_SERIALIZE(component::Billboard_to_camera,                              edit::imgui_edit__sample);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Follow_camera_follow_ref,                         edit::imgui_edit__follow_camera_follow_ref);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Follow_camera_lockon_target,                      edit::imgui_edit__follow_camera_lockon_target);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Game_interrupt_event_queue,                       edit::imgui_edit__sample);
