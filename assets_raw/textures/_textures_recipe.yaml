@@ -73,3 +73,10 @@ font_msdf_pitagon_serif_regular:
     format: ldr_unorm
     mipmapped: false
     source_image: font_msdf/pitagon_serif_regular.png
+
+perilous_icon:
+  Texture2D:
+    channels: 4
+    format: ldr_srgb
+    mipmapped: true
+    source_image: perilous_icon.png

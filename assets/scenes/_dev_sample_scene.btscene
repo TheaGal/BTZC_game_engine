@@ -47,7 +47,7 @@
                     "type_name": "component::Transform_hierarchy",
                     "members_j": {
                         "parent_entity": null,
-                        "children_entities": []
+                        "children_entities": ["c153d5c1-9558-4077-b8fb-ae8917d96eda"]
                     }
                 },
                 {
@@ -133,6 +133,55 @@
                 {
                     "type_name": "component::Game_interrupt_event_queue",
                     "members_j": {}
+                }
+            ]
+        },
+        {
+            "entity_uuid": "c153d5c1-9558-4077-b8fb-ae8917d96eda",
+            "components": [
+                {
+                    "type_name": "TXP::component::Entity_metadata",
+                    "members_j": {
+                        "name": "Perilous symbol",
+                        "uuid": "c153d5c1-9558-4077-b8fb-ae8917d96eda"
+                    }
+                },
+                {
+                    "type_name": "component::Transform",
+                    "members_j": {
+                        "position": {
+                            "x": 0.0,
+                            "y": 7.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "scale": {
+                            "x": 0.5,
+                            "y": 0.5,
+                            "z": 0.5
+                        }
+                    }
+                },
+                {
+                    "type_name": "component::Transform_hierarchy",
+                    "members_j": {
+                        "parent_entity": "aae5ebfb-7c2b-49a8-bcb9-658fdea987af",
+                        "children_entities": []
+                    }
+                },
+                {
+                    "type_name": "TXP::component::Render_object_config",
+                    "members_j": {
+                        "is_visible": false,
+                        "render_layer": 1,
+                        "model_name": "unit_plane",
+                        "material_palette": "perilous_icon_material_palette"
+                    }
                 }
             ]
         },

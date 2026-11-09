@@ -145,6 +145,7 @@ int main(int argc, char* argv[])
     main_renderer.add_texture("FuckinAround_physdesc", ".ktx2");
     main_renderer.add_texture("FuckinAround_normal", ".ktx2");
     main_renderer.add_texture("font_msdf_pitagon_serif_regular", ".ktx2");
+    main_renderer.add_texture("perilous_icon", ".ktx2");
     // main_renderer.add_material("default_mat",
     //                            "pbr",
     //                            { { "base_color_factor", "0.75 0.75 0.5 1" },
@@ -190,9 +191,16 @@ int main(int argc, char* argv[])
     main_renderer.add_material("__gradient_mat",
                                "gradient",
                                { { "image", "__hdr_draw_image_color" } });
+    main_renderer.add_material("perilous_icon_mat",
+                               "pbr",
+                               { { "base_color_factor", "1 1 1 1" },
+                                 { "metallic_factor", "0" },
+                                 { "roughness_factor", "0" },
+                                 { "base_color_texture", "perilous_icon" } });
     main_renderer.add_material_palette("default_material_palette", { "default_mat" });
     main_renderer.add_material_palette("probuilder_material_palette", { "ProBuilderDefault" });
     main_renderer.add_material_palette("large_grid_material_palette", { "large_grid_mat" });
+    main_renderer.add_material_palette("perilous_icon_material_palette", { "perilous_icon_mat" });
     main_renderer.add_model("unit_box", ".wobj", false, false);
     main_renderer.add_model("unit_plane", ".glb", false, false);
     main_renderer.add_model("unit_capsule_parts", ".glb", false, false);

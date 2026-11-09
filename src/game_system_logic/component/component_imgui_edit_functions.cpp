@@ -339,12 +339,29 @@ void BT::component::edit::imgui_edit__render_object_config(entt::registry& reg,
         "invalidated (see button at bottom) to force recreating the render object.");
 
     // Settings.
+    ImGui::TextColored(ImVec4(1, 1, 1, 0.5), "%s", "* updates immediately/uncached");
+
     ImGui::SeparatorText("Required");
+
+    ImGui::Checkbox("is_visible*", &rend_obj_settings.is_visible);
 
     static std::vector<std::pair<std::string, TXP::Render_layer>> const k_layers{
         { "Default",      TXP::RENDER_LAYER_DEFAULT      },
-        { "Invisible",    TXP::RENDER_LAYER_INVISIBLE    },
         { "Level editor", TXP::RENDER_LAYER_LEVEL_EDITOR },
+        { "unassigned3",  TXP::RENDER_LAYER_UNASSIGNED3  },
+        { "unassigned4",  TXP::RENDER_LAYER_UNASSIGNED4  },
+        { "unassigned5",  TXP::RENDER_LAYER_UNASSIGNED5  },
+        { "unassigned6",  TXP::RENDER_LAYER_UNASSIGNED6  },
+        { "unassigned7",  TXP::RENDER_LAYER_UNASSIGNED7  },
+        { "unassigned8",  TXP::RENDER_LAYER_UNASSIGNED8  },
+        { "unassigned9",  TXP::RENDER_LAYER_UNASSIGNED9  },
+        { "unassigned10", TXP::RENDER_LAYER_UNASSIGNED10 },
+        { "unassigned11", TXP::RENDER_LAYER_UNASSIGNED11 },
+        { "unassigned12", TXP::RENDER_LAYER_UNASSIGNED12 },
+        { "unassigned13", TXP::RENDER_LAYER_UNASSIGNED13 },
+        { "unassigned14", TXP::RENDER_LAYER_UNASSIGNED14 },
+        { "unassigned15", TXP::RENDER_LAYER_UNASSIGNED15 },
+        { "unassigned16", TXP::RENDER_LAYER_UNASSIGNED16 },
     };
 
     int32_t render_layer_cur_item = [&rend_obj_settings]() {

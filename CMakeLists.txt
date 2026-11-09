@@ -171,6 +171,7 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/FuckinAround_physdesc.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/font_msdf_pitagon_serif_regular.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/grid_1m.ktx2
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/perilous_icon.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/test_ktx_tex.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/tiles084_basecolor.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/tiles084_normal.ktx2
