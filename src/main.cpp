@@ -220,7 +220,7 @@ int main(int argc, char* argv[])
     main_renderer.set_imgui_build_contents_callback([]() {
         BT::system::imgui_render_transform_hierarchy_window(false);
     });
-    TXP::Skeletal_animator::set_play_audio_at_pos_oneshot_fn_callback(
+    TXP::Skeletal_animator::set_play_audio_fn_callbacks(
         [](std::string const& snd_name, vec3 const pos, float_t volume) {
             auto snd_key{ BT::audio::mark_snd_required(snd_name, true, false, false) };
             BT::audio::play_sound_3d(snd_key, pos, BT::audio::volume_to_db(volume));
@@ -233,6 +233,13 @@ int main(int argc, char* argv[])
                       pos[2]);
 
             TXP::debug::emplace_debug_line_based_capsule(pos, pos, 1, vec4{ 1, 0, 0.2, 1 }, 0.25f);
+        },
+        [](std::string const& snd_name, float_t volume) {
+            auto snd_key{ BT::audio::mark_snd_required(snd_name, false, false, false) };
+            BT::audio::play_sound(snd_key, BT::audio::volume_to_db(volume));
+            BT::audio::unmark_snd_required(snd_key);
+
+            BT_TRACEF("Played sfx \"%s\" as 2d", snd_name.c_str());
         });
 
     BT::ui_ifc::Hp_w_posture hp_w_posture_ui{ ui_state };

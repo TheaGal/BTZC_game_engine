@@ -24,7 +24,7 @@
                         3.0
                     ],
                     "state_set": "st_attack_2",
-                    "weight": 0.0010000000474974513
+                    "weight": 0.1
                 },
                 {
                     "min_max_range": [
@@ -1907,6 +1907,15 @@
                     "end_frame": 125,
                     "row_idx": 3,
                     "start_frame": 123
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "signal_perilous"
+                    },
+                    "end_frame": 14,
+                    "row_idx": 4,
+                    "start_frame": 10
                 },
                 {
                     "ctrl_cmd": {
