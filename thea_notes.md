@@ -801,19 +801,21 @@
         - [x] billboard thingy
         - [x] make activate on there being a perilous message.
     - [ ] add one sweep attack anim
+        - [x] make it in blender
+        - [ ] make afa stuff for it in engine
     - [ ] create stomp anim
     - [ ] add dodge anim
         - 8 directions (or just 4 and blendtree it) to keep consistency when doing it on gamepad
     - [ ] create mikiri give/receive anims
 
-- [ ] fill in different parry and hurt types
-    - will need 2 action maps, one for getting hurt a certain way and another for parrying a certain way (guard will just be same awkward anim)
-    - the action maps will have the same indexes as `enum class Atk_dir` since the `.action_idx` that comes in will be that number
-
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
         - so max 3 cascades (both realtime cascades and one static cascade if dir light changes) get updated on one frame
     - look into this tech: https://discord.com/channels/1563075165473083402/1564514891862114314
+
+- [ ] fill in different parry and hurt types
+    - will need 2 action maps, one for getting hurt a certain way and another for parrying a certain way (guard will just be same awkward anim)
+    - the action maps will have the same indexes as `enum class Atk_dir` since the `.action_idx` that comes in will be that number
 
 - [ ] create projectile spawning
 - [ ] some fun: energy ball enemy shoots and you have to parry it back to each other until one of you gets hit.
@@ -857,6 +859,8 @@
 
 - [ ] BUG: moving the window to a different virtual desktop on macos crashes the program
     - mayeb it's actualy just when doing discord screenshare on the actual window?
+    - `2026-11-09 14:41:09.814162-0800 btzc_game_engine[60953:3453272] [AppKit] Invalid view geometry: width is negative.`
+    - possibly switch to sdl3? or write custom windowing for macos. or just fork glfw?
 
 
 ## SOMEDAY
