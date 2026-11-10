@@ -10,10 +10,13 @@
 #include "txp_renderer_public.h"
 
 #include <cassert>
+#include <tracy/Tracy.hpp>
 
 
 void BT::system::update_camera_billboards()
 {
+    ZoneScoped;
+
     if (!service_finder::find_service<world::World_properties_container>()
              .get_data_handle()
              .is_simulation_running)

@@ -20,6 +20,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdint>
+#include <tracy/Tracy.hpp>
 
 
 namespace
@@ -619,6 +620,8 @@ void apply_velocity_to_char_con(
 
 void BT::system::input_controlled_character_movement()
 {
+    ZoneScoped;
+
     auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
     auto view{ reg.view<component::Character_world_space_input const,
                         component::Character_mvt_state,

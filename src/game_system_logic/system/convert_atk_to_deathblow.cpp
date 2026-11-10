@@ -14,10 +14,14 @@
 
 #include <cassert>
 #include <stdexcept>
+#include <tracy/Tracy.hpp>
 
 
 void BT::system::convert_atk_input_to_deathblow()
-{   // Exit early if simulation not running.
+{
+    ZoneScoped;
+
+    // Exit early if simulation not running.
     if (!service_finder::find_service<world::World_properties_container>()
              .get_data_handle()
              .is_simulation_running)

@@ -796,6 +796,8 @@
 
     - @NOTE: to create a sweep attack or mikiri attack, use the chkboxes in AFA editor, and then add in watches for the event queues for unguardable, unparryable, and mikiriable attacks in guard, dodge, parry anims (AND make sure they're higher priority than the regular on_hurt event)
 
+    - [x] DETOUR: add tracy profiling
+
     - [x] add perilous indicator
         - ~~there probably needs to be a new shader for this~~
         - [x] billboard thingy

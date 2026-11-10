@@ -14,6 +14,7 @@
 #include "txp_renderer_public.h"
 
 #include <cassert>
+#include <tracy/Tracy.hpp>
 
 #define OLD_HITCAPSULE_ATK_PROCESS 0
 
@@ -268,6 +269,8 @@ void process_attack_interaction(Entity_container& entity_container,
 
 void BT::system::hitcapsule_attack_processing(float_t delta_time)
 {
+    ZoneScoped;
+
     static double_t s_global_attack_timer{ 0 };
 
     // Overlap pairs buffer for lagging the attacks by `k_lagging_ticks` ticks.

@@ -7,9 +7,13 @@
 #include "service_finder/service_finder.h"
 #include "txp_renderer_public.h"
 
+#include <tracy/Tracy.hpp>
+
 
 void BT::system::animator_driven_hitcapsule_sets_update()
 {
+    ZoneScoped;
+
     auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
     auto view{ reg.view<TXP::component::Animator_driven_hitcapsule_set const,
                         component::Transform const>() };

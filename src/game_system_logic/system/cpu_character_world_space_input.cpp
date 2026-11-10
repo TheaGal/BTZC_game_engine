@@ -13,6 +13,7 @@
 
 #include <cstdint>
 #include <limits>
+#include <tracy/Tracy.hpp>
 
 
 namespace
@@ -108,6 +109,8 @@ void process_broadcasted_enemy_msgs(component::Detectable_character* detect_char
 
 void BT::system::cpu_character_world_space_input(float_t const delta_time)
 {
+    ZoneScoped;
+
     auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
     auto view{ reg.view<component::Transform const,
                         component::CPU_enemy_awareness,

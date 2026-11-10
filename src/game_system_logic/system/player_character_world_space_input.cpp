@@ -17,6 +17,7 @@
 #include "txp_renderer_public.h"
 
 #include <cassert>
+#include <tracy/Tracy.hpp>
 
 
 namespace
@@ -63,6 +64,8 @@ void transform_input_to_camera_pov_input(TXP::Camera& main_camera,
 
 void BT::system::player_character_world_space_input()
 {
+    ZoneScoped;
+
     auto& main_camera = service_finder::find_service<TXP::Renderer>().get_main_camera();
 
     auto& entity_container{ service_finder::find_service<Entity_container>() };

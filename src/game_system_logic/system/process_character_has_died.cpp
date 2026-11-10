@@ -16,12 +16,16 @@
 
 #include <cassert>
 #include <cmath>
+#include <tracy/Tracy.hpp>
 
 using Interrupt_event = BT::component::Game_interrupt_event_queue::Interrupt_event;
 
 
 void BT::system::process_character_has_died(float_t const delta_time)
-{   // Exit early if simulation not running.
+{
+    ZoneScoped;
+
+    // Exit early if simulation not running.
     if (!service_finder::find_service<world::World_properties_container>()
              .get_data_handle()
              .is_simulation_running)

@@ -12,10 +12,13 @@
 #include <cstddef>
 #include <cstdint>
 #include <stdexcept>
+#include <tracy/Tracy.hpp>
 
 
 void BT::system::rail_line_editor_update()
 {
+    ZoneScoped;
+
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
 

@@ -10,6 +10,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <tracy/Tracy.hpp>
 
 
 void BT::system::signal_perilous()
@@ -32,6 +33,8 @@ void BT::system::signal_perilous()
 
 void BT::system::update_perilous_signal(float_t const delta_time)
 {
+    ZoneScoped;
+
     if (!service_finder::find_service<world::World_properties_container>()
              .get_data_handle()
              .is_simulation_running)

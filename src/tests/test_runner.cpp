@@ -6,9 +6,13 @@
 #include "test_types.h"
 #include "undefined_behavior.test.h"
 
+#include <tracy/Tracy.hpp>
+
 
 bool BT::tests::run_all_tests()
 {
+    ZoneScoped;
+
     Test_run_result_stats trrs;
 
     BT_INFO("-= RUNNING ALL TESTS =-=-=-=-=-=-=-=-=-=-=-=-");

@@ -13,10 +13,14 @@
 #include "service_finder/service_finder.h"
 
 #include <cassert>
+#include <tracy/Tracy.hpp>
 
 
 void BT::system::process_finish_deathblow()
-{   // Exit early if simulation not running.
+{
+    ZoneScoped;
+
+    // Exit early if simulation not running.
     if (!service_finder::find_service<world::World_properties_container>()
              .get_data_handle()
              .is_simulation_running)

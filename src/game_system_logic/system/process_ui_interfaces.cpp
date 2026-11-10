@@ -20,6 +20,7 @@
 
 #include <cassert>
 #include <stdexcept>
+#include <tracy/Tracy.hpp>
 
 
 namespace
@@ -221,6 +222,8 @@ void process_ui_you_died(Process_method const method,
 
 void BT::system::process_ui_interfaces(TXP::UI_state& ui_state, float_t const delta_time)
 {
+    ZoneScoped;
+
     Process_method method;
     {
         static bool s_prev_sim_running{ false };

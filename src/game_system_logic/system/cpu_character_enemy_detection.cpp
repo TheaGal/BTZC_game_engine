@@ -15,6 +15,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <tracy/Tracy.hpp>
 
 
 namespace
@@ -118,7 +119,10 @@ void draw_detection_cone(component::CPU_enemy_awareness::Sight_detection_zone co
 
 
 void BT::system::cpu_character_enemy_detection()
-{   // Exit early if simulation not running.
+{
+    ZoneScoped;
+
+    // Exit early if simulation not running.
     if (!service_finder::find_service<world::World_properties_container>()
              .get_data_handle()
              .is_simulation_running)

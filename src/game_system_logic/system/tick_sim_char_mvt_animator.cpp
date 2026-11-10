@@ -12,10 +12,13 @@
 #include <cassert>
 #include <stdexcept>
 #include <string>
+#include <tracy/Tracy.hpp>
 
 
 void BT::system::tick_sim_char_mvt_animator()
 {
+    ZoneScoped;
+
     auto& renderer{ service_finder::find_service<TXP::Renderer>() };
     auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
 

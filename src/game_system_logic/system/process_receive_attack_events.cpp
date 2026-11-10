@@ -12,6 +12,7 @@
 
 #include <cmath>
 #include <stdexcept>
+#include <tracy/Tracy.hpp>
 
 
 namespace
@@ -228,7 +229,10 @@ void process_posture_pts_regeneration(component::Health_stats_data& health_stats
 
 
 void BT::system::process_receive_attack_events(float_t const delta_time)
-{   // Exit early if simulation not running.
+{
+    ZoneScoped;
+
+    // Exit early if simulation not running.
     if (!service_finder::find_service<world::World_properties_container>()
              .get_data_handle()
              .is_simulation_running)

@@ -11,6 +11,7 @@
 
 #include <cmath>
 #include <cstdlib>
+#include <tracy/Tracy.hpp>
 
 
 namespace
@@ -173,6 +174,8 @@ std::pair<Rail_position_transform, float_t> find_transform_approx(
 
 void BT::system::rail_line_rider_update()
 {
+    ZoneScoped;
+
     auto& entity_container{ service_finder::find_service<Entity_container>() };
     auto& reg{ entity_container.get_ecs_registry() };
 

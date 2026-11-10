@@ -14,11 +14,15 @@
 #include <cassert>
 #include <cmath>
 #include <limits>
+#include <tracy/Tracy.hpp>
 #include <vector>
 
 
 void BT::system::player_character_lock_onto_target(float_t const delta_time)
-{   // Exit early if simulation not running.
+{
+    ZoneScoped;
+
+    // Exit early if simulation not running.
     if (!service_finder::find_service<world::World_properties_container>()
              .get_data_handle()
              .is_simulation_running)

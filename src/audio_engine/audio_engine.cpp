@@ -10,6 +10,7 @@
 #include <functional>
 #include <memory>
 #include <stdexcept>
+#include <tracy/Tracy.hpp>
 #include <unordered_map>
 
 
@@ -203,6 +204,8 @@ void BT::audio::initialize()
 
 void BT::audio::update()
 {
+    ZoneScoped;
+
     Audio_engine::instance().update();
 }
 
