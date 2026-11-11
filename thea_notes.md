@@ -802,9 +802,11 @@
         - ~~there probably needs to be a new shader for this~~
         - [x] billboard thingy
         - [x] make activate on there being a perilous message.
-    - [ ] add one sweep attack anim
+    - [x] add one sweep attack anim
         - [x] make it in blender
-        - [ ] make afa stuff for it in engine
+        - [x] make afa stuff for it in engine
+        - [x] add nonparryable attrib to afa
+    - [ ] FIX: reorg the afa regions to make it spaced out a bit more
     - [ ] create stomp anim
     - [ ] add dodge anim
         - 8 directions (or just 4 and blendtree it) to keep consistency when doing it on gamepad

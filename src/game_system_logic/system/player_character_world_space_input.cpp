@@ -122,7 +122,8 @@ void BT::system::player_character_world_space_input()
         {
             bool const attack_pressed{
                 main_camera.is_follow_orbit() &&
-                input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_LEFT).pressed
+                (input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_LEFT).pressed ||
+                 input_handler.get_keyboard_key_state(BT_KEY_J).pressed)
             };
 
             char_mvt_anim_state->input_mvt_state.on_attack_press =
@@ -140,14 +141,15 @@ void BT::system::player_character_world_space_input()
 
         // On guard trigger and is-guarding bool.
         {
-            bool guard_pressed{
-                input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_RIGHT).pressed
+            bool const guard_pressed{
+                main_camera.is_follow_orbit() &&
+                (input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_RIGHT).pressed ||
+                 input_handler.get_keyboard_key_state(BT_KEY_K).pressed)
             };
-            bool is_guarding{ main_camera.is_follow_orbit() && guard_pressed };
 
             char_mvt_anim_state->input_mvt_state.on_guard_press =
-                (is_guarding && !char_mvt_anim_state->state.prev_guard_pressed);
-            char_mvt_anim_state->input_mvt_state.is_guard_released = !is_guarding;
+                (guard_pressed && !char_mvt_anim_state->state.prev_guard_pressed);
+            char_mvt_anim_state->input_mvt_state.is_guard_released = !guard_pressed;
 
             char_mvt_anim_state->state.prev_guard_pressed = guard_pressed;
         }

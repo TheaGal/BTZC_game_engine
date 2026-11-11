@@ -123,6 +123,11 @@
             "anim_name": "Attack_side_zoom"
         },
         {
+            "state_name": "st_attack_5",
+            "state_type": "single_anim",
+            "anim_name": "Attack_sweep"
+        },
+        {
             "state_name": "st_jump_back_evade",
             "state_type": "single_anim",
             "anim_name": "Jump_back_evade"
