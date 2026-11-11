@@ -6,7 +6,7 @@ project(btzc_game_engine
     LANGUAGES CXX C)
 
 # When turning this option on, the library will be compiled using assertions. By default asserts are enabled in Debug build.
-option(ENABLE_PROFILING "Enable profiling" ON)
+option(ENABLE_PROFILING "Enable profiling" OFF)
 
 # When turning this option on, the logging version of the FMOD library will be linked.
 option(ENABLE_FMOD_LOGGING "Enable FMOD logging" ON)
@@ -30,7 +30,7 @@ else()
     message(FATAL_ERROR "Asset folder location must be defined in `ASSET_DIR`")
 endif()
 
-# C/C++ standard.
+# C/C++ standard.b
 # set(CMAKE_UNITY_BUILD ON)  # @TODO: get this working at some point!!
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED True)
@@ -469,6 +469,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${FMOD_LIBRARY_PATH}${FMOD_LIB_FILE_PREFIX}.dll
             ${CMAKE_CURRENT_BINARY_DIR})
+    install(FILES $<TARGET_RUNTIME_DLLS:${PROJECT_NAME}> TYPE BIN)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     # message(WARNING "MACOS APP DYNA-lib stuff (TODO: RESEARCH!!!)")
 else()

@@ -807,6 +807,7 @@
         - [x] make afa stuff for it in engine
         - [x] add nonparryable attrib to afa
     - [x] FIX: reorg the afa regions to make it spaced out a bit more
+    - [ ] CRASHFIX: make hitcapsule group set component and health component be required to both have each other
     - [ ] create stomp anim
     - [ ] add dodge anim
         - 8 directions (or just 4 and blendtree it) to keep consistency when doing it on gamepad
