@@ -503,6 +503,8 @@ int main(int argc, char* argv[])
 
         // Tick scene loader.
         main_scene_loader.process_scene_loading_requests();
+
+        FrameMark;
     }
 
     // Try to fix audio popping when quitting app by fading out sound master volume.

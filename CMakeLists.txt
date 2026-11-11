@@ -6,7 +6,7 @@ project(btzc_game_engine
     LANGUAGES CXX C)
 
 # When turning this option on, the library will be compiled using assertions. By default asserts are enabled in Debug build.
-option(ENABLE_PROFILING "Enable profiling" OFF)
+option(ENABLE_PROFILING "Enable profiling" ON)
 
 # When turning this option on, the logging version of the FMOD library will be linked.
 option(ENABLE_FMOD_LOGGING "Enable FMOD logging" ON)
