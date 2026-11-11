@@ -2,11 +2,13 @@
 
 #include "entt/entity/fwd.hpp"
 #include "entt/entity/registry.hpp"
+#include "game_system_logic/component/health_stats.h"
 #include "game_system_logic/component/transform.h"
 #include "game_system_logic/entity_container.h"
 #include "service_finder/service_finder.h"
 #include "txp_renderer_public.h"
 
+#include <stdexcept>
 #include <tracy/Tracy.hpp>
 
 
@@ -22,6 +24,11 @@ void BT::system::animator_driven_hitcapsule_sets_update()
     // Work with tagged entities.
     for (auto ent : view)
     {
+        // Sanity check.
+        if (!reg.any_of<component::Health_stats_data>(ent))
+            throw std::runtime_error(
+                "this should never happen that a hitcapsule set doesnt have health stats");
+
         // Update whether capsules are enabled and keep capsules attached to connecting bone in
         // animator.
         auto animator{ renderer.try_get_skeletal_animator(ent).value() };

@@ -14,6 +14,7 @@
 #include "txp_renderer_public.h"
 
 #include <cassert>
+#include <stdexcept>
 #include <tracy/Tracy.hpp>
 
 #define OLD_HITCAPSULE_ATK_PROCESS 0
@@ -314,7 +315,7 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
 
         // Get defender stats.
         auto defender_ecs_entity{ entity_container.find_entity(defender_uuid) };
-        auto& defe_health_stats{ offender_view.get<component::Health_stats_data>(
+        auto& defe_health_stats{ defender_view.get<component::Health_stats_data>(
             defender_ecs_entity) };
 
         // Process.
