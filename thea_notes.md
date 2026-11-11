@@ -806,11 +806,13 @@
         - [x] make it in blender
         - [x] make afa stuff for it in engine
         - [x] add nonparryable attrib to afa
-    - [ ] FIX: reorg the afa regions to make it spaced out a bit more
+    - [x] FIX: reorg the afa regions to make it spaced out a bit more
     - [ ] create stomp anim
     - [ ] add dodge anim
         - 8 directions (or just 4 and blendtree it) to keep consistency when doing it on gamepad
     - [ ] create mikiri give/receive anims
+
+- [ ] BUG: hitting the enemy char after they're dead makes the game crash
 
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).

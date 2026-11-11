@@ -35,13 +35,12 @@ void BT::system::update_camera_billboards()
         if (first)
         {
             // Calc rotation to billboard to camera.
+            auto const& cam_matrices = service_finder::find_service<TXP::Renderer>()
+                                           .get_main_camera()
+                                           .get_calculated_camera_matrices();
+
             mat4 cam_view;
-            glm_mat4_copy(const_cast<vec4*>(service_finder::find_service<TXP::Renderer>()
-                                                .get_main_camera()
-                                                .get_calculated_camera_matrices()
-                                                .front()
-                                                .view),
-                          cam_view);
+            glm_mat4_copy(const_cast<vec4*>(cam_matrices.front().view), cam_view);
             glm_mat4_inv(cam_view, cam_view);
 
             glm_mat4_quat(cam_view, cam_view_inv_rot.raw);
