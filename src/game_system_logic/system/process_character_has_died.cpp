@@ -113,7 +113,7 @@ void BT::system::process_character_has_died(float_t const delta_time)
                 BT_CHK_RETVAL(reg.remove<TXP::component::Animator_driven_hitcapsule_set>(entity),
                               1);
 
-                auto& hitcapsule_group_set{ service_finder::find_service<TXP::Renderer>()
+                auto& hitcapsule_group_set{ service_finder::find_service<TXP::Renderer>()  // @TODO: may be better to have a helper func instead of reaching in for the shirikodama and doing this.  -thea 2026/11/11
                                                 .try_get_skeletal_animator(entity)
                                                 .value()
                                                 .get_anim_frame_action_data_handle()
