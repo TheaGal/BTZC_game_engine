@@ -811,11 +811,12 @@
     - [ ] create stomp anim
         - [x] made in blender
         - [ ] make afa stuff
+            - [ ] make on_jump input event happen every time spacebar is pressed even when grounded (ig that can give input buffering too!)
     - [ ] add dodge anim
         - 8 directions (or just 4 and blendtree it) to keep consistency when doing it on gamepad
     - [ ] create mikiri give/receive anims
 
-- [ ] BUG: hitting the enemy char after they're dead makes the game crash
+- [x] BUG: hitting the enemy char after they're dead makes the game crash
 
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
@@ -834,6 +835,8 @@
 
 - [ ] fix sound playing on bones where the sound position updates to follow the bone every frame.
     - just update the sound positions in simulation ticks. that's where the bones and the audio engine update anyway.
+
+- [ ] BUG: when changing audio output (plugging in/out headphones), FMOD or the app crashes
 
 - @NOTE: for pathfinding, just have to set enemy facing direction to go to next node to go to. pathfinding would happen during the st_runnning anim until enemy is close enough to player to do an attack
 
@@ -870,6 +873,7 @@
     - mayeb it's actualy just when doing discord screenshare on the actual window?
     - `2026-11-09 14:41:09.814162-0800 btzc_game_engine[60953:3453272] [AppKit] Invalid view geometry: width is negative.`
     - possibly switch to sdl3? or write custom windowing for macos. or just fork glfw?
+    - it appears to work just fine on macos 27??
 
 
 ## SOMEDAY
