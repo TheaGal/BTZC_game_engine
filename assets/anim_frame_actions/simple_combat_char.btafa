@@ -711,6 +711,21 @@
         },
         {
             "regions": [
+            ],
+            "state_name": "st_jump_midair_ready"
+        },
+        {
+            "regions": [
+            ],
+            "state_name": "st_jump_midair"
+        },
+        {
+            "regions": [
+            ],
+            "state_name": "st_jump_midair_fall"
+        },
+        {
+            "regions": [
                 {
                     "ctrl_cmd": {
                         "argv": [

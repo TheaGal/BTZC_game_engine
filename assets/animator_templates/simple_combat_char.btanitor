@@ -68,6 +68,21 @@
             "anim_name": "Fall"
         },
         {
+            "state_name": "st_jump_midair_ready",
+            "state_type": "single_anim",
+            "anim_name": "Jump_midair_ready"
+        },
+        {
+            "state_name": "st_jump_midair",
+            "state_type": "single_anim",
+            "anim_name": "Jump_midair"
+        },
+        {
+            "state_name": "st_jump_midair_fall",
+            "state_type": "single_anim",
+            "anim_name": "Jump_midair_fall"
+        },
+        {
             "state_name": "st_pc_attack_1cha",
             "state_type": "single_anim",
             "anim_name": "PC_attack_1cha"
