@@ -12,6 +12,8 @@
 #include "game_system_logic/world/world_properties.h"
 #include "physics_engine/physics_engine.h"
 #include "service_finder/service_finder.h"
+#include "txp_renderer/renderer.h"
+#include "txp_renderer/types.h"
 #include "txp_renderer_public.h"
 
 #include <cassert>
@@ -108,6 +110,16 @@ void BT::system::process_character_has_died(float_t const delta_time)
                 bool const is_boss_oppo{ !health_stats_data.ui_name.empty() };
 
                 BT_CHK_RETVAL(reg.remove<component::Health_stats_data>(entity), 1);
+                BT_CHK_RETVAL(reg.remove<TXP::component::Animator_driven_hitcapsule_set>(entity),
+                              1);
+
+                auto& hitcapsule_group_set{ service_finder::find_service<TXP::Renderer>()
+                                                .try_get_skeletal_animator(entity)
+                                                .value()
+                                                .get_anim_frame_action_data_handle()
+                                                .hitcapsule_group_set };
+                hitcapsule_group_set.unregister_from_overlap_solver();
+                hitcapsule_group_set.get_hitcapsule_groups().clear();
 
                 // Add ninsatsu interrupt.
                 if (is_boss_oppo)

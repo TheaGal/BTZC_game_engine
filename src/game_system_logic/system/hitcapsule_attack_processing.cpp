@@ -308,6 +308,13 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
 
         // Get offender stats.
         auto offender_ecs_entity{ entity_container.find_entity(offender_uuid) };
+
+        if (!reg.all_of<component::Base_combat_stats_data const, component::Health_stats_data>(
+                offender_ecs_entity))
+            throw std::runtime_error(
+                "this should never happen that an offe hitcapsule set doesnt have both combat "
+                "stats and health stats");
+
         auto const& offe_combat_stats{ offender_view.get<component::Base_combat_stats_data const>(
             offender_ecs_entity) };
         auto& offe_health_stats{ offender_view.get<component::Health_stats_data>(
@@ -315,6 +322,11 @@ void BT::system::hitcapsule_attack_processing(float_t delta_time)
 
         // Get defender stats.
         auto defender_ecs_entity{ entity_container.find_entity(defender_uuid) };
+
+        if (!reg.any_of<component::Health_stats_data>(defender_ecs_entity))
+            throw std::runtime_error(
+                "this should never happen that a defe hitcapsule set doesnt have health stats");
+
         auto& defe_health_stats{ defender_view.get<component::Health_stats_data>(
             defender_ecs_entity) };
 
