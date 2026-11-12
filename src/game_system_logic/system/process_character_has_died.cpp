@@ -70,10 +70,12 @@ void BT::system::process_character_has_died(float_t const delta_time)
                 };
 
                 bool const death_input_pressed{
-                    input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_RIGHT).pressed
+                    input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_RIGHT).pressed ||
+                    input_handler.get_keyboard_key_state(BT_KEY_K).pressed
                 };
                 bool const resurrect_input_pressed{
-                    input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_LEFT).pressed
+                    input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_LEFT).pressed ||
+                    input_handler.get_keyboard_key_state(BT_KEY_J).pressed
                 };
 
                 constexpr float_t k_make_choice_time{ 8 };

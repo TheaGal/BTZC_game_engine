@@ -196,7 +196,7 @@ void BT::system::tick_sim_char_mvt_animator()
 
 
             // Update animator state.
-            animator.update_state(TXP::SIMULATION_TIMER_PROFILE);
+            animator.update_state();
 
 
             // Read animator root motion AFA data.
