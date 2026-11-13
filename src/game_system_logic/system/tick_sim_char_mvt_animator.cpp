@@ -147,6 +147,9 @@ void BT::system::tick_sim_char_mvt_animator()
                 throw std::runtime_error("Cannot have invalid input mvt state mode.");
             }
 
+            if (mvt_state.on_landed_attack)
+                animator.emplace_event("evq_on_landed_attack", 0.0f, {});
+
             if ((mvt_state.on_hurt & hurt_type_t::HURT_TYPE_REGULAR) != 0)
             {
                 int32_t action_idx{ 0 };

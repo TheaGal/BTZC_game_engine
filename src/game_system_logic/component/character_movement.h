@@ -94,6 +94,8 @@ struct Character_mvt_animated_state
         bool is_grounded{ false };
 
         // Combat reactions.
+        bool on_landed_attack{ false };
+
         enum Hurt_type : uint32_t
         {
             HURT_TYPE_NONE = 0b0,

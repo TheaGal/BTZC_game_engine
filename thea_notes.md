@@ -808,13 +808,19 @@
         - [x] add nonparryable attrib to afa
     - [x] FIX: reorg the afa regions to make it spaced out a bit more
     - [x] CRASHFIX: make hitcapsule group set component and health component be required to both have each other
-    - [ ] create stomp anim
+    - [x] create stomp anim
         - [x] made in blender
-        - [ ] make afa stuff
-            - [ ] make on_jump input event happen every time spacebar is pressed even when grounded (ig that can give input buffering too!)
+        - [x] make afa stuff
+            - [x] make on_jump input event happen every time spacebar is pressed even when grounded (ig that can give input buffering too!)
+            - [x] make jump midair for attack happen only when the attack landed
     - [ ] add dodge anim
         - 8 directions (or just 4 and blendtree it) to keep consistency when doing it on gamepad
     - [ ] create mikiri give/receive anims
+- [ ] add back in crouching as just an idle anim
+    - have there be an event for if the get-up from crouching is successful. if not, then go back to crouch anim
+- [ ] add back in jump midair for if next to a wall
+    - have afa function that triggers checking for raycast of wall stuff
+    - have that check produce an event to do the jump up, and that event queue will be watched!
 
 - [x] BUG: hitting the enemy char after they're dead makes the game crash
 
@@ -822,10 +828,14 @@
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
         - so max 3 cascades (both realtime cascades and one static cascade if dir light changes) get updated on one frame
     - look into this tech: https://discord.com/channels/1563075165473083402/1564514891862114314
+- [ ] add light manager
+    - one obj that can control directional light
+    - one obj each for each point light
 
 - [ ] fill in different parry and hurt types
     - will need 2 action maps, one for getting hurt a certain way and another for parrying a certain way (guard will just be same awkward anim)
     - the action maps will have the same indexes as `enum class Atk_dir` since the `.action_idx` that comes in will be that number
+    - make the stomp anim use its own Atk_dir so that the defender/receiver of the stomp will make the bonk sound and decrease its own health but less than a typical attack
 
 - [ ] create projectile spawning
 - [ ] some fun: energy ball enemy shoots and you have to parry it back to each other until one of you gets hit.

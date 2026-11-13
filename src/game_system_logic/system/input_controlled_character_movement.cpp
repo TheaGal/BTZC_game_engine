@@ -369,6 +369,11 @@ Char_mvt_logic_results character_controller_movement_logic(
                                         char_con_impl->read_transform().rotation });
     }
 
+    // Anim.
+    // @THEA: this is fine here... but rly i wanna just rewrite the crouching stuff and such too!!!
+    if (char_mvt_anim_state /* && !char_con_impl->get_cc_stance()*/ && on_jump_press)
+        char_mvt_anim_state->input_mvt_state.on_jump = true;
+
     // Calc and apply desired velocity.
     JPH::Vec3 new_velocity;
     if (is_grounded)
@@ -383,8 +388,6 @@ Char_mvt_logic_results character_controller_movement_logic(
         {   // Jump.
             // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
             // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_jump = true;
-            if (char_mvt_anim_state)
-                char_mvt_anim_state->input_mvt_state.on_jump = true;
         }
     }
     else
@@ -396,14 +399,14 @@ Char_mvt_logic_results character_controller_movement_logic(
             char_con_impl->set_cc_stance(false);
         }
 
-        if (on_jump_press)
-        {
-            process_midair_jump_interactions(char_mvt_state.airborne_state,
-                                             mvt_settings,
-                                             char_con_impl,
-                                             up_direction,
-                                             new_velocity);
-        }
+        // if (on_jump_press)
+        // {
+        //     process_midair_jump_interactions(char_mvt_state.airborne_state,
+        //                                      mvt_settings,
+        //                                      char_con_impl,
+        //                                      up_direction,
+        //                                      new_velocity);
+        // }
     }
 
     // Desired facing angle.
@@ -575,6 +578,10 @@ Char_mvt_logic_results character_controller_movement_logic(
     {
         if (anim_root_motion->jump_up)
         {
+            // Undo any direction away from up.
+            if (auto velo_dot_up = new_velocity.Dot(up_direction); velo_dot_up < 0)
+                new_velocity -= (up_direction * velo_dot_up);
+
             new_velocity += mvt_settings.jump_speed * up_direction;
         }
 

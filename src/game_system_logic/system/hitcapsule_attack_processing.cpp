@@ -81,6 +81,14 @@ void process_attack_interaction(Entity_container& entity_container,
     }
 #endif // OLD_HITCAPSULE_ATK_PROCESS
 
+    // Record that attack has landed to the offender.
+    if (auto* char_mvt_anim_state =
+            reg.try_get<component::Character_mvt_animated_state>(offender_ecs_entity);
+        char_mvt_anim_state != nullptr)
+    {
+        char_mvt_anim_state->input_mvt_state.on_landed_attack = true;
+    }
+
     // Record sent attack into the defender.
     using Attack_stats = component::Health_stats_data::Runtime_state::Attack_stats;
     defe_health_stats.state.last_received_attack = {
