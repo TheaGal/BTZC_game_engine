@@ -815,7 +815,12 @@
             - [x] make jump midair for attack happen only when the attack landed
     - [ ] add dodge anim
         - 8 directions (or just 4 and blendtree it) to keep consistency when doing it on gamepad
+        - hmmm just 4 should be fine. i think mikiri will be determined by facing dirs not whether dodge anim is facing forward or not
+        - [x] make stub anims
+        - [ ] put in afa info
+        - [ ] connect this anim to char mvt
     - [ ] create mikiri give/receive anims
+
 - [ ] add back in crouching as just an idle anim
     - have there be an event for if the get-up from crouching is successful. if not, then go back to crouch anim
 - [ ] add back in jump midair for if next to a wall
