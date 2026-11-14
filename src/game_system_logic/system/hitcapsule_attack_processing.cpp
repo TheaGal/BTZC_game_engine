@@ -196,10 +196,8 @@ void process_attack_interaction(Entity_container& entity_container,
             auto delta_angle_1{ target_facing_angle - char_mvt_state->get_facing_angle() };
             auto delta_angle_2{ delta_angle_1 + glm_rad(180.0f) };
 
-            while (delta_angle_1 > glm_rad(180.0f)) delta_angle_1 -= glm_rad(360.0f);
-            while (delta_angle_1 <= glm_rad(-180.0f)) delta_angle_1 += glm_rad(360.0f);
-            while (delta_angle_2 > glm_rad(180.0f)) delta_angle_2 -= glm_rad(360.0f);
-            while (delta_angle_2 <= glm_rad(-180.0f)) delta_angle_2 += glm_rad(360.0f);
+            btglm_angle_normalize(delta_angle_1, glm_rad(-180.0f), glm_rad(180.0f));
+            btglm_angle_normalize(delta_angle_2, glm_rad(-180.0f), glm_rad(180.0f));
 
             // Disabled for ensuring char always face towards where it got attacked.
             //   -Thea 2025/12/23
@@ -208,8 +206,7 @@ void process_attack_interaction(Entity_container& entity_container,
                 if (std::abs(delta_angle_2) < std::abs(delta_angle_1))
                 {   // Delta angle 2 is more optimal.
                     target_facing_angle += glm_rad(180.0f);
-                    while (target_facing_angle > glm_rad(180.0f)) target_facing_angle -= glm_rad(360.0f);
-                    while (target_facing_angle <= glm_rad(-180.0f)) target_facing_angle += glm_rad(360.0f);
+                    btglm_angle_normalize(target_facing_angle, glm_rad(-180.0f), glm_rad(180.0f));
 
                     // This is facing away case.
                     turn_to_face_away = true;

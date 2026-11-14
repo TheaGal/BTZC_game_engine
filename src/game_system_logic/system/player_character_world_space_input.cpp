@@ -130,12 +130,6 @@ void BT::system::player_character_world_space_input()
                 (attack_pressed && !char_mvt_anim_state->state.prev_attack_pressed);
             char_mvt_anim_state->input_mvt_state.is_attack_released = !attack_pressed;
 
-            // @ANIMATOR_REFACTOR if (camera.is_follow_orbit() &&
-            // @ANIMATOR_REFACTOR     can_attack_exit &&
-            // @ANIMATOR_REFACTOR     !char_mvt_anim_state->state.prev_attack_pressed &&
-            // @ANIMATOR_REFACTOR     attack_pressed)
-            // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_attack = true;
-
             char_mvt_anim_state->state.prev_attack_pressed = attack_pressed;
         }
 
@@ -153,8 +147,22 @@ void BT::system::player_character_world_space_input()
 
             char_mvt_anim_state->state.prev_guard_pressed = guard_pressed;
         }
-        // @ANIMATOR_REFACTOR char_mvt_anim_state->write_to_animator_data.on_guard = on_guard;
-        // @ANIMATOR_REFACTOR char_mvt_anim_state->write_to_animator_data.is_guarding = is_guarding;
+
+        // On dodge trigger and is-dodging bool.
+        // @COPYPASTA
+        {
+            bool const dodge_pressed{
+                main_camera.is_follow_orbit() &&
+                (input_handler.get_keyboard_key_state(BT_KEY_LEFT_SHIFT).pressed ||
+                 input_handler.get_keyboard_key_state(BT_KEY_L).pressed)
+            };
+
+            char_mvt_anim_state->input_mvt_state.on_dodge_press =
+                (dodge_pressed && !char_mvt_anim_state->state.prev_dodge_pressed);
+            char_mvt_anim_state->input_mvt_state.is_dodge_released = !dodge_pressed;
+
+            char_mvt_anim_state->state.prev_dodge_pressed = dodge_pressed;
+        }
 
         // End of first iteration.
         is_first = false;

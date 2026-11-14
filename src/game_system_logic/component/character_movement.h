@@ -130,6 +130,8 @@ struct Character_mvt_animated_state
         bool is_attack_released{ false };
         bool on_guard_press{ false };
         bool is_guard_released{ false };
+        bool on_dodge_press{ false };
+        bool is_dodge_released{ false };
 
         // @THOUGHT: maybe the CPU can have some kind of anxiety or fatigue when posture bar goes up
         //           or a long attack?  -Thea 2026/10/06
@@ -202,6 +204,7 @@ struct Character_mvt_animated_state
     {
         bool prev_attack_pressed{ false };
         bool prev_guard_pressed{ false };
+        bool prev_dodge_pressed{ false };
     } state;
 
     char _;

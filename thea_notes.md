@@ -817,8 +817,12 @@
         - 8 directions (or just 4 and blendtree it) to keep consistency when doing it on gamepad
         - hmmm just 4 should be fine. i think mikiri will be determined by facing dirs not whether dodge anim is facing forward or not
         - [x] make stub anims
-        - [ ] put in afa info
-        - [ ] connect this anim to char mvt
+        - [x] put in afa info
+        - [x] connect this anim to char mvt
+        - [x] BUG: when pressing just dodge the direction isnt forward
+            - should this be required for all blend tree actions?
+            - ok so it looks like it goes (0, 0, 1) globally
+        - [ ] when holding a direction, should go into sprinting (but for now just have everything go into idle)
     - [ ] create mikiri give/receive anims
 
 - [ ] add back in crouching as just an idle anim

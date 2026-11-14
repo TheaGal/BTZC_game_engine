@@ -119,6 +119,10 @@ void BT::system::tick_sim_char_mvt_animator()
                     animator.emplace_event("evq_on_guard_press", 0.5f, {});
                 if (mvt_state.is_guard_released)
                     animator.emplace_event("evq_is_guard_released", 0.0f, {});
+                if (mvt_state.on_dodge_press)
+                    animator.emplace_event("evq_on_dodge_press", 0.5f, {});
+                if (mvt_state.is_dodge_released)
+                    animator.emplace_event("evq_is_dodge_released", 0.0f, {});
 
                 if (mvt_state.choose_to_resurrect)
                     animator.emplace_event("evq_do_resurrect", 1000000, {});

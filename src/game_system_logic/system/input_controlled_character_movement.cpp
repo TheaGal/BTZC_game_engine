@@ -188,8 +188,7 @@ void apply_grounded_facing_angle(component::Character_mvt_state::Grounded_state&
     assert(!std::isnan(desired_facing_angle));
 
     float_t delta_direction{ desired_facing_angle - grounded_state.facing_angle };
-    while (delta_direction > glm_rad(180.0f)) delta_direction -= glm_rad(360.0f);
-    while (delta_direction <= glm_rad(-180.0f)) delta_direction += glm_rad(360.0f);
+    btglm_angle_normalize(delta_direction, glm_rad(-180.0f), glm_rad(180.0f));
 
     bool do_turnaround_anim{ false };
     if (anim_root_motion && anim_root_motion->can_do_turnaround_anim)
@@ -204,8 +203,7 @@ void apply_grounded_facing_angle(component::Character_mvt_state::Grounded_state&
         // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
         // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_turnaround = true;
 
-        while (desired_facing_angle > glm_rad(180.0f)) desired_facing_angle -= glm_rad(360.0f);
-        while (desired_facing_angle <= glm_rad(-180.0f)) desired_facing_angle += glm_rad(360.0f);
+        btglm_angle_normalize(desired_facing_angle, glm_rad(-180.0f), glm_rad(180.0f));
         grounded_state.facing_angle = desired_facing_angle;
     }
     else
@@ -417,40 +415,51 @@ Char_mvt_logic_results character_controller_movement_logic(
                                       ? atan2f(char_ws_input.ws_flat_clamped_input.x,
                                                char_ws_input.ws_flat_clamped_input.z)
                                       : 0 };
-    float_t turn_speed{ anim_root_motion ? anim_root_motion->turn_speed : 1000000.0f };
-
-    // Capture input angle.
-    float_t input_angle{ desired_facing_angle };  // @TODO: Get this to interpolate!!
+    float_t const turn_speed{ anim_root_motion ? anim_root_motion->turn_speed : 1000000.0f };
 
     // Override desired facing angle.
     bool const is_follow_cam_locked_on{ follow_cam_state &&
                                         !follow_cam_state->locked_on_entity.is_nil() };
-    if (is_follow_cam_locked_on)
-    {
-        has_desired_facing_angle = true;
-        desired_facing_angle = follow_cam_state->locked_on_facing_angle;
-    }
-
-    // Capture locked-on angle.
-    float_t locked_on_angle{ desired_facing_angle };  // @TODO: Get this to interpolate!! (Or not??)
 
     // Calc movement facing angle.
     if (char_mvt_anim_state)
     {
         char_mvt_anim_state->input_mvt_state.is_moving = is_moving;
 
-        // @ANIMATOR_REFACTOR char_mvt_anim_state->write_to_animator_data.is_follow_cam_locked_on = is_follow_cam_locked_on;
-
         if (is_follow_cam_locked_on)
         {
-            float_t facing_angle{ locked_on_angle - input_angle };
-            while (facing_angle >= glm_rad(360.0f)) facing_angle -= glm_rad(360.0f);
-            while (facing_angle < glm_rad(0.0f)) facing_angle += glm_rad(360.0f);
+            float_t const desired_mvt_facing_angle{ has_desired_facing_angle
+                                                        ? follow_cam_state->locked_on_facing_angle -
+                                                              desired_facing_angle
+                                                        : 0 };
 
-            char_mvt_anim_state->write_to_animator_data.mvt_facing_angle = facing_angle;
+            float_t delta_facing_angle{
+                desired_mvt_facing_angle -
+                char_mvt_anim_state->write_to_animator_data.mvt_facing_angle
+            };
+            btglm_angle_normalize(delta_facing_angle, glm_rad(-180.0f), glm_rad(180.0f));
+
+            float_t const max_turn_delta{ turn_speed * Physics_engine::k_simulation_delta_time };
+            if (abs(delta_facing_angle) > max_turn_delta)
+            {   // Limit turn speed.
+                delta_facing_angle = max_turn_delta * glm_signf(delta_facing_angle);
+            }
+
+            float_t new_mvt_facing_angle{
+                char_mvt_anim_state->write_to_animator_data.mvt_facing_angle + delta_facing_angle
+            };
+            btglm_angle_normalize(new_mvt_facing_angle, glm_rad(0.0f), glm_rad(360.0f));
+
+            char_mvt_anim_state->write_to_animator_data.mvt_facing_angle = new_mvt_facing_angle;
         }
         else
             char_mvt_anim_state->write_to_animator_data.mvt_facing_angle = 0;
+    }
+
+    if (is_follow_cam_locked_on)
+    {
+        has_desired_facing_angle = true;  // force facing towards target all the time
+        desired_facing_angle = follow_cam_state->locked_on_facing_angle;
     }
 
     // Force facing angle for deathblow.
@@ -503,18 +512,6 @@ Char_mvt_logic_results character_controller_movement_logic(
                                         desired_facing_angle,
                                         turn_speed);
 
-        // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
-        // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.is_moving = is_moving;
-
-        // if (char_mvt_anim_state)
-        // {
-        //     char_mvt_anim_state->write_to_animator_data.next_anim_state =
-        //         (!is_moving ? component::Character_mvt_animated_state::Write_to_animator_data::
-        //                           AS_GROUNDED_IDLE
-        //                     : component::Character_mvt_animated_state::Write_to_animator_data::
-        //                           AS_GROUNDED_MOVE);
-        // }
-
         grounded_state.allow_grounded_sliding = (desired_velocity.LengthSq() > 1e-6f * 1e-6f);
 
         new_velocity += (JPH::Quat::sEulerAngles(JPH::Vec3Arg(0, grounded_state.facing_angle, 0)) *
@@ -551,10 +548,9 @@ Char_mvt_logic_results character_controller_movement_logic(
         if (has_desired_facing_angle)
         {   // Move facing angle towards desired facing angle.
             float_t delta_direction{ desired_facing_angle - airborne_state.input_facing_angle };
-            while (delta_direction > glm_rad(180.0f)) delta_direction -= glm_rad(360.0f);
-            while (delta_direction <= glm_rad(-180.0f)) delta_direction += glm_rad(360.0f);
+            btglm_angle_normalize(delta_direction, glm_rad(-180.0f), glm_rad(180.0f));
 
-            float_t max_turn_delta{ turn_speed * Physics_engine::k_simulation_delta_time };
+            float_t const max_turn_delta{ turn_speed * Physics_engine::k_simulation_delta_time };
             if (abs(delta_direction) > max_turn_delta)
             {   // Limit turn speed.
                 delta_direction = max_turn_delta * glm_signf(delta_direction);

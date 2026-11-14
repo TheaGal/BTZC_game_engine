@@ -46,10 +46,7 @@ void process_broadcasted_enemy_msgs(component::Detectable_character* detect_char
         // Get similarity of facing angles in facing each other
         // (0 means they are facing each other perfectly).
         auto facing_ang_diff{ std::abs(msg.other_facing_angle + glm_rad(180) - char_facing_angle) };
-        while (facing_ang_diff > glm_rad(180.0f))
-            facing_ang_diff -= glm_rad(360.0f);
-        while (facing_ang_diff <= glm_rad(-180.0f))
-            facing_ang_diff += glm_rad(360.0f);
+        btglm_angle_normalize(facing_ang_diff, glm_rad(-180.0f), glm_rad(180.0f));
 
         constexpr float_t k_max_flat_distance{ 7.5f };
         constexpr float_t k_max_ang_diff{ glm_rad(45.0f) };
