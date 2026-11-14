@@ -523,6 +523,19 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "evq_is_moving",
+                            "st_running",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 31,
+                    "row_idx": 7,
+                    "start_frame": 28
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "evq_on_hurt",
                             "ACTION_MAP_hurt",
                             "0"
