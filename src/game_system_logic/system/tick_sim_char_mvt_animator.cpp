@@ -191,6 +191,12 @@ void BT::system::tick_sim_char_mvt_animator()
             if (mvt_state.on_receive_deathblow)
                 animator.emplace_event("evq_on_receive_deathblow", 1000000, {});
 
+            if (mvt_state.pair_anim_align_self_type == mvt_state.PAIR_ANIM_ALIGN_SELF_GIVER)
+                animator.emplace_event("evq_on_give_mikiri", 1000000, {});
+
+            if (mvt_state.pair_anim_align_self_type == mvt_state.PAIR_ANIM_ALIGN_SELF_RECEIVER)
+                animator.emplace_event("evq_on_receive_mikiri", 1000000, {});
+
             // Reset inputs.
             char_mvt_anim_state.input_mvt_state.reset_state(false);
 

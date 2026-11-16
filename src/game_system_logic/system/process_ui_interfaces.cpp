@@ -91,11 +91,11 @@ void process_ui_hp_w_posture(Process_method const method,
         {
             BT_ERROR("whoopsie not implemente dyet!!");
             date_deadline(2026, 12, 1);  // @TODO: make this not have to use the error counter
-            static uint32_t s_error_times{ 0 };
-            if (s_error_times++ > 5)
-            {
-                throw std::runtime_error("asdflkjasdlkfjalskdjf");
-            }
+            // static uint32_t s_error_times{ 0 };
+            // if (s_error_times++ > 5)
+            // {
+            //     throw std::runtime_error("asdflkjasdlkfjalskdjf");
+            // }
         }
 
         ui.set_hp_bar(canvas_name,

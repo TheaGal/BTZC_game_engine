@@ -823,7 +823,18 @@
             - should this be required for all blend tree actions?
             - ok so it looks like it goes (0, 0, 1) globally
         - [x] when holding a direction, should go into sprinting (but for now just have everything go into idle)
-    - [ ] create mikiri give/receive anims
+    - [x] create mikiri give/receive anims
+    - [x] add afa info to mikiri
+    - [x] get sync spacing working
+        - i feel like it should be where the last attack is
+        - it seems to be working, but i suspect it's one frame off
+    - [x] print the frame idx during the anim
+        - it really is one frame off. is that an issue?
+        - yes, bc then it could be off distance-wise
+    - [x] remake the mikiri so that it uses a pre-setup step (st_hurt_mikiri)
+        - ok this works perfect
+
+- [ ] BUG: can cmd+v paste in afa editor when nothing is on clipboard
 
 - [ ] add back in crouching as just an idle anim
     - have there be an event for if the get-up from crouching is successful. if not, then go back to crouch anim
@@ -895,6 +906,12 @@
     - `2026-11-09 14:41:09.814162-0800 btzc_game_engine[60953:3453272] [AppKit] Invalid view geometry: width is negative.`
     - possibly switch to sdl3? or write custom windowing for macos. or just fork glfw?
     - it appears to work just fine on macos 27??
+
+
+## Ideas
+
+- have a form that's kind of like ryuuryuumai where time slows down and you face a dir and lmb click to zoom that direction to attack a certain enemy and the stamina to do it lasts a certain amount of time and hits (ie the faster you can do the skill the more hits you can get in)
+    - mmm so maybe instead of time slowing down, you just keep building the moves as you keep pressing lmb until you make it to full strength but you lose the waza if you hesitate and dont keep the rhythm, but you are allowed to slash at the air. the enemy can also parry you so yeah. may not be that effective who knows
 
 
 ## SOMEDAY

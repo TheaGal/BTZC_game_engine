@@ -536,6 +536,19 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "evq_on_hurt_mikiriable",
+                            "st_hurt_mikiri",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 25,
+                    "row_idx": 8,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "evq_on_hurt",
                             "ACTION_MAP_hurt",
                             "0"
@@ -543,7 +556,7 @@
                         "cmd_name": "watch_event_queue"
                     },
                     "end_frame": 31,
-                    "row_idx": 8,
+                    "row_idx": 9,
                     "start_frame": 0
                 },
                 {
@@ -580,9 +593,9 @@
                         ],
                         "cmd_name": "var_ov"
                     },
-                    "end_frame": 2,
+                    "end_frame": 1,
                     "row_idx": 13,
-                    "start_frame": 1
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_dodge"
@@ -2324,8 +2337,8 @@
                         "argv": [
                             "0",
                             "0",
-                            "0",
-                            "0",
+                            "1",
+                            "1",
                             "10",
                             "0",
                             "0",
@@ -2386,6 +2399,19 @@
                     "end_frame": 108,
                     "row_idx": 9,
                     "start_frame": 92
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_receive_mikiri",
+                            "st_mikiri_receive",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 81,
+                    "row_idx": 10,
+                    "start_frame": 63
                 },
                 {
                     "ctrl_cmd": {
@@ -3379,6 +3405,126 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "receive_atk_as_mikiri"
+                        ],
+                        "cmd_name": "var_mark_reeve"
+                    },
+                    "end_frame": 1,
+                    "row_idx": 0,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_give_mikiri",
+                            "st_mikiri_give",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 4,
+                    "row_idx": 1,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "error.mp3",
+                            "0  0.000000 0.000000 0.000000",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 20,
+                    "row_idx": 2,
+                    "start_frame": 10
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "error.mp3",
+                            "0  0.000000 0.000000 0.000000",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 30,
+                    "row_idx": 3,
+                    "start_frame": 20
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "error.mp3",
+                            "0  0.000000 0.000000 0.000000",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 40,
+                    "row_idx": 4,
+                    "start_frame": 30
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "error.mp3",
+                            "0  0.000000 0.000000 0.000000",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 50,
+                    "row_idx": 5,
+                    "start_frame": 40
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "error.mp3",
+                            "0  0.000000 0.000000 0.000000",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 60,
+                    "row_idx": 6,
+                    "start_frame": 50
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "error.mp3",
+                            "0  0.000000 0.000000 0.000000",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 70,
+                    "row_idx": 7,
+                    "start_frame": 60
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "error.mp3",
+                            "0  0.000000 0.000000 0.000000",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 80,
+                    "row_idx": 8,
+                    "start_frame": 70
+                }
+            ],
+            "state_name": "st_hurt_mikiri"
+        },
+        {
+            "regions": [
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "evq_exec_atk_combo_idx",
                             "ACTION_MAP_attacks",
                             "0"
@@ -3561,9 +3707,9 @@
                         ],
                         "cmd_name": "play_sfx_oneshot"
                     },
-                    "end_frame": 4,
+                    "end_frame": 1,
                     "row_idx": 17,
-                    "start_frame": 3
+                    "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
@@ -3572,9 +3718,9 @@
                         ],
                         "cmd_name": "var_mark_reeve"
                     },
-                    "end_frame": 2,
+                    "end_frame": 1,
                     "row_idx": 18,
-                    "start_frame": 1
+                    "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
@@ -3585,9 +3731,9 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 4,
+                    "end_frame": 3,
                     "row_idx": 19,
-                    "start_frame": 1
+                    "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
@@ -3598,9 +3744,9 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 4,
+                    "end_frame": 3,
                     "row_idx": 20,
-                    "start_frame": 1
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_hurt_parry"
@@ -3818,9 +3964,9 @@
                         ],
                         "cmd_name": "play_sfx_oneshot"
                     },
-                    "end_frame": 4,
+                    "end_frame": 1,
                     "row_idx": 18,
-                    "start_frame": 3
+                    "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
@@ -3829,9 +3975,9 @@
                         ],
                         "cmd_name": "var_mark_reeve"
                     },
-                    "end_frame": 2,
+                    "end_frame": 1,
                     "row_idx": 19,
-                    "start_frame": 1
+                    "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
@@ -3842,9 +3988,9 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 4,
+                    "end_frame": 3,
                     "row_idx": 20,
-                    "start_frame": 1
+                    "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
@@ -3855,9 +4001,9 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 4,
+                    "end_frame": 3,
                     "row_idx": 21,
-                    "start_frame": 1
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_hurt_guard"
@@ -4010,9 +4156,9 @@
                         ],
                         "cmd_name": "play_sfx_oneshot"
                     },
-                    "end_frame": 4,
+                    "end_frame": 1,
                     "row_idx": 14,
-                    "start_frame": 3
+                    "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
@@ -4021,9 +4167,9 @@
                         ],
                         "cmd_name": "var_mark_reeve"
                     },
-                    "end_frame": 2,
+                    "end_frame": 1,
                     "row_idx": 15,
-                    "start_frame": 1
+                    "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
@@ -4034,9 +4180,9 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 4,
+                    "end_frame": 3,
                     "row_idx": 16,
-                    "start_frame": 1
+                    "start_frame": 0
                 },
                 {
                     "ctrl_cmd": {
@@ -4047,9 +4193,9 @@
                         ],
                         "cmd_name": "watch_event_queue"
                     },
-                    "end_frame": 4,
+                    "end_frame": 3,
                     "row_idx": 17,
-                    "start_frame": 1
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_hurt_receive"
@@ -4140,9 +4286,9 @@
                         ],
                         "cmd_name": "play_sfx_oneshot"
                     },
-                    "end_frame": 2,
+                    "end_frame": 1,
                     "row_idx": 13,
-                    "start_frame": 1
+                    "start_frame": 0
                 }
             ],
             "state_name": "st_hurt_receive_from_back"
@@ -4611,6 +4757,253 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
+                            "evq_on_guard_press",
+                            "st_ready_parry",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 81,
+                    "row_idx": 0,
+                    "start_frame": 66
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 31,
+                    "row_idx": 1,
+                    "start_frame": 30
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_attack_press",
+                            "st_pc_attack_2cha",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 81,
+                    "row_idx": 1,
+                    "start_frame": 73
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_give_deathblow",
+                            "st_deathblow_give",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 81,
+                    "row_idx": 2,
+                    "start_frame": 73
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_is_midair",
+                            "st_fall",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 81,
+                    "row_idx": 3,
+                    "start_frame": 79
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_is_grounded",
+                            "st_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 81,
+                    "row_idx": 4,
+                    "start_frame": 79
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_exec_atk_combo_idx",
+                            "ACTION_MAP_attacks",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 81,
+                    "row_idx": 5,
+                    "start_frame": 78
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "root_motion_multi",
+                            "1"
+                        ],
+                        "cmd_name": "var_wr"
+                    },
+                    "end_frame": 10,
+                    "row_idx": 6,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_exec_mvt_idx",
+                            "ACTION_MAP_movements",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 81,
+                    "row_idx": 6,
+                    "start_frame": 79
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "punch_w_buildup.wav",
+                            "0  0.000000 0.000000 0.000000",
+                            "1.000000"
+                        ],
+                        "cmd_name": "play_sfx_oneshot"
+                    },
+                    "end_frame": 11,
+                    "row_idx": 9,
+                    "start_frame": 7
+                }
+            ],
+            "state_name": "st_mikiri_give"
+        },
+        {
+            "regions": [
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_guard_press",
+                            "st_ready_parry",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 81,
+                    "row_idx": 0,
+                    "start_frame": 66
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [],
+                        "cmd_name": "nop"
+                    },
+                    "end_frame": 31,
+                    "row_idx": 1,
+                    "start_frame": 30
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_attack_press",
+                            "st_pc_attack_2cha",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 81,
+                    "row_idx": 1,
+                    "start_frame": 73
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_on_give_deathblow",
+                            "st_deathblow_give",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 81,
+                    "row_idx": 2,
+                    "start_frame": 73
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_is_midair",
+                            "st_fall",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 81,
+                    "row_idx": 3,
+                    "start_frame": 79
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_is_grounded",
+                            "st_idle",
+                            "1"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 81,
+                    "row_idx": 4,
+                    "start_frame": 79
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_exec_atk_combo_idx",
+                            "ACTION_MAP_attacks",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 81,
+                    "row_idx": 5,
+                    "start_frame": 78
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "root_motion_multi",
+                            "1"
+                        ],
+                        "cmd_name": "var_wr"
+                    },
+                    "end_frame": 10,
+                    "row_idx": 6,
+                    "start_frame": 0
+                },
+                {
+                    "ctrl_cmd": {
+                        "argv": [
+                            "evq_exec_mvt_idx",
+                            "ACTION_MAP_movements",
+                            "0"
+                        ],
+                        "cmd_name": "watch_event_queue"
+                    },
+                    "end_frame": 81,
+                    "row_idx": 6,
+                    "start_frame": 79
+                }
+            ],
+            "state_name": "st_mikiri_receive"
+        },
+        {
+            "regions": [
+                {
+                    "ctrl_cmd": {
+                        "argv": [
                             "is_alive",
                             "false"
                         ],
@@ -4964,6 +5357,12 @@
         },
         {
             "name": "evq_on_receive_deathblow"
+        },
+        {
+            "name": "evq_on_give_mikiri"
+        },
+        {
+            "name": "evq_on_receive_mikiri"
         }
     ],
     "animated_model_name": "simple_combat_char",

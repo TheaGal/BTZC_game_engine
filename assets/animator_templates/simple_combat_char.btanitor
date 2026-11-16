@@ -200,6 +200,11 @@
             "anim_name": "Cancel_parried_attack"
         },
         {
+            "state_name": "st_hurt_mikiri",
+            "state_type": "single_anim",
+            "anim_name": "Mikiri_give"
+        },
+        {
             "state_name": "st_hurt_parry",
             "state_type": "single_anim",
             "anim_name": "Hurt_parry_left"
@@ -265,6 +270,16 @@
             "state_name": "st_posture_break",
             "state_type": "single_anim",
             "anim_name": "Posture_break"
+        },
+        {
+            "state_name": "st_mikiri_give",
+            "state_type": "single_anim",
+            "anim_name": "Mikiri_give"
+        },
+        {
+            "state_name": "st_mikiri_receive",
+            "state_type": "single_anim",
+            "anim_name": "Mikiri_receive"
         },
         {
             "state_name": "st_health_depleted",

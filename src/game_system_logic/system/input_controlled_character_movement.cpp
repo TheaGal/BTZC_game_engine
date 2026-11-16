@@ -326,7 +326,11 @@ Char_mvt_logic_results character_controller_movement_logic(
                             !(anim_root_motion && anim_root_motion->jump_up) };  // force not-grounded if performing jump_up event.
 
     // Distance self as deathblow receiver.
-    if (char_mvt_anim_state && char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_receiver)
+    if (char_mvt_anim_state &&
+        (char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_receiver ||
+         char_mvt_anim_state->input_mvt_state.pair_anim_align_self_type ==
+             component::Character_mvt_animated_state::Input_mvt_state::
+                 PAIR_ANIM_ALIGN_SELF_RECEIVER))
     {   // Move self to where other is offset by a distance.
         constexpr float_t k_db_distance{ 2 };  // @HARDCODE
 
@@ -355,7 +359,12 @@ Char_mvt_logic_results character_controller_movement_logic(
         }
 
         vec3 corrected_delta_pos;
-        glm_vec3_scale_as(delta_pos, k_db_distance, corrected_delta_pos);
+        if (char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_receiver)
+            glm_vec3_scale_as(delta_pos, k_db_distance, corrected_delta_pos);
+        else
+            glm_vec3_scale_as(delta_pos,
+                              char_mvt_anim_state->input_mvt_state.pair_anim_align_distance,
+                              corrected_delta_pos);
 
         assert(!std::isnan(corrected_delta_pos[0]));
         assert(!std::isnan(corrected_delta_pos[1]));
@@ -466,13 +475,19 @@ Char_mvt_logic_results character_controller_movement_logic(
     float_t display_facing_angle;
     if (char_mvt_anim_state &&
         (char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_giver ||
-         char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_receiver))
+         char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_receiver ||
+         char_mvt_anim_state->input_mvt_state.pair_anim_align_self_type >
+             component::Character_mvt_animated_state::Input_mvt_state::PAIR_ANIM_ALIGN_SELF_NONE))
     {   // Face self to the other.
         UUID const other_phys_obj_uuid{
             service_finder::find_service<Entity_container>()
                 .get_ecs_registry()
                 .get<component::Created_physics_object_reference>(
-                    char_mvt_anim_state->input_mvt_state.deathblow_other_entity)
+                    char_mvt_anim_state->input_mvt_state.pair_anim_align_self_type >
+                            component::Character_mvt_animated_state::Input_mvt_state::
+                                PAIR_ANIM_ALIGN_SELF_NONE
+                        ? char_mvt_anim_state->input_mvt_state.pair_anim_other_entity
+                        : char_mvt_anim_state->input_mvt_state.deathblow_other_entity)
                 .physics_obj_uuid_ref
         };
         auto& other_phys_obj{ *service_finder::find_service<Physics_engine>()

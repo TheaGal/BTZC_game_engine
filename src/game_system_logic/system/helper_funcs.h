@@ -17,11 +17,11 @@ bool fetch_wanted_afa_data(entt::entity const ecs_entity,
                            bool& out_request_new_attack,
                            bool& out_request_new_attack_early);
 
-bool check_for_receive_atk_afa_events(
-    entt::entity ecs_entity,
-    bool& out_receive_atk_as_hurt,
-    bool& out_receive_atk_as_guard,
-    bool& out_receive_atk_as_parry);
+bool check_for_receive_atk_afa_events(entt::entity ecs_entity,
+                                      bool& out_receive_atk_as_hurt,
+                                      bool& out_receive_atk_as_guard,
+                                      bool& out_receive_atk_as_parry,
+                                      bool& out_receive_atk_as_mikiri);
 
 }  // namespace helper
 }  // namespace system

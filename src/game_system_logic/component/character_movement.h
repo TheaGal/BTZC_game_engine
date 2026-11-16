@@ -115,6 +115,7 @@ struct Character_mvt_animated_state
         float_t resurrect_make_choice_timer{ 0 };
 
         // Deathblow syncing.
+        // @THEA: @TODO: delete this
         bool on_give_deathblow{ false };
         bool align_self_as_deathblow_giver{ false };
         bool on_finish_deathblow_give{ false };
@@ -124,6 +125,17 @@ struct Character_mvt_animated_state
         bool on_finish_deathblow_receive{ false };
 
         entt::entity deathblow_other_entity{ entt::null };  // persistent
+
+        // Pair anim syncing.
+        enum Pair_anim_alignment_type : int32_t
+        {
+            PAIR_ANIM_ALIGN_SELF_NONE = 0,
+            PAIR_ANIM_ALIGN_SELF_GIVER,
+            PAIR_ANIM_ALIGN_SELF_RECEIVER,
+        } pair_anim_align_self_type{ 0 };
+
+        float_t pair_anim_align_distance{ 0 };  // persistent
+        entt::entity pair_anim_other_entity{ entt::null };  // persistent
 
         // Combat inputs (player char).
         bool on_attack_press{ false };
@@ -146,26 +158,37 @@ struct Character_mvt_animated_state
             CPU_ATK_TYPE_BY_CHANCE,
         } on_exec_attack_combo{ 0 };
 
-        float_t distance_to_target{ 0 };  // this is persistent
+        float_t distance_to_target{ 0 };  // persistent
         float_t aggression_radius{ 10 };  // @NOTE: this is a setting  @THEA: is this the best place for this?
 
-        void reset_state(bool reset_persist_vals)
+        void reset_state(bool force_reset_persist_vals)
         {
-            // capture persistent vals here.
-            auto cap0 = deathblow_other_entity;
-            auto cap1 = distance_to_target;
+            #define PERSISTENT_VAR_LIST        \
+                X(deathblow_other_entity)      \
+                X(pair_anim_align_distance)    \
+                X(pair_anim_other_entity)      \
+                X(distance_to_target)
 
+            // Capture persistent vals.
+            #define X(__var)  auto __bt_cap__ ## __var = __var;
+            PERSISTENT_VAR_LIST
+            #undef X
+
+            // Do reset!!
             *this = {
                 .mode = mode,
                 .aggression_radius = aggression_radius,
             };
 
-            if (!reset_persist_vals)
+            if (!force_reset_persist_vals)
             {
-                // rewrite in persistent vals here.
-                deathblow_other_entity = cap0;
-                distance_to_target = cap1;
+                // Rewrite in persistent vals.
+                #define X(__var)  __var = __bt_cap__ ## __var;
+                PERSISTENT_VAR_LIST
+                #undef X
             }
+
+            #undef PERSISTENT_VAR_LIST
         }
 
         inline bool is_player_char_mode() const

@@ -343,6 +343,7 @@ int main(int argc, char* argv[])
         }
 
         // Simulation loop.
+        int32_t sim_loop_execs{ 0 };
         main_physics_engine.accumulate_delta_time(delta_time);
         while (main_physics_engine.calc_wants_to_tick() ||  // @TODO: Change the `wants_to_tick()` to something that's not the physics engine. Perhaps a simulation manager or something???  -Thea 2025/10/31
                iter_type == Iteration_type::TEARDOWN_ITERATION)  // Force one iteration if teardown.
@@ -392,7 +393,7 @@ int main(int argc, char* argv[])
             // Audio tick.
             {
                 // @TODO: make this thread safe.
-                BT::date_deadline(2026, 11, 15);
+                BT::date_deadline(2026, 11, 16);
 
                 vec3 cam_position;
                 vec3 cam_forward;
@@ -416,15 +417,20 @@ int main(int argc, char* argv[])
 
             FrameMarkEnd("SIMULATION LOOP");
 
+            sim_loop_execs++;
+
             // Only run once if teardown iteration.
             if (iter_type == Iteration_type::TEARDOWN_ITERATION)
                 break;
         }
+        if (sim_loop_execs > 1)
+            BT_ERRORF("simulation loop is fell behind (ran %d times)", sim_loop_execs);
 
         // Render loop.
-        main_physics_engine.calc_interpolation_alpha();
         {
             FrameMarkStart("RENDER LOOP");
+
+            main_physics_engine.calc_interpolation_alpha();
 
             // Performance measure.
             BT::Timer perf_timer;

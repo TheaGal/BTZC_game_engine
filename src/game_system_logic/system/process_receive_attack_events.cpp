@@ -24,13 +24,14 @@ void process_receive_attack(entt::registry& reg,
                             entt::entity entity,
                             component::Health_stats_data& health_stats_data)
 {
-    bool receive_atk_as_hurt, receive_atk_as_guard, receive_atk_as_parry;
+    bool receive_atk_as_hurt, receive_atk_as_guard, receive_atk_as_parry, receive_atk_as_mikiri;
 
     bool const afa_check_success =
         system::helper::check_for_receive_atk_afa_events(entity,
                                                          receive_atk_as_hurt,
                                                          receive_atk_as_guard,
-                                                         receive_atk_as_parry);
+                                                         receive_atk_as_parry,
+                                                         receive_atk_as_mikiri);
     if (!afa_check_success)
         return;
 
@@ -74,7 +75,8 @@ void process_receive_attack(entt::registry& reg,
     }
 
     // Check if nothing happened.
-    if (!receive_atk_as_hurt && !receive_atk_as_guard && !receive_atk_as_parry)
+    if (!receive_atk_as_hurt && !receive_atk_as_guard && !receive_atk_as_parry &&
+        !receive_atk_as_mikiri)
         return;
 
     // Calc damage multiplier depending on receive method.
@@ -92,6 +94,11 @@ void process_receive_attack(entt::registry& reg,
     {
         rece_meth_dmg_mult = 0.5;
         rece_meth_posture_mult = 0.75;
+    }
+    else if (receive_atk_as_mikiri)
+    {
+        rece_meth_dmg_mult = 0;
+        rece_meth_posture_mult = 0;
     }
     else
     {
@@ -198,6 +205,32 @@ void process_receive_attack(entt::registry& reg,
                     std::min(offe_hp_stats_data->state.posture_pts,
                              offe_hp_stats_data->max_posture_pts - 1);
             }
+        }
+    }
+
+    // Start playing mikiri animations.
+    if (receive_atk_as_mikiri)
+    {
+        if (auto* offe_char_mvt_anim_state =
+                reg.try_get<component::Character_mvt_animated_state>(proc_atk.offender_entity);
+            offe_char_mvt_anim_state != nullptr)
+        {
+            using align_t =
+                component::Character_mvt_animated_state::Input_mvt_state::Pair_anim_alignment_type;
+
+            constexpr float_t k_align_distance{ 1 };  // @HARDCODE
+
+            // Set up mikiri giver.
+            char_mvt_anim_state.input_mvt_state.pair_anim_align_self_type =
+                align_t::PAIR_ANIM_ALIGN_SELF_GIVER;
+            char_mvt_anim_state.input_mvt_state.pair_anim_align_distance = k_align_distance;
+            char_mvt_anim_state.input_mvt_state.pair_anim_other_entity = proc_atk.offender_entity;
+
+            // Set up mikiri receiver.
+            offe_char_mvt_anim_state->input_mvt_state.pair_anim_align_self_type =
+                align_t::PAIR_ANIM_ALIGN_SELF_RECEIVER;
+            offe_char_mvt_anim_state->input_mvt_state.pair_anim_align_distance = k_align_distance;
+            offe_char_mvt_anim_state->input_mvt_state.pair_anim_other_entity = entity;
         }
     }
 }
