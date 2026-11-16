@@ -221,13 +221,13 @@ void process_receive_attack(entt::registry& reg,
             constexpr float_t k_align_distance{ 1 };  // @HARDCODE
 
             // Set up mikiri giver.
-            char_mvt_anim_state.input_mvt_state.pair_anim_align_self_type =
+            char_mvt_anim_state.input_mvt_state.next_pair_anim_align_self_type =
                 align_t::PAIR_ANIM_ALIGN_SELF_GIVER;
             char_mvt_anim_state.input_mvt_state.pair_anim_align_distance = k_align_distance;
             char_mvt_anim_state.input_mvt_state.pair_anim_other_entity = proc_atk.offender_entity;
 
             // Set up mikiri receiver.
-            offe_char_mvt_anim_state->input_mvt_state.pair_anim_align_self_type =
+            offe_char_mvt_anim_state->input_mvt_state.next_pair_anim_align_self_type =
                 align_t::PAIR_ANIM_ALIGN_SELF_RECEIVER;
             offe_char_mvt_anim_state->input_mvt_state.pair_anim_align_distance = k_align_distance;
             offe_char_mvt_anim_state->input_mvt_state.pair_anim_other_entity = entity;

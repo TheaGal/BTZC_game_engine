@@ -835,6 +835,7 @@
         - ok this works perfect
     - [ ] do cleanup
         - [x] fix regression where facing/distancing doesn't happen w mikiri
+        - [x] fix another regression where pair anim doesn't play on deathblow
         - [ ] uggghhh the code doesn't look good
 
 - [ ] BUG: can cmd+v paste in afa editor when nothing is on clipboard

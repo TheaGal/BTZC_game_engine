@@ -113,13 +113,13 @@ void BT::system::convert_atk_input_to_deathblow()
 
             auto& my_input_mvt_state{ char_mvt_anim_state.input_mvt_state };
             my_input_mvt_state.on_attack_press = false;
-            my_input_mvt_state.pair_anim_align_self_type =
+            my_input_mvt_state.next_pair_anim_align_self_type =
                 align_t::PAIR_ANIM_ALIGN_SELF_GIVER;
             my_input_mvt_state.pair_anim_align_distance = k_db_distance;
             my_input_mvt_state.pair_anim_other_entity = other_entity;
 
             auto& other_input_mvt_state{ other_char_mvt_anim_state.input_mvt_state };
-            other_input_mvt_state.pair_anim_align_self_type =
+            other_input_mvt_state.next_pair_anim_align_self_type =
                 align_t::PAIR_ANIM_ALIGN_SELF_RECEIVER;
             other_input_mvt_state.pair_anim_align_distance = k_db_distance;
             other_input_mvt_state.pair_anim_other_entity = entity;

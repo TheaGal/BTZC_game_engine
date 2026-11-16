@@ -325,11 +325,13 @@ Char_mvt_logic_results character_controller_movement_logic(
                             !char_con_impl->is_cc_slope_too_steep(ground_normal) &&
                             !(anim_root_motion && anim_root_motion->jump_up) };  // force not-grounded if performing jump_up event.
 
-    // Distance self as deathblow receiver.
+    // Position and face self in pair animation.
+    float_t display_facing_angle;
     if (char_mvt_anim_state &&
-        char_mvt_anim_state->input_mvt_state.pair_anim_align_self_type ==
-            component::Character_mvt_animated_state::Input_mvt_state::PAIR_ANIM_ALIGN_SELF_RECEIVER)
-    {   // Move self to where other is offset by a distance.
+        char_mvt_anim_state->input_mvt_state.pair_anim_align_self_type >
+            component::Character_mvt_animated_state::Input_mvt_state::PAIR_ANIM_ALIGN_SELF_NONE)
+    {
+        // Find other phys obj position.
         UUID const other_phys_obj_uuid{
             service_finder::find_service<Entity_container>()
                 .get_ecs_registry()
@@ -350,26 +352,45 @@ Char_mvt_logic_results character_controller_movement_logic(
             other_phys_obj.get_transform_for_entity(other_phys_pos, _);
 
             rvec3 delta_pos_r;
-            btglm_rvec3_sub(phys_pos, other_phys_pos, delta_pos_r);
+            btglm_rvec3_sub(other_phys_pos, phys_pos, delta_pos_r);
             btglm_rvec3_to_vec3(delta_pos_r, delta_pos);
         }
 
-        vec3 corrected_delta_pos;
-        glm_vec3_scale_as(delta_pos,
-                          char_mvt_anim_state->input_mvt_state.pair_anim_align_distance,
-                          corrected_delta_pos);
+        // Move self to where other is offset by a distance (receiver only).
+        if (char_mvt_anim_state->input_mvt_state.pair_anim_align_self_type ==
+            component::Character_mvt_animated_state::Input_mvt_state::PAIR_ANIM_ALIGN_SELF_RECEIVER)
+        {
+            vec3 corrected_delta_pos;
+            glm_vec3_scale_as(delta_pos,
+                              -char_mvt_anim_state->input_mvt_state.pair_anim_align_distance,
+                              corrected_delta_pos);
 
-        assert(!std::isnan(corrected_delta_pos[0]));
-        assert(!std::isnan(corrected_delta_pos[1]));
-        assert(!std::isnan(corrected_delta_pos[2]));
+            assert(!std::isnan(corrected_delta_pos[0]));
+            assert(!std::isnan(corrected_delta_pos[1]));
+            assert(!std::isnan(corrected_delta_pos[2]));
 
-        char_con_impl->move_kinematic({ JPH::RVec3(other_phys_pos[0] + corrected_delta_pos[0],
-                                                   other_phys_pos[1] + corrected_delta_pos[1],
-                                                   other_phys_pos[2] + corrected_delta_pos[2]),
-                                        char_con_impl->read_transform().rotation });
+            char_con_impl->move_kinematic({ JPH::RVec3(other_phys_pos[0] + corrected_delta_pos[0],
+                                                       other_phys_pos[1] + corrected_delta_pos[1],
+                                                       other_phys_pos[2] + corrected_delta_pos[2]),
+                                            char_con_impl->read_transform().rotation });
 
-        BT_INFOF("distanced self as pair receiver by %.2fm",
-                 char_mvt_anim_state->input_mvt_state.pair_anim_align_distance);
+            BT_INFOF("distanced self as pair receiver by %.2fm",
+                     char_mvt_anim_state->input_mvt_state.pair_anim_align_distance);
+        }
+
+        // Face self to the other.
+        display_facing_angle = std::atan2f(delta_pos[0], delta_pos[2]);
+
+        // So facing angle isn't overwritten later.
+        char_mvt_state.grounded_state.facing_angle = display_facing_angle;
+        char_mvt_state.airborne_state.input_facing_angle = display_facing_angle;
+
+        BT_INFOF("faced self to other as pair %s",
+                 char_mvt_anim_state->input_mvt_state.pair_anim_align_self_type ==
+                         component::Character_mvt_animated_state::Input_mvt_state::
+                             PAIR_ANIM_ALIGN_SELF_GIVER
+                     ? "giver"
+                     : "receiver");
     }
 
     // Anim.
@@ -465,54 +486,6 @@ Char_mvt_logic_results character_controller_movement_logic(
     {
         has_desired_facing_angle = true;  // force facing towards target all the time
         desired_facing_angle = follow_cam_state->locked_on_facing_angle;
-    }
-
-    // Force facing angle for deathblow.
-    float_t display_facing_angle;
-    if (char_mvt_anim_state &&
-        char_mvt_anim_state->input_mvt_state.pair_anim_align_self_type >
-            component::Character_mvt_animated_state::Input_mvt_state::PAIR_ANIM_ALIGN_SELF_NONE)
-    {   // Face self to the other.
-        UUID const other_phys_obj_uuid{
-            service_finder::find_service<Entity_container>()
-                .get_ecs_registry()
-                .get<component::Created_physics_object_reference>(
-                    char_mvt_anim_state->input_mvt_state.pair_anim_other_entity)
-                .physics_obj_uuid_ref
-        };
-        auto& other_phys_obj{ *service_finder::find_service<Physics_engine>()
-                                   .get_physics_object_during_checkout(other_phys_obj_uuid) };
-
-        vec3 delta_pos;
-        {
-            versor _;
-
-            rvec3 phys_pos;
-            phys_obj.get_transform_for_entity(phys_pos, _);
-            rvec3 other_phys_pos;
-            other_phys_obj.get_transform_for_entity(other_phys_pos, _);
-
-            rvec3 delta_pos_r;
-            btglm_rvec3_sub(other_phys_pos, phys_pos, delta_pos_r);
-            btglm_rvec3_to_vec3(delta_pos_r, delta_pos);
-        }
-
-        display_facing_angle = std::atan2f(delta_pos[0], delta_pos[2]);
-
-        // So facing angle isn't overwritten later.
-        char_mvt_state.grounded_state.facing_angle = display_facing_angle;
-        char_mvt_state.airborne_state.input_facing_angle = display_facing_angle;
-
-        // Reset align type.
-        char_mvt_anim_state->input_mvt_state.pair_anim_align_self_type =
-            component::Character_mvt_animated_state::Input_mvt_state::PAIR_ANIM_ALIGN_SELF_NONE;
-
-        BT_INFOF("faced self to other as pair %s",
-                 char_mvt_anim_state->input_mvt_state.pair_anim_align_self_type ==
-                         component::Character_mvt_animated_state::Input_mvt_state::
-                             PAIR_ANIM_ALIGN_SELF_GIVER
-                     ? "giver"
-                     : "receiver");
     }
 
     // Desired facing angle and incorporate desired velocity into velocity.

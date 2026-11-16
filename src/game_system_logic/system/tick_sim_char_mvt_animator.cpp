@@ -88,6 +88,10 @@ void BT::system::tick_sim_char_mvt_animator()
             //         too to affect the randomness.
             //       - and then for a CPU, it could be the list of available attacks to do.
 
+            // Move to next pair anim align type.
+            char_mvt_anim_state.input_mvt_state.pair_anim_align_self_type =
+                char_mvt_anim_state.input_mvt_state.next_pair_anim_align_self_type;
+
             // Send animator events.
             auto const& mvt_state{ char_mvt_anim_state.input_mvt_state };
 

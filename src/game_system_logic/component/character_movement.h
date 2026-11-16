@@ -124,7 +124,9 @@ struct Character_mvt_animated_state
             PAIR_ANIM_ALIGN_SELF_NONE = 0,
             PAIR_ANIM_ALIGN_SELF_GIVER,
             PAIR_ANIM_ALIGN_SELF_RECEIVER,
-        } pair_anim_align_self_type{ 0 };  // persistent
+        };
+        Pair_anim_alignment_type next_pair_anim_align_self_type{ 0 };
+        Pair_anim_alignment_type pair_anim_align_self_type{ 0 };  // persistent
 
         float_t pair_anim_align_distance{ 0 };  // persistent
         entt::entity pair_anim_other_entity{ entt::null };  // persistent
