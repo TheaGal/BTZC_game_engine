@@ -114,17 +114,9 @@ struct Character_mvt_animated_state
         bool choose_to_die{ false };
         float_t resurrect_make_choice_timer{ 0 };
 
-        // Deathblow syncing.
-        // @THEA: @TODO: delete this
-        bool on_give_deathblow{ false };
-        bool align_self_as_deathblow_giver{ false };
+        // Deathblow.
         bool on_finish_deathblow_give{ false };
-
-        bool on_receive_deathblow{ false };
-        bool align_self_as_deathblow_receiver{ false };
         bool on_finish_deathblow_receive{ false };
-
-        entt::entity deathblow_other_entity{ entt::null };  // persistent
 
         // Pair anim syncing.
         enum Pair_anim_alignment_type : int32_t
@@ -132,7 +124,7 @@ struct Character_mvt_animated_state
             PAIR_ANIM_ALIGN_SELF_NONE = 0,
             PAIR_ANIM_ALIGN_SELF_GIVER,
             PAIR_ANIM_ALIGN_SELF_RECEIVER,
-        } pair_anim_align_self_type{ 0 };
+        } pair_anim_align_self_type{ 0 };  // persistent
 
         float_t pair_anim_align_distance{ 0 };  // persistent
         entt::entity pair_anim_other_entity{ entt::null };  // persistent
@@ -163,10 +155,10 @@ struct Character_mvt_animated_state
 
         void reset_state(bool force_reset_persist_vals)
         {
-            #define PERSISTENT_VAR_LIST        \
-                X(deathblow_other_entity)      \
-                X(pair_anim_align_distance)    \
-                X(pair_anim_other_entity)      \
+            #define PERSISTENT_VAR_LIST         \
+                X(pair_anim_align_self_type)    \
+                X(pair_anim_align_distance)     \
+                X(pair_anim_other_entity)       \
                 X(distance_to_target)
 
             // Capture persistent vals.

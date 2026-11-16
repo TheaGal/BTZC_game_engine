@@ -833,6 +833,9 @@
         - yes, bc then it could be off distance-wise
     - [x] remake the mikiri so that it uses a pre-setup step (st_hurt_mikiri)
         - ok this works perfect
+    - [ ] do cleanup
+        - [x] fix regression where facing/distancing doesn't happen w mikiri
+        - [ ] uggghhh the code doesn't look good
 
 - [ ] BUG: can cmd+v paste in afa editor when nothing is on clipboard
 

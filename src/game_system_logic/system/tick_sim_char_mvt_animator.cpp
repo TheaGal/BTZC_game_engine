@@ -185,17 +185,11 @@ void BT::system::tick_sim_char_mvt_animator()
             if (mvt_state.on_health_depleted)
                 animator.emplace_event("evq_on_health_depleted", 1000000, {});
 
-            if (mvt_state.on_give_deathblow)
-                animator.emplace_event("evq_on_give_deathblow", 1000000, {});
-
-            if (mvt_state.on_receive_deathblow)
-                animator.emplace_event("evq_on_receive_deathblow", 1000000, {});
-
             if (mvt_state.pair_anim_align_self_type == mvt_state.PAIR_ANIM_ALIGN_SELF_GIVER)
-                animator.emplace_event("evq_on_give_mikiri", 1000000, {});
+                animator.emplace_event("evq_on_pair_anim_give_role", 0, {});
 
             if (mvt_state.pair_anim_align_self_type == mvt_state.PAIR_ANIM_ALIGN_SELF_RECEIVER)
-                animator.emplace_event("evq_on_receive_mikiri", 1000000, {});
+                animator.emplace_event("evq_on_pair_anim_receive_role", 0, {});
 
             // Reset inputs.
             char_mvt_anim_state.input_mvt_state.reset_state(false);
@@ -288,17 +282,6 @@ void BT::system::tick_sim_char_mvt_animator()
 
                 char_mvt_anim_state.input_mvt_state.is_alive =
                     anim_afa_data_handle.get_bool_data_handle(AFA_ctrl::CTRL_DATA_LABEL_is_alive)
-                        .get_val();
-
-                char_mvt_anim_state.input_mvt_state.align_self_as_deathblow_giver =
-                    anim_afa_data_handle
-                        .get_bool_data_handle(
-                            AFA_ctrl::CTRL_DATA_LABEL_align_self_as_deathblow_giver)
-                        .get_val();
-                char_mvt_anim_state.input_mvt_state.align_self_as_deathblow_receiver =
-                    anim_afa_data_handle
-                        .get_bool_data_handle(
-                            AFA_ctrl::CTRL_DATA_LABEL_align_self_as_deathblow_receiver)
                         .get_val();
 
                 char_mvt_anim_state.input_mvt_state.on_finish_deathblow_give =

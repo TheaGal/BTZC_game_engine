@@ -238,15 +238,16 @@ void process_receive_attack(entt::registry& reg,
 void process_posture_pts_regeneration(component::Health_stats_data& health_stats_data,
                                       float_t const delta_time)
 {
-    if (health_stats_data.state.posture_pts_regen_wait_timer < health_stats_data.posture_pts_regen_wait_time)
+    if (health_stats_data.state.posture_pts_regen_wait_timer <
+        health_stats_data.posture_pts_regen_wait_time)
     {
         health_stats_data.state.posture_pts_regen_wait_timer += delta_time;
         return;
     }
 
     health_stats_data.state.posture_pts_regen_remainder +=
-        (health_stats_data.posture_pts_regen_rate * health_stats_data.state.posture_pts_regen_rate_multi *
-         delta_time);
+        (health_stats_data.posture_pts_regen_rate *
+         health_stats_data.state.posture_pts_regen_rate_multi * delta_time);
 
     while (health_stats_data.state.posture_pts_regen_remainder >= 1)
     {

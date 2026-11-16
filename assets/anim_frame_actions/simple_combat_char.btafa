@@ -151,7 +151,7 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "evq_on_give_deathblow",
+                            "evq_on_pair_anim_give_role",
                             "st_deathblow_give",
                             "0"
                         ],
@@ -285,7 +285,7 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "evq_on_give_deathblow",
+                            "evq_on_pair_anim_give_role",
                             "st_deathblow_give",
                             "0"
                         ],
@@ -445,7 +445,7 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "evq_on_give_deathblow",
+                            "evq_on_pair_anim_give_role",
                             "st_deathblow_give",
                             "0"
                         ],
@@ -1205,7 +1205,7 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "evq_on_give_deathblow",
+                            "evq_on_pair_anim_give_role",
                             "st_deathblow_give",
                             "0"
                         ],
@@ -1426,7 +1426,7 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "evq_on_give_deathblow",
+                            "evq_on_pair_anim_give_role",
                             "st_deathblow_give",
                             "0"
                         ],
@@ -1647,7 +1647,7 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "evq_on_give_deathblow",
+                            "evq_on_pair_anim_give_role",
                             "st_deathblow_give",
                             "0"
                         ],
@@ -2403,7 +2403,7 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "evq_on_receive_mikiri",
+                            "evq_on_pair_anim_receive_role",
                             "st_mikiri_receive",
                             "0"
                         ],
@@ -3416,7 +3416,7 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "evq_on_give_mikiri",
+                            "evq_on_pair_anim_give_role",
                             "st_mikiri_give",
                             "0"
                         ],
@@ -4702,7 +4702,7 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "evq_on_receive_deathblow",
+                            "evq_on_pair_anim_receive_role",
                             "st_deathblow_receive",
                             "0"
                         ],
@@ -4792,7 +4792,7 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "evq_on_give_deathblow",
+                            "evq_on_pair_anim_give_role",
                             "st_deathblow_give",
                             "0"
                         ],
@@ -4922,7 +4922,7 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "evq_on_give_deathblow",
+                            "evq_on_pair_anim_give_role",
                             "st_deathblow_give",
                             "0"
                         ],
@@ -5102,18 +5102,6 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "align_self_as_deathblow_giver",
-                            "true"
-                        ],
-                        "cmd_name": "var_ov"
-                    },
-                    "end_frame": 1,
-                    "row_idx": 0,
-                    "start_frame": 0
-                },
-                {
-                    "ctrl_cmd": {
-                        "argv": [
                             "finish_deathblow_give",
                             "true"
                         ],
@@ -5219,18 +5207,6 @@
         },
         {
             "regions": [
-                {
-                    "ctrl_cmd": {
-                        "argv": [
-                            "align_self_as_deathblow_receiver",
-                            "true"
-                        ],
-                        "cmd_name": "var_ov"
-                    },
-                    "end_frame": 1,
-                    "row_idx": 0,
-                    "start_frame": 0
-                },
                 {
                     "ctrl_cmd": {
                         "argv": [
@@ -5353,16 +5329,10 @@
             "name": "evq_do_resurrect"
         },
         {
-            "name": "evq_on_give_deathblow"
+            "name": "evq_on_pair_anim_give_role"
         },
         {
-            "name": "evq_on_receive_deathblow"
-        },
-        {
-            "name": "evq_on_give_mikiri"
-        },
-        {
-            "name": "evq_on_receive_mikiri"
+            "name": "evq_on_pair_anim_receive_role"
         }
     ],
     "animated_model_name": "simple_combat_char",
