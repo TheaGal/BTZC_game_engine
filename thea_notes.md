@@ -843,7 +843,7 @@
 
 - [x] BUG: can cmd+v paste in afa editor when nothing is on clipboard
 
-- [ ] add back in crouching as just an idle anim
+- [x] add back in crouching as just an idle anim
     - have there be an event for if the get-up from crouching is successful. if not, then go back to crouch anim
 - [ ] add back in jump midair for if next to a wall
     - have afa function that triggers checking for raycast of wall stuff

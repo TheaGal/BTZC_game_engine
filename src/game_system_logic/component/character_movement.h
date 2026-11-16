@@ -34,8 +34,6 @@ struct Character_world_space_input
 
     bool jump_pressed{ false };
     bool prev_jump_pressed{ false };
-    bool crouch_pressed{ false };
-    bool prev_crouch_pressed{ false };
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Character_world_space_input,
                                                 ws_flat_clamped_input);
@@ -92,6 +90,11 @@ struct Character_mvt_animated_state
         bool is_moving{ false };
         bool on_jump{ false };
         bool is_grounded{ false };
+        bool on_crouch{ false };
+
+        // Crouching.
+        bool do_crouch_stance_toggle{ false };
+        bool on_uncrouch_failed{ false };
 
         // Combat reactions.
         bool on_landed_attack{ false };
@@ -222,6 +225,7 @@ struct Character_mvt_animated_state
         bool prev_attack_pressed{ false };
         bool prev_guard_pressed{ false };
         bool prev_dodge_pressed{ false };
+        bool prev_crouch_pressed{ false };
     } state;
 
     char _;

@@ -33,6 +33,21 @@
             ]
         },
         {
+            "state_name": "st_crouch_enter",
+            "state_type": "single_anim",
+            "anim_name": "Crouch_enter"
+        },
+        {
+            "state_name": "st_crouch_from_getup",
+            "state_type": "single_anim",
+            "anim_name": "Crouch_from_getup"
+        },
+        {
+            "state_name": "st_crouch_getup",
+            "state_type": "single_anim",
+            "anim_name": "Crouch_getup"
+        },
+        {
             "state_name": "st_dodge",
             "state_type": "blendtree",
             "blend_var": "mvt_facing_angle",

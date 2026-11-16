@@ -115,8 +115,6 @@ void BT::system::player_character_world_space_input()
         // Update input state.
         char_ws_input.prev_jump_pressed   = char_ws_input.jump_pressed;
         char_ws_input.jump_pressed        = input_handler.get_keyboard_key_state(BT_KEY_SPACE).pressed;
-        char_ws_input.prev_crouch_pressed = char_ws_input.crouch_pressed;
-        char_ws_input.crouch_pressed      = input_handler.get_keyboard_key_state(BT_KEY_LEFT_CONTROL).pressed;
 
         // On attack trigger.
         {
@@ -162,6 +160,18 @@ void BT::system::player_character_world_space_input()
             char_mvt_anim_state->input_mvt_state.is_dodge_released = !dodge_pressed;
 
             char_mvt_anim_state->state.prev_dodge_pressed = dodge_pressed;
+        }
+
+        // On crouch trigger.
+        // @COPYPASTA
+        {
+            bool const crouch_pressed{ main_camera.is_follow_orbit() &&
+                                       input_handler.get_keyboard_key_state(BT_KEY_Q).pressed };
+
+            char_mvt_anim_state->input_mvt_state.on_crouch =
+                (crouch_pressed && !char_mvt_anim_state->state.prev_crouch_pressed);
+
+            char_mvt_anim_state->state.prev_crouch_pressed = crouch_pressed;
         }
 
         // End of first iteration.

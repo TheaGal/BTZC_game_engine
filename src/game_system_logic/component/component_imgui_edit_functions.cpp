@@ -285,8 +285,6 @@ void BT::component::edit::imgui_edit__character_world_space_input(entt::registry
 
     ImGui::Checkbox("jump_pressed",        &char_ws_input.jump_pressed);
     ImGui::Checkbox("prev_jump_pressed",   &char_ws_input.prev_jump_pressed);
-    ImGui::Checkbox("crouch_pressed",      &char_ws_input.crouch_pressed);
-    ImGui::Checkbox("prev_crouch_pressed", &char_ws_input.prev_crouch_pressed);
 
     ImGui::PopID();
 }

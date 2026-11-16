@@ -316,7 +316,6 @@ Char_mvt_logic_results character_controller_movement_logic(
 
     // Extra input checks.
     bool const on_jump_press{ char_ws_input.jump_pressed && !char_ws_input.prev_jump_pressed };
-    bool const on_crouch_press{ char_ws_input.crouch_pressed && !char_ws_input.prev_crouch_pressed };
 
     // Find movement state.
     JPH::Vec3 current_vertical_velocity = linear_velocity.Dot(up_direction) * up_direction;
@@ -393,26 +392,25 @@ Char_mvt_logic_results character_controller_movement_logic(
                      : "receiver");
     }
 
-    // Anim.
-    // @THEA: this is fine here... but rly i wanna just rewrite the crouching stuff and such too!!!
-    if (char_mvt_anim_state /* && !char_con_impl->get_cc_stance()*/ && on_jump_press)
+    // Jump input.
+    if (char_mvt_anim_state && on_jump_press)
         char_mvt_anim_state->input_mvt_state.on_jump = true;
+
+    // Crouch event.
+    if (char_mvt_anim_state && char_mvt_anim_state->input_mvt_state.do_crouch_stance_toggle)
+    {
+        bool const is_crouched{ char_con_impl->get_cc_stance() };
+        bool const change_success = char_con_impl->set_cc_stance(!is_crouched);
+
+        if (!change_success)
+            char_mvt_anim_state->input_mvt_state.on_uncrouch_failed = true;
+    }
 
     // Calc and apply desired velocity.
     JPH::Vec3 new_velocity;
     if (is_grounded)
     {   // Grounded.
         new_velocity = ground_velocity;
-
-        if (on_crouch_press || (char_con_impl->get_cc_stance() && on_jump_press))
-        {   // Toggle crouching.
-            char_con_impl->set_cc_stance(!char_con_impl->get_cc_stance());
-        }
-        else if (!char_con_impl->get_cc_stance() && on_jump_press)
-        {   // Jump.
-            // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
-            // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_jump = true;
-        }
     }
     else
     {   // Start with previous tick velocity.
