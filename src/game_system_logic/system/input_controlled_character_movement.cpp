@@ -48,6 +48,31 @@ Origin_offset_and_input_dir calc_check_origin_point_and_input_dir(float_t facing
     return { resized_to_radius_box_velo, flat_input_dir };
 }
 
+bool check_for_wall_jump_wall(Physics_object_type_impl_ifc* char_con_impl,
+                              JPH::Vec3Arg up_direction)
+{
+    float_t const char_con_radius{ char_con_impl->get_cc_radius() };
+
+    constexpr uint32_t k_num_circle_raycasts{ 9 };
+    for (uint32_t i = 0; i < k_num_circle_raycasts; i++)
+    {
+        auto opaid{ calc_check_origin_point_and_input_dir(i * glm_rad(360.0f) /
+                                                              k_num_circle_raycasts,
+                                                          char_con_radius) };
+
+        auto data{ Raycast_helper::raycast(char_con_impl->read_transform().position +
+                                               opaid.origin_offset,
+                                           1.5f * opaid.input_dir) };
+        if (data.success)
+        {
+            // Commit to wall jump.
+            return true;
+        }
+    }
+
+    return false;
+}
+
 void process_midair_jump_interactions(
     component::Character_mvt_state::Airborne_state const& airborne_state,
     component::Character_mvt_state::Settings const& mvt_settings,
@@ -406,6 +431,13 @@ Char_mvt_logic_results character_controller_movement_logic(
             char_mvt_anim_state->input_mvt_state.on_uncrouch_failed = true;
     }
 
+    // Check for wall jump.
+    if (char_mvt_anim_state && char_mvt_anim_state->input_mvt_state.check_for_wall_jump)
+    {
+        char_mvt_anim_state->input_mvt_state.on_wall_jump =
+            check_for_wall_jump_wall(char_con_impl, up_direction);
+    }
+
     // Calc and apply desired velocity.
     JPH::Vec3 new_velocity;
     if (is_grounded)
@@ -420,15 +452,6 @@ Char_mvt_logic_results character_controller_movement_logic(
         {   // Leave crouching stance automatically.
             char_con_impl->set_cc_stance(false);
         }
-
-        // if (on_jump_press)
-        // {
-        //     process_midair_jump_interactions(char_mvt_state.airborne_state,
-        //                                      mvt_settings,
-        //                                      char_con_impl,
-        //                                      up_direction,
-        //                                      new_velocity);
-        // }
     }
 
     // Desired facing angle.

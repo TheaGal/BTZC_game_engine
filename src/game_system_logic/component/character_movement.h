@@ -92,6 +92,10 @@ struct Character_mvt_animated_state
         bool is_grounded{ false };
         bool on_crouch{ false };
 
+        // Wall jump check.
+        bool check_for_wall_jump{ false };
+        bool on_wall_jump{ false };
+
         // Crouching.
         bool do_crouch_stance_toggle{ false };
         bool on_uncrouch_failed{ false };

@@ -155,6 +155,9 @@ void BT::system::tick_sim_char_mvt_animator()
                 throw std::runtime_error("Cannot have invalid input mvt state mode.");
             }
 
+            if (mvt_state.on_wall_jump)  // @TODO: maybe put in playchar only?
+                animator.emplace_event("evq_on_wall_jump", 0.0f, {});
+
             if (mvt_state.on_crouch)
                 animator.emplace_event("evq_on_crouch", 0.5f, {});
 
@@ -289,6 +292,11 @@ void BT::system::tick_sim_char_mvt_animator()
                             .get_float_data_handle(
                                 AFA_ctrl::CTRL_DATA_LABEL_posture_pts_regen_multi)
                             .get_val();
+
+                char_mvt_anim_state.input_mvt_state.check_for_wall_jump =
+                    anim_afa_data_handle
+                        .get_bool_data_handle(AFA_ctrl::CTRL_DATA_LABEL_check_for_wall_jump)
+                        .get_val();
 
                 char_mvt_anim_state.input_mvt_state.do_crouch_stance_toggle =
                     anim_afa_data_handle
