@@ -232,6 +232,23 @@ void process_receive_attack(entt::registry& reg,
             offe_char_mvt_anim_state->input_mvt_state.pair_anim_align_distance = k_align_distance;
             offe_char_mvt_anim_state->input_mvt_state.pair_anim_other_entity = entity;
         }
+
+        if (auto* offe_hp_stats_data =
+                reg.try_get<component::Health_stats_data>(proc_atk.offender_entity);
+            offe_hp_stats_data != nullptr)
+        {
+            constexpr float_t k_mikiri_posture_dmg{ 10 };
+            float_t const mikiri_return_real_posture{ k_mikiri_posture_dmg };
+
+            // Return posture damage for mikiri.
+            offe_hp_stats_data->state.posture_pts += mikiri_return_real_posture;
+
+            if (mikiri_return_real_posture > 1e-3)
+            {   // Reset posture regen state on receiving posture dmg.
+                offe_hp_stats_data->state.posture_pts_regen_wait_timer = 0;
+                offe_hp_stats_data->state.posture_pts_regen_remainder = 0;
+            }
+        }
     }
 }
 

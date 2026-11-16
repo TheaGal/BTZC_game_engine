@@ -2377,8 +2377,8 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "evq_on_posture_broken",
-                            "st_posture_break",
+                            "evq_on_pair_anim_receive_role",
+                            "st_mikiri_receive",
                             "0"
                         ],
                         "cmd_name": "watch_event_queue"
@@ -2403,8 +2403,8 @@
                 {
                     "ctrl_cmd": {
                         "argv": [
-                            "evq_on_pair_anim_receive_role",
-                            "st_mikiri_receive",
+                            "evq_on_posture_broken",
+                            "st_posture_break",
                             "0"
                         ],
                         "cmd_name": "watch_event_queue"

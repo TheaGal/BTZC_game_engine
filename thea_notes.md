@@ -837,6 +837,9 @@
         - [x] fix regression where facing/distancing doesn't happen w mikiri
         - [x] fix another regression where pair anim doesn't play on deathblow
         - [x] uggghhh the code doesn't look good
+    - [x] have receive mikiri receive posture damage
+    - [ ] ~~have return parry posture damage set the timer~~
+        - this is already done
 
 - [ ] BUG: can cmd+v paste in afa editor when nothing is on clipboard
 
