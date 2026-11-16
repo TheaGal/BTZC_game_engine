@@ -752,7 +752,7 @@
 
 - [x] BUG: fix last voxel traversal overstepping limit 
 
-- [ ] add sweep attacks and thrust attacks
+- [x] add sweep attacks and thrust attacks
     - hell yeah mikiri
     - jump goomba stomp
 
@@ -833,10 +833,10 @@
         - yes, bc then it could be off distance-wise
     - [x] remake the mikiri so that it uses a pre-setup step (st_hurt_mikiri)
         - ok this works perfect
-    - [ ] do cleanup
+    - [x] do cleanup
         - [x] fix regression where facing/distancing doesn't happen w mikiri
         - [x] fix another regression where pair anim doesn't play on deathblow
-        - [ ] uggghhh the code doesn't look good
+        - [x] uggghhh the code doesn't look good
 
 - [ ] BUG: can cmd+v paste in afa editor when nothing is on clipboard
 
