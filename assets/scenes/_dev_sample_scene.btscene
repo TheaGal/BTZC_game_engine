@@ -13,6 +13,233 @@
             ]
         },
         {
+            "entity_uuid": "9fdff841-f3c2-4767-90e8-1ec33471c3ca",
+            "components": [
+                {
+                    "type_name": "TXP::component::Entity_metadata",
+                    "members_j": {
+                        "name": "Directional Light",
+                        "uuid": "9fdff841-f3c2-4767-90e8-1ec33471c3ca"
+                    }
+                },
+                {
+                    "type_name": "component::Transform",
+                    "members_j": {
+                        "position": {
+                            "x": 0.0,
+                            "y": 25.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "x": -0.267,
+                            "y": 0.365,
+                            "z": 0.141,
+                            "w": 0.881
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                },
+                {
+                    "type_name": "component::Transform_hierarchy",
+                    "members_j": {
+                        "parent_entity": null,
+                        "children_entities": []
+                    }
+                },
+                {
+                    "type_name": "TXP::component::Render_object_config",
+                    "members_j": {
+                        "render_layer": 2,
+                        "model_name": "unit_box"
+                    }
+                },
+                {
+                    "type_name": "TXP::component::Directional_light",
+                    "members_j": {
+                        "intensity": 10.0
+                    }
+                }
+            ]
+        },
+        {
+            "entity_uuid": "f801780a-c461-4cf5-8580-6d6f045074a6",
+            "components": [
+                {
+                    "type_name": "TXP::component::Entity_metadata",
+                    "members_j": {
+                        "name": "Point Light 1",
+                        "uuid": "f801780a-c461-4cf5-8580-6d6f045074a6"
+                    }
+                },
+                {
+                    "type_name": "component::Transform",
+                    "members_j": {
+                        "position": {
+                            "x": 10.0,
+                            "y": 0.5,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                },
+                {
+                    "type_name": "component::Transform_hierarchy",
+                    "members_j": {
+                        "parent_entity": null,
+                        "children_entities": []
+                    }
+                },
+                {
+                    "type_name": "TXP::component::Render_object_config",
+                    "members_j": {
+                        "render_layer": 2,
+                        "model_name": "unit_box"
+                    }
+                },
+                {
+                    "type_name": "TXP::component::Point_light",
+                    "members_j": {
+                        "color": {
+                            "x": 1.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "intensity": 4.0
+                    }
+                }
+            ]
+        },
+        {
+            "entity_uuid": "9f5849fe-3535-4fd9-a17f-3eb39c3c81d2",
+            "components": [
+                {
+                    "type_name": "TXP::component::Entity_metadata",
+                    "members_j": {
+                        "name": "Point Light 2",
+                        "uuid": "9f5849fe-3535-4fd9-a17f-3eb39c3c81d2"
+                    }
+                },
+                {
+                    "type_name": "component::Transform",
+                    "members_j": {
+                        "position": {
+                            "x": 10.0,
+                            "y": 0.5,
+                            "z": 1.0
+                        },
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                },
+                {
+                    "type_name": "component::Transform_hierarchy",
+                    "members_j": {
+                        "parent_entity": null,
+                        "children_entities": []
+                    }
+                },
+                {
+                    "type_name": "TXP::component::Render_object_config",
+                    "members_j": {
+                        "render_layer": 2,
+                        "model_name": "unit_box"
+                    }
+                },
+                {
+                    "type_name": "TXP::component::Point_light",
+                    "members_j": {
+                        "color": {
+                            "x": 0.0,
+                            "y": 1.0,
+                            "z": 0.0
+                        },
+                        "intensity": 4.0
+                    }
+                }
+            ]
+        },
+        {
+            "entity_uuid": "d55f9a34-4626-4fed-9f8a-555970fe1234",
+            "components": [
+                {
+                    "type_name": "TXP::component::Entity_metadata",
+                    "members_j": {
+                        "name": "Point Light 3",
+                        "uuid": "d55f9a34-4626-4fed-9f8a-555970fe1234"
+                    }
+                },
+                {
+                    "type_name": "component::Transform",
+                    "members_j": {
+                        "position": {
+                            "x": 10.0,
+                            "y": 0.5,
+                            "z": 2.0
+                        },
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                },
+                {
+                    "type_name": "component::Transform_hierarchy",
+                    "members_j": {
+                        "parent_entity": null,
+                        "children_entities": []
+                    }
+                },
+                {
+                    "type_name": "TXP::component::Render_object_config",
+                    "members_j": {
+                        "render_layer": 2,
+                        "model_name": "unit_box"
+                    }
+                },
+                {
+                    "type_name": "TXP::component::Point_light",
+                    "members_j": {
+                        "color": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 1.0
+                        },
+                        "intensity": 4.0
+                    }
+                }
+            ]
+        },
+        {
             "entity_uuid": "aae5ebfb-7c2b-49a8-bcb9-658fdea987af",
             "components": [
                 {
