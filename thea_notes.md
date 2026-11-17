@@ -851,13 +851,13 @@
 
 - [x] BUG: hitting the enemy char after they're dead makes the game crash
 
+- [ ] add light manager
+    - one obj that can control directional light
+    - one obj each for each point light
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
         - so max 3 cascades (both realtime cascades and one static cascade if dir light changes) get updated on one frame
     - look into this tech: https://discord.com/channels/1563075165473083402/1564514891862114314
-- [ ] add light manager
-    - one obj that can control directional light
-    - one obj each for each point light
 
 - [ ] make it so player can't stand on top of npc or cpu
     - stomp is still good tho!
