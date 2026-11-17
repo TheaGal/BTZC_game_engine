@@ -324,6 +324,43 @@ void BT::component::edit::imgui_edit__follow_camera_lockon_target(entt::registry
     ImGui::PopID();
 }
 
+void BT::component::edit::imgui_edit__directional_light(entt::registry& reg,
+                                                        entt::entity ecs_entity)
+{
+    auto& light{ reg.get<TXP::component::Directional_light>(ecs_entity) };
+
+    ImGui::PushID(&light);
+    ImGui::PushItemWidth(ImGui::GetFontSize() * -10);
+
+    ImGui::BeginDisabled();
+    ImGui::InputFloat3("direction", light.direction.raw);
+    ImGui::EndDisabled();
+
+    ImGui::ColorEdit3("color", light.color.raw);
+    ImGui::DragFloat("intensity", &light.intensity, 0.1, 0, 1000);
+
+    ImGui::PopItemWidth();
+    ImGui::PopID();
+}
+
+void BT::component::edit::imgui_edit__point_light(entt::registry& reg, entt::entity ecs_entity)
+{
+    auto& light{ reg.get<TXP::component::Point_light>(ecs_entity) };
+
+    ImGui::PushID(&light);
+    ImGui::PushItemWidth(ImGui::GetFontSize() * -10);
+
+    ImGui::BeginDisabled();
+    ImGui::InputFloat3("origin", light.origin.raw);
+    ImGui::EndDisabled();
+
+    ImGui::ColorEdit3("color", light.color.raw);
+    ImGui::DragFloat("intensity", &light.intensity, 0.1, 0, 1000);
+
+    ImGui::PopItemWidth();
+    ImGui::PopID();
+}
+
 void BT::component::edit::imgui_edit__render_object_config(entt::registry& reg,
                                                              entt::entity ecs_entity)
 {
