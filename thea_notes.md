@@ -851,7 +851,7 @@
 
 - [x] BUG: hitting the enemy char after they're dead makes the game crash
 
-- [ ] add light manager
+- [x] add light manager
     - one obj that can control directional light
     - one obj each for each point light
 - [ ] add shadows for pbr renderer
