@@ -11,6 +11,7 @@
 #include "txp_renderer_public.h"
 
 #include <cassert>
+#include <tracy/Tracy.hpp>
 
 
 namespace
@@ -28,6 +29,8 @@ void iter_and_asdfasdfasdf()
 
 void BT::system::character_broadcast_attack_msg_to_enemies()
 {
+    ZoneScoped;
+
     auto& renderer{ service_finder::find_service<TXP::Renderer>() };
     auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
 

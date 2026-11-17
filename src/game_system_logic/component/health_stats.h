@@ -49,14 +49,26 @@ struct Health_stats_data
         {
             entt::entity offender_entity;
 
-            enum Atk_type
+            enum class Atk_type  // @COPYPASTA
             {
-                CRUSH,
-                SLICE,
-                SPEAR,
+                METALBLADE,
+                METALBLADEMASTER,
+                WOODCLUB,
+                FIST,
             };
+            Atk_type physical_type;
 
-            Atk_type type;
+            enum class Atk_dir  // @COPYPASTA
+            {
+                LEFT,
+                RIGHT,
+                CENTER,
+                HEAVYCENTER,
+                ABOVE,
+                BELOW,
+            };
+            Atk_dir direction_type;
+
             int32_t damage;
 
             bool is_honed;  // can be blocked, but causes chip damage unless parried

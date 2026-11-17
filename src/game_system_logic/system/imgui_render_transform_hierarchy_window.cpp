@@ -250,9 +250,7 @@ void internal_imgui_render_entities()
 }
 
 /// Adds transform to be manipulated and a callback if it happens.
-void internal_add_transform_to_manip_list(entt::registry& reg,
-                                          TXP::Renderer& renderer,
-                                          TXP::Camera& camera)
+void internal_add_transform_to_manip_list(entt::registry& reg, TXP::Renderer& renderer)
 {   // Get selected entity transform.
     auto const ent_transform{ reg.try_get<component::Transform const>(s_state.selected_entity) };
     if (ent_transform == nullptr)
@@ -321,7 +319,7 @@ void internal_manip_transform()
 
     renderer.set_imguizmo_enabled(camera.is_cursor_free());
 
-    internal_add_transform_to_manip_list(reg, renderer, camera);
+    internal_add_transform_to_manip_list(reg, renderer);
 }
 
 /// "Properties inspector" window.

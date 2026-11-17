@@ -12,6 +12,7 @@
 
 #include <cmath>
 #include <stdexcept>
+#include <tracy/Tracy.hpp>
 
 
 namespace
@@ -23,13 +24,14 @@ void process_receive_attack(entt::registry& reg,
                             entt::entity entity,
                             component::Health_stats_data& health_stats_data)
 {
-    bool receive_atk_as_hurt, receive_atk_as_guard, receive_atk_as_parry;
+    bool receive_atk_as_hurt, receive_atk_as_guard, receive_atk_as_parry, receive_atk_as_mikiri;
 
     bool const afa_check_success =
         system::helper::check_for_receive_atk_afa_events(entity,
                                                          receive_atk_as_hurt,
                                                          receive_atk_as_guard,
-                                                         receive_atk_as_parry);
+                                                         receive_atk_as_parry,
+                                                         receive_atk_as_mikiri);
     if (!afa_check_success)
         return;
 
@@ -73,7 +75,8 @@ void process_receive_attack(entt::registry& reg,
     }
 
     // Check if nothing happened.
-    if (!receive_atk_as_hurt && !receive_atk_as_guard && !receive_atk_as_parry)
+    if (!receive_atk_as_hurt && !receive_atk_as_guard && !receive_atk_as_parry &&
+        !receive_atk_as_mikiri)
         return;
 
     // Calc damage multiplier depending on receive method.
@@ -92,6 +95,11 @@ void process_receive_attack(entt::registry& reg,
         rece_meth_dmg_mult = 0.5;
         rece_meth_posture_mult = 0.75;
     }
+    else if (receive_atk_as_mikiri)
+    {
+        rece_meth_dmg_mult = 0;
+        rece_meth_posture_mult = 0;
+    }
     else
     {
         rece_meth_dmg_mult = 1;
@@ -103,9 +111,9 @@ void process_receive_attack(entt::registry& reg,
     float_t atk_type_posture_mult;
 
     using Atk_type = component::Health_stats_data::Runtime_state::Attack_stats::Atk_type;
-    switch (proc_atk.type)
+    switch (proc_atk.physical_type)
     {
-    case Atk_type::CRUSH:
+    case Atk_type::METALBLADE:
         atk_type_dmg_mult = 1;
         atk_type_posture_mult = 1;
         if (!receive_atk_as_hurt)
@@ -114,7 +122,7 @@ void process_receive_attack(entt::registry& reg,
         }
         break;
 
-    case Atk_type::SLICE:
+    case Atk_type::METALBLADEMASTER:
         atk_type_dmg_mult = 1;
         atk_type_posture_mult = 1;
         if (!receive_atk_as_hurt)
@@ -123,13 +131,26 @@ void process_receive_attack(entt::registry& reg,
         }
         break;
 
-    case Atk_type::SPEAR:
+    case Atk_type::WOODCLUB:
         atk_type_dmg_mult = 1;
         atk_type_posture_mult = 1;
         if (!receive_atk_as_hurt)
         {
             BT_WARN("TODO: implement playing sfx for attack type.");
         }
+        break;
+
+    case Atk_type::FIST:
+        atk_type_dmg_mult = 1;
+        atk_type_posture_mult = 1;
+        if (!receive_atk_as_hurt)
+        {
+            BT_WARN("TODO: implement playing sfx for attack type.");
+        }
+        break;
+
+    default:
+        assert(false);
         break;
     }
 
@@ -186,20 +207,64 @@ void process_receive_attack(entt::registry& reg,
             }
         }
     }
+
+    // Start playing mikiri animations.
+    if (receive_atk_as_mikiri)
+    {
+        if (auto* offe_char_mvt_anim_state =
+                reg.try_get<component::Character_mvt_animated_state>(proc_atk.offender_entity);
+            offe_char_mvt_anim_state != nullptr)
+        {
+            using align_t =
+                component::Character_mvt_animated_state::Input_mvt_state::Pair_anim_alignment_type;
+
+            constexpr float_t k_align_distance{ 1 };  // @HARDCODE
+
+            // Set up mikiri giver.
+            char_mvt_anim_state.input_mvt_state.next_pair_anim_align_self_type =
+                align_t::PAIR_ANIM_ALIGN_SELF_GIVER;
+            char_mvt_anim_state.input_mvt_state.pair_anim_align_distance = k_align_distance;
+            char_mvt_anim_state.input_mvt_state.pair_anim_other_entity = proc_atk.offender_entity;
+
+            // Set up mikiri receiver.
+            offe_char_mvt_anim_state->input_mvt_state.next_pair_anim_align_self_type =
+                align_t::PAIR_ANIM_ALIGN_SELF_RECEIVER;
+            offe_char_mvt_anim_state->input_mvt_state.pair_anim_align_distance = k_align_distance;
+            offe_char_mvt_anim_state->input_mvt_state.pair_anim_other_entity = entity;
+        }
+
+        if (auto* offe_hp_stats_data =
+                reg.try_get<component::Health_stats_data>(proc_atk.offender_entity);
+            offe_hp_stats_data != nullptr)
+        {
+            constexpr float_t k_mikiri_posture_dmg{ 10 };
+            float_t const mikiri_return_real_posture{ k_mikiri_posture_dmg };
+
+            // Return posture damage for mikiri.
+            offe_hp_stats_data->state.posture_pts += mikiri_return_real_posture;
+
+            if (mikiri_return_real_posture > 1e-3)
+            {   // Reset posture regen state on receiving posture dmg.
+                offe_hp_stats_data->state.posture_pts_regen_wait_timer = 0;
+                offe_hp_stats_data->state.posture_pts_regen_remainder = 0;
+            }
+        }
+    }
 }
 
 void process_posture_pts_regeneration(component::Health_stats_data& health_stats_data,
                                       float_t const delta_time)
 {
-    if (health_stats_data.state.posture_pts_regen_wait_timer < health_stats_data.posture_pts_regen_wait_time)
+    if (health_stats_data.state.posture_pts_regen_wait_timer <
+        health_stats_data.posture_pts_regen_wait_time)
     {
         health_stats_data.state.posture_pts_regen_wait_timer += delta_time;
         return;
     }
 
     health_stats_data.state.posture_pts_regen_remainder +=
-        (health_stats_data.posture_pts_regen_rate * health_stats_data.state.posture_pts_regen_rate_multi *
-         delta_time);
+        (health_stats_data.posture_pts_regen_rate *
+         health_stats_data.state.posture_pts_regen_rate_multi * delta_time);
 
     while (health_stats_data.state.posture_pts_regen_remainder >= 1)
     {
@@ -215,7 +280,10 @@ void process_posture_pts_regeneration(component::Health_stats_data& health_stats
 
 
 void BT::system::process_receive_attack_events(float_t const delta_time)
-{   // Exit early if simulation not running.
+{
+    ZoneScoped;
+
+    // Exit early if simulation not running.
     if (!service_finder::find_service<world::World_properties_container>()
              .get_data_handle()
              .is_simulation_running)

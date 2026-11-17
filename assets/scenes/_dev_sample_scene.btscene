@@ -137,6 +137,75 @@
             ]
         },
         {
+            "entity_uuid": "c153d5c1-9558-4077-b8fb-ae8917d96eda",
+            "components": [
+                {
+                    "type_name": "TXP::component::Entity_metadata",
+                    "members_j": {
+                        "name": "Perilous symbol",
+                        "uuid": "c153d5c1-9558-4077-b8fb-ae8917d96eda"
+                    }
+                },
+                {
+                    "type_name": "component::Transform",
+                    "members_j": {
+                        "position": {
+                            "x": 0.0,
+                            "y": 7.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "scale": {
+                            "x": 0.25,
+                            "y": 0.25,
+                            "z": 0.25
+                        }
+                    }
+                },
+                {
+                    "type_name": "component::Transform_hierarchy",
+                    "members_j": {
+                        "parent_entity": null,
+                        "children_entities": []
+                    }
+                },
+                {
+                    "type_name": "component::Billboard_to_camera",
+                    "members_j": {
+                        "rotation_euler": {
+                            "x": 1.5707963268,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "copy_position_entity": "aae5ebfb-7c2b-49a8-bcb9-658fdea987af",
+                        "copy_position_offset": {
+                            "x": 0.0,
+                            "y": 2.25,
+                            "z": 0.0
+                        }
+                    }
+                },
+                {
+                    "type_name": "component::Perilous_signal_receiver",
+                    "members_j": {}
+                },
+                {
+                    "type_name": "TXP::component::Render_object_config",
+                    "members_j": {
+                        "is_visible": false,
+                        "render_layer": 1,
+                        "model_name": "unit_plane",
+                        "material_palette": "perilous_icon_material_palette"
+                    }
+                }
+            ]
+        },
+        {
             "entity_uuid": "aae5ebfb-7c2b-49a8-bcb9-658fdea987ae",
             "components": [
                 {
@@ -305,8 +374,9 @@
                 {
                     "type_name": "component::Health_stats_data",
                     "members_j": {
-                        "ui_name": "Test Dummy the First",
-                        "max_num_deathblows": 3
+                        "ui_name": "Test Dummy the First @TODO: reset the max posture",
+                        "max_num_deathblows": 3,
+                        "max_posture_pts": 10
                     }
                 },
                 {

@@ -10,6 +10,7 @@
 #include <functional>
 #include <memory>
 #include <stdexcept>
+#include <tracy/Tracy.hpp>
 #include <unordered_map>
 
 
@@ -33,7 +34,8 @@ public:
     {
         // Try doing no garbage collection!! (bc FMOD does garbage collection already)
         // BT::date_deadline(2026, 11, 1);  // if no errors by this date, assume it's fixed
-        BT::date_deadline(2026, 11, 15);  // @THEA: this did have errors!! (but the patch below did fix 90% of errors). now what abt the 15th?
+        // BT::date_deadline(2026, 11, 15);  // @THEA: this did have errors!! (but the patch below did fix 90% of errors). now what abt the 15th?
+        // @TODO: do cleanup bc it seems to be working well
     #if 0
         // Do garbage collection.
         constexpr uint32_t k_garbage_collect_check_interval{ 1024 };
@@ -203,6 +205,8 @@ void BT::audio::initialize()
 
 void BT::audio::update()
 {
+    ZoneScoped;
+
     Audio_engine::instance().update();
 }
 

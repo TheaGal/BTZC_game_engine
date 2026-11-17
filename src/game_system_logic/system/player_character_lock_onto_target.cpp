@@ -14,11 +14,15 @@
 #include <cassert>
 #include <cmath>
 #include <limits>
+#include <tracy/Tracy.hpp>
 #include <vector>
 
 
 void BT::system::player_character_lock_onto_target(float_t const delta_time)
-{   // Exit early if simulation not running.
+{
+    ZoneScoped;
+
+    // Exit early if simulation not running.
     if (!service_finder::find_service<world::World_properties_container>()
              .get_data_handle()
              .is_simulation_running)
@@ -248,11 +252,7 @@ void BT::system::player_character_lock_onto_target(float_t const delta_time)
             ideal_orbit_cam_angle_tilt = std::atan2f(glm_vec3_dot(real_delta, basis_x),
                                                      glm_vec3_dot(real_delta, basis_y)) -
                                          glm_rad(90);
-
-            while (ideal_orbit_cam_angle_tilt < glm_rad(-180))
-                ideal_orbit_cam_angle_tilt += glm_rad(360);
-            while (ideal_orbit_cam_angle_tilt >= glm_rad(180))
-                ideal_orbit_cam_angle_tilt -= glm_rad(360);
+            btglm_angle_normalize(ideal_orbit_cam_angle_tilt, glm_rad(-180), glm_rad(180));
         }
     }
 
@@ -368,10 +368,7 @@ void BT::system::player_character_lock_onto_target(float_t const delta_time)
         vec2 delta_orbits;
         glm_vec2_sub(target_orbits_scaled, prev_orbits_scaled, delta_orbits);
 
-        while (delta_orbits[0] < glm_rad(-180))
-            delta_orbits[0] += glm_rad(360);
-        while (delta_orbits[0] >= glm_rad(180))
-            delta_orbits[0] -= glm_rad(360);
+        btglm_angle_normalize(delta_orbits[0], glm_rad(-180), glm_rad(180));
 
         // Calc target orbit turn speeds.
         float_t const delta_dist{ glm_vec2_norm(delta_orbits) };

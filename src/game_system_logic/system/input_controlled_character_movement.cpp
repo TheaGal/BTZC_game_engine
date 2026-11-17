@@ -20,6 +20,7 @@
 #include <cassert>
 #include <cmath>
 #include <cstdint>
+#include <tracy/Tracy.hpp>
 
 
 namespace
@@ -45,6 +46,31 @@ Origin_offset_and_input_dir calc_check_origin_point_and_input_dir(float_t facing
     JPH::Vec3 resized_to_radius_box_velo{ flat_input_dir * cancel_ratio };
 
     return { resized_to_radius_box_velo, flat_input_dir };
+}
+
+bool check_for_wall_jump_wall(Physics_object_type_impl_ifc* char_con_impl,
+                              JPH::Vec3Arg up_direction)
+{
+    float_t const char_con_radius{ char_con_impl->get_cc_radius() };
+
+    constexpr uint32_t k_num_circle_raycasts{ 9 };
+    for (uint32_t i = 0; i < k_num_circle_raycasts; i++)
+    {
+        auto opaid{ calc_check_origin_point_and_input_dir(i * glm_rad(360.0f) /
+                                                              k_num_circle_raycasts,
+                                                          char_con_radius) };
+
+        auto data{ Raycast_helper::raycast(char_con_impl->read_transform().position +
+                                               opaid.origin_offset,
+                                           1.5f * opaid.input_dir) };
+        if (data.success)
+        {
+            // Commit to wall jump.
+            return true;
+        }
+    }
+
+    return false;
 }
 
 void process_midair_jump_interactions(
@@ -187,8 +213,7 @@ void apply_grounded_facing_angle(component::Character_mvt_state::Grounded_state&
     assert(!std::isnan(desired_facing_angle));
 
     float_t delta_direction{ desired_facing_angle - grounded_state.facing_angle };
-    while (delta_direction > glm_rad(180.0f)) delta_direction -= glm_rad(360.0f);
-    while (delta_direction <= glm_rad(-180.0f)) delta_direction += glm_rad(360.0f);
+    btglm_angle_normalize(delta_direction, glm_rad(-180.0f), glm_rad(180.0f));
 
     bool do_turnaround_anim{ false };
     if (anim_root_motion && anim_root_motion->can_do_turnaround_anim)
@@ -203,8 +228,7 @@ void apply_grounded_facing_angle(component::Character_mvt_state::Grounded_state&
         // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
         // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_turnaround = true;
 
-        while (desired_facing_angle > glm_rad(180.0f)) desired_facing_angle -= glm_rad(360.0f);
-        while (desired_facing_angle <= glm_rad(-180.0f)) desired_facing_angle += glm_rad(360.0f);
+        btglm_angle_normalize(desired_facing_angle, glm_rad(-180.0f), glm_rad(180.0f));
         grounded_state.facing_angle = desired_facing_angle;
     }
     else
@@ -317,7 +341,6 @@ Char_mvt_logic_results character_controller_movement_logic(
 
     // Extra input checks.
     bool const on_jump_press{ char_ws_input.jump_pressed && !char_ws_input.prev_jump_pressed };
-    bool const on_crouch_press{ char_ws_input.crouch_pressed && !char_ws_input.prev_crouch_pressed };
 
     // Find movement state.
     JPH::Vec3 current_vertical_velocity = linear_velocity.Dot(up_direction) * up_direction;
@@ -326,16 +349,18 @@ Char_mvt_logic_results character_controller_movement_logic(
                             !char_con_impl->is_cc_slope_too_steep(ground_normal) &&
                             !(anim_root_motion && anim_root_motion->jump_up) };  // force not-grounded if performing jump_up event.
 
-    // Distance self as deathblow receiver.
-    if (char_mvt_anim_state && char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_receiver)
-    {   // Move self to where other is offset by a distance.
-        constexpr float_t k_db_distance{ 2 };  // @HARDCODE
-
+    // Position and face self in pair animation.
+    float_t display_facing_angle;
+    if (char_mvt_anim_state &&
+        char_mvt_anim_state->input_mvt_state.pair_anim_align_self_type >
+            component::Character_mvt_animated_state::Input_mvt_state::PAIR_ANIM_ALIGN_SELF_NONE)
+    {
+        // Find other phys obj position.
         UUID const other_phys_obj_uuid{
             service_finder::find_service<Entity_container>()
                 .get_ecs_registry()
                 .get<component::Created_physics_object_reference>(
-                    char_mvt_anim_state->input_mvt_state.deathblow_other_entity)
+                    char_mvt_anim_state->input_mvt_state.pair_anim_other_entity)
                 .physics_obj_uuid_ref
         };
         auto& other_phys_obj{ *service_finder::find_service<Physics_engine>()
@@ -351,21 +376,66 @@ Char_mvt_logic_results character_controller_movement_logic(
             other_phys_obj.get_transform_for_entity(other_phys_pos, _);
 
             rvec3 delta_pos_r;
-            btglm_rvec3_sub(phys_pos, other_phys_pos, delta_pos_r);
+            btglm_rvec3_sub(other_phys_pos, phys_pos, delta_pos_r);
             btglm_rvec3_to_vec3(delta_pos_r, delta_pos);
         }
 
-        vec3 corrected_delta_pos;
-        glm_vec3_scale_as(delta_pos, k_db_distance, corrected_delta_pos);
+        // Move self to where other is offset by a distance (receiver only).
+        if (char_mvt_anim_state->input_mvt_state.pair_anim_align_self_type ==
+            component::Character_mvt_animated_state::Input_mvt_state::PAIR_ANIM_ALIGN_SELF_RECEIVER)
+        {
+            vec3 corrected_delta_pos;
+            glm_vec3_scale_as(delta_pos,
+                              -char_mvt_anim_state->input_mvt_state.pair_anim_align_distance,
+                              corrected_delta_pos);
 
-        assert(!std::isnan(corrected_delta_pos[0]));
-        assert(!std::isnan(corrected_delta_pos[1]));
-        assert(!std::isnan(corrected_delta_pos[2]));
+            assert(!std::isnan(corrected_delta_pos[0]));
+            assert(!std::isnan(corrected_delta_pos[1]));
+            assert(!std::isnan(corrected_delta_pos[2]));
 
-        char_con_impl->move_kinematic({ JPH::RVec3(other_phys_pos[0] + corrected_delta_pos[0],
-                                                   other_phys_pos[1] + corrected_delta_pos[1],
-                                                   other_phys_pos[2] + corrected_delta_pos[2]),
-                                        char_con_impl->read_transform().rotation });
+            char_con_impl->move_kinematic({ JPH::RVec3(other_phys_pos[0] + corrected_delta_pos[0],
+                                                       other_phys_pos[1] + corrected_delta_pos[1],
+                                                       other_phys_pos[2] + corrected_delta_pos[2]),
+                                            char_con_impl->read_transform().rotation });
+
+            BT_INFOF("distanced self as pair receiver by %.2fm",
+                     char_mvt_anim_state->input_mvt_state.pair_anim_align_distance);
+        }
+
+        // Face self to the other.
+        display_facing_angle = std::atan2f(delta_pos[0], delta_pos[2]);
+
+        // So facing angle isn't overwritten later.
+        char_mvt_state.grounded_state.facing_angle = display_facing_angle;
+        char_mvt_state.airborne_state.input_facing_angle = display_facing_angle;
+
+        BT_INFOF("faced self to other as pair %s",
+                 char_mvt_anim_state->input_mvt_state.pair_anim_align_self_type ==
+                         component::Character_mvt_animated_state::Input_mvt_state::
+                             PAIR_ANIM_ALIGN_SELF_GIVER
+                     ? "giver"
+                     : "receiver");
+    }
+
+    // Jump input.
+    if (char_mvt_anim_state && on_jump_press)
+        char_mvt_anim_state->input_mvt_state.on_jump = true;
+
+    // Crouch event.
+    if (char_mvt_anim_state && char_mvt_anim_state->input_mvt_state.do_crouch_stance_toggle)
+    {
+        bool const is_crouched{ char_con_impl->get_cc_stance() };
+        bool const change_success = char_con_impl->set_cc_stance(!is_crouched);
+
+        if (!change_success)
+            char_mvt_anim_state->input_mvt_state.on_uncrouch_failed = true;
+    }
+
+    // Check for wall jump.
+    if (char_mvt_anim_state && char_mvt_anim_state->input_mvt_state.check_for_wall_jump)
+    {
+        char_mvt_anim_state->input_mvt_state.on_wall_jump =
+            check_for_wall_jump_wall(char_con_impl, up_direction);
     }
 
     // Calc and apply desired velocity.
@@ -373,18 +443,6 @@ Char_mvt_logic_results character_controller_movement_logic(
     if (is_grounded)
     {   // Grounded.
         new_velocity = ground_velocity;
-
-        if (on_crouch_press || (char_con_impl->get_cc_stance() && on_jump_press))
-        {   // Toggle crouching.
-            char_con_impl->set_cc_stance(!char_con_impl->get_cc_stance());
-        }
-        else if (!char_con_impl->get_cc_stance() && on_jump_press)
-        {   // Jump.
-            // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
-            // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_jump = true;
-            if (char_mvt_anim_state)
-                char_mvt_anim_state->input_mvt_state.on_jump = true;
-        }
     }
     else
     {   // Start with previous tick velocity.
@@ -393,15 +451,6 @@ Char_mvt_logic_results character_controller_movement_logic(
         if (char_con_impl->get_cc_stance())
         {   // Leave crouching stance automatically.
             char_con_impl->set_cc_stance(false);
-        }
-
-        if (on_jump_press)
-        {
-            process_midair_jump_interactions(char_mvt_state.airborne_state,
-                                             mvt_settings,
-                                             char_con_impl,
-                                             up_direction,
-                                             new_velocity);
         }
     }
 
@@ -413,77 +462,51 @@ Char_mvt_logic_results character_controller_movement_logic(
                                       ? atan2f(char_ws_input.ws_flat_clamped_input.x,
                                                char_ws_input.ws_flat_clamped_input.z)
                                       : 0 };
-    float_t turn_speed{ anim_root_motion ? anim_root_motion->turn_speed : 1000000.0f };
-
-    // Capture input angle.
-    float_t input_angle{ desired_facing_angle };  // @TODO: Get this to interpolate!!
+    float_t const turn_speed{ anim_root_motion ? anim_root_motion->turn_speed : 1000000.0f };
 
     // Override desired facing angle.
     bool const is_follow_cam_locked_on{ follow_cam_state &&
                                         !follow_cam_state->locked_on_entity.is_nil() };
-    if (is_follow_cam_locked_on)
-    {
-        has_desired_facing_angle = true;
-        desired_facing_angle = follow_cam_state->locked_on_facing_angle;
-    }
-
-    // Capture locked-on angle.
-    float_t locked_on_angle{ desired_facing_angle };  // @TODO: Get this to interpolate!! (Or not??)
 
     // Calc movement facing angle.
     if (char_mvt_anim_state)
     {
         char_mvt_anim_state->input_mvt_state.is_moving = is_moving;
 
-        // @ANIMATOR_REFACTOR char_mvt_anim_state->write_to_animator_data.is_follow_cam_locked_on = is_follow_cam_locked_on;
-
         if (is_follow_cam_locked_on)
         {
-            float_t facing_angle{ locked_on_angle - input_angle };
-            while (facing_angle >= glm_rad(360.0f)) facing_angle -= glm_rad(360.0f);
-            while (facing_angle < glm_rad(0.0f)) facing_angle += glm_rad(360.0f);
+            float_t const desired_mvt_facing_angle{ has_desired_facing_angle
+                                                        ? follow_cam_state->locked_on_facing_angle -
+                                                              desired_facing_angle
+                                                        : 0 };
 
-            char_mvt_anim_state->write_to_animator_data.mvt_facing_angle = facing_angle;
+            float_t delta_facing_angle{
+                desired_mvt_facing_angle -
+                char_mvt_anim_state->write_to_animator_data.mvt_facing_angle
+            };
+            btglm_angle_normalize(delta_facing_angle, glm_rad(-180.0f), glm_rad(180.0f));
+
+            float_t const max_turn_delta{ turn_speed * Physics_engine::k_simulation_delta_time };
+            if (abs(delta_facing_angle) > max_turn_delta)
+            {   // Limit turn speed.
+                delta_facing_angle = max_turn_delta * glm_signf(delta_facing_angle);
+            }
+
+            float_t new_mvt_facing_angle{
+                char_mvt_anim_state->write_to_animator_data.mvt_facing_angle + delta_facing_angle
+            };
+            btglm_angle_normalize(new_mvt_facing_angle, glm_rad(0.0f), glm_rad(360.0f));
+
+            char_mvt_anim_state->write_to_animator_data.mvt_facing_angle = new_mvt_facing_angle;
         }
         else
             char_mvt_anim_state->write_to_animator_data.mvt_facing_angle = 0;
     }
 
-    // Force facing angle for deathblow.
-    float_t display_facing_angle;
-    if (char_mvt_anim_state &&
-        (char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_giver ||
-         char_mvt_anim_state->input_mvt_state.align_self_as_deathblow_receiver))
-    {   // Face self to the other.
-        UUID const other_phys_obj_uuid{
-            service_finder::find_service<Entity_container>()
-                .get_ecs_registry()
-                .get<component::Created_physics_object_reference>(
-                    char_mvt_anim_state->input_mvt_state.deathblow_other_entity)
-                .physics_obj_uuid_ref
-        };
-        auto& other_phys_obj{ *service_finder::find_service<Physics_engine>()
-                                   .get_physics_object_during_checkout(other_phys_obj_uuid) };
-
-        vec3 delta_pos;
-        {
-            versor _;
-
-            rvec3 phys_pos;
-            phys_obj.get_transform_for_entity(phys_pos, _);
-            rvec3 other_phys_pos;
-            other_phys_obj.get_transform_for_entity(other_phys_pos, _);
-
-            rvec3 delta_pos_r;
-            btglm_rvec3_sub(other_phys_pos, phys_pos, delta_pos_r);
-            btglm_rvec3_to_vec3(delta_pos_r, delta_pos);
-        }
-
-        display_facing_angle = std::atan2f(delta_pos[0], delta_pos[2]);
-
-        // So facing angle isn't overwritten later.
-        char_mvt_state.grounded_state.facing_angle = display_facing_angle;
-        char_mvt_state.airborne_state.input_facing_angle = display_facing_angle;
+    if (is_follow_cam_locked_on)
+    {
+        has_desired_facing_angle = true;  // force facing towards target all the time
+        desired_facing_angle = follow_cam_state->locked_on_facing_angle;
     }
 
     // Desired facing angle and incorporate desired velocity into velocity.
@@ -498,18 +521,6 @@ Char_mvt_logic_results character_controller_movement_logic(
                                         anim_root_motion,
                                         desired_facing_angle,
                                         turn_speed);
-
-        // @ANIMATOR_REFACTOR if (char_mvt_anim_state)
-        // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.is_moving = is_moving;
-
-        // if (char_mvt_anim_state)
-        // {
-        //     char_mvt_anim_state->write_to_animator_data.next_anim_state =
-        //         (!is_moving ? component::Character_mvt_animated_state::Write_to_animator_data::
-        //                           AS_GROUNDED_IDLE
-        //                     : component::Character_mvt_animated_state::Write_to_animator_data::
-        //                           AS_GROUNDED_MOVE);
-        // }
 
         grounded_state.allow_grounded_sliding = (desired_velocity.LengthSq() > 1e-6f * 1e-6f);
 
@@ -547,10 +558,9 @@ Char_mvt_logic_results character_controller_movement_logic(
         if (has_desired_facing_angle)
         {   // Move facing angle towards desired facing angle.
             float_t delta_direction{ desired_facing_angle - airborne_state.input_facing_angle };
-            while (delta_direction > glm_rad(180.0f)) delta_direction -= glm_rad(360.0f);
-            while (delta_direction <= glm_rad(-180.0f)) delta_direction += glm_rad(360.0f);
+            btglm_angle_normalize(delta_direction, glm_rad(-180.0f), glm_rad(180.0f));
 
-            float_t max_turn_delta{ turn_speed * Physics_engine::k_simulation_delta_time };
+            float_t const max_turn_delta{ turn_speed * Physics_engine::k_simulation_delta_time };
             if (abs(delta_direction) > max_turn_delta)
             {   // Limit turn speed.
                 delta_direction = max_turn_delta * glm_signf(delta_direction);
@@ -574,6 +584,10 @@ Char_mvt_logic_results character_controller_movement_logic(
     {
         if (anim_root_motion->jump_up)
         {
+            // Undo any direction away from up.
+            if (auto velo_dot_up = new_velocity.Dot(up_direction); velo_dot_up < 0)
+                new_velocity -= (up_direction * velo_dot_up);
+
             new_velocity += mvt_settings.jump_speed * up_direction;
         }
 
@@ -619,6 +633,8 @@ void apply_velocity_to_char_con(
 
 void BT::system::input_controlled_character_movement()
 {
+    ZoneScoped;
+
     auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
     auto view{ reg.view<component::Character_world_space_input const,
                         component::Character_mvt_state,

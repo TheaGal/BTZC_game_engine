@@ -50,8 +50,10 @@ BT::audio::impl::Audio_impl_FMOD::~Audio_impl_FMOD()
 
 void BT::audio::impl::Audio_impl_FMOD::update()
 {
+    BT::date_deadline(2026, 11, 30);  // @THEA: the below did have errors!! but now the way that key value pairs are erased in the used channels are better... perhaps. will have to see if there's still an error by this date
+
     // Unload unused channels.
-    std::vector<Alive_channels_iterator_t> stopped_channels;
+    std::vector<channel_key_t> stopped_channel_keys;
     for (auto it = m_alive_channels.begin(); it != m_alive_channels.end(); it++)
     {
         bool is_playing;
@@ -59,11 +61,11 @@ void BT::audio::impl::Audio_impl_FMOD::update()
 
         if (!is_playing)
         {
-            stopped_channels.emplace_back(it);
+            stopped_channel_keys.emplace_back(it->first);
         }
     }
-    for (auto& it : stopped_channels)
-        m_alive_channels.erase(it);
+    for (channel_key_t const key : stopped_channel_keys)
+        m_alive_channels.erase(key);
 
     // Tick update for FMOD.
     ERRCHECK(m_system->update());

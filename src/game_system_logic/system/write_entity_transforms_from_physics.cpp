@@ -9,9 +9,13 @@
 #include "physics_engine/physics_engine.h"
 #include "service_finder/service_finder.h"
 
+#include <tracy/Tracy.hpp>
+
 
 void BT::system::write_entity_transforms_from_physics()
 {
+    ZoneScoped;
+
     auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
     auto& phys_engine{ service_finder::find_service<Physics_engine>() };
 

@@ -752,33 +752,119 @@
 
 - [x] BUG: fix last voxel traversal overstepping limit 
 
-- [ ] add sweep attacks and thrust attacks
+- [x] add sweep attacks and thrust attacks
     - hell yeah mikiri
     - jump goomba stomp
 
-    - [ ] PREREQUISITE: do these SOMEDAYs:
-        - [ ] SOMEDAY: create tool for easy placement of hitcapsules, hurtcapsules, and sfx emission.
+    - [x] PREREQUISITE: do these SOMEDAYs:
+        - [x] SOMEDAY: create tool for easy placement of hitcapsules, hurtcapsules, and sfx emission.
+            - add imguizmo to a random thing in afa editor
+            - ok turns out i cant have two gizmos on at the same time
+            - [x] have some way to represent a bone and vertex in an afa arg
+                - string 
+            - [x] migrate afa file to the new way w `bone_vec3`
+            - [x] basic vec3 editing
+            - [x] have bone transform-based editing
+            - [x] make it so that leaving the 2nd bone name blank wont inherit the 1st bone name
+                - remove any mention of it in the docs too
 
-        - [ ] SOMEDAY: change the hitbox to one single hitcapsule group.
+        - [x] SOMEDAY: change the hitbox to one single hitcapsule group.
             - actually no. it should be two, so that the legs can get masked away during a jump
-        - [ ] SOMEDAY: change the hurtboxes to an afa function region instead of a hitcapsule group that gets enabled/disabled.
+            - [x] mask away the legs during jump and fall
+        - [x] SOMEDAY: change the hurtboxes to an afa function region instead of a hitcapsule group that gets enabled/disabled.
             - the dynamic hurtcapsule should have:
                 - the damage to deal
                 - the knockback multiplier
                 - what kind of parry opponent should do (parry-left, parry-right, or parry-strong)
                 - whether perilous attack
+        
+        - [x] BUG: when pressing discard changes in AFA editor, it looks like there are uninitialized hitcapsules???
+            - it probably needs a flush or smth when that happens
+        - [x] BUG: fix being able to leave while afa is dirty and while command modal is open
+            - leaving while modal is open is fine if its just not open when reloading (just make it part of editor state struct)
+            - [x] fixed modal staying open when reopening afa editor
 
-    - [ ] add perilous indicator
-    - [ ] add one sweep attack anim
-    - [ ] create stomp anim
-    - [ ] add dodge anim
+    - [x] DETOUR: i wanna just make some point lights in the engine for fun
+        - it looks like point lights will have to be on its own buffer, since the numerous amounts of point lights cannot be in a vertex output/fragment input.
+        - [x] POC for one point light success!
+        - [x] move lighting information out of environment data buffer/struct
+        - [x] create lighting information struct and buffer
+        - [x] update cpp shader containers to use the new buffer
+        - [x] yay it works!
+        - in the future there would be a lighting manager that would gather all the visible light sources and include them in the render
+        - [x] only show dir light in scene view (enshittification lol)
+
+    - @NOTE: to create a sweep attack or mikiri attack, use the chkboxes in AFA editor, and then add in watches for the event queues for unguardable, unparryable, and mikiriable attacks in guard, dodge, parry anims (AND make sure they're higher priority than the regular on_hurt event)
+
+    - [x] DETOUR: add tracy profiling
+
+    - [x] add perilous indicator
+        - ~~there probably needs to be a new shader for this~~
+        - [x] billboard thingy
+        - [x] make activate on there being a perilous message.
+    - [x] add one sweep attack anim
+        - [x] make it in blender
+        - [x] make afa stuff for it in engine
+        - [x] add nonparryable attrib to afa
+    - [x] FIX: reorg the afa regions to make it spaced out a bit more
+    - [x] CRASHFIX: make hitcapsule group set component and health component be required to both have each other
+    - [x] create stomp anim
+        - [x] made in blender
+        - [x] make afa stuff
+            - [x] make on_jump input event happen every time spacebar is pressed even when grounded (ig that can give input buffering too!)
+            - [x] make jump midair for attack happen only when the attack landed
+    - [x] add dodge anim
         - 8 directions (or just 4 and blendtree it) to keep consistency when doing it on gamepad
-    - [ ] create mikiri give/receive anims
+        - hmmm just 4 should be fine. i think mikiri will be determined by facing dirs not whether dodge anim is facing forward or not
+        - [x] make stub anims
+        - [x] put in afa info
+        - [x] connect this anim to char mvt
+        - [x] BUG: when pressing just dodge the direction isnt forward
+            - should this be required for all blend tree actions?
+            - ok so it looks like it goes (0, 0, 1) globally
+        - [x] when holding a direction, should go into sprinting (but for now just have everything go into idle)
+    - [x] create mikiri give/receive anims
+    - [x] add afa info to mikiri
+    - [x] get sync spacing working
+        - i feel like it should be where the last attack is
+        - it seems to be working, but i suspect it's one frame off
+    - [x] print the frame idx during the anim
+        - it really is one frame off. is that an issue?
+        - yes, bc then it could be off distance-wise
+    - [x] remake the mikiri so that it uses a pre-setup step (st_hurt_mikiri)
+        - ok this works perfect
+    - [x] do cleanup
+        - [x] fix regression where facing/distancing doesn't happen w mikiri
+        - [x] fix another regression where pair anim doesn't play on deathblow
+        - [x] uggghhh the code doesn't look good
+    - [x] have receive mikiri receive posture damage
+    - [ ] ~~have return parry posture damage set the timer~~
+        - this is already done
 
+- [x] BUG: can cmd+v paste in afa editor when nothing is on clipboard
+
+- [x] add back in crouching as just an idle anim
+    - have there be an event for if the get-up from crouching is successful. if not, then go back to crouch anim
+- [x] add back in jump midair for if next to a wall
+    - have afa function that triggers checking for raycast of wall stuff
+    - have that check produce an event to do the jump up, and that event queue will be watched!
+
+- [x] BUG: hitting the enemy char after they're dead makes the game crash
+
+- [ ] add light manager
+    - one obj that can control directional light
+    - one obj each for each point light
 - [ ] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
         - so max 3 cascades (both realtime cascades and one static cascade if dir light changes) get updated on one frame
     - look into this tech: https://discord.com/channels/1563075165473083402/1564514891862114314
+
+- [ ] make it so player can't stand on top of npc or cpu
+    - stomp is still good tho!
+- [ ] fill in different parry and hurt types
+    - will need 2 action maps, one for getting hurt a certain way and another for parrying a certain way (guard will just be same awkward anim)
+    - the action maps will have the same indexes as `enum class Atk_dir` since the `.action_idx` that comes in will be that number
+    - make the stomp anim use its own Atk_dir so that the defender/receiver of the stomp will make the bonk sound and decrease its own health but less than a typical attack
 
 - [ ] create projectile spawning
 - [ ] some fun: energy ball enemy shoots and you have to parry it back to each other until one of you gets hit.
@@ -788,6 +874,8 @@
 
 - [ ] fix sound playing on bones where the sound position updates to follow the bone every frame.
     - just update the sound positions in simulation ticks. that's where the bones and the audio engine update anyway.
+
+- [ ] BUG: when changing audio output (plugging in/out headphones), FMOD or the app crashes
 
 - @NOTE: for pathfinding, just have to set enemy facing direction to go to next node to go to. pathfinding would happen during the st_runnning anim until enemy is close enough to player to do an attack
 
@@ -822,6 +910,15 @@
 
 - [ ] BUG: moving the window to a different virtual desktop on macos crashes the program
     - mayeb it's actualy just when doing discord screenshare on the actual window?
+    - `2026-11-09 14:41:09.814162-0800 btzc_game_engine[60953:3453272] [AppKit] Invalid view geometry: width is negative.`
+    - possibly switch to sdl3? or write custom windowing for macos. or just fork glfw?
+    - it appears to work just fine on macos 27??
+
+
+## Ideas
+
+- have a form that's kind of like ryuuryuumai where time slows down and you face a dir and lmb click to zoom that direction to attack a certain enemy and the stamina to do it lasts a certain amount of time and hits (ie the faster you can do the skill the more hits you can get in)
+    - mmm so maybe instead of time slowing down, you just keep building the moves as you keep pressing lmb until you make it to full strength but you lose the waza if you hesitate and dont keep the rhythm, but you are allowed to slash at the air. the enemy can also parry you so yeah. may not be that effective who knows
 
 
 ## SOMEDAY

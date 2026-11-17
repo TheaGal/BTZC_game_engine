@@ -12,16 +12,22 @@
 #include "game_system_logic/world/world_properties.h"
 #include "physics_engine/physics_engine.h"
 #include "service_finder/service_finder.h"
+#include "txp_renderer/renderer.h"
+#include "txp_renderer/types.h"
 #include "txp_renderer_public.h"
 
 #include <cassert>
 #include <cmath>
+#include <tracy/Tracy.hpp>
 
 using Interrupt_event = BT::component::Game_interrupt_event_queue::Interrupt_event;
 
 
 void BT::system::process_character_has_died(float_t const delta_time)
-{   // Exit early if simulation not running.
+{
+    ZoneScoped;
+
+    // Exit early if simulation not running.
     if (!service_finder::find_service<world::World_properties_container>()
              .get_data_handle()
              .is_simulation_running)
@@ -64,10 +70,12 @@ void BT::system::process_character_has_died(float_t const delta_time)
                 };
 
                 bool const death_input_pressed{
-                    input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_RIGHT).pressed
+                    input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_RIGHT).pressed ||
+                    input_handler.get_keyboard_key_state(BT_KEY_K).pressed
                 };
                 bool const resurrect_input_pressed{
-                    input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_LEFT).pressed
+                    input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_LEFT).pressed ||
+                    input_handler.get_keyboard_key_state(BT_KEY_J).pressed
                 };
 
                 constexpr float_t k_make_choice_time{ 8 };
@@ -104,6 +112,16 @@ void BT::system::process_character_has_died(float_t const delta_time)
                 bool const is_boss_oppo{ !health_stats_data.ui_name.empty() };
 
                 BT_CHK_RETVAL(reg.remove<component::Health_stats_data>(entity), 1);
+                BT_CHK_RETVAL(reg.remove<TXP::component::Animator_driven_hitcapsule_set>(entity),
+                              1);
+
+                auto& hitcapsule_group_set{ service_finder::find_service<TXP::Renderer>()  // @TODO: may be better to have a helper func instead of reaching in for the shirikodama and doing this.  -thea 2026/11/11
+                                                .try_get_skeletal_animator(entity)
+                                                .value()
+                                                .get_anim_frame_action_data_handle()
+                                                .hitcapsule_group_set };
+                hitcapsule_group_set.unregister_from_overlap_solver();
+                hitcapsule_group_set.get_hitcapsule_groups().clear();
 
                 // Add ninsatsu interrupt.
                 if (is_boss_oppo)

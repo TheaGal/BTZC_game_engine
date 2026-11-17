@@ -83,7 +83,6 @@ private:
         FMOD::Channel* fmod_channel;
     };
     std::unordered_map<channel_key_t, Alive_channel> m_alive_channels;
-    using Alive_channels_iterator_t = std::unordered_map<channel_key_t, Alive_channel>::iterator;
 
     channel_key_t m_next_key{ 80085 };
 };

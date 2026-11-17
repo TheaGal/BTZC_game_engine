@@ -34,11 +34,11 @@ bool BT::system::helper::fetch_wanted_afa_data(
     return true;
 }
 
-bool BT::system::helper::check_for_receive_atk_afa_events(
-    entt::entity ecs_entity,
-    bool& out_receive_atk_as_hurt,
-    bool& out_receive_atk_as_guard,
-    bool& out_receive_atk_as_parry)
+bool BT::system::helper::check_for_receive_atk_afa_events(entt::entity ecs_entity,
+                                                          bool& out_receive_atk_as_hurt,
+                                                          bool& out_receive_atk_as_guard,
+                                                          bool& out_receive_atk_as_parry,
+                                                          bool& out_receive_atk_as_mikiri)
 {
     // @COPYPASTA: see func above.
     auto& renderer{ service_finder::find_service<TXP::Renderer>() };
@@ -59,6 +59,7 @@ bool BT::system::helper::check_for_receive_atk_afa_events(
     out_receive_atk_as_hurt  = afa_data.get_reeve_data_handle(AFA_ctrl::CTRL_DATA_LABEL_receive_atk_as_hurt).check_if_rising_edge_occurred();
     out_receive_atk_as_guard = afa_data.get_reeve_data_handle(AFA_ctrl::CTRL_DATA_LABEL_receive_atk_as_guard).check_if_rising_edge_occurred();
     out_receive_atk_as_parry = afa_data.get_reeve_data_handle(AFA_ctrl::CTRL_DATA_LABEL_receive_atk_as_parry).check_if_rising_edge_occurred();
+    out_receive_atk_as_mikiri = afa_data.get_reeve_data_handle(AFA_ctrl::CTRL_DATA_LABEL_receive_atk_as_mikiri).check_if_rising_edge_occurred();
 
     return true;
 }

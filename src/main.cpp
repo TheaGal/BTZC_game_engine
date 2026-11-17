@@ -15,6 +15,7 @@
 #include "game_system_logic/system/hitcapsule_attack_processing.h"
 #include "game_system_logic/system/imgui_render_transform_hierarchy_window.h"
 #include "game_system_logic/system/input_controlled_character_movement.h"
+#include "game_system_logic/system/perilous_signal.h"
 #include "game_system_logic/system/player_character_lock_onto_target.h"
 #include "game_system_logic/system/player_character_world_space_input.h"
 #include "game_system_logic/system/process_character_has_died.h"
@@ -26,6 +27,7 @@
 #include "game_system_logic/system/rail_line_editor_update.h"
 #include "game_system_logic/system/rail_line_rider_update.h"
 #include "game_system_logic/system/tick_sim_char_mvt_animator.h"
+#include "game_system_logic/system/update_camera_billboards.h"
 #include "game_system_logic/system/write_entity_transforms_from_physics.h"
 #include "game_system_logic/system/write_render_transforms.h"
 #include "game_system_logic/world/scene_loader.h"
@@ -47,6 +49,7 @@
 #include <chrono>
 #include <cstdint>
 #include <thread>
+#include <tracy/Tracy.hpp>
 
 
 #define IMPLEMENT_THIS 0
@@ -145,6 +148,7 @@ int main(int argc, char* argv[])
     main_renderer.add_texture("FuckinAround_physdesc", ".ktx2");
     main_renderer.add_texture("FuckinAround_normal", ".ktx2");
     main_renderer.add_texture("font_msdf_pitagon_serif_regular", ".ktx2");
+    main_renderer.add_texture("perilous_icon", ".ktx2");
     // main_renderer.add_material("default_mat",
     //                            "pbr",
     //                            { { "base_color_factor", "0.75 0.75 0.5 1" },
@@ -190,9 +194,16 @@ int main(int argc, char* argv[])
     main_renderer.add_material("__gradient_mat",
                                "gradient",
                                { { "image", "__hdr_draw_image_color" } });
+    main_renderer.add_material("perilous_icon_mat",
+                               "pbr",
+                               { { "base_color_factor", "1 1 1 1" },
+                                 { "metallic_factor", "0" },
+                                 { "roughness_factor", "0" },
+                                 { "base_color_texture", "perilous_icon" } });
     main_renderer.add_material_palette("default_material_palette", { "default_mat" });
     main_renderer.add_material_palette("probuilder_material_palette", { "ProBuilderDefault" });
     main_renderer.add_material_palette("large_grid_material_palette", { "large_grid_mat" });
+    main_renderer.add_material_palette("perilous_icon_material_palette", { "perilous_icon_mat" });
     main_renderer.add_model("unit_box", ".wobj", false, false);
     main_renderer.add_model("unit_plane", ".glb", false, false);
     main_renderer.add_model("unit_capsule_parts", ".glb", false, false);
@@ -211,7 +222,7 @@ int main(int argc, char* argv[])
     main_renderer.set_imgui_build_contents_callback([]() {
         BT::system::imgui_render_transform_hierarchy_window(false);
     });
-    TXP::Skeletal_animator::set_play_audio_at_pos_oneshot_fn_callback(
+    TXP::Skeletal_animator::set_func_callbacks(
         [](std::string const& snd_name, vec3 const pos, float_t volume) {
             auto snd_key{ BT::audio::mark_snd_required(snd_name, true, false, false) };
             BT::audio::play_sound_3d(snd_key, pos, BT::audio::volume_to_db(volume));
@@ -224,6 +235,16 @@ int main(int argc, char* argv[])
                       pos[2]);
 
             TXP::debug::emplace_debug_line_based_capsule(pos, pos, 1, vec4{ 1, 0, 0.2, 1 }, 0.25f);
+        },
+        [](std::string const& snd_name, float_t volume) {
+            auto snd_key{ BT::audio::mark_snd_required(snd_name, false, false, false) };
+            BT::audio::play_sound(snd_key, BT::audio::volume_to_db(volume));
+            BT::audio::unmark_snd_required(snd_key);
+
+            BT_TRACEF("Played sfx \"%s\" as 2d", snd_name.c_str());
+        },
+        []() {
+            BT::system::signal_perilous();
         });
 
     BT::ui_ifc::Hp_w_posture hp_w_posture_ui{ ui_state };
@@ -306,16 +327,30 @@ int main(int argc, char* argv[])
         // @NOCHECKIN: @DEBUG: Fun little sfx for audio engine.
         if (iter_type == Iteration_type::FIRST_RUNNING_ITERATION)
         {
-            auto snd_key{ BT::audio::mark_snd_required("startup_sfx.wav", false, false, false) };
+            auto snd_key{ BT::audio::mark_snd_required(
+            #ifdef TRACY_ENABLE
+                #warning PROFILING IS ENABLED (a startup sound will play to indicate this)
+                "tracy.mp3",  // @NOTE: always play this sound on tracy builds
+            #else
+                "startup_sfx.wav",
+            #endif  // TRACY_ENABLE
+                false,
+                false,
+                false) };
+
             BT::audio::play_sound(snd_key, BT::audio::volume_to_db(1.0f));
             BT::audio::unmark_snd_required(snd_key);
         }
 
         // Simulation loop.
+        int32_t sim_loop_execs{ 0 };
         main_physics_engine.accumulate_delta_time(delta_time);
         while (main_physics_engine.calc_wants_to_tick() ||  // @TODO: Change the `wants_to_tick()` to something that's not the physics engine. Perhaps a simulation manager or something???  -Thea 2025/10/31
                iter_type == Iteration_type::TEARDOWN_ITERATION)  // Force one iteration if teardown.
-        {   // Performance measure.
+        {
+            FrameMarkStart("SIMULATION LOOP");
+
+            // Performance measure.
             BT::Timer perf_timer;
             perf_timer.start_timer();
 
@@ -358,7 +393,7 @@ int main(int argc, char* argv[])
             // Audio tick.
             {
                 // @TODO: make this thread safe.
-                BT::date_deadline(2026, 11, 15);
+                BT::date_deadline(2026, 11, 16);
 
                 vec3 cam_position;
                 vec3 cam_forward;
@@ -380,14 +415,24 @@ int main(int argc, char* argv[])
             main_renderer.report_performance_time(TXP::PERF_TIME_TYPE_SIMULATION_LOOP,
                                                   perf_timer.calc_delta_time());
 
+            FrameMarkEnd("SIMULATION LOOP");
+
+            sim_loop_execs++;
+
             // Only run once if teardown iteration.
             if (iter_type == Iteration_type::TEARDOWN_ITERATION)
                 break;
         }
+        if (sim_loop_execs > 1)
+            BT_ERRORF("simulation loop is fell behind (ran %d times)", sim_loop_execs);
 
         // Render loop.
-        main_physics_engine.calc_interpolation_alpha();
-        {   // Performance measure.
+        {
+            FrameMarkStart("RENDER LOOP");
+
+            main_physics_engine.calc_interpolation_alpha();
+
+            // Performance measure.
             BT::Timer perf_timer;
             perf_timer.start_timer();
 
@@ -404,6 +449,9 @@ int main(int argc, char* argv[])
 
             ui_state.tick();
 
+            BT::system::update_camera_billboards();
+            BT::system::update_perilous_signal(delta_time);
+
             if (iter_type < Iteration_type::TEARDOWN_ITERATION)
             {
                 main_renderer.set_allow_deformed_render_models(
@@ -416,6 +464,8 @@ int main(int argc, char* argv[])
             // Performance measure.
             main_renderer.report_performance_time(TXP::PERF_TIME_TYPE_RENDERER_LOOP,
                                                   perf_timer.calc_delta_time());
+
+            FrameMarkEnd("RENDER LOOP");
         }
 
         // Switch iteration type.
@@ -459,6 +509,8 @@ int main(int argc, char* argv[])
 
         // Tick scene loader.
         main_scene_loader.process_scene_loading_requests();
+
+        FrameMark;
     }
 
     // Try to fix audio popping when quitting app by fading out sound master volume.

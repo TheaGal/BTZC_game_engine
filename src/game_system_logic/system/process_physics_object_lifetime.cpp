@@ -13,6 +13,7 @@
 #include "btuuid.h"
 
 #include <memory>
+#include <tracy/Tracy.hpp>
 
 
 namespace
@@ -157,6 +158,8 @@ void create_staged_physics_objects(entt::registry& reg, Physics_engine& phys_eng
 
 void BT::system::process_physics_object_lifetime()
 {
+    ZoneScoped;
+
     auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
     auto& phys_engine{ service_finder::find_service<Physics_engine>() };
 

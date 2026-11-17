@@ -7,6 +7,8 @@
 #include "game_system_logic/entity_container.h"
 #include "service_finder/service_finder.h"
 
+#include <tracy/Tracy.hpp>
+
 
 namespace
 {
@@ -130,6 +132,8 @@ void apply_delta_transform_recursive(auto& view,
 
 void BT::system::propagate_changed_transforms()
 {
+    ZoneScoped;
+
     auto& entity_container{ service_finder::find_service<Entity_container>() };
 
     auto& reg{ entity_container.get_ecs_registry() };

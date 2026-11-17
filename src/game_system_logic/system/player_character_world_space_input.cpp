@@ -17,6 +17,7 @@
 #include "txp_renderer_public.h"
 
 #include <cassert>
+#include <tracy/Tracy.hpp>
 
 
 namespace
@@ -63,6 +64,8 @@ void transform_input_to_camera_pov_input(TXP::Camera& main_camera,
 
 void BT::system::player_character_world_space_input()
 {
+    ZoneScoped;
+
     auto& main_camera = service_finder::find_service<TXP::Renderer>().get_main_camera();
 
     auto& entity_container{ service_finder::find_service<Entity_container>() };
@@ -112,44 +115,64 @@ void BT::system::player_character_world_space_input()
         // Update input state.
         char_ws_input.prev_jump_pressed   = char_ws_input.jump_pressed;
         char_ws_input.jump_pressed        = input_handler.get_keyboard_key_state(BT_KEY_SPACE).pressed;
-        char_ws_input.prev_crouch_pressed = char_ws_input.crouch_pressed;
-        char_ws_input.crouch_pressed      = input_handler.get_keyboard_key_state(BT_KEY_LEFT_CONTROL).pressed;
 
         // On attack trigger.
         {
             bool const attack_pressed{
                 main_camera.is_follow_orbit() &&
-                input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_LEFT).pressed
+                (input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_LEFT).pressed ||
+                 input_handler.get_keyboard_key_state(BT_KEY_J).pressed)
             };
 
             char_mvt_anim_state->input_mvt_state.on_attack_press =
                 (attack_pressed && !char_mvt_anim_state->state.prev_attack_pressed);
             char_mvt_anim_state->input_mvt_state.is_attack_released = !attack_pressed;
 
-            // @ANIMATOR_REFACTOR if (camera.is_follow_orbit() &&
-            // @ANIMATOR_REFACTOR     can_attack_exit &&
-            // @ANIMATOR_REFACTOR     !char_mvt_anim_state->state.prev_attack_pressed &&
-            // @ANIMATOR_REFACTOR     attack_pressed)
-            // @ANIMATOR_REFACTOR     char_mvt_anim_state->write_to_animator_data.on_attack = true;
-
             char_mvt_anim_state->state.prev_attack_pressed = attack_pressed;
         }
 
         // On guard trigger and is-guarding bool.
         {
-            bool guard_pressed{
-                input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_RIGHT).pressed
+            bool const guard_pressed{
+                main_camera.is_follow_orbit() &&
+                (input_handler.get_mouse_button_state(BT_MOUSE_BUTTON_RIGHT).pressed ||
+                 input_handler.get_keyboard_key_state(BT_KEY_K).pressed)
             };
-            bool is_guarding{ main_camera.is_follow_orbit() && guard_pressed };
 
             char_mvt_anim_state->input_mvt_state.on_guard_press =
-                (is_guarding && !char_mvt_anim_state->state.prev_guard_pressed);
-            char_mvt_anim_state->input_mvt_state.is_guard_released = !is_guarding;
+                (guard_pressed && !char_mvt_anim_state->state.prev_guard_pressed);
+            char_mvt_anim_state->input_mvt_state.is_guard_released = !guard_pressed;
 
             char_mvt_anim_state->state.prev_guard_pressed = guard_pressed;
         }
-        // @ANIMATOR_REFACTOR char_mvt_anim_state->write_to_animator_data.on_guard = on_guard;
-        // @ANIMATOR_REFACTOR char_mvt_anim_state->write_to_animator_data.is_guarding = is_guarding;
+
+        // On dodge trigger and is-dodging bool.
+        // @COPYPASTA
+        {
+            bool const dodge_pressed{
+                main_camera.is_follow_orbit() &&
+                (input_handler.get_keyboard_key_state(BT_KEY_LEFT_SHIFT).pressed ||
+                 input_handler.get_keyboard_key_state(BT_KEY_L).pressed)
+            };
+
+            char_mvt_anim_state->input_mvt_state.on_dodge_press =
+                (dodge_pressed && !char_mvt_anim_state->state.prev_dodge_pressed);
+            char_mvt_anim_state->input_mvt_state.is_dodge_released = !dodge_pressed;
+
+            char_mvt_anim_state->state.prev_dodge_pressed = dodge_pressed;
+        }
+
+        // On crouch trigger.
+        // @COPYPASTA
+        {
+            bool const crouch_pressed{ main_camera.is_follow_orbit() &&
+                                       input_handler.get_keyboard_key_state(BT_KEY_Q).pressed };
+
+            char_mvt_anim_state->input_mvt_state.on_crouch =
+                (crouch_pressed && !char_mvt_anim_state->state.prev_crouch_pressed);
+
+            char_mvt_anim_state->state.prev_crouch_pressed = crouch_pressed;
+        }
 
         // End of first iteration.
         is_first = false;

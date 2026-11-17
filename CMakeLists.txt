@@ -30,7 +30,7 @@ else()
     message(FATAL_ERROR "Asset folder location must be defined in `ASSET_DIR`")
 endif()
 
-# C/C++ standard.
+# C/C++ standard.b
 # set(CMAKE_UNITY_BUILD ON)  # @TODO: get this working at some point!!
 set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED True)
@@ -57,8 +57,18 @@ set(CMAKE_BUILD_PARALLEL_LEVEL 16)
 # endif()
 
 # Profiling.
-if(ENABLE_PROFILING)
-    message(FATAL_ERROR "@TODO: Implement profiling libraries here!")
+if (NOT TARGET Tracy::TracyClient)
+    if(ENABLE_PROFILING)
+        set(TRACY_ENABLE ON CACHE BOOL "" FORCE)          # Enables Tracy profiler
+        set(TRACY_STATIC OFF CACHE BOOL "" FORCE)         # Compiles as shared lib
+        set(TRACY_ONLY_LOCALHOST ON CACHE BOOL "" FORCE)  # Only allows localhost server
+    endif()
+
+    add_subdirectory(third_party/tracy)
+
+    set(PROFILING_LINK_LIBS
+        Tracy::TracyClient
+    )
 endif()
 
 # Assets directory.
@@ -142,10 +152,7 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/unit_capsule_parts.glb
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/models/unit_plane.glb
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/scenes/_dev_animation_editor_view.btscene
-    ${CMAKE_CURRENT_SOURCE_DIR}/assets/scenes/_dev_animation_editor_view_OLD_COPY.btscene
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/scenes/_dev_sample_scene.btscene
-    ${CMAKE_CURRENT_SOURCE_DIR}/assets/scenes/_dev_sample_scene_BACKUP.btscene
-    ${CMAKE_CURRENT_SOURCE_DIR}/assets/scenes/_dev_sample_scene_OLD_COPY.btscene
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/__debug_color_grad_line.shader
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/__debug_color_grad_line.shadrefl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/__debug_color_wireframe.shader
@@ -171,6 +178,7 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/FuckinAround_physdesc.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/font_msdf_pitagon_serif_regular.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/grid_1m.ktx2
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/perilous_icon.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/test_ktx_tex.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/tiles084_basecolor.ktx2
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/textures/tiles084_normal.ktx2
@@ -222,6 +230,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/btzc_game_engine.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/btzc_game_engine.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/anim_frame_action_controller.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/billboard_to_camera.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/character_movement.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/character_movement.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/combat_stats.h
@@ -234,6 +243,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/game_interrupt_event_queue.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/game_interrupt_event_queue.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/health_stats.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/perilous_signal_receiver.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/physics_object_settings.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/physics_object_settings.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/component/rail_line.cpp
@@ -262,6 +272,8 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/imgui_render_transform_hierarchy_window.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/input_controlled_character_movement.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/input_controlled_character_movement.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/perilous_signal.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/perilous_signal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/player_character_lock_onto_target.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/player_character_lock_onto_target.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/player_character_world_space_input.cpp
@@ -284,6 +296,8 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/rail_line_rider_update.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/tick_sim_char_mvt_animator.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/tick_sim_char_mvt_animator.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/update_camera_billboards.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/update_camera_billboards.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/write_entity_transforms_from_physics.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/write_entity_transforms_from_physics.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/write_render_transforms.cpp
@@ -442,6 +456,7 @@ target_link_libraries(${PROJECT_NAME}
     Jolt
     nlohmann_json::nlohmann_json
     stduuid
+    ${PROFILING_LINK_LIBS}
 )
 
 # Copy dynamic libs.
@@ -451,6 +466,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             ${FMOD_LIBRARY_PATH}${FMOD_LIB_FILE_PREFIX}.dll
             ${CMAKE_CURRENT_BINARY_DIR})
+    install(FILES $<TARGET_RUNTIME_DLLS:${PROJECT_NAME}> TYPE BIN)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
     # message(WARNING "MACOS APP DYNA-lib stuff (TODO: RESEARCH!!!)")
 else()

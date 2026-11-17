@@ -9,6 +9,7 @@
 #include <cassert>
 #include <memory>
 #include <stdexcept>
+#include <tracy/Tracy.hpp>
 
 using std::make_unique;
 using std::min;
@@ -85,6 +86,8 @@ void BT::Physics_engine::calc_interpolation_alpha()
 
 void BT::Physics_engine::update_physics()
 {
+    ZoneScoped;
+
     phys_obj_pool_wait_until_free_then_block();
 
     // Run all physics objects' pre update.

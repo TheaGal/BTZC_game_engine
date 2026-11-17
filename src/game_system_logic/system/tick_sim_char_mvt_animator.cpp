@@ -12,10 +12,13 @@
 #include <cassert>
 #include <stdexcept>
 #include <string>
+#include <tracy/Tracy.hpp>
 
 
 void BT::system::tick_sim_char_mvt_animator()
 {
+    ZoneScoped;
+
     auto& renderer{ service_finder::find_service<TXP::Renderer>() };
     auto& reg{ service_finder::find_service<Entity_container>().get_ecs_registry() };
 
@@ -85,6 +88,10 @@ void BT::system::tick_sim_char_mvt_animator()
             //         too to affect the randomness.
             //       - and then for a CPU, it could be the list of available attacks to do.
 
+            // Move to next pair anim align type.
+            char_mvt_anim_state.input_mvt_state.pair_anim_align_self_type =
+                char_mvt_anim_state.input_mvt_state.next_pair_anim_align_self_type;
+
             // Send animator events.
             auto const& mvt_state{ char_mvt_anim_state.input_mvt_state };
 
@@ -108,11 +115,6 @@ void BT::system::tick_sim_char_mvt_animator()
                 else
                     animator.emplace_event("evq_is_midair", 0.0f, {});
 
-                if (mvt_state.on_hurt > hurt_type_t::HURT_TYPE_NONE)
-                    animator.emplace_event("evq_on_hurt",
-                                           0.0f,
-                                           { .action_idx = mvt_state.on_hurt });
-
                 if (mvt_state.on_attack_press)
                     animator.emplace_event("evq_on_attack_press", 1.0f, {});
                 if (mvt_state.is_attack_released)
@@ -121,17 +123,16 @@ void BT::system::tick_sim_char_mvt_animator()
                     animator.emplace_event("evq_on_guard_press", 0.5f, {});
                 if (mvt_state.is_guard_released)
                     animator.emplace_event("evq_is_guard_released", 0.0f, {});
+                if (mvt_state.on_dodge_press)
+                    animator.emplace_event("evq_on_dodge_press", 0.5f, {});
+                if (mvt_state.is_dodge_released)
+                    animator.emplace_event("evq_is_dodge_released", 0.0f, {});
 
                 if (mvt_state.choose_to_resurrect)
                     animator.emplace_event("evq_do_resurrect", 1000000, {});
                 break;
 
             case mvt_state_mode_t::MODE_CPU_CHAR:
-                if (mvt_state.on_hurt > hurt_type_t::HURT_TYPE_NONE)
-                    animator.emplace_event("evq_on_hurt",
-                                           0.0f,
-                                           { .action_idx = mvt_state.on_hurt });
-
                 if (mvt_state.on_guard_press)
                     animator.emplace_event("evq_exec_guard_response", 0.0f, {});
 
@@ -154,17 +155,54 @@ void BT::system::tick_sim_char_mvt_animator()
                 throw std::runtime_error("Cannot have invalid input mvt state mode.");
             }
 
+            if (mvt_state.on_wall_jump)  // @TODO: maybe put in playchar only?
+                animator.emplace_event("evq_on_wall_jump", 0.0f, {});
+
+            if (mvt_state.on_crouch)
+                animator.emplace_event("evq_on_crouch", 0.5f, {});
+
+            if (mvt_state.on_uncrouch_failed)
+                animator.emplace_event("evq_on_uncrouch_failed", 0.0f, {});
+
+            if (mvt_state.on_landed_attack)
+                animator.emplace_event("evq_on_landed_attack", 0.0f, {});
+
+            if ((mvt_state.on_hurt & hurt_type_t::HURT_TYPE_REGULAR) != 0)
+            {
+                int32_t action_idx{ 0 };
+
+                if (poss_health_stats_data)
+                    action_idx = static_cast<int32_t>(
+                        poss_health_stats_data->state.last_received_attack.direction_type);
+
+                animator.emplace_event("evq_on_hurt", 0.0f, { .action_idx = action_idx });
+
+                // Extra events for if AFA is listening for these.
+                if ((mvt_state.on_hurt & hurt_type_t::HURT_TYPE_UNPARRYABLE) != 0)
+                    animator.emplace_event("evq_on_hurt_unparryable",
+                                           0.0f,
+                                           { .action_idx = action_idx });
+                if ((mvt_state.on_hurt & hurt_type_t::HURT_TYPE_UNGUARDABLE) != 0)
+                    animator.emplace_event("evq_on_hurt_unguardable",
+                                           0.0f,
+                                           { .action_idx = action_idx });
+                if ((mvt_state.on_hurt & hurt_type_t::HURT_TYPE_MIKIRIABLE) != 0)
+                    animator.emplace_event("evq_on_hurt_mikiriable",
+                                           0.0f,
+                                           { .action_idx = action_idx });
+            }
+
             if (mvt_state.on_posture_broken)
                 animator.emplace_event("evq_on_posture_broken", 1000000, {});
 
             if (mvt_state.on_health_depleted)
                 animator.emplace_event("evq_on_health_depleted", 1000000, {});
 
-            if (mvt_state.on_give_deathblow)
-                animator.emplace_event("evq_on_give_deathblow", 1000000, {});
+            if (mvt_state.pair_anim_align_self_type == mvt_state.PAIR_ANIM_ALIGN_SELF_GIVER)
+                animator.emplace_event("evq_on_pair_anim_give_role", 0, {});
 
-            if (mvt_state.on_receive_deathblow)
-                animator.emplace_event("evq_on_receive_deathblow", 1000000, {});
+            if (mvt_state.pair_anim_align_self_type == mvt_state.PAIR_ANIM_ALIGN_SELF_RECEIVER)
+                animator.emplace_event("evq_on_pair_anim_receive_role", 0, {});
 
             // Reset inputs.
             char_mvt_anim_state.input_mvt_state.reset_state(false);
@@ -178,7 +216,7 @@ void BT::system::tick_sim_char_mvt_animator()
 
 
             // Update animator state.
-            animator.update_state(TXP::SIMULATION_TIMER_PROFILE);
+            animator.update_state();
 
 
             // Read animator root motion AFA data.
@@ -255,19 +293,18 @@ void BT::system::tick_sim_char_mvt_animator()
                                 AFA_ctrl::CTRL_DATA_LABEL_posture_pts_regen_multi)
                             .get_val();
 
-                char_mvt_anim_state.input_mvt_state.is_alive =
-                    anim_afa_data_handle.get_bool_data_handle(AFA_ctrl::CTRL_DATA_LABEL_is_alive)
+                char_mvt_anim_state.input_mvt_state.check_for_wall_jump =
+                    anim_afa_data_handle
+                        .get_bool_data_handle(AFA_ctrl::CTRL_DATA_LABEL_check_for_wall_jump)
                         .get_val();
 
-                char_mvt_anim_state.input_mvt_state.align_self_as_deathblow_giver =
+                char_mvt_anim_state.input_mvt_state.do_crouch_stance_toggle =
                     anim_afa_data_handle
-                        .get_bool_data_handle(
-                            AFA_ctrl::CTRL_DATA_LABEL_align_self_as_deathblow_giver)
-                        .get_val();
-                char_mvt_anim_state.input_mvt_state.align_self_as_deathblow_receiver =
-                    anim_afa_data_handle
-                        .get_bool_data_handle(
-                            AFA_ctrl::CTRL_DATA_LABEL_align_self_as_deathblow_receiver)
+                        .get_reeve_data_handle(AFA_ctrl::CTRL_DATA_LABEL_do_crouch_stance_toggle)
+                        .check_if_rising_edge_occurred();
+
+                char_mvt_anim_state.input_mvt_state.is_alive =
+                    anim_afa_data_handle.get_bool_data_handle(AFA_ctrl::CTRL_DATA_LABEL_is_alive)
                         .get_val();
 
                 char_mvt_anim_state.input_mvt_state.on_finish_deathblow_give =

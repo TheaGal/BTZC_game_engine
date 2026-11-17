@@ -14,10 +14,14 @@
 
 #include <cassert>
 #include <stdexcept>
+#include <tracy/Tracy.hpp>
 
 
 void BT::system::convert_atk_input_to_deathblow()
-{   // Exit early if simulation not running.
+{
+    ZoneScoped;
+
+    // Exit early if simulation not running.
     if (!service_finder::find_service<world::World_properties_container>()
              .get_data_handle()
              .is_simulation_running)
@@ -102,14 +106,23 @@ void BT::system::convert_atk_input_to_deathblow()
                 continue;
 
             // This is a winner!!!! Convert the attack to a deathblow.
+            using align_t =
+                component::Character_mvt_animated_state::Input_mvt_state::Pair_anim_alignment_type;
+
+            constexpr float_t k_db_distance{ 2 };  // @HARDCODE
+
             auto& my_input_mvt_state{ char_mvt_anim_state.input_mvt_state };
             my_input_mvt_state.on_attack_press = false;
-            my_input_mvt_state.on_give_deathblow = true;
-            my_input_mvt_state.deathblow_other_entity = other_entity;
+            my_input_mvt_state.next_pair_anim_align_self_type =
+                align_t::PAIR_ANIM_ALIGN_SELF_GIVER;
+            my_input_mvt_state.pair_anim_align_distance = k_db_distance;
+            my_input_mvt_state.pair_anim_other_entity = other_entity;
 
             auto& other_input_mvt_state{ other_char_mvt_anim_state.input_mvt_state };
-            other_input_mvt_state.on_receive_deathblow = true;
-            other_input_mvt_state.deathblow_other_entity = entity;
+            other_input_mvt_state.next_pair_anim_align_self_type =
+                align_t::PAIR_ANIM_ALIGN_SELF_RECEIVER;
+            other_input_mvt_state.pair_anim_align_distance = k_db_distance;
+            other_input_mvt_state.pair_anim_other_entity = entity;
 
             // Also deactivate physics inner bodies so they can go thru each other.
             auto& phys_engine{ service_finder::find_service<Physics_engine>() };

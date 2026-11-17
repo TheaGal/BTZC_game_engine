@@ -33,6 +33,48 @@
             ]
         },
         {
+            "state_name": "st_crouch_enter",
+            "state_type": "single_anim",
+            "anim_name": "Crouch_enter"
+        },
+        {
+            "state_name": "st_crouch_from_getup",
+            "state_type": "single_anim",
+            "anim_name": "Crouch_from_getup"
+        },
+        {
+            "state_name": "st_crouch_getup",
+            "state_type": "single_anim",
+            "anim_name": "Crouch_getup"
+        },
+        {
+            "state_name": "st_dodge",
+            "state_type": "blendtree",
+            "blend_var": "mvt_facing_angle",
+            "blend_anims": [
+                {
+                    "anim_name": "Dodge",
+                    "value": 0.0
+                },
+                {
+                    "anim_name": "Dodge_east",
+                    "value": 1.5708
+                },
+                {
+                    "anim_name": "Dodge_south",
+                    "value": 3.14159
+                },
+                {
+                    "anim_name": "Dodge_west",
+                    "value": 4.71239
+                },
+                {
+                    "anim_name": "Dodge",
+                    "value": 6.28319
+                }
+            ]
+        },
+        {
             "state_name": "st_running_turnaround",
             "state_type": "single_anim",
             "anim_name": "Running_turnaround"
@@ -66,6 +108,21 @@
             "state_name": "st_fall",
             "state_type": "single_anim",
             "anim_name": "Fall"
+        },
+        {
+            "state_name": "st_jump_midair_ready",
+            "state_type": "single_anim",
+            "anim_name": "Jump_midair_ready"
+        },
+        {
+            "state_name": "st_jump_midair",
+            "state_type": "single_anim",
+            "anim_name": "Jump_midair"
+        },
+        {
+            "state_name": "st_jump_midair_fall",
+            "state_type": "single_anim",
+            "anim_name": "Jump_midair_fall"
         },
         {
             "state_name": "st_pc_attack_1cha",
@@ -123,6 +180,11 @@
             "anim_name": "Attack_side_zoom"
         },
         {
+            "state_name": "st_attack_5",
+            "state_type": "single_anim",
+            "anim_name": "Attack_sweep"
+        },
+        {
             "state_name": "st_jump_back_evade",
             "state_type": "single_anim",
             "anim_name": "Jump_back_evade"
@@ -151,6 +213,11 @@
             "state_name": "st_cancel_parried_attack",
             "state_type": "single_anim",
             "anim_name": "Cancel_parried_attack"
+        },
+        {
+            "state_name": "st_hurt_mikiri",
+            "state_type": "single_anim",
+            "anim_name": "Mikiri_give"
         },
         {
             "state_name": "st_hurt_parry",
@@ -218,6 +285,16 @@
             "state_name": "st_posture_break",
             "state_type": "single_anim",
             "anim_name": "Posture_break"
+        },
+        {
+            "state_name": "st_mikiri_give",
+            "state_type": "single_anim",
+            "anim_name": "Mikiri_give"
+        },
+        {
+            "state_name": "st_mikiri_receive",
+            "state_type": "single_anim",
+            "anim_name": "Mikiri_receive"
         },
         {
             "state_name": "st_health_depleted",

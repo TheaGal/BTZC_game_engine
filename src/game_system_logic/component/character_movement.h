@@ -34,8 +34,6 @@ struct Character_world_space_input
 
     bool jump_pressed{ false };
     bool prev_jump_pressed{ false };
-    bool crouch_pressed{ false };
-    bool prev_crouch_pressed{ false };
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(Character_world_space_input,
                                                 ws_flat_clamped_input);
@@ -92,25 +90,28 @@ struct Character_mvt_animated_state
         bool is_moving{ false };
         bool on_jump{ false };
         bool is_grounded{ false };
+        bool on_crouch{ false };
+
+        // Wall jump check.
+        bool check_for_wall_jump{ false };
+        bool on_wall_jump{ false };
+
+        // Crouching.
+        bool do_crouch_stance_toggle{ false };
+        bool on_uncrouch_failed{ false };
 
         // Combat reactions.
-        enum Hurt_type : int32_t
-        {
-            HURT_TYPE_NONE = -1,
+        bool on_landed_attack{ false };
 
-            HURT_TYPE_LIGHT_FROM_FRONT,
-            HURT_TYPE_HEAVY_FROM_FRONT,
-            HURT_TYPE_LIGHT_FROM_BEHIND,
-            HURT_TYPE_HEAVY_FROM_BEHIND,
-            HURT_TYPE_LIGHT_FROM_ABOVE,
-            HURT_TYPE_HEAVY_FROM_ABOVE,
-            HURT_TYPE_LIGHT_FROM_BELOW,
-            HURT_TYPE_HEAVY_FROM_BELOW,
-            HURT_TYPE_LIGHT_FROM_LEFT,
-            HURT_TYPE_HEAVY_FROM_LEFT,
-            HURT_TYPE_LIGHT_FROM_RIGHT,
-            HURT_TYPE_HEAVY_FROM_RIGHT,
-        } on_hurt{ -1 };
+        enum Hurt_type : uint32_t
+        {
+            HURT_TYPE_NONE = 0b0,
+
+            HURT_TYPE_REGULAR     = 0b0000'0001,
+            HURT_TYPE_UNPARRYABLE = 0b0000'0010,
+            HURT_TYPE_UNGUARDABLE = 0b0000'0100,
+            HURT_TYPE_MIKIRIABLE  = 0b0000'1000,
+        } on_hurt{ HURT_TYPE_NONE };
 
         bool on_health_depleted{ false };
         bool on_posture_broken{ false };
@@ -120,22 +121,30 @@ struct Character_mvt_animated_state
         bool choose_to_die{ false };
         float_t resurrect_make_choice_timer{ 0 };
 
-        // Deathblow syncing.
-        bool on_give_deathblow{ false };
-        bool align_self_as_deathblow_giver{ false };
+        // Deathblow.
         bool on_finish_deathblow_give{ false };
-
-        bool on_receive_deathblow{ false };
-        bool align_self_as_deathblow_receiver{ false };
         bool on_finish_deathblow_receive{ false };
 
-        entt::entity deathblow_other_entity{ entt::null };  // persistent
+        // Pair anim syncing.
+        enum Pair_anim_alignment_type : int32_t
+        {
+            PAIR_ANIM_ALIGN_SELF_NONE = 0,
+            PAIR_ANIM_ALIGN_SELF_GIVER,
+            PAIR_ANIM_ALIGN_SELF_RECEIVER,
+        };
+        Pair_anim_alignment_type next_pair_anim_align_self_type{ 0 };
+        Pair_anim_alignment_type pair_anim_align_self_type{ 0 };  // persistent
+
+        float_t pair_anim_align_distance{ 0 };  // persistent
+        entt::entity pair_anim_other_entity{ entt::null };  // persistent
 
         // Combat inputs (player char).
         bool on_attack_press{ false };
         bool is_attack_released{ false };
         bool on_guard_press{ false };
         bool is_guard_released{ false };
+        bool on_dodge_press{ false };
+        bool is_dodge_released{ false };
 
         // @THOUGHT: maybe the CPU can have some kind of anxiety or fatigue when posture bar goes up
         //           or a long attack?  -Thea 2026/10/06
@@ -150,26 +159,37 @@ struct Character_mvt_animated_state
             CPU_ATK_TYPE_BY_CHANCE,
         } on_exec_attack_combo{ 0 };
 
-        float_t distance_to_target{ 0 };  // this is persistent
+        float_t distance_to_target{ 0 };  // persistent
         float_t aggression_radius{ 10 };  // @NOTE: this is a setting  @THEA: is this the best place for this?
 
-        void reset_state(bool reset_persist_vals)
+        void reset_state(bool force_reset_persist_vals)
         {
-            // capture persistent vals here.
-            auto cap0 = deathblow_other_entity;
-            auto cap1 = distance_to_target;
+            #define PERSISTENT_VAR_LIST         \
+                X(pair_anim_align_self_type)    \
+                X(pair_anim_align_distance)     \
+                X(pair_anim_other_entity)       \
+                X(distance_to_target)
 
+            // Capture persistent vals.
+            #define X(__var)  auto __bt_cap__ ## __var = __var;
+            PERSISTENT_VAR_LIST
+            #undef X
+
+            // Do reset!!
             *this = {
                 .mode = mode,
                 .aggression_radius = aggression_radius,
             };
 
-            if (!reset_persist_vals)
+            if (!force_reset_persist_vals)
             {
-                // rewrite in persistent vals here.
-                deathblow_other_entity = cap0;
-                distance_to_target = cap1;
+                // Rewrite in persistent vals.
+                #define X(__var)  __var = __bt_cap__ ## __var;
+                PERSISTENT_VAR_LIST
+                #undef X
             }
+
+            #undef PERSISTENT_VAR_LIST
         }
 
         inline bool is_player_char_mode() const
@@ -208,6 +228,8 @@ struct Character_mvt_animated_state
     {
         bool prev_attack_pressed{ false };
         bool prev_guard_pressed{ false };
+        bool prev_dodge_pressed{ false };
+        bool prev_crouch_pressed{ false };
     } state;
 
     char _;
