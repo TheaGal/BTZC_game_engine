@@ -163,6 +163,8 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/clouds.shadrefl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/default_shader.shader
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/default_shader.shadrefl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/directional_light_shadow.shader
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/directional_light_shadow.shadrefl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/gradient.shader
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/gradient.shadrefl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/pbr.shader
