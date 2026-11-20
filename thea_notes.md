@@ -858,6 +858,9 @@
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
         - so max 3 cascades (both realtime cascades and one static cascade if dir light changes) get updated on one frame
     - look into this tech: https://discord.com/channels/1563075165473083402/1564514891862114314
+    - [ ] add hotswappable shaders
+        - [ ] make compile_assets.py only compile changed things (use hash map for keeping track)
+    - [ ] add checks for if any cglm header guards were defined before including btglm.h
 
 - [ ] make it so player can't stand on top of npc or cpu
     - stomp is still good tho!
