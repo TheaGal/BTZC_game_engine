@@ -1,3 +1,4 @@
+import hashlib
 import os
 from pathlib import Path
 import shutil
@@ -33,6 +34,17 @@ def find_existing_files(search_dirs: list[str], search_extensions: list[str]) ->
     return all_found_files
 
 
+def hash_file(file_path: Path):  # @COPYPASTA
+    hash_func = hashlib.new('sha512')
+
+    with open(file_path, 'rb') as file:
+        # Read the file in chunks of 8192 bytes
+        while chunk := file.read(8192):
+            hash_func.update(chunk)
+
+    return hash_func.hexdigest()
+
+
 def copy_built_shaders_to_asset_dir():
     files_to_copy = find_existing_files([TXP_RENDERER_SHADERS_DIR], ['shader', 'shadrefl'])
 
@@ -40,7 +52,11 @@ def copy_built_shaders_to_asset_dir():
         if not f.is_file():
             continue
 
-        shutil.copyfile(f, Path(MY_SHADERS_DIR) / f.name)
+        dest_path = Path(MY_SHADERS_DIR) / f.name
+        if dest_path.exists() and hash_file(f) == hash_file(dest_path):
+            continue  # skip because nothing changed
+
+        shutil.copyfile(f, dest_path)
         print(f'Copied: {f.name}')
 
 
