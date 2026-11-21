@@ -866,7 +866,9 @@
         - hmmm, i feel uncomfy with shaders not being quite right e.g. if they import modules. maybe have the thing running in the background for building shaders?
         - [x] make compile_assets.py poll for changes infinitely
         - [x] add in polling so that if anything changed hash then it would trigger a full recompile
-    - [ ] add checks for if any cglm header guards were defined before including btglm.h
+    - [ ] ~~add checks for if any cglm header guards were defined before including btglm.h~~
+        - im just gonna skip this 😬
+    - [ ] give shadows pcf
 
 - [ ] make it so player can't stand on top of npc or cpu
     - stomp is still good tho!
