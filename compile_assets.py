@@ -1,7 +1,8 @@
+import argparse
 import hashlib
 import os
 from pathlib import Path
-from playsound import playsound
+from playsound import playsound # type: ignore
 import shutil
 import subprocess
 import time
@@ -20,6 +21,13 @@ TXP_RENDERER_SHADERS_DIR = f'{TXP_RENDERER_REPO_DIR}/assets/shaders/'
 
 WATCH_DIRS_FOR_UPDATE = [f'{MY_REPO_DIR}/assets_raw/', f'{TXP_RENDERER_REPO_DIR}/assets_raw/']
 NOTIFY_UPDATE_SOUND_FNAME = f'{MY_REPO_DIR}/assets/audio/i_came.mp3'
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--watch',
+                    help='Keeps program running to watch for changes to recompile.',
+                    action='store_true')
+args = parser.parse_args()
 
 
 def find_existing_files(search_dirs: list[str], search_extensions: list[str]) -> list[Path]:
@@ -107,6 +115,8 @@ def do_compile_assets():
     print()
     print()
 
+    playsound(NOTIFY_UPDATE_SOUND_FNAME)
+
 
 def check_if_changed(last_mod_hashes: dict[Path, str]):
     has_changed = False
@@ -134,13 +144,12 @@ if __name__ == '__main__':
         first_iter = True
         last_mod_hashes: dict[Path, str] = {}
 
-        while True:
+        while args.watch:
             has_changed = check_if_changed(last_mod_hashes)
 
             if not first_iter and has_changed:
                 do_compile_assets()
                 # check_if_changed(last_mod_hashes)  # to force infinite compilation loop from happening (this would introduce a bug if a save happened during compilation)
-                playsound(NOTIFY_UPDATE_SOUND_FNAME)
 
             time.sleep(1)
             first_iter = False
