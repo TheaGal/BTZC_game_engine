@@ -1,2 +1,4 @@
 pyyaml
 imageio
+playsound
+PyObjC

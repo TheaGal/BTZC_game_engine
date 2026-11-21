@@ -859,9 +859,13 @@
         - so max 3 cascades (both realtime cascades and one static cascade if dir light changes) get updated on one frame
     - look into this tech: https://discord.com/channels/1563075165473083402/1564514891862114314
     - [ ] ~~add hotswappable shaders~~
-    - [ ] make compile_assets.py only compile changed things (use hash map for keeping track)
+    - [x] make compile_assets.py only compile changed things (use hash map for keeping track)
         - [x] done'd with shaders
+            - undone so that polling check can happen.
         - [x] done'd with built-shader-copy-to-asset-dir step
+        - hmmm, i feel uncomfy with shaders not being quite right e.g. if they import modules. maybe have the thing running in the background for building shaders?
+        - [x] make compile_assets.py poll for changes infinitely
+        - [x] add in polling so that if anything changed hash then it would trigger a full recompile
     - [ ] add checks for if any cglm header guards were defined before including btglm.h
 
 - [ ] make it so player can't stand on top of npc or cpu
@@ -919,6 +923,7 @@
     - `2026-11-09 14:41:09.814162-0800 btzc_game_engine[60953:3453272] [AppKit] Invalid view geometry: width is negative.`
     - possibly switch to sdl3? or write custom windowing for macos. or just fork glfw?
     - it appears to work just fine on macos 27??
+    - no it will stilll happen occasionally instead of all the time
 
 
 ## Ideas
