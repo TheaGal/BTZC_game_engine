@@ -53,7 +53,7 @@
                 {
                     "type_name": "TXP::component::Render_object_config",
                     "members_j": {
-                        "render_layer": 2,
+                        "render_layer": 4,
                         "model_name": "unit_box"
                     }
                 },
@@ -106,7 +106,7 @@
                 {
                     "type_name": "TXP::component::Render_object_config",
                     "members_j": {
-                        "render_layer": 2,
+                        "render_layer": 4,
                         "model_name": "unit_box"
                     }
                 },
@@ -164,7 +164,7 @@
                 {
                     "type_name": "TXP::component::Render_object_config",
                     "members_j": {
-                        "render_layer": 2,
+                        "render_layer": 4,
                         "model_name": "unit_box"
                     }
                 },
@@ -222,7 +222,7 @@
                 {
                     "type_name": "TXP::component::Render_object_config",
                     "members_j": {
-                        "render_layer": 2,
+                        "render_layer": 4,
                         "model_name": "unit_box"
                     }
                 },
@@ -328,7 +328,7 @@
                 {
                     "type_name": "TXP::component::Render_object_config",
                     "members_j": {
-                        "render_layer": 1,
+                        "render_layer": 3,
                         "model_name": "simple_combat_char",
                         "is_deformed": true,
                         "animator_template_name": "simple_combat_char.btanitor"
@@ -473,7 +473,7 @@
                 {
                     "type_name": "TXP::component::Render_object_config",
                     "members_j": {
-                        "render_layer": 1,
+                        "render_layer": 3,
                         "model_name": "probuilder_example",
                         "is_deformed": false,
                         "animator_template_name": ""
@@ -582,7 +582,7 @@
                 {
                     "type_name": "TXP::component::Render_object_config",
                     "members_j": {
-                        "render_layer": 1,
+                        "render_layer": 3,
                         "model_name": "simple_combat_char",
                         "is_deformed": true,
                         "animator_template_name": "simple_combat_char.btanitor"
@@ -756,7 +756,7 @@
                 {
                     "type_name": "TXP::component::Render_object_config",
                     "members_j": {
-                        "render_layer": 1,
+                        "render_layer": 3,
                         "model_name": "material_viewer_ball"
                     }
                 }
@@ -796,7 +796,7 @@
                 {
                     "type_name": "TXP::component::Render_object_config",
                     "members_j": {
-                        "render_layer": 1,
+                        "render_layer": 3,
                         "model_name": "material_viewer_ball",
                         "material_palette": "probuilder_material_palette"
                     }
@@ -837,7 +837,7 @@
                 {
                     "type_name": "TXP::component::Render_object_config",
                     "members_j": {
-                        "render_layer": 1,
+                        "render_layer": 3,
                         "model_name": "FuckinAround"
                     }
                 }
@@ -877,7 +877,7 @@
                 {
                     "type_name": "TXP::component::Render_object_config",
                     "members_j": {
-                        "render_layer": 1,
+                        "render_layer": 3,
                         "model_name": "unit_box"
                     }
                 }

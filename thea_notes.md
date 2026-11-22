@@ -871,6 +871,9 @@
     - [x] give shadows pcf
         - ended up just doing a vogel disk sampling system to make it stochastic
         - a blur pass or temporal pass in the future would clean this up
+- [x] only render things in shadow map if they are a shadow caster
+- [x] BUG: clearcolor for shadow maps is bad if left alone
+    - clears to float::max() now
 
 - [ ] make it so player can't stand on top of npc or cpu
     - stomp is still good tho!

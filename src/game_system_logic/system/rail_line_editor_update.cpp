@@ -46,6 +46,7 @@ void BT::system::rail_line_editor_update()
 
         // Add render object.
         auto& rend_obj_cfg = reg.emplace<TXP::component::Render_object_config>(new_ent);
+        rend_obj_cfg.render_layer |= TXP::RENDER_LAYER_SHADOW_CASTER;
         rend_obj_cfg.model_name = "rails";
         rend_obj_cfg.sub_mesh_name = sub_mesh_name;
 
