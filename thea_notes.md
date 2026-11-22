@@ -874,6 +874,8 @@
 - [x] only render things in shadow map if they are a shadow caster
 - [x] BUG: clearcolor for shadow maps is bad if left alone
     - clears to float::max() now
+- [x] capture gpu timing for whole frame
+    - note: turns out on macos with kosmickrisp it's just impossible to measure perf of compute shaders
 
 - [ ] make it so player can't stand on top of npc or cpu
     - stomp is still good tho!
