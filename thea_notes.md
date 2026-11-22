@@ -881,6 +881,7 @@
 
 - [ ] make it so player can't stand on top of npc or cpu
     - stomp is still good tho!
+    - [x] nit: adds a small 10 frame window where playchar can jump if press jump button before hit ground
 - [ ] fill in different parry and hurt types
     - will need 2 action maps, one for getting hurt a certain way and another for parrying a certain way (guard will just be same awkward anim)
     - the action maps will have the same indexes as `enum class Atk_dir` since the `.action_idx` that comes in will be that number
