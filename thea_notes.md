@@ -887,6 +887,9 @@
     - make the stomp anim use its own Atk_dir so that the defender/receiver of the stomp will make the bonk sound and decrease its own health but less than a typical attack
     - [ ] create descriptor for pbr.slang shader now that there's a shadow atlas image
 
+- [ ] make camera rig for deathblow anim and posture break
+    - see https://discord.com/channels/1563075165473083402/1573471576991469759
+
 - [ ] create projectile spawning
 - [ ] some fun: energy ball enemy shoots and you have to parry it back to each other until one of you gets hit.
 
