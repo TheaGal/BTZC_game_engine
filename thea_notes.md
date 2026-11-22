@@ -851,13 +851,33 @@
 
 - [x] BUG: hitting the enemy char after they're dead makes the game crash
 
-- [ ] add light manager
+- [x] add light manager
     - one obj that can control directional light
     - one obj each for each point light
-- [ ] add shadows for pbr renderer
+- [x] add shadows for pbr renderer
     - 2 close, realtime cascades, and more faraway static cascades that only update when the directional light changes (but update it one of the faraway static cascades at a time per frame).
         - so max 3 cascades (both realtime cascades and one static cascade if dir light changes) get updated on one frame
     - look into this tech: https://discord.com/channels/1563075165473083402/1564514891862114314
+    - [ ] ~~add hotswappable shaders~~
+    - [x] make compile_assets.py only compile changed things (use hash map for keeping track)
+        - [x] done'd with shaders
+            - undone so that polling check can happen.
+        - [x] done'd with built-shader-copy-to-asset-dir step
+        - hmmm, i feel uncomfy with shaders not being quite right e.g. if they import modules. maybe have the thing running in the background for building shaders?
+        - [x] make compile_assets.py poll for changes infinitely
+        - [x] add in polling so that if anything changed hash then it would trigger a full recompile
+    - [ ] ~~add checks for if any cglm header guards were defined before including btglm.h~~
+        - im just gonna skip this 😬
+    - [x] give shadows pcf
+        - ended up just doing a vogel disk sampling system to make it stochastic
+        - a blur pass or temporal pass in the future would clean this up
+- [x] only render things in shadow map if they are a shadow caster
+- [x] BUG: clearcolor for shadow maps is bad if left alone
+    - clears to float::max() now
+- [x] capture gpu timing for whole frame
+    - note: turns out on macos with kosmickrisp it's just impossible to measure perf of compute shaders
+- [x] extend performance window to show gpu time
+    - ooo pretty graphs!
 
 - [ ] make it so player can't stand on top of npc or cpu
     - stomp is still good tho!
@@ -865,6 +885,10 @@
     - will need 2 action maps, one for getting hurt a certain way and another for parrying a certain way (guard will just be same awkward anim)
     - the action maps will have the same indexes as `enum class Atk_dir` since the `.action_idx` that comes in will be that number
     - make the stomp anim use its own Atk_dir so that the defender/receiver of the stomp will make the bonk sound and decrease its own health but less than a typical attack
+    - [ ] create descriptor for pbr.slang shader now that there's a shadow atlas image
+
+- [ ] make camera rig for deathblow anim and posture break
+    - see https://discord.com/channels/1563075165473083402/1573471576991469759
 
 - [ ] create projectile spawning
 - [ ] some fun: energy ball enemy shoots and you have to parry it back to each other until one of you gets hit.
@@ -913,6 +937,7 @@
     - `2026-11-09 14:41:09.814162-0800 btzc_game_engine[60953:3453272] [AppKit] Invalid view geometry: width is negative.`
     - possibly switch to sdl3? or write custom windowing for macos. or just fork glfw?
     - it appears to work just fine on macos 27??
+    - no it will stilll happen occasionally instead of all the time
 
 
 ## Ideas

@@ -59,6 +59,7 @@ void build_bogie_entities(Entity_container& entity_container,
 
         // Add model.
         auto& rend_obj_cfg = reg.emplace_or_replace<TXP::component::Render_object_config>(new_ent);
+        rend_obj_cfg.render_layer |= TXP::RENDER_LAYER_SHADOW_CASTER;
         rend_obj_cfg.model_name = "unit_box";
     }
 
@@ -110,6 +111,7 @@ void build_car_entities(Entity_container& entity_container,
 
         // Add model.
         auto& rend_obj_cfg = reg.emplace_or_replace<TXP::component::Render_object_config>(new_ent);
+        rend_obj_cfg.render_layer |= TXP::RENDER_LAYER_SHADOW_CASTER;
         rend_obj_cfg.model_name = "unit_box";
     }
 }

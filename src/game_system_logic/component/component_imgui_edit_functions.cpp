@@ -324,6 +324,43 @@ void BT::component::edit::imgui_edit__follow_camera_lockon_target(entt::registry
     ImGui::PopID();
 }
 
+void BT::component::edit::imgui_edit__directional_light(entt::registry& reg,
+                                                        entt::entity ecs_entity)
+{
+    auto& light{ reg.get<TXP::component::Directional_light>(ecs_entity) };
+
+    ImGui::PushID(&light);
+    ImGui::PushItemWidth(ImGui::GetFontSize() * -10);
+
+    ImGui::BeginDisabled();
+    ImGui::InputFloat3("direction", light.direction.raw);
+    ImGui::EndDisabled();
+
+    ImGui::ColorEdit3("color", light.color.raw);
+    ImGui::DragFloat("intensity", &light.intensity, 0.1, 0, 1000);
+
+    ImGui::PopItemWidth();
+    ImGui::PopID();
+}
+
+void BT::component::edit::imgui_edit__point_light(entt::registry& reg, entt::entity ecs_entity)
+{
+    auto& light{ reg.get<TXP::component::Point_light>(ecs_entity) };
+
+    ImGui::PushID(&light);
+    ImGui::PushItemWidth(ImGui::GetFontSize() * -10);
+
+    ImGui::BeginDisabled();
+    ImGui::InputFloat3("origin", light.origin.raw);
+    ImGui::EndDisabled();
+
+    ImGui::ColorEdit3("color", light.color.raw);
+    ImGui::DragFloat("intensity", &light.intensity, 0.1, 0, 1000);
+
+    ImGui::PopItemWidth();
+    ImGui::PopID();
+}
+
 void BT::component::edit::imgui_edit__render_object_config(entt::registry& reg,
                                                              entt::entity ecs_entity)
 {
@@ -344,52 +381,39 @@ void BT::component::edit::imgui_edit__render_object_config(entt::registry& reg,
     ImGui::Checkbox("is_visible*", &rend_obj_settings.is_visible);
 
     static std::vector<std::pair<std::string, TXP::Render_layer>> const k_layers{
-        { "Default",      TXP::RENDER_LAYER_DEFAULT      },
-        { "Level editor", TXP::RENDER_LAYER_LEVEL_EDITOR },
-        { "unassigned3",  TXP::RENDER_LAYER_UNASSIGNED3  },
-        { "unassigned4",  TXP::RENDER_LAYER_UNASSIGNED4  },
-        { "unassigned5",  TXP::RENDER_LAYER_UNASSIGNED5  },
-        { "unassigned6",  TXP::RENDER_LAYER_UNASSIGNED6  },
-        { "unassigned7",  TXP::RENDER_LAYER_UNASSIGNED7  },
-        { "unassigned8",  TXP::RENDER_LAYER_UNASSIGNED8  },
-        { "unassigned9",  TXP::RENDER_LAYER_UNASSIGNED9  },
-        { "unassigned10", TXP::RENDER_LAYER_UNASSIGNED10 },
-        { "unassigned11", TXP::RENDER_LAYER_UNASSIGNED11 },
-        { "unassigned12", TXP::RENDER_LAYER_UNASSIGNED12 },
-        { "unassigned13", TXP::RENDER_LAYER_UNASSIGNED13 },
-        { "unassigned14", TXP::RENDER_LAYER_UNASSIGNED14 },
-        { "unassigned15", TXP::RENDER_LAYER_UNASSIGNED15 },
-        { "unassigned16", TXP::RENDER_LAYER_UNASSIGNED16 },
+        { "Default",       TXP::RENDER_LAYER_DEFAULT       },
+        { "Shadow caster", TXP::RENDER_LAYER_SHADOW_CASTER },
+        { "Level editor",  TXP::RENDER_LAYER_LEVEL_EDITOR  },
+        { "unassigned4",   TXP::RENDER_LAYER_UNASSIGNED4   },
+        { "unassigned5",   TXP::RENDER_LAYER_UNASSIGNED5   },
+        { "unassigned6",   TXP::RENDER_LAYER_UNASSIGNED6   },
+        { "unassigned7",   TXP::RENDER_LAYER_UNASSIGNED7   },
+        { "unassigned8",   TXP::RENDER_LAYER_UNASSIGNED8   },
+        { "unassigned9",   TXP::RENDER_LAYER_UNASSIGNED9   },
+        { "unassigned10",  TXP::RENDER_LAYER_UNASSIGNED10  },
+        { "unassigned11",  TXP::RENDER_LAYER_UNASSIGNED11  },
+        { "unassigned12",  TXP::RENDER_LAYER_UNASSIGNED12  },
+        { "unassigned13",  TXP::RENDER_LAYER_UNASSIGNED13  },
+        { "unassigned14",  TXP::RENDER_LAYER_UNASSIGNED14  },
+        { "unassigned15",  TXP::RENDER_LAYER_UNASSIGNED15  },
+        { "unassigned16",  TXP::RENDER_LAYER_UNASSIGNED16  },
     };
 
-    int32_t render_layer_cur_item = [&rend_obj_settings]() {
-        int32_t layer_idx = 0;
+    if (ImGui::TreeNodeEx("render_layer", ImGuiTreeNodeFlags_DefaultOpen))
+    {
         for (auto const& [str, layer] : k_layers)
         {
-            if (rend_obj_settings.render_layer == layer)
-                break;
-            layer_idx++;
+            bool selected{ (rend_obj_settings.render_layer & layer) != 0 };
+            if (ImGui::Checkbox((str + "##render_layer_bits_checkbox").c_str(), &selected))
+            {
+                if (selected)
+                    rend_obj_settings.render_layer |= layer;
+                else
+                    rend_obj_settings.render_layer ^= layer;
+            }
         }
-        return layer_idx;
-    }();
 
-    static std::vector<char const*> k_render_layer_str_list = []() {
-        std::vector<char const*> str_list;
-        str_list.reserve(k_layers.size());
-
-        for (auto const& [str, _] : k_layers)
-        {
-            str_list.emplace_back(str.data());
-        }
-        return str_list;
-    }();
-
-    if (ImGui::Combo("render_layer",
-                     &render_layer_cur_item,
-                     k_render_layer_str_list.data(),
-                     k_render_layer_str_list.size()))
-    {
-        rend_obj_settings.render_layer = k_layers[render_layer_cur_item].second;
+        ImGui::TreePop();
     }
 
     ImGui::InputText("model_name", &rend_obj_settings.model_name);

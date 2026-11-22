@@ -163,6 +163,8 @@ set(ASSET_DIR_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/clouds.shadrefl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/default_shader.shader
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/default_shader.shadrefl
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/directional_light_shadow.shader
+    ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/directional_light_shadow.shadrefl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/gradient.shader
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/gradient.shadrefl
     ${CMAKE_CURRENT_SOURCE_DIR}/assets/shaders/pbr.shader
@@ -298,6 +300,8 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/tick_sim_char_mvt_animator.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/update_camera_billboards.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/update_camera_billboards.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/update_light_transforms.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/update_light_transforms.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/write_entity_transforms_from_physics.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/write_entity_transforms_from_physics.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/game_system_logic/system/write_render_transforms.cpp

@@ -71,7 +71,7 @@
                 {
                     "type_name": "TXP::component::Render_object_config",
                     "members_j": {
-                        "render_layer": 1,
+                        "render_layer": 3,
                         "model_name": "unit_plane",
                         "material_palette": "large_grid_material_palette"
                     }
@@ -112,7 +112,7 @@
                 {
                     "type_name": "TXP::component::Render_object_config",
                     "members_j": {
-                        "render_layer": 1,
+                        "render_layer": 3,
                         "model_name": "floor_compass"
                     }
                 }

@@ -1,5 +1,6 @@
 #include "write_render_transforms.h"
 
+#include "btdatecheck.h"
 #include "btglm.h"
 #include "entt/entity/registry.hpp"
 #include "game_system_logic/component/transform.h"
@@ -23,6 +24,7 @@ void BT::system::write_render_transforms()
     for (auto&& [_, transform, rend_obj_ref] : view.each())
     {
         // @TODO: Include interpolation instead of just straight copying.
+        date_deadline(2027, 1, 1);
 
         // Calculate TRS into mat4 transform.
         vec3 trans_pos_f;

@@ -28,6 +28,7 @@
 #include "game_system_logic/system/rail_line_rider_update.h"
 #include "game_system_logic/system/tick_sim_char_mvt_animator.h"
 #include "game_system_logic/system/update_camera_billboards.h"
+#include "game_system_logic/system/update_light_transforms.h"
 #include "game_system_logic/system/write_entity_transforms_from_physics.h"
 #include "game_system_logic/system/write_render_transforms.h"
 #include "game_system_logic/world/scene_loader.h"
@@ -393,7 +394,7 @@ int main(int argc, char* argv[])
             // Audio tick.
             {
                 // @TODO: make this thread safe.
-                BT::date_deadline(2026, 11, 16);
+                BT::date_deadline(2026, 12, 17);
 
                 vec3 cam_position;
                 vec3 cam_forward;
@@ -440,6 +441,7 @@ int main(int argc, char* argv[])
             BT::system::rail_line_editor_update();
 
             BT::system::write_render_transforms();
+            BT::system::update_light_transforms();
             BT::system::follow_camera_position_update();
 #if IMPLEMENT_THIS
             BT::system::update_selected_entity_debug_render_transform();
