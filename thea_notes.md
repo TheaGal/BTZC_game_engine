@@ -876,6 +876,8 @@
     - clears to float::max() now
 - [x] capture gpu timing for whole frame
     - note: turns out on macos with kosmickrisp it's just impossible to measure perf of compute shaders
+- [x] extend performance window to show gpu time
+    - ooo pretty graphs!
 
 - [ ] make it so player can't stand on top of npc or cpu
     - stomp is still good tho!
