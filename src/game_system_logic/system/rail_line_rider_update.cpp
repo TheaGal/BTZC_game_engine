@@ -243,7 +243,7 @@ void BT::system::rail_line_rider_update()
         static auto const k_apply_transform_to_entity =
             [](entt::registry& reg, entt::entity ent, Rail_position_transform const& transform) {
                 versors transform_rot;
-                glm_euler_zyx_quat(vec3{ transform.angle_x, transform.angle_y, transform.angle_z },
+                glm_euler_yxz_quat(vec3{ transform.angle_x, transform.angle_y, transform.angle_z },
                                    transform_rot.raw);
 
                 k_apply_transform_to_entity_vec3_quat(reg, ent, transform.position, transform_rot);
@@ -300,12 +300,12 @@ void BT::system::rail_line_rider_update()
             glm_vec3_muladds(const_cast<float_t*>(bogie_trans1.position.raw), 0.5f, mid_pos.raw);
 
             versor transform_rot0;
-            glm_euler_zyx_quat(
+            glm_euler_yxz_quat(
                 vec3{ bogie_trans0.angle_x, bogie_trans0.angle_y, bogie_trans0.angle_z },
                 transform_rot0);
 
             versor transform_rot1;
-            glm_euler_zyx_quat(
+            glm_euler_yxz_quat(
                 vec3{ bogie_trans1.angle_x, bogie_trans1.angle_y, bogie_trans1.angle_z },
                 transform_rot1);
             

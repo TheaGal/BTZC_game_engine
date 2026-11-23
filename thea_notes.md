@@ -882,11 +882,12 @@
 - [ ] make it so player can't stand on top of npc or cpu
     - stomp is still good tho!
     - [x] nit: adds a small 10 frame window where playchar can jump if press jump button before hit ground
+    - [x] change rotation order to YXZ and derive euler angle extraction math func
+    - [ ] create a bit of a gym to make sure that wall sliding is enabled
 - [ ] fill in different parry and hurt types
     - will need 2 action maps, one for getting hurt a certain way and another for parrying a certain way (guard will just be same awkward anim)
     - the action maps will have the same indexes as `enum class Atk_dir` since the `.action_idx` that comes in will be that number
     - make the stomp anim use its own Atk_dir so that the defender/receiver of the stomp will make the bonk sound and decrease its own health but less than a typical attack
-    - [ ] create descriptor for pbr.slang shader now that there's a shadow atlas image
 
 - [ ] make camera rig for deathblow anim and posture break
     - see https://discord.com/channels/1563075165473083402/1573471576991469759

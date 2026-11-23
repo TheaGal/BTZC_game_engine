@@ -66,7 +66,7 @@ void BT::system::update_camera_billboards()
 
         // Calc billboard rotation.
         mat4 extra_rot;
-        glm_euler_zyx(billboard_to_camera.rotation_euler.raw, extra_rot);
+        glm_euler_yxz(billboard_to_camera.rotation_euler.raw, extra_rot);
         versor extra_rot_q;
         glm_mat4_quat(extra_rot, extra_rot_q);
 

@@ -178,9 +178,58 @@ void BT::component::edit::imgui_edit__transform(entt::registry& reg, entt::entit
     // Rotation.
     if (s_rotation_type == 0)
     {
-        // @INCOMPLETE: @TODO: Make this actually use euler angles (in degrees).
-        // See `game_object.cpp:522` for a good example (since euler angles are unstable when doing multiple calcs).
-        changed |= ImGui::DragFloat3("Rotation (Euler)", transform_copy.rotation.raw, 0.1f);
+        static vec3 s_euler_angles;
+
+        static auto const k_update_euler_angles = [](versor rot_quat,
+                                                     vec3 in_out_euler_angles) -> void {
+            vec3 euler_angles_rad{
+                glm_rad(in_out_euler_angles[0]),
+                glm_rad(in_out_euler_angles[1]),
+                glm_rad(in_out_euler_angles[2]),
+            };
+            versor euler_angles_quat;
+            glm_euler_yxz_quat(euler_angles_rad, euler_angles_quat);
+
+            if (!glm_eq(rot_quat[0], euler_angles_quat[0]) ||
+                !glm_eq(rot_quat[1], euler_angles_quat[1]) ||
+                !glm_eq(rot_quat[2], euler_angles_quat[2]) ||
+                !glm_eq(rot_quat[3], euler_angles_quat[3]))
+            {
+                // Recalc and reapply euler angles!!
+                versor rot_quat_n;
+                glm_quat_normalize_to(rot_quat, rot_quat_n);
+                mat4 rot_mat4;
+                glm_quat_mat4(rot_quat_n, rot_mat4);
+                vec3 rot_euler;
+                btglm_euler_angles_yxz(rot_mat4, rot_euler);
+
+                rot_euler[0] = glm_deg(rot_euler[0]);
+                rot_euler[1] = glm_deg(rot_euler[1]);
+                rot_euler[2] = glm_deg(rot_euler[2]);
+                glm_vec3_copy(rot_euler, in_out_euler_angles);
+            }
+        };
+
+        // Recalc euler angles if changed too much.
+        if (!reg.any_of<component::Transform_changed>(ecs_entity))
+            k_update_euler_angles(transform_copy.rotation.raw, s_euler_angles);
+
+        // Edit euler angles, writing if changed.
+        if (ImGui::DragFloat3("Rotation (Euler degrees)", s_euler_angles, 0.1f))
+        {
+            btglm_angle_normalize_degrees(s_euler_angles[0], -180, 180);
+            btglm_angle_normalize_degrees(s_euler_angles[1], -180, 180);
+            btglm_angle_normalize_degrees(s_euler_angles[2], -180, 180);
+
+            vec3 euler_angles_rad{
+                glm_rad(s_euler_angles[0]),
+                glm_rad(s_euler_angles[1]),
+                glm_rad(s_euler_angles[2]),
+            };
+            glm_euler_yxz_quat(euler_angles_rad, transform_copy.rotation.raw);
+
+            changed |= true;
+        }
     }
     else if (s_rotation_type == 1)
     {   // Quaternion editing.

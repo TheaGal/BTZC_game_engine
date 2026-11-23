@@ -495,6 +495,246 @@
             ]
         },
         {
+            "entity_uuid": "4d4bcf99-bb7b-47eb-87a0-9295ed17391e",
+            "components": [
+                {
+                    "type_name": "TXP::component::Entity_metadata",
+                    "members_j": {
+                        "name": "Angled cube 1",
+                        "uuid": "4d4bcf99-bb7b-47eb-87a0-9295ed17391e"
+                    }
+                },
+                {
+                    "type_name": "component::Transform",
+                    "members_j": {
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                },
+                {
+                    "type_name": "component::Transform_hierarchy",
+                    "members_j": {
+                        "parent_entity": null,
+                        "children_entities": []
+                    }
+                },
+                {
+                    "type_name": "TXP::component::Render_object_config",
+                    "members_j": {
+                        "render_layer": 3,
+                        "model_name": "unit_box"
+                    }
+                },
+                {
+                    "type_name": "component::Physics_object_settings",
+                    "members_j": {
+                        "phys_obj_type": 0
+                    }
+                },
+                {
+                    "type_name": "component::Physics_obj_type_triangle_mesh_settings",
+                    "members_j": {
+                        "model_name": "unit_box",
+                        "motion_type": 0
+                    }
+                }
+            ]
+        },
+        {
+            "entity_uuid": "f715554c-eb4f-4d49-88d3-7a67886a2645",
+            "components": [
+                {
+                    "type_name": "TXP::component::Entity_metadata",
+                    "members_j": {
+                        "name": "Angled cube 2",
+                        "uuid": "f715554c-eb4f-4d49-88d3-7a67886a2645"
+                    }
+                },
+                {
+                    "type_name": "component::Transform",
+                    "members_j": {
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                },
+                {
+                    "type_name": "component::Transform_hierarchy",
+                    "members_j": {
+                        "parent_entity": null,
+                        "children_entities": []
+                    }
+                },
+                {
+                    "type_name": "TXP::component::Render_object_config",
+                    "members_j": {
+                        "render_layer": 3,
+                        "model_name": "unit_box"
+                    }
+                },
+                {
+                    "type_name": "component::Physics_object_settings",
+                    "members_j": {
+                        "phys_obj_type": 0
+                    }
+                },
+                {
+                    "type_name": "component::Physics_obj_type_triangle_mesh_settings",
+                    "members_j": {
+                        "model_name": "unit_box",
+                        "motion_type": 0
+                    }
+                }
+            ]
+        },
+        {
+            "entity_uuid": "a32f9321-ba89-45f3-a0ab-c85935698072",
+            "components": [
+                {
+                    "type_name": "TXP::component::Entity_metadata",
+                    "members_j": {
+                        "name": "Angled cube 3",
+                        "uuid": "a32f9321-ba89-45f3-a0ab-c85935698072"
+                    }
+                },
+                {
+                    "type_name": "component::Transform",
+                    "members_j": {
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                },
+                {
+                    "type_name": "component::Transform_hierarchy",
+                    "members_j": {
+                        "parent_entity": null,
+                        "children_entities": []
+                    }
+                },
+                {
+                    "type_name": "TXP::component::Render_object_config",
+                    "members_j": {
+                        "render_layer": 3,
+                        "model_name": "unit_box"
+                    }
+                },
+                {
+                    "type_name": "component::Physics_object_settings",
+                    "members_j": {
+                        "phys_obj_type": 0
+                    }
+                },
+                {
+                    "type_name": "component::Physics_obj_type_triangle_mesh_settings",
+                    "members_j": {
+                        "model_name": "unit_box",
+                        "motion_type": 0
+                    }
+                }
+            ]
+        },
+        {
+            "entity_uuid": "20c18d6d-bf27-4404-b103-7c18ab17ff5f",
+            "components": [
+                {
+                    "type_name": "TXP::component::Entity_metadata",
+                    "members_j": {
+                        "name": "Angled cube 4",
+                        "uuid": "20c18d6d-bf27-4404-b103-7c18ab17ff5f"
+                    }
+                },
+                {
+                    "type_name": "component::Transform",
+                    "members_j": {
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "rotation": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0,
+                            "w": 1.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        }
+                    }
+                },
+                {
+                    "type_name": "component::Transform_hierarchy",
+                    "members_j": {
+                        "parent_entity": null,
+                        "children_entities": []
+                    }
+                },
+                {
+                    "type_name": "TXP::component::Render_object_config",
+                    "members_j": {
+                        "render_layer": 3,
+                        "model_name": "unit_box"
+                    }
+                },
+                {
+                    "type_name": "component::Physics_object_settings",
+                    "members_j": {
+                        "phys_obj_type": 0
+                    }
+                },
+                {
+                    "type_name": "component::Physics_obj_type_triangle_mesh_settings",
+                    "members_j": {
+                        "model_name": "unit_box",
+                        "motion_type": 0
+                    }
+                }
+            ]
+        },
+        {
             "entity_uuid": "019a9611-b980-7378-aea7-17deb7f1b3db",
             "components": [
                 {
