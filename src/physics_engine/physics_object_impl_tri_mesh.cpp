@@ -21,10 +21,13 @@
 
 
 BT::Phys_obj_impl_tri_mesh::Phys_obj_impl_tri_mesh(std::string const& model_name,
+                                                   JPH::Vec3Arg model_scale,
                                                    JPH::EMotionType motion_type,
                                                    Physics_transform&& init_transform)
-    : m_phys_body_ifc{ *reinterpret_cast<JPH::BodyInterface*>(service_finder::find_service<Physics_engine>().get_physics_body_ifc()) }
+    : m_phys_body_ifc{ *reinterpret_cast<JPH::BodyInterface*>(
+          service_finder::find_service<Physics_engine>().get_physics_body_ifc()) }
     , m_can_move{ motion_type == JPH::EMotionType::Kinematic }
+    , m_model_scale{ model_scale }
 {
     if (motion_type == JPH::EMotionType::Dynamic)
     {
@@ -40,13 +43,22 @@ BT::Phys_obj_impl_tri_mesh::Phys_obj_impl_tri_mesh(std::string const& model_name
     //   that makes the triangle list better than using the inefficient-for-physics
     //   indexed triangle list from the obj file (or placebo hehe), so I'm gonna
     //   stick to the triangle list below for now.  -Thea 2025/05/29
+
+    // @TODO: think about what to do about multiple static mesh shapes getting reused (or if that
+    //        scenario would even happen). it might just be best to make an assets checker that
+    //        scans all physics object tri mesh settings objects and trips if there are too many
+    //        reused ones.  -thea 2026/11/23
+    date_deadline(2027, 1, 1);
+
 #define INDEXED_TRIANGLE_LIST 0
 #if INDEXED_TRIANGLE_LIST
     JPH::VertexList vertex_list;
     vertex_list.reserve(basic_model.vertices.size());
     for (auto& vertex : basic_model.vertices)
     {
-        vertex_list.emplace_back(vertex.position[0], vertex.position[1], vertex.position[2]);
+        vertex_list.emplace_back(vertex.position[0] * m_model_scale.GetX(),
+                                 vertex.position[1] * m_model_scale.GetY(),
+                                 vertex.position[2] * m_model_scale.GetZ());
     }
 
     assert(basic_model.indices.size() % 3 == 0);
@@ -64,15 +76,15 @@ BT::Phys_obj_impl_tri_mesh::Phys_obj_impl_tri_mesh(std::string const& model_name
     JPH::TriangleList tri_list;
     for (size_t i = 0; i < basic_model.indices.size(); i += 3)
     {
-        JPH::Float3 p0{ basic_model.vertices[basic_model.indices[i + 0]].position[0],
-                        basic_model.vertices[basic_model.indices[i + 0]].position[1],
-                        basic_model.vertices[basic_model.indices[i + 0]].position[2] };
-        JPH::Float3 p1{ basic_model.vertices[basic_model.indices[i + 1]].position[0],
-                        basic_model.vertices[basic_model.indices[i + 1]].position[1],
-                        basic_model.vertices[basic_model.indices[i + 1]].position[2] };
-        JPH::Float3 p2{ basic_model.vertices[basic_model.indices[i + 2]].position[0],
-                        basic_model.vertices[basic_model.indices[i + 2]].position[1],
-                        basic_model.vertices[basic_model.indices[i + 2]].position[2] };
+        JPH::Float3 p0{ basic_model.vertices[basic_model.indices[i + 0]].position[0] * m_model_scale.GetX(),
+                        basic_model.vertices[basic_model.indices[i + 0]].position[1] * m_model_scale.GetY(),
+                        basic_model.vertices[basic_model.indices[i + 0]].position[2] * m_model_scale.GetZ() };
+        JPH::Float3 p1{ basic_model.vertices[basic_model.indices[i + 1]].position[0] * m_model_scale.GetX(),
+                        basic_model.vertices[basic_model.indices[i + 1]].position[1] * m_model_scale.GetY(),
+                        basic_model.vertices[basic_model.indices[i + 1]].position[2] * m_model_scale.GetZ() };
+        JPH::Float3 p2{ basic_model.vertices[basic_model.indices[i + 2]].position[0] * m_model_scale.GetX(),
+                        basic_model.vertices[basic_model.indices[i + 2]].position[1] * m_model_scale.GetY(),
+                        basic_model.vertices[basic_model.indices[i + 2]].position[2] * m_model_scale.GetZ() };
         tri_list.emplace_back(p0, p1, p2);
     }
     JPH::MeshShapeSettings mesh_settings(tri_list);
@@ -138,5 +150,8 @@ void BT::Phys_obj_impl_tri_mesh::update_debug_mesh()
                                            current_trans.rotation.GetY(),
                                            current_trans.rotation.GetZ(),
                                            current_trans.rotation.GetW() }, graphic_trans);
+    glm_scale(graphic_trans,
+              vec3{ m_model_scale.GetX(), m_model_scale.GetY(), m_model_scale.GetZ() });
+
     TXP::debug::update_debug_model_transform(m_debug_mesh_id, graphic_trans);
 }

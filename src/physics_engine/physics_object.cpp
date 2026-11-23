@@ -57,13 +57,14 @@ BT::Physics_transform BT::Physics_transform::make_phys_trans(rvec3s pos, versors
 unique_ptr<BT::Physics_object> BT::Physics_object::create_triangle_mesh(
     bool interpolate_transform,
     std::string const& model_name,
+    JPH::Vec3Arg model_scale,
     JPH::EMotionType motion_type,
     Physics_transform&& init_transform)
 {
-    auto tri_mesh =
-        make_unique<Phys_obj_impl_tri_mesh>(model_name,
-                                            motion_type,
-                                            std::move(init_transform));
+    auto tri_mesh = make_unique<Phys_obj_impl_tri_mesh>(model_name,
+                                                        model_scale,
+                                                        motion_type,
+                                                        std::move(init_transform));
     return unique_ptr<Physics_object>(
         new Physics_object(interpolate_transform, std::move(tri_mesh)));
 }

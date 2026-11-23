@@ -2,6 +2,7 @@
 
 #include "Jolt/Jolt.h"
 #include "Jolt/Math/Float3.h"
+#include "Jolt/Math/MathTypes.h"
 #include "Jolt/Physics/Body/BodyID.h"
 #include "Jolt/Physics/Body/BodyInterface.h"
 #include "Jolt/Physics/Body/MotionType.h"
@@ -21,6 +22,7 @@ class Phys_obj_impl_tri_mesh : public Physics_object_type_impl_ifc
 {
 public:
     Phys_obj_impl_tri_mesh(std::string const& model_name,
+                           JPH::Vec3Arg model_scale,
                            JPH::EMotionType motion_type,
                            Physics_transform&& init_transform);
     Phys_obj_impl_tri_mesh(Phys_obj_impl_tri_mesh const&)            = delete;
@@ -38,6 +40,8 @@ private:
     JPH::BodyInterface& m_phys_body_ifc;
     JPH::BodyID m_body_id;
     bool m_can_move;
+
+    JPH::Vec3Arg m_model_scale;
 
     TXP::debug::debug_model_id_t m_debug_mesh_id;
 };

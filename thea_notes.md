@@ -883,8 +883,10 @@
     - stomp is still good tho!
     - [x] nit: adds a small 10 frame window where playchar can jump if press jump button before hit ground
     - [x] change rotation order to YXZ and derive euler angle extraction math func
+    - [x] fix static physics objects not scaling
     - [ ] create a bit of a gym to make sure that wall sliding is enabled
         - [ ] add saving button for the scene
+        - hmm i want to have an "add gameobject" button too but i think that it needs to be a prefab-based system and maybe there's a prefab editor and then the values can get overridden in the actual .btscene file??
     - [ ] mark other characters with something to show that it should be not standable. maybe use a bit flag in userdata uint64?
 - [ ] fill in different parry and hurt types
     - will need 2 action maps, one for getting hurt a certain way and another for parrying a certain way (guard will just be same awkward anim)
