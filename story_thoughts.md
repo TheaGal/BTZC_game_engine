@@ -97,3 +97,13 @@
 - pc can choose whether to receive the abaranuki treatment or to describe the meds they were taking before. if pc chooses not to get it, the game "ends" with a 50 yrs later thing, where pc is permanently hooked up to the machine giving antidepressants, and others are trying to cheer them up and keep company. obvi bad ending but pc didnt lose their status, just their dignity.
 
 - maybe having a moment of talking about nyoketsu in your blood vs danketsu? it'll be very on the nose lol
+
+
+# bone sword
+
+- after removing pc's abarabone, they can take it to ppl's place to get it made into a sword with the abara's essence.
+- this sword is extremely dangerous, so once grabbing the sword, pc's life energy starts to drastically drain due to how incompatible the unoabara's essence is to pc's body.
+- if pc can find a sheath for the sword, then they can wield the sword without dying.
+- using the sword takes a little bit of max health away from pc until they rest again.
+    - similar to TOTK's gloom or the purple stuff in TUNIC
+- why is the bone sword important? idk, but it being incompatible w pc is the most important part
