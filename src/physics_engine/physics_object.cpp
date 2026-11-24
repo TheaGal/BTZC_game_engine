@@ -56,6 +56,7 @@ BT::Physics_transform BT::Physics_transform::make_phys_trans(rvec3s pos, versors
 
 unique_ptr<BT::Physics_object> BT::Physics_object::create_triangle_mesh(
     bool interpolate_transform,
+    Phys_obj_flags flags,
     std::string const& model_name,
     JPH::Vec3Arg model_scale,
     JPH::EMotionType motion_type,
@@ -64,13 +65,15 @@ unique_ptr<BT::Physics_object> BT::Physics_object::create_triangle_mesh(
     auto tri_mesh = make_unique<Phys_obj_impl_tri_mesh>(model_name,
                                                         model_scale,
                                                         motion_type,
-                                                        std::move(init_transform));
+                                                        std::move(init_transform),
+                                                        flags.to_flags());
     return unique_ptr<Physics_object>(
         new Physics_object(interpolate_transform, std::move(tri_mesh)));
 }
 
 unique_ptr<BT::Physics_object> BT::Physics_object::create_character_controller(
     bool interpolate_transform,
+    Phys_obj_flags flags,
     float_t radius,
     float_t height,
     float_t crouch_height,
@@ -79,7 +82,8 @@ unique_ptr<BT::Physics_object> BT::Physics_object::create_character_controller(
     auto cc = make_unique<Phys_obj_impl_char_controller>(radius,
                                                          height,
                                                          crouch_height,
-                                                         std::move(init_transform));
+                                                         std::move(init_transform),
+                                                         flags.to_flags());
     return unique_ptr<Physics_object>(new Physics_object(interpolate_transform, std::move(cc)));
 }
 
@@ -136,6 +140,8 @@ void BT::Physics_object::get_transform_for_entity(rvec3& out_position, versor& o
         out_position[1] = pos_a[1] + lerp_val * (pos_b[1] - pos_a[1]);
         out_position[2] = pos_a[2] + lerp_val * (pos_b[2] - pos_a[2]);
         glm_quat_nlerp(rot_a, rot_b, lerp_val, out_rotation);
+
+        assert(false);  // apparently this isn't supposed to be here but rather the triple buffer needs to happen in the render thread!!!  -thea 2026/11/23
     }
     else
     {

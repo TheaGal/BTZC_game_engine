@@ -26,7 +26,8 @@ public:
     Phys_obj_impl_char_controller(float_t radius,
                                   float_t height,
                                   float_t crouch_height,
-                                  Physics_transform&& init_transform);
+                                  Physics_transform&& init_transform,
+                                  uint64_t userdata);
     ~Phys_obj_impl_char_controller();
 
     // Phys obj impl ifc.

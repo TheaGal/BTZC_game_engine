@@ -10,6 +10,7 @@
 #include "Jolt/Physics/Collision/Shape/CapsuleShape.h"
 #include "Jolt/Physics/Collision/Shape/RotatedTranslatedShape.h"
 #include "Jolt/Physics/PhysicsSystem.h"
+#include "physics_engine/physics_object.h"
 #include "physics_engine_impl_layers.h"
 #include "service_finder/service_finder.h"
 #include "txp_renderer_public.h"
@@ -20,9 +21,12 @@
 BT::Phys_obj_impl_char_controller::Phys_obj_impl_char_controller(float_t radius,
                                                                  float_t height,
                                                                  float_t crouch_height,
-                                                                 Physics_transform&& init_transform)
-    : m_phys_system{ *reinterpret_cast<JPH::PhysicsSystem*>(service_finder::find_service<Physics_engine>().get_physics_system_ptr()) }
-    , m_phys_temp_allocator{ *reinterpret_cast<JPH::TempAllocator*>(service_finder::find_service<Physics_engine>().get_physics_temp_allocator_ptr()) }
+                                                                 Physics_transform&& init_transform,
+                                                                 uint64_t userdata)
+    : m_phys_system{ *reinterpret_cast<JPH::PhysicsSystem*>(
+          service_finder::find_service<Physics_engine>().get_physics_system_ptr()) }
+    , m_phys_temp_allocator{ *reinterpret_cast<JPH::TempAllocator*>(
+          service_finder::find_service<Physics_engine>().get_physics_temp_allocator_ptr()) }
     , m_radius{ radius }
     , m_height{ height - 2.0f * radius }
     , m_crouch_height{ crouch_height - 2.0f * radius }
@@ -112,7 +116,7 @@ BT::Phys_obj_impl_char_controller::Phys_obj_impl_char_controller(float_t radius,
     m_character = new JPH::CharacterVirtual(settings,
                                             init_transform.position,
                                             init_transform.rotation,
-                                            0,
+                                            userdata,
                                             &m_phys_system);
 
     // @TODO: Add handling for char vs char collision!
@@ -123,15 +127,19 @@ BT::Phys_obj_impl_char_controller::Phys_obj_impl_char_controller(float_t radius,
     m_character->SetListener(this);
 
     // Create debug render job.
+    TXP::debug::Material_type const material_type{
+        Phys_obj_flags(userdata).is_standable() ? TXP::debug::PHYSICS_STANDABLE_WIREFRAME
+                                                : TXP::debug::PHYSICS_UNSTANDABLE_WIREFRAME
+    };
     m_debug_mesh_ids[0] = TXP::debug::emplace_debug_model_submesh("unit_capsule_parts",
                                                                   "Capsule_cap_top",
-                                                                  TXP::debug::PHYSICS_WIREFRAME);
+                                                                  material_type);
     m_debug_mesh_ids[1] = TXP::debug::emplace_debug_model_submesh("unit_capsule_parts",
                                                                   "Capsule_midsection",
-                                                                  TXP::debug::PHYSICS_WIREFRAME);
+                                                                  material_type);
     m_debug_mesh_ids[2] = TXP::debug::emplace_debug_model_submesh("unit_capsule_parts",
                                                                   "Capsule_cap_bottom",
-                                                                  TXP::debug::PHYSICS_WIREFRAME);
+                                                                  material_type);
 }
 
 BT::Phys_obj_impl_char_controller::~Phys_obj_impl_char_controller()
@@ -163,7 +171,8 @@ void BT::Phys_obj_impl_char_controller::tick_fetch_cc_status(JPH::Vec3& out_grou
     out_ground_velocity = m_character->GetGroundVelocity();
     out_linear_velocity = m_character->GetLinearVelocity();
     out_up_direction = m_character->GetUp();
-    out_is_supported = m_character->IsSupported();
+    out_is_supported = (m_character->IsSupported() &&
+                        Phys_obj_flags(m_character->GetGroundUserData()).is_standable());
     out_ground_state = m_character->GetGroundState();
     out_ground_normal = m_character->GetGroundNormal();
     out_is_crouched = m_is_crouched;

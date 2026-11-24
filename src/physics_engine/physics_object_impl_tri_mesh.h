@@ -24,7 +24,8 @@ public:
     Phys_obj_impl_tri_mesh(std::string const& model_name,
                            JPH::Vec3Arg model_scale,
                            JPH::EMotionType motion_type,
-                           Physics_transform&& init_transform);
+                           Physics_transform&& init_transform,
+                           uint64_t userdata);
     Phys_obj_impl_tri_mesh(Phys_obj_impl_tri_mesh const&)            = delete;
     Phys_obj_impl_tri_mesh(Phys_obj_impl_tri_mesh&&)                 = delete;
     Phys_obj_impl_tri_mesh& operator=(Phys_obj_impl_tri_mesh const&) = delete;

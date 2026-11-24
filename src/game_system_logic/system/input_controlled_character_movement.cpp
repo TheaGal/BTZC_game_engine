@@ -344,9 +344,10 @@ Char_mvt_logic_results character_controller_movement_logic(
 
     // Find movement state.
     JPH::Vec3 current_vertical_velocity = linear_velocity.Dot(up_direction) * up_direction;
-    bool const is_grounded{ ground_state == JPH::CharacterVirtual::EGroundState::OnGround &&
+    bool const is_grounded{ is_supported &&
+                            ground_state == JPH::CharacterVirtual::EGroundState::OnGround &&
                             (current_vertical_velocity.GetY() - ground_velocity.GetY()) < 0.1f &&
-                            !char_con_impl->is_cc_slope_too_steep(ground_normal) &&
+                            !char_con_impl->is_cc_slope_too_steep(ground_normal) &&  // @CHECK: is this needed? bc too steep of a slope will already show up in EGroundState
                             !(anim_root_motion && anim_root_motion->jump_up) };  // force not-grounded if performing jump_up event.
 
     // Position and face self in pair animation.

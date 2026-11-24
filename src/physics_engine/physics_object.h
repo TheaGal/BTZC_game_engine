@@ -72,21 +72,56 @@ public:
     virtual void update_debug_mesh() = 0;
 };
 
-class Physics_engine;
+
+class Phys_obj_flags
+{
+public:
+    Phys_obj_flags(bool is_standable)
+    {
+        m_flags |= (is_standable ? IS_STANDABLE : 0);
+    }
+
+    Phys_obj_flags(uint64_t flags)
+        : m_flags{ flags }
+    {
+    }
+
+    bool is_standable() const
+    {
+        return ((m_flags & IS_STANDABLE) != 0);
+    }
+
+    inline uint64_t to_flags() const
+    {
+        return m_flags;
+    }
+
+private:
+    uint64_t m_flags{ 0 };
+
+    enum Flag_value : uint64_t
+    {
+        IS_STANDABLE = (1ULL << 0),
+    };
+};
+
 
 class Physics_object : public UUID_ifc
 {
 public:
     static unique_ptr<Physics_object> create_triangle_mesh(bool interpolate_transform,
+                                                           Phys_obj_flags flags,
                                                            std::string const& model_name,
                                                            JPH::Vec3Arg model_scale,
                                                            JPH::EMotionType motion_type,
                                                            Physics_transform&& init_transform);
-    static unique_ptr<Physics_object> create_character_controller(bool interpolate_transform,
-                                                                  float_t radius,
-                                                                  float_t height,
-                                                                  float_t crouch_height,
-                                                                  Physics_transform&& init_transform);
+    static unique_ptr<Physics_object> create_character_controller(
+        bool interpolate_transform,
+        Phys_obj_flags flags,
+        float_t radius,
+        float_t height,
+        float_t crouch_height,
+        Physics_transform&& init_transform);
 
 private:
     // Required to use a factory function to init.

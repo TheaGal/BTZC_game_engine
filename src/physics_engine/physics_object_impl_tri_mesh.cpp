@@ -23,7 +23,8 @@
 BT::Phys_obj_impl_tri_mesh::Phys_obj_impl_tri_mesh(std::string const& model_name,
                                                    JPH::Vec3Arg model_scale,
                                                    JPH::EMotionType motion_type,
-                                                   Physics_transform&& init_transform)
+                                                   Physics_transform&& init_transform,
+                                                   uint64_t userdata)
     : m_phys_body_ifc{ *reinterpret_cast<JPH::BodyInterface*>(
           service_finder::find_service<Physics_engine>().get_physics_body_ifc()) }
     , m_can_move{ motion_type == JPH::EMotionType::Kinematic }
@@ -96,10 +97,14 @@ BT::Phys_obj_impl_tri_mesh::Phys_obj_impl_tri_mesh(std::string const& model_name
                                                  init_transform.rotation,
                                                  motion_type,
                                                  (m_can_move ? Layers::MOVING : Layers::NON_MOVING));
+    mesh_body_settings.mUserData = userdata;
     m_body_id = m_phys_body_ifc.CreateAndAddBody(mesh_body_settings, JPH::EActivation::DontActivate);
 
     // Create debug render job.
-    m_debug_mesh_id = TXP::debug::emplace_debug_model(model_name, TXP::debug::PHYSICS_WIREFRAME);
+    m_debug_mesh_id = TXP::debug::emplace_debug_model(
+        model_name,
+        Phys_obj_flags(userdata).is_standable() ? TXP::debug::PHYSICS_STANDABLE_WIREFRAME
+                                                : TXP::debug::PHYSICS_UNSTANDABLE_WIREFRAME);
 }
 
 BT::Phys_obj_impl_tri_mesh::~Phys_obj_impl_tri_mesh()
