@@ -86,9 +86,19 @@ public:
     {
     }
 
-    bool is_standable() const
+    inline bool is_standable() const
     {
         return ((m_flags & IS_STANDABLE) != 0);
+    }
+
+    inline Phys_obj_flags& set_is_standable(bool const flag)
+    {
+        if (flag)
+            m_flags |= IS_STANDABLE;
+        else
+            m_flags &= ~IS_STANDABLE;
+
+        return *this;
     }
 
     inline uint64_t to_flags() const

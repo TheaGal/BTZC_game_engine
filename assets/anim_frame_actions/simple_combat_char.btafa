@@ -1089,7 +1089,7 @@
                     "ctrl_cmd": {
                         "argv": [
                             "evq_is_grounded",
-                            "st_jump",
+                            "st_jump,st_fall",
                             "0"
                         ],
                         "cmd_name": "watch_event_queue"

@@ -893,6 +893,8 @@
     - [x] make char slide off unstandable areas
         - use the `ground_normal` var and really only work for if `ground_normal.y > 0`
         - had it for only if using mvt based input (as opposed to anim based input) but forgot that mvt based input doesn't necessarily mean being midair, so added it regardless of mvt type.
+- [x] add checkbox in phys obj config to set if standable or not
+    - sets in .btscene that the chars are unstandable
 - [ ] fill in different parry and hurt types
     - will need 2 action maps, one for getting hurt a certain way and another for parrying a certain way (guard will just be same awkward anim)
     - the action maps will have the same indexes as `enum class Atk_dir` since the `.action_idx` that comes in will be that number

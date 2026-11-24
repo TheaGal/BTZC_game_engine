@@ -458,7 +458,7 @@ void BT::component::edit::imgui_edit__render_object_config(entt::registry& reg,
                 if (selected)
                     rend_obj_settings.render_layer |= layer;
                 else
-                    rend_obj_settings.render_layer ^= layer;
+                    rend_obj_settings.render_layer &= ~layer;
             }
         }
 
@@ -547,10 +547,24 @@ void BT::component::edit::imgui_edit__physics_object_settings(entt::registry& re
     }
 
     ImGui::BeginDisabled(is_disabled);
+
     if (ImGui::Combo("Physics obj type", &selected_idx, combined_str.c_str()))
     {
         phys_obj_settings.phys_obj_type = s_phys_obj_types[selected_idx].second;
     }
+
+    ImGui::Separator();
+
+    {
+        bool is_standable{ Phys_obj_flags(phys_obj_settings.phys_obj_flags).is_standable() };
+        if (ImGui::Checkbox("flags.is_standable", &is_standable))
+        {
+            phys_obj_settings.phys_obj_flags = Phys_obj_flags(phys_obj_settings.phys_obj_flags)
+                                                   .set_is_standable(is_standable)
+                                                   .to_flags();
+        }
+    }
+
     ImGui::EndDisabled();
 
     ImGui::PopItemWidth();

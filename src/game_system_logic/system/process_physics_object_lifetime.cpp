@@ -118,7 +118,7 @@ void create_staged_physics_objects(entt::registry& reg, Physics_engine& phys_eng
             };
             new_phys_obj = Physics_object::create_triangle_mesh(
                 false,
-                Phys_obj_flags(true),
+                phys_obj_settings.phys_obj_flags,
                 tm_settings.model_name,
                 JPH::Vec3{ transform.scale.x, transform.scale.y, transform.scale.z },
                 JPH::EMotionType{ tm_settings.motion_type },
@@ -132,7 +132,7 @@ void create_staged_physics_objects(entt::registry& reg, Physics_engine& phys_eng
                 entity) };
             new_phys_obj = Physics_object::create_character_controller(
                 false,
-                Phys_obj_flags(false),
+                phys_obj_settings.phys_obj_flags,
                 cc_settings.radius,
                 cc_settings.height,
                 cc_settings.crouch_height,

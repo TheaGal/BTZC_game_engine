@@ -16,10 +16,12 @@ namespace component
 struct Physics_object_settings
 {
     Physics_object_type phys_obj_type{ NUM_PHYSICS_OBJECT_TYPES };  // Invalid value as default.
+    uint64_t phys_obj_flags{ Phys_obj_flags(true).to_flags() };
 
     NLOHMANN_DEFINE_TYPE_INTRUSIVE_WITH_DEFAULT(
         Physics_object_settings,
-        phys_obj_type
+        phys_obj_type,
+        phys_obj_flags
     );
 };
 
