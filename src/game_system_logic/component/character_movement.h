@@ -45,6 +45,7 @@ struct Character_mvt_state
 {
     struct Grounded_state
     {
+        bool force_grounded_sliding_this_tick{ false };
         bool allow_grounded_sliding{ false };
         float_t facing_angle{ 0.0f };
     } grounded_state;

@@ -264,7 +264,7 @@ Char_mvt_logic_results character_controller_movement_logic(
     component::Follow_camera_follow_ref::State const* follow_cam_state,
     Physics_object& phys_obj)
 {   // Get current character controller state.
-    auto char_con_impl{ phys_obj.get_impl() };
+    auto* char_con_impl{ phys_obj.get_impl() };
 
     JPH::Vec3 ground_velocity;
     JPH::Vec3 linear_velocity;
@@ -344,11 +344,12 @@ Char_mvt_logic_results character_controller_movement_logic(
 
     // Find movement state.
     JPH::Vec3 current_vertical_velocity = linear_velocity.Dot(up_direction) * up_direction;
-    bool const is_grounded{ is_supported &&
-                            ground_state == JPH::CharacterVirtual::EGroundState::OnGround &&
-                            (current_vertical_velocity.GetY() - ground_velocity.GetY()) < 0.1f &&
-                            !char_con_impl->is_cc_slope_too_steep(ground_normal) &&  // @CHECK: is this needed? bc too steep of a slope will already show up in EGroundState
-                            !(anim_root_motion && anim_root_motion->jump_up) };  // force not-grounded if performing jump_up event.
+    bool const is_on_flat_slope_surface{
+        ground_state == JPH::CharacterVirtual::EGroundState::OnGround &&
+        (current_vertical_velocity.GetY() - ground_velocity.GetY()) < 0.1f &&
+        !char_con_impl->is_cc_slope_too_steep(ground_normal) &&  // @CHECK: is this needed? bc too steep of a slope will already show up in EGroundState
+        !(anim_root_motion && anim_root_motion->jump_up) };  // force not-grounded if performing jump_up event.
+    bool const is_grounded{ is_on_flat_slope_surface && is_supported };
 
     // Position and face self in pair animation.
     float_t display_facing_angle;
@@ -553,11 +554,13 @@ Char_mvt_logic_results character_controller_movement_logic(
             delta_velocity = delta_velocity.Normalized() * airborne_accel;
         }
 
-        JPH::Vec3 effective_velocity{ flat_linear_velo + delta_velocity };
+        // Apply effective velocity (velocity excluding vertical velocity).
+        JPH::Vec3Arg effective_velocity{ flat_linear_velo + delta_velocity };
         new_velocity += effective_velocity;
 
+        // Move facing angle towards desired facing angle.
         if (has_desired_facing_angle)
-        {   // Move facing angle towards desired facing angle.
+        {
             float_t delta_direction{ desired_facing_angle - airborne_state.input_facing_angle };
             btglm_angle_normalize(delta_direction, glm_rad(-180.0f), glm_rad(180.0f));
 
@@ -581,6 +584,30 @@ Char_mvt_logic_results character_controller_movement_logic(
     }
     else assert(false);  // Unsupported movement type.
 
+    // If falling on a non-standing surface, add in horizontal velocity away from surface normal.
+    if (is_on_flat_slope_surface && !is_supported)
+    {
+        JPH::Vec3 non_standing_surface_avoid_velo{ ground_normal.GetX(), 0, ground_normal.GetZ() };
+        non_standing_surface_avoid_velo =
+            non_standing_surface_avoid_velo.NormalizedOr(JPH::Vec3Arg{ 0, 0, 1 });
+
+        char_mvt_state.grounded_state.force_grounded_sliding_this_tick = true;
+
+        BT_TRACEF(
+            "Slide off unstandable flat slope surface:\n"
+            "  `ground_normal`: %.3f, %.3f, %.3f\n"
+            "  `avoid_velo`:    %.3f, %.3f, %.3f",
+            ground_normal.GetX(),
+            ground_normal.GetY(),
+            ground_normal.GetZ(),
+            non_standing_surface_avoid_velo.GetX(),
+            non_standing_surface_avoid_velo.GetY(),
+            non_standing_surface_avoid_velo.GetZ());
+
+        new_velocity += non_standing_surface_avoid_velo;
+    }
+
+    // Events from anim root motion.
     if (anim_root_motion)
     {
         if (anim_root_motion->jump_up)
@@ -625,7 +652,9 @@ void apply_velocity_to_char_con(
     JPH::Vec3 velo_w_grav{ velocity };
     velo_w_grav += (up_rotation * physics_gravity) * Physics_engine::k_simulation_delta_time;
 
-    phys_obj.get_impl()->set_cc_allow_sliding(is_grounded && grounded_state.allow_grounded_sliding);
+    phys_obj.get_impl()->set_cc_allow_sliding(
+        grounded_state.force_grounded_sliding_this_tick ||
+        (is_grounded && grounded_state.allow_grounded_sliding));
     phys_obj.get_impl()->set_cc_velocity(velo_w_grav);
 }
 
@@ -689,6 +718,9 @@ void BT::system::input_controlled_character_movement()
                                    mvt_logic_result.new_velocity);
 
         phys_engine.return_physics_object(&phys_obj);
+
+        // Reset.
+        char_mvt_state.grounded_state.force_grounded_sliding_this_tick = false;
 
         // Try writing a new facing direction.
         {

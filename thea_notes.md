@@ -879,16 +879,20 @@
 - [x] extend performance window to show gpu time
     - ooo pretty graphs!
 
-- [ ] make it so player can't stand on top of npc or cpu
+- [x] make it so player can't stand on top of npc or cpu
     - stomp is still good tho!
     - [x] nit: adds a small 10 frame window where playchar can jump if press jump button before hit ground
     - [x] change rotation order to YXZ and derive euler angle extraction math func
     - [x] fix static physics objects not scaling
-    - [ ] create a bit of a gym to make sure that wall sliding is enabled
-        - [ ] add saving button for the scene
+    - [ ] ~~create a bit of a gym to make sure that wall sliding is enabled~~
+        - [ ] ~~add saving button for the scene~~
+            - DEFERRED: decide how to make the level editor once finish design plans for world editor
         - hmm i want to have an "add gameobject" button too but i think that it needs to be a prefab-based system and maybe there's a prefab editor and then the values can get overridden in the actual .btscene file??
     - [x] mark other characters with something to show that it should be not standable. maybe use a bit flag in userdata uint64?
         - the userdata flag works. there needs to be something to slide off the character tho
+    - [x] make char slide off unstandable areas
+        - use the `ground_normal` var and really only work for if `ground_normal.y > 0`
+        - had it for only if using mvt based input (as opposed to anim based input) but forgot that mvt based input doesn't necessarily mean being midair, so added it regardless of mvt type.
 - [ ] fill in different parry and hurt types
     - will need 2 action maps, one for getting hurt a certain way and another for parrying a certain way (guard will just be same awkward anim)
     - the action maps will have the same indexes as `enum class Atk_dir` since the `.action_idx` that comes in will be that number
