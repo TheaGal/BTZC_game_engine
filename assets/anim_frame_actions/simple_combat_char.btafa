@@ -121,11 +121,32 @@
                         0.0,
                         1000000.0
                     ],
-                    "state_set": "st_hurt_receive_from_back",
+                    "state_set": "st_hurt_receive",
                     "weight": 0.10000000149011612
                 }
             ],
             "name": "ACTION_MAP_hurt"
+        },
+        {
+            "actions": [
+                {
+                    "min_max_range": [
+                        0.0,
+                        1000000.0
+                    ],
+                    "state_set": "st_hurt_parry",
+                    "weight": 0.10000000149011612
+                },
+                {
+                    "min_max_range": [
+                        0.0,
+                        1000000.0
+                    ],
+                    "state_set": "st_hurt_parry",
+                    "weight": 0.10000000149011612
+                }
+            ],
+            "name": "ACTION_MAP_parry"
         }
     ],
     "anim_frame_action_timelines": [
@@ -3923,7 +3944,7 @@
                     "ctrl_cmd": {
                         "argv": [
                             "evq_on_guard_press",
-                            "st_hurt_parry",
+                            "ACTION_MAP_parry",
                             "0"
                         ],
                         "cmd_name": "watch_event_queue"
@@ -3949,7 +3970,7 @@
                     "ctrl_cmd": {
                         "argv": [
                             "evq_exec_guard_response",
-                            "st_hurt_parry",
+                            "ACTION_MAP_parry",
                             "0"
                         ],
                         "cmd_name": "watch_event_queue"
@@ -4538,7 +4559,7 @@
                     "ctrl_cmd": {
                         "argv": [
                             "evq_on_hurt",
-                            "st_hurt_parry",
+                            "ACTION_MAP_parry",
                             "0"
                         ],
                         "cmd_name": "watch_event_queue"

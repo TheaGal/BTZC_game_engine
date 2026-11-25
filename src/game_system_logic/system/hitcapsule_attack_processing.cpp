@@ -61,8 +61,6 @@ void process_attack_interaction(Entity_container& entity_container,
     {
         // Write root motion multiplier from offender to defender.
         {
-            date_deadline(2026, 12, 1);  // @TODO: delete all this fuckass dead code
-
             auto& animator{ defender_animator.value() };
 
             auto& afa_data_handle{ animator.get_anim_frame_action_data_handle() };
