@@ -218,6 +218,7 @@ set(MAIN_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_engine/audio_impl_fmod.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_engine/audio_impl_fmod.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/audio_engine/util.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/bt_memory_shim.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btdatecheck.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btdatecheck.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/bt_lib/btglm.h
