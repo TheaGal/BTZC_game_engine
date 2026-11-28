@@ -230,6 +230,11 @@
             "anim_name": "Hurt_parry_right"
         },
         {
+            "state_name": "st_hurt_parry_heavycenter",
+            "state_type": "single_anim",
+            "anim_name": "Hurt_parry_heavycenter"
+        },
+        {
             "state_name": "st_hurt_guard",
             "state_type": "single_anim",
             "anim_name": "Hurt_guard"
