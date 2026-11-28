@@ -66,6 +66,17 @@ int main(int argc, char* argv[])
         "===-=-=-=-=-=-=-=-=-=-=-=-        BTZC  ENGINE        -=-=-=-=-=-=-=-=-=-=-=-===\n"
         "================================================================================\n");
 
+    // Setup audio engine.
+    BT::audio::initialize();
+
+    // Setup error ballback
+    BT::logger::set_on_error_callback_fn([]() {
+        auto snd_key = BT::audio::mark_snd_required("error.mp3", false, false, false);
+        BT::audio::play_sound(snd_key, BT::audio::volume_to_db(1));
+        BT::audio::unmark_snd_required(snd_key);
+    });
+
+    // Initialize program.
     BT::tests::run_all_tests();
 
     BT::initialize_app_settings_from_file_or_fallback_to_defaults();
@@ -96,6 +107,7 @@ int main(int argc, char* argv[])
 
     TXP::Renderer main_renderer{
         entity_container.get_ecs_registry(),
+        ui_state,
         k_application_title_str,
         BTZC_GAME_ENGINE_ASSET_TEXTURE_PATH,
         BTZC_GAME_ENGINE_ASSET_SHADER_PATH,
@@ -264,9 +276,6 @@ int main(int argc, char* argv[])
     BT::Physics_engine main_physics_engine;
 
     BT::Raycast_helper::set_physics_engine(main_physics_engine);
-
-    // Setup audio engine.
-    BT::audio::initialize();
 
     // Timer.
     BT::Timer main_timer;

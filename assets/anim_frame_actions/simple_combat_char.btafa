@@ -134,7 +134,7 @@
                         0.0,
                         1000000.0
                     ],
-                    "state_set": "st_hurt_parry",
+                    "state_set": "st_hurt_parry_left",
                     "weight": 0.10000000149011612
                 },
                 {
@@ -142,7 +142,7 @@
                         0.0,
                         1000000.0
                     ],
-                    "state_set": "st_hurt_parry",
+                    "state_set": "st_hurt_parry_right",
                     "weight": 0.10000000149011612
                 }
             ],
@@ -151,10 +151,12 @@
     ],
     "anim_frame_action_timelines": [
         {
+            "base_state_name": "",
             "regions": [],
             "state_name": "_DEBUG_STATE"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -302,6 +304,7 @@
             "state_name": "st_idle"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -475,6 +478,7 @@
             "state_name": "st_running"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -504,6 +508,7 @@
             "state_name": "st_crouch_enter"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -535,6 +540,7 @@
             "state_name": "st_crouch_from_getup"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -577,6 +583,7 @@
             "state_name": "st_crouch_getup"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -750,10 +757,12 @@
             "state_name": "st_dodge"
         },
         {
+            "base_state_name": "",
             "regions": [],
             "state_name": "st_running_turnaround"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -768,6 +777,7 @@
             "state_name": "st_awareness_suspicion_begin"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -782,6 +792,7 @@
             "state_name": "st_awareness_suspicion_walking"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -805,6 +816,7 @@
             "state_name": "st_awareness_suspicion_end"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -828,6 +840,7 @@
             "state_name": "st_awareness_aware_begin"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -955,6 +968,7 @@
             "state_name": "st_jump"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -1071,6 +1085,7 @@
             "state_name": "st_fall"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -1221,6 +1236,7 @@
             "state_name": "st_jump_midair_ready"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -1250,6 +1266,7 @@
             "state_name": "st_jump_midair"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -1268,6 +1285,7 @@
             "state_name": "st_jump_midair_fall"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -1349,6 +1367,7 @@
             "state_name": "st_pc_attack_1cha"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -1489,6 +1508,7 @@
             "state_name": "st_pc_attack_1rel"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -1570,6 +1590,7 @@
             "state_name": "st_pc_attack_2cha"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -1710,6 +1731,7 @@
             "state_name": "st_pc_attack_2rel"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -1791,6 +1813,7 @@
             "state_name": "st_pc_attack_3cha"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -1931,6 +1954,7 @@
             "state_name": "st_pc_attack_3rel"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -2033,7 +2057,7 @@
                             "0",
                             "10",
                             "0",
-                            "0",
+                            "1",
                             "1.000000",
                             "16 Sword attachment -0.6620000004768372 1.3880000114440918 1.0499999523162842",
                             "16 Sword attachment -0.7250000238418579 1.3880000114440918 0.07500000298023224",
@@ -2231,6 +2255,7 @@
             "state_name": "st_attack_0"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -2306,7 +2331,7 @@
                             "10",
                             "0",
                             "0",
-                            "20.000000",
+                            "2.000000",
                             "16 Sword attachment -0.6620000004768372 1.3880000114440918 1.0499999523162842",
                             "16 Sword attachment -0.7250000238418579 1.3880000114440918 0.07500000298023224",
                             "0.25"
@@ -2434,6 +2459,7 @@
             "state_name": "st_attack_1"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -2528,7 +2554,7 @@
                             "1",
                             "10",
                             "0",
-                            "0",
+                            "1",
                             "2.000000",
                             "16 Sword attachment -0.6620000004768372 1.3880000114440918 1.0499999523162842",
                             "16 Sword attachment -0.7250000238418579 1.3880000114440918 0.07500000298023224",
@@ -2694,6 +2720,7 @@
             "state_name": "st_attack_2"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -2886,6 +2913,7 @@
             "state_name": "st_attack_3"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -3089,6 +3117,7 @@
             "state_name": "st_attack_4"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -3251,6 +3280,7 @@
             "state_name": "st_attack_5"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -3308,6 +3338,7 @@
             "state_name": "st_jump_back_evade"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -3377,6 +3408,7 @@
             "state_name": "st_yosumi_shift_left"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -3446,6 +3478,7 @@
             "state_name": "st_yosumi_shift_right"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -3515,6 +3548,7 @@
             "state_name": "st_yosumi_shift_left_close"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -3584,10 +3618,12 @@
             "state_name": "st_yosumi_shift_right_close"
         },
         {
+            "base_state_name": "",
             "regions": [],
             "state_name": "st_cancel_parried_attack"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -3708,6 +3744,7 @@
             "state_name": "st_hurt_mikiri"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -3936,9 +3973,15 @@
                     "start_frame": 0
                 }
             ],
-            "state_name": "st_hurt_parry"
+            "state_name": "st_hurt_parry_left"
         },
         {
+            "base_state_name": "st_hurt_parry_left",
+            "regions": [],
+            "state_name": "st_hurt_parry_right"
+        },
+        {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -4196,6 +4239,7 @@
             "state_name": "st_hurt_guard"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -4388,6 +4432,7 @@
             "state_name": "st_hurt_receive"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -4481,6 +4526,7 @@
             "state_name": "st_hurt_receive_from_back"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -4629,10 +4675,12 @@
             "state_name": "st_ready_parry"
         },
         {
+            "base_state_name": "",
             "regions": [],
             "state_name": "st_ready_parry_from_running"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -4723,6 +4771,7 @@
             "state_name": "st_hold_guard_idle"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -4822,6 +4871,7 @@
             "state_name": "st_hold_guard_walking"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -4940,6 +4990,7 @@
             "state_name": "st_posture_break"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -5070,6 +5121,7 @@
             "state_name": "st_mikiri_give"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -5187,6 +5239,7 @@
             "state_name": "st_mikiri_receive"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -5242,6 +5295,7 @@
             "state_name": "st_health_depleted"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -5285,6 +5339,7 @@
             "state_name": "st_resurrect"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {
@@ -5393,6 +5448,7 @@
             "state_name": "st_deathblow_give"
         },
         {
+            "base_state_name": "",
             "regions": [
                 {
                     "ctrl_cmd": {

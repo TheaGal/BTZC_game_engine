@@ -89,7 +89,7 @@ void process_ui_hp_w_posture(Process_method const method,
         }
         else
         {
-            BT_ERROR("whoopsie not implemente dyet!!");
+            BT_WARN("whoopsie not implemente dyet!!");
             date_deadline(2026, 12, 1);  // @TODO: make this not have to use the error counter
             // static uint32_t s_error_times{ 0 };
             // if (s_error_times++ > 5)

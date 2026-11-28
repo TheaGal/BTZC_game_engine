@@ -899,6 +899,18 @@
     - will need 2 action maps, one for getting hurt a certain way and another for parrying a certain way (guard will just be same awkward anim)
     - the action maps will have the same indexes as `enum class Atk_dir` since the `.action_idx` that comes in will be that number
     - make the stomp anim use its own Atk_dir so that the defender/receiver of the stomp will make the bonk sound and decrease its own health but less than a typical attack
+    - do i want the different anims be the same thing as one anim but in a blendtree or smth or do i want the anims be separate so then the AFAs are copied over?
+        - or is there a way to make an AFA variant or smth??
+    - ok after sleeping on it, there should be AFA variants. Where you can add to it but not subtract. i want to avoid the blendtree as much as possible (since it adds 2x runtime cost for nothing)
+        - after thinking about it, it seems pretty impossible to be able to subtract unless if there are ids attached or smth.
+            - so for now or for ever, just make it not removable, only add
+    - [x] when an error comes up, play a sound
+    - [x] throw error if base state name is not a base state (i.e. cannot have a variant of a variant)
+    - [x] show both states in AFA editor
+        - show base state in faded out, unclickable regions, and then variant state is regular
+    - [x] can you make the priority levels mix?
+        - maybe having regions overlapping is an error??
+        - i could make them mix by iterating thru the row idxs and then always sampling from base state and variant state every time (make sure base state has higher priority... but also they shouldn't be overlapping)
 
 - [ ] make camera rig for deathblow anim and posture break
     - see https://discord.com/channels/1563075165473083402/1573471576991469759

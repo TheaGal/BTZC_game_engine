@@ -336,20 +336,12 @@
                     }
                 },
                 {
-                    "type_name": "component::Anim_frame_action_controller",
-                    "members_j": {
-                        "anim_frame_action_controller_name": "simple_combat_char.btafa"
-                    }
-                },
-                {
                     "type_name": "TXP::component::Animator_root_motion",
                     "members_j": {}
                 },
                 {
                     "type_name": "component::Health_stats_data",
-                    "members_j": {
-                        "max_health_pts": 10
-                    }
+                    "members_j": {}
                 },
                 {
                     "type_name": "component::Base_combat_stats_data",
@@ -831,21 +823,14 @@
                     }
                 },
                 {
-                    "type_name": "component::Anim_frame_action_controller",
-                    "members_j": {
-                        "anim_frame_action_controller_name": "simple_combat_char.btafa"
-                    }
-                },
-                {
                     "type_name": "TXP::component::Animator_root_motion",
                     "members_j": {}
                 },
                 {
                     "type_name": "component::Health_stats_data",
                     "members_j": {
-                        "ui_name": "Test Dummy the First @TODO: reset the max posture",
-                        "max_num_deathblows": 3,
-                        "max_posture_pts": 10
+                        "ui_name": "Test Dummy the First",
+                        "max_num_deathblows": 3
                     }
                 },
                 {

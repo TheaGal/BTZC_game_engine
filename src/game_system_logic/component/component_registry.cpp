@@ -1,6 +1,5 @@
 #include "component_registry.h"
 
-#include "anim_frame_action_controller.h"
 #include "btdatecheck.h"
 #include "btjson.h"
 #include "btlogger.h"
@@ -120,7 +119,6 @@ void BT::component::register_all_components()
     REGISTER_COMPONENT__YES_SERIALIZE(TXP::component::Point_light,                                 edit::imgui_edit__point_light);
     REGISTER_COMPONENT__YES_SERIALIZE(TXP::component::Render_object_config,                        edit::imgui_edit__render_object_config);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Character_mvt_animated_state,                     edit::imgui_edit__sample);
-    REGISTER_COMPONENT__YES_SERIALIZE(component::Anim_frame_action_controller,                     edit::imgui_edit__sample);
     REGISTER_COMPONENT___NO_SERIALIZE(TXP::component::Animator_driven_hitcapsule_set,              edit::imgui_edit__sample);
     REGISTER_COMPONENT__YES_SERIALIZE(TXP::component::Animator_root_motion,                        edit::imgui_edit__animator_root_motion);
     REGISTER_COMPONENT__YES_SERIALIZE(component::Physics_object_settings,                          edit::imgui_edit__physics_object_settings);

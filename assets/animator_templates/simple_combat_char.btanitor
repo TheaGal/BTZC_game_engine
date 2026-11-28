@@ -220,9 +220,14 @@
             "anim_name": "Mikiri_give"
         },
         {
-            "state_name": "st_hurt_parry",
+            "state_name": "st_hurt_parry_left",
             "state_type": "single_anim",
             "anim_name": "Hurt_parry_left"
+        },
+        {
+            "state_name": "st_hurt_parry_right",
+            "state_type": "single_anim",
+            "anim_name": "Hurt_parry_right"
         },
         {
             "state_name": "st_hurt_guard",
